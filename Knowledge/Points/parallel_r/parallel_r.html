@@ -1,0 +1,910 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  
+  "http://www.w3.org/TR/html4/loose.dtd">  
+<html > 
+<head><title>Parallel in R</title> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> 
+<meta name="generator" content="TeX4ht (https://tug.org/tex4ht/)"> 
+<meta name="originator" content="TeX4ht (https://tug.org/tex4ht/)"> 
+<!-- html --> 
+<meta name="src" content="parallel_r.tex"> 
+<link rel="stylesheet" type="text/css" href="parallel_r.css"> 
+</head><body 
+>
+   <div class="maketitle">
+                                                                  
+
+                                                                  
+                                                                  
+
+                                                                  
+
+<h2 class="titleHead">Parallel in R</h2>
+<div class="author" ><span 
+class="cmr-12">yuan</span></div><br />
+<div class="date" ><span 
+class="cmr-12">April 8, 2023</span></div>
+   </div>
+<!--l. 32--><p class="indent" >   Recently, I have a chance to access parallel computation in R, and write down in
+case I forget.
+<!--l. 34--><p class="indent" >   In R programming, we often use for loop, which is user friendly. And &#8221;for loop&#8221;
+can be viewed as a serial structure, we execute the code step by step. For example, in
+code We add from 1 to 100 step by step.
+<!--l. 43--><p class="indent" >   But the problem is, serial structure is time consuming, why can we only go from
+start to the end, what about spliting the procedure into 2 small procedure? That is:
+the first person adds from 1 to 50, the second adds from 51 to 100, and combine
+their results finally, we can save about half the time. This is the idea of
+parallel.
+   <h3 class="likesectionHead"><a 
+ id="x1-1000"></a>Goal</h3>
+<!--l. 45--><p class="noindent" >Give a more specific example, suppose we know the data generating mechanism is
+<span 
+class="cmmi-10">N</span>(<span 
+class="cmmi-10">&#x03BC;,</span>1), where <span 
+class="cmmi-10">&#x03BC; </span>is unknown and need to estimate(Though in many cases, the normal
+distribution assumption is not that reasonable, but many people do so). And consider
+the difficulty in collecting samples, we finally use 100 samples to estimate the mean,
+which is our interest estimand. But is this estimation procedure reasonable? What is
+the bias?
+<!--l. 48--><p class="indent" >   So, we need an experiment. In our experiment setting, the data is generated
+from <span 
+class="cmmi-10">N</span>(20<span 
+class="cmmi-10">,</span>1), and we get repeat <span 
+class="cmti-10">cyc </span>times, get <span 
+class="cmti-10">cyc </span>estimates, observe the
+histogram,,,etc.
+<!--l. 51--><p class="indent" >
+                                                                  
+
+                                                                  
+   <h3 class="likesectionHead"><a 
+ id="x1-2000"></a>Original Code</h3>
+<!--l. 53--><p class="noindent" >Code is as below:
+   <!--l. 56-->
+<pre class="lstlisting" id="listing-1"><span class="label"><a 
+ id="x1-2001r1"></a><span 
+class="cmr-9">1</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">1.</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">Functions</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">---------------------------</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2002r2"></a><span 
+class="cmr-9">2</span></span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimator</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">function</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">seed</span></span><span style="color:#000000"><span 
+class="cmtt-9">,</span></span><span style="color:#000000"><span 
+class="cmtt-9">mu</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span style="color:#000000"><span 
+class="cmtt-9">{</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2003r3"></a><span 
+class="cmr-9">3</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">function</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">of</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">one</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">experiment</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2004r4"></a><span 
+class="cmr-9">4</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#000000"><span 
+class="cmtt-9">set</span></span><span style="color:#000000"><span 
+class="cmtt-9">.</span></span><span style="color:#000000"><span 
+class="cmtt-9">seed</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">seed</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2005r5"></a><span 
+class="cmr-9">5</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#000000"><span 
+class="cmtt-9">x</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">rnorm</span></span><span style="color:#000000"><span 
+class="cmtt-9">(1000,</span></span><span style="color:#000000"><span 
+class="cmtt-9">mean</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">mu</span></span><span style="color:#000000"><span 
+class="cmtt-9">,</span></span><span style="color:#000000"><span 
+class="cmtt-9">sd</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">1)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2006r6"></a><span 
+class="cmr-9">6</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#000000"><span 
+class="cmtt-9">return</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">mean</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">x</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2007r7"></a><span 
+class="cmr-9">7</span></span><span style="color:#000000"><span 
+class="cmtt-9">}</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2008r8"></a><span 
+class="cmr-9">8</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2009r9"></a><span 
+class="cmr-9">9</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2010r10"></a><span 
+class="cmr-9">10</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">2.</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">Experiments</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">For</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">loop</span></span><span style="color:#808080"><span 
+class="cmtt-9">---------------------------</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2011r11"></a><span 
+class="cmr-9">11</span></span><span style="color:#000000"><span 
+class="cmtt-9">mu</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">20</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2012r12"></a><span 
+class="cmr-9">12</span></span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimates</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">NULL</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2013r13"></a><span 
+class="cmr-9">13</span></span><span style="color:#000000"><span 
+class="cmtt-9">cycTimes</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">1600000</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2014r14"></a><span 
+class="cmr-9">14</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">cyc</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">is</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">setting</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">large</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">for</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">experiment</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2015r15"></a><span 
+class="cmr-9">15</span></span><span style="color:#000000"><span 
+class="cmtt-9">timeStart</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">Sys</span></span><span style="color:#000000"><span 
+class="cmtt-9">.</span></span><span style="color:#000000"><span 
+class="cmtt-9">time</span></span><span style="color:#000000"><span 
+class="cmtt-9">()</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2016r16"></a><span 
+class="cmr-9">16</span></span><span style="color:#000000"><span 
+class="cmtt-9">for</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">seed</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">in</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">1:</span></span><span style="color:#000000"><span 
+class="cmtt-9">cycTimes</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span style="color:#000000"><span 
+class="cmtt-9">{</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2017r17"></a><span 
+class="cmr-9">17</span></span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimates</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">c</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimates</span></span><span style="color:#000000"><span 
+class="cmtt-9">,</span></span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimator</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">seed</span></span><span style="color:#000000"><span 
+class="cmtt-9">,</span></span><span style="color:#000000"><span 
+class="cmtt-9">mu</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2018r18"></a><span 
+class="cmr-9">18</span></span><span style="color:#000000"><span 
+class="cmtt-9">}</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2019r19"></a><span 
+class="cmr-9">19</span></span><span style="color:#000000"><span 
+class="cmtt-9">timeEnd</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">Sys</span></span><span style="color:#000000"><span 
+class="cmtt-9">.</span></span><span style="color:#000000"><span 
+class="cmtt-9">time</span></span><span style="color:#000000"><span 
+class="cmtt-9">()</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-2020r20"></a><span 
+class="cmr-9">20</span></span><span style="color:#000000"><span 
+class="cmtt-9">print</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">timeEnd</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">-</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">timeStart</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span></pre>
+<!--l. 79--><p class="indent" >   While the code is running, I check the cpu status, as Figure (1), most time, only
+one cpu is working hard, others are resting, which is not fair, which is not good, and
+finally time used is <span 
+class="cmbx-10">1.045371 hours</span>&#8221;. <hr class="figure"><div class="figure" 
+>
+                                                                  
+
+                                                                  
+                                                                  
+
+                                                                  
+<div  
+class="centerline">                               <img 
+src="./For_loop.png" alt="PIC"  
+>                               </div>
+<a 
+ id="x1-2021r1"></a>
+<a 
+ id="x1-2022"></a>
+<br />                                                                  <div class="caption" 
+><span class="id">
+Figure&#x00A0;1: </span><span  
+class="content">Cpu status: for loop code
+</span></div><!--tex4ht:label?: x1-2021r -->
+                                                                  
+
+                                                                  
+<!--l. 84--><p class="indent" >   </div><hr class="endfigure">
+   <h3 class="likesectionHead"><a 
+ id="x1-3000"></a>Parallel code</h3>
+<!--l. 88--><p class="noindent" >So, what we want, is all cpu cores working together. And it is better if they can
+encourage the others. The method is <span 
+class="cmbx-10">PARALLEL</span>.
+<!--l. 90--><p class="indent" >   I implement code in Ubuntu(linux) system, so this method may not be applicable
+to windows system. Code directly,
+   <!--l. 93-->
+<pre class="lstlisting" id="listing-2"><span class="label"><a 
+ id="x1-3001r1"></a><span 
+class="cmr-9">1</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#000000"><span 
+class="cmtt-9">library</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">parallel</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3002r2"></a><span 
+class="cmr-9">2</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3003r3"></a><span 
+class="cmr-9">3</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">make</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">clusters</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3004r4"></a><span 
+class="cmr-9">4</span></span><span style="color:#000000"><span 
+class="cmtt-9">clnum</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">detectCores</span></span><span style="color:#000000"><span 
+class="cmtt-9">()</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3005r5"></a><span 
+class="cmr-9">5</span></span><span style="color:#000000"><span 
+class="cmtt-9">print</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">paste</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">"</span></span><span style="color:#000000"><span 
+class="cmtt-9">detectCores</span></span><span style="color:#000000"><span 
+class="cmtt-9">:</span></span><span style="color:#000000"><span 
+class="cmtt-9">"</span></span><span style="color:#000000"><span 
+class="cmtt-9">,</span></span><span style="color:#000000"><span 
+class="cmtt-9">clnum</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3006r6"></a><span 
+class="cmr-9">6</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3007r7"></a><span 
+class="cmr-9">7</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">The</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">line</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">below</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">is</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">to</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">make</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">cluster</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">as</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">its</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">name</span></span><span style="color:#808080"><span 
+class="cmtt-9">.</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3008r8"></a><span 
+class="cmr-9">8</span></span><span style="color:#000000"><span 
+class="cmtt-9">cl</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">makeCluster</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">getOption</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">&#8217;</span></span><span style="color:#000000"><span 
+class="cmtt-9">cl</span></span><span style="color:#000000"><span 
+class="cmtt-9">.</span></span><span style="color:#000000"><span 
+class="cmtt-9">cores</span></span><span style="color:#000000"><span 
+class="cmtt-9">&#8217;</span></span><span style="color:#000000"><span 
+class="cmtt-9">,</span></span><span style="color:#000000"><span 
+class="cmtt-9">clnum</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3009r9"></a><span 
+class="cmr-9">9</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3010r10"></a><span 
+class="cmr-9">10</span></span><span style="color:#000000"><span 
+class="cmtt-9">timeStart</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">Sys</span></span><span style="color:#000000"><span 
+class="cmtt-9">.</span></span><span style="color:#000000"><span 
+class="cmtt-9">time</span></span><span style="color:#000000"><span 
+class="cmtt-9">()</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3011r11"></a><span 
+class="cmr-9">11</span></span><span style="color:#000000"><span 
+class="cmtt-9">cycTimes</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">1600000</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3012r12"></a><span 
+class="cmr-9">12</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3013r13"></a><span 
+class="cmr-9">13</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3014r14"></a><span 
+class="cmr-9">14</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">1.</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">Parallel</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">function</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">--------------------</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3015r15"></a><span 
+class="cmr-9">15</span></span><span style="color:#000000"><span 
+class="cmtt-9">meanEsti</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">function</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">seed</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span style="color:#000000"><span 
+class="cmtt-9">{</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3016r16"></a><span 
+class="cmr-9">16</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimator</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">function</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">seed</span></span><span style="color:#000000"><span 
+class="cmtt-9">,</span></span><span style="color:#000000"><span 
+class="cmtt-9">mu</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span style="color:#000000"><span 
+class="cmtt-9">{</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3017r17"></a><span 
+class="cmr-9">17</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">function</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">of</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">one</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">experiment</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3018r18"></a><span 
+class="cmr-9">18</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#000000"><span 
+class="cmtt-9">set</span></span><span style="color:#000000"><span 
+class="cmtt-9">.</span></span><span style="color:#000000"><span 
+class="cmtt-9">seed</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">seed</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3019r19"></a><span 
+class="cmr-9">19</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#000000"><span 
+class="cmtt-9">x</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">rnorm</span></span><span style="color:#000000"><span 
+class="cmtt-9">(1000,</span></span><span style="color:#000000"><span 
+class="cmtt-9">mean</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">mu</span></span><span style="color:#000000"><span 
+class="cmtt-9">,</span></span><span style="color:#000000"><span 
+class="cmtt-9">sd</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">1)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3020r20"></a><span 
+class="cmr-9">20</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#000000"><span 
+class="cmtt-9">return</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">mean</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">x</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3021r21"></a><span 
+class="cmr-9">21</span></span><span style="color:#000000"><span 
+class="cmtt-9">}</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3022r22"></a><span 
+class="cmr-9">22</span></span><span style="color:#000000"><span 
+class="cmtt-9">mu</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">20</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3023r23"></a><span 
+class="cmr-9">23</span></span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimate</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimator</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">seed</span></span><span style="color:#000000"><span 
+class="cmtt-9">,</span></span><span style="color:#000000"><span 
+class="cmtt-9">mu</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3024r24"></a><span 
+class="cmr-9">24</span></span><span style="color:#000000"><span 
+class="cmtt-9">return</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimate</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3025r25"></a><span 
+class="cmr-9">25</span></span><span style="color:#000000"><span 
+class="cmtt-9">}</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3026r26"></a><span 
+class="cmr-9">26</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3027r27"></a><span 
+class="cmr-9">27</span></span><span style="color:#000000"><span 
+class="cmtt-9">res</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">parLapply</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">cl</span></span><span style="color:#000000"><span 
+class="cmtt-9">,1:</span></span><span style="color:#000000"><span 
+class="cmtt-9">cycTimes</span></span><span style="color:#000000"><span 
+class="cmtt-9">,</span></span><span style="color:#000000"><span 
+class="cmtt-9">meanEsti</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3028r28"></a><span 
+class="cmr-9">28</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"><span 
+class="cmtt-9">##</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">parLapply</span></span><span style="color:#808080"><span 
+class="cmtt-9">:</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">running</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">our</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">function</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">in</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">cluster</span></span><span style="color:#808080"><span 
+class="cmtt-9">.</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">So</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">cool</span></span><span style="color:#808080"><span 
+class="cmtt-9">.</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3029r29"></a><span 
+class="cmr-9">29</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3030r30"></a><span 
+class="cmr-9">30</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3031r31"></a><span 
+class="cmr-9">31</span></span><span style="color:#000000"><span 
+class="cmtt-9">timeEnd1</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">Sys</span></span><span style="color:#000000"><span 
+class="cmtt-9">.</span></span><span style="color:#000000"><span 
+class="cmtt-9">time</span></span><span style="color:#000000"><span 
+class="cmtt-9">()</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3032r32"></a><span 
+class="cmr-9">32</span></span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimatesParallel</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">NULL</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3033r33"></a><span 
+class="cmr-9">33</span></span><span style="color:#000000"><span 
+class="cmtt-9">print</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">timeEnd1</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">-</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">timeStart</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3034r34"></a><span 
+class="cmr-9">34</span></span><span style="color:#000000"><span 
+class="cmtt-9">for</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">i</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">in</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">1:</span></span><span style="color:#000000"><span 
+class="cmtt-9">length</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">res</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span style="color:#000000"><span 
+class="cmtt-9">{</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3035r35"></a><span 
+class="cmr-9">35</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"><span 
+class="cmtt-9">#</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">We</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">still</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">use</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">for</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">loop</span></span><span style="color:#808080"> </span><span style="color:#808080"><span 
+class="cmtt-9">here</span></span><span style="color:#808080"><span 
+class="cmtt-9">.</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3036r36"></a><span 
+class="cmr-9">36</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimatesParallel</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3037r37"></a><span 
+class="cmr-9">37</span></span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span 
+class="cmtt-9">&#x00A0;</span><span style="color:#000000"><span 
+class="cmtt-9">c</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">meanEstimatesParallel</span></span><span style="color:#000000"><span 
+class="cmtt-9">,</span></span><span style="color:#000000"><span 
+class="cmtt-9">res</span></span><span style="color:#000000"><span 
+class="cmtt-9">[[</span></span><span style="color:#000000"><span 
+class="cmtt-9">i</span></span><span style="color:#000000"><span 
+class="cmtt-9">]][1])</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3038r38"></a><span 
+class="cmr-9">38</span></span><span style="color:#000000"><span 
+class="cmtt-9">}</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3039r39"></a><span 
+class="cmr-9">39</span></span><span style="color:#000000"><span 
+class="cmtt-9">timeEnd2</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">=</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">Sys</span></span><span style="color:#000000"><span 
+class="cmtt-9">.</span></span><span style="color:#000000"><span 
+class="cmtt-9">time</span></span><span style="color:#000000"><span 
+class="cmtt-9">()</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3040r40"></a><span 
+class="cmr-9">40</span></span><span style="color:#000000"><span 
+class="cmtt-9">print</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">timeEnd2</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">-</span></span><span style="color:#000000"> </span><span style="color:#000000"><span 
+class="cmtt-9">timeStart</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span><span 
+class="cmtt-9">&#x00A0;</span><br /> 
+<span class="label"><a 
+ id="x1-3041r41"></a><span 
+class="cmr-9">41</span></span><span style="color:#000000"><span 
+class="cmtt-9">save</span></span><span style="color:#000000"><span 
+class="cmtt-9">.</span></span><span style="color:#000000"><span 
+class="cmtt-9">image</span></span><span style="color:#000000"><span 
+class="cmtt-9">(</span></span><span style="color:#000000"><span 
+class="cmtt-9">"</span></span><span style="color:#000000"><span 
+class="cmtt-9">Cluster</span></span><span style="color:#000000"><span 
+class="cmtt-9">&#x2423;</span></span><span style="color:#000000"><span 
+class="cmtt-9">results</span></span><span style="color:#000000"><span 
+class="cmtt-9">.</span></span><span style="color:#000000"><span 
+class="cmtt-9">RData</span></span><span style="color:#000000"><span 
+class="cmtt-9">"</span></span><span style="color:#000000"><span 
+class="cmtt-9">)</span></span></pre>
+<!--l. 138--><p class="indent" >   P.s.
+     <ul class="itemize1">
+     <li class="itemize">
+     <!--l. 140--><p class="noindent" >clnum is how many cores we prepare to use. detectCores()=8 here, we will
+     use full cores of this machine. But in cluster(while submitting homework
+     to cluster), I will specify a little smaller than full. E.g. If there is 64 cores,
+     I will specify 56 in case of some errors I don&#8217;t understand.
+     </li>
+     <li class="itemize">
+     <!--l. 144--><p class="noindent" >We need to put all in one function. Specifically, mean_estimator function
+     need to be defined in mean_esti function.
+     </li>
+     <li class="itemize">
+     <!--l. 145--><p class="noindent" >We must return in our function mean_esti. Or, we just need to run again.
+     And  if  we  want  to  save  multiple  values,  we  can  return  a  vector  like
+     c(a,b,c,d).
+     </li>
+     <li class="itemize">
+     <!--l. 146--><p class="noindent" >1:cyc_times  in  parLapply  function  is  the  parameter  in  our  mean_esti
+     function.
+     </li>
+     <li class="itemize">
+     <!--l. 147--><p class="noindent" >Results of parLapply is a list. We get use res[[i]] to get the <span 
+class="cmti-10">ith </span>returh.
+     </li>
+     <li class="itemize">
+     <!--l. 148--><p class="noindent" >Save our results! Expecially when we are in cluster. Or, the program exit
+     with nothing left.</li></ul>
+<!--l. 151--><p class="indent" >   And an exciting CPU status as Figure (2): <hr class="figure"><div class="figure" 
+>
+                                                                  
+
+                                                                  
+                                                                  
+
+                                                                  
+<div  
+class="centerline">                               <img 
+src="./Cluster2.png" alt="PIC"  
+>                               </div>
+<a 
+ id="x1-3042r2"></a>
+<a 
+ id="x1-3043"></a>
+<br />                                                                  <div class="caption" 
+><span class="id">
+Figure&#x00A0;2: </span><span  
+class="content">Cpu status: Parallel
+</span></div><!--tex4ht:label?: x1-3042r -->
+                                                                  
+
+                                                                  
+<!--l. 156--><p class="indent" >   </div><hr class="endfigure">
+   <h3 class="likesectionHead"><a 
+ id="x1-4000"></a>Comparison</h3>
+<!--l. 158--><p class="noindent" >Results for the two way are totally similar. As figure below: <hr class="figure"><div class="figure" 
+>
+                                                                  
+
+                                                                  
+                                                                  
+
+                                                                  
+<div  
+class="centerline">                               <img 
+src="./Comparison.png" alt="PIC"  
+>                               </div>
+<a 
+ id="x1-4001r3"></a>
+<a 
+ id="x1-4002"></a>
+<br />                                                                  <div class="caption" 
+><span class="id">
+Figure&#x00A0;3: </span><span  
+class="content">Cpu status: Parallel
+</span></div><!--tex4ht:label?: x1-4001r -->
+                                                                  
+
+                                                                  
+<!--l. 163--><p class="indent" >   </div><hr class="endfigure">
+<!--l. 164--><p class="indent" >   Finish the parallel computation just use <span 
+class="cmbx-10">14.76524 secs</span>. But the for loop used
+more than <span 
+class="cmbx-10">1 hours</span>. Really Amazing.
+<!--l. 166--><p class="indent" >   But, when we want to collect all results together, we still need a for loop(line 43
+in Parallel Code), it is really time consuming.
+<!--l. 168--><p class="indent" >   So maybe the <span 
+class="cmmi-10">a &#x003C; </span><span 
+class="cmsy-10">-</span><span 
+class="cmmi-10">c</span>(<span 
+class="cmmi-10">a,b</span>) process took some time. And I replace line 17 in
+Original Code as mean_estimator(seed, mu)(i.e. without combination process, just
+computatin), it took <span 
+class="cmbx-10">59.28718 secs </span>finally. It makes sense.
+<!--l. 170--><p class="indent" >   As a conclusion: parallel reduces time from <span 
+class="cmbx-10">59.28718 secs </span>to <span 
+class="cmbx-10">14.76524</span>. And
+combine results with for loop took about one hour.
+<!--l. 172--><p class="indent" >   Any question and discussion are welcome! My email: yuan_just@outlook.com
+    
+</body></html> 
+
+                                                                  
+
+
