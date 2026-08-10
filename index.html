@@ -1,141 +1,177 @@
-<!DOCTYPE html><html lang="en"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>yuan</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/magic-grid/dist/magic-grid.min.js"></script>
-    <link rel="stylesheet" href="index.css">
-  <link rel="icon" href="https://avatars.githubusercontent.com/u/8399559?v=4" type="image/png"></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Yuan Liu / 刘源</title>
+<meta name="description" content="Yuan Liu (刘源) — PhD candidate, Mathematical Institute, Leiden University. Causal inference, survival analysis, machine learning." />
+<meta name="keywords" content="Yuan Liu, Leiden University, Mathematical Institute, Causal Inference, Machine Learning, Survival Analysis" />
+<link rel="icon" href="images/profile.jpg" type="image/jpeg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
-  <body>
-    <div id="loading">
-      <div id="spinner"></div>
-    </div>
-    <div id="profile">
-      <div id="profile_img" style="background: url(./Pictures/me.jpeg) center;"></div>
-      <div id="username"><span style="display:block;">yuan</span><a href="https://github.com/yuanEns">@yuanEnS</a></div>
-      <div id="about">
-                <span style="display:none;"><i class="fas fa-users"></i> &nbsp; null</span>
-                <span style="display:none;"><i class="fas fa-envelope"></i> &nbsp; null</span>
-                <span style="display:none;"><i class="fas fa-map-marker-alt"></i> &nbsp;&nbsp; null</span>
-                <span style="display:none;"><i class="fas fa-user-tie"></i> &nbsp;&nbsp; Available for hire</span>
-                <div class="socials">
-                <span style="display:none !important;"><a href="https://www.twitter.com/null" target="_blank" class="socials"><i class="fab fa-twitter"></i></a></span>
-                <span style="display:none !important;"><a href="https://www.dribbble.com/null" target="_blank" class="socials"><i class="fab fa-dribbble"></i></a></span>
-                <span style="display:none !important;"><a href="https://www.linkedin.com/in/null/" target="_blank" class="socials"><i class="fab fa-linkedin-in"></i></a></span>
-                <span style="display:none !important;"><a href="https://www.medium.com/@null/" target="_blank" class="socials"><i class="fab fa-medium-m"></i></a></span>
-                </div>
-                </div>
-    </div>
-    <div id="display">
-      <div id="work">
-        <h1>About me.</h1>
-        <div class="projects" id="work_section">
-                        <a href="./Knowledge/index.html" target="_blank">
-                        <section>
-                            <div class="section_title">Knowledge</div>
-                            <div class="about_section">
-                            <span style="display:block;">the first one</span>
-                            </div>
-                        </section>
-                        </a>
-                        <a href="./Research/index.html" target="_blank">
-                        <section>
-                            <div class="section_title">Research</div>
-                            <div class="about_section">
-                            <span style="display:block;">the first one</span>
-                            </div>
-                        </section>
-                        </a>
-                        <a href="https://github.com/yuan/backup" target="_blank">
-                        <section>
-                            <div class="section_title">Something else</div>
-                            <div class="about_section">
-                            <span style="display:none;">undefined</span>
-                            </div>
-                            <div class="bottom_section">
-                                <span style="display:none;"><i class="fas fa-code"></i>&nbsp; null</span>
-                                <span><i class="fas fa-star"></i>&nbsp; 0</span>
-                                <span><i class="fas fa-code-branch"></i>&nbsp; 0</span>
-                            </div>
-                        </section>
-                        </section>
-                        </a></div>
-      </div>
-      <div id="forks" style="display:none;">
-        <h1>Forks.</h1>
-        <div class="projects" id="forks_section"></div>
-      </div>
-      <div id="blog_section">
-        <h1>Blog.</h1>
-        <div id="blogs"></div>
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-mark">YL</div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#awards">Awards</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+  <section class="hero" id="top">
+    <img class="hero-photo" src="images/profile.jpg" alt="Yuan Liu" />
+    <div class="hero-text">
+      <h1>Yuan Liu <span class="zh">刘源</span></h1>
+      <div class="hero-role">PhD Candidate, Mathematical Institute, Leiden University</div>
+      <div class="hero-links">
+        <a href="mailto:yuan_nju@outlook.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg>
+          yuan_nju@outlook.com
+        </a>
+        <a href="https://github.com/yuanEnS" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.85-2.34 4.7-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
+          yuanEnS
+        </a>
+        <a href="https://www.universiteitleiden.nl/en/science/mathematics" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 2 8l10 5 10-5-10-5Z"/><path d="M6 10.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-5.5"/></svg>
+          Leiden University
+        </a>
       </div>
     </div>
-    <script type="text/javascript">
-      setTimeout(function() {
-        document.getElementById("loading").classList.add("animated");
-        document.getElementById("loading").classList.add("fadeOut");
-        setTimeout(function() {
-          document.getElementById("loading").classList.remove("animated");
-          document.getElementById("loading").classList.remove("fadeOut");
-          document.getElementById("loading").style.display = "none";
-        }, 800);
-      }, 1500);
-      $.getJSON("blog.json", function(blog) {
-        blog = blog || [];
-        if (blog.length == 0) {
-          return (document.getElementById("blog_section").style.display =
-            "none");
-        }
-        for (var i = 0; i < blog.length; i++) {
-          $("#blogs").append(`
-            <a href="./blog/${blog[i].url_title}/" target="_blank">
-                <section>
-                    <img src="./blog/${blog[i].url_title}/${blog[i].top_image}">
-                    <div class="blog_container">
-                        <div class="section_title">${blog[i].title}</div>
-                        <div class="about_section">
-                            ${blog[i].sub_title}
-                        </div>
-                    </div>
-                </section>
-            </a>
-            `);
-        }
-      }).fail(function() {
-        return (document.getElementById("blog_section").style.display = "none");
-      });
-    </script>
+  </section>
 
-    <script>
-      const magicProjectsGrid = new MagicGrid({
-        container: "#work_section",
-        animate: false,
-        gutter: 30, // default gutter size
-        static: true,
-        useMin: false,
-        maxColumns: 2,
-        useTransform: true
-      });
+  <section id="about">
+    <h2 class="section-title">About</h2>
+    <div class="bio">
+      <p>I am a PhD candidate at the <a href="https://www.universiteitleiden.nl/en/science/mathematics" target="_blank" rel="noopener">Mathematical Institute, Leiden University</a>, currently focused on causal inference and survival analysis.</p>
+      <p>Born in 1999 in Yantai, China — a city well known for its apples. Outside research I enjoy reading, across history, fiction, and beyond. Feel free to get in touch if you have any questions.</p>
+    </div>
+    <div class="tags">
+      <span class="tag">Survival Analysis</span>
+      <span class="tag">Causal Inference</span>
+      <span class="tag">Missing Data</span>
+      <span class="tag">Instrumental Variable</span>
+      <span class="tag">Truncation by Death</span>
+      <span class="tag">Proxy Variable</span>
+      <span class="tag">Machine Learning</span>
+    </div>
+  </section>
 
-      const magicForksGrid = new MagicGrid({
-        container: "#forks_section",
-        animate: false,
-        gutter: 30, // default gutter size
-        static: true,
-        useMin: false,
-        maxColumns: 2,
-        useTransform: true
-      });
+  <section id="experience">
+    <h2 class="section-title">Experience</h2>
 
-      $("document").ready(() => {
-        magicProjectsGrid.listen();
-        magicForksGrid.listen();
-      });
-    </script>
-  
+    <div class="subgroup">
+      <div class="subgroup-label">Research</div>
+      <div class="entry">
+        <div class="entry-main">
+          <div class="entry-title">Causal Inference With Outcomes Truncated by Death and Missing Not at Random</div>
+        </div>
+        <div class="entry-date">2022.06 – 2025.05</div>
+      </div>
+      <div class="entry">
+        <div class="entry-main">
+          <div class="entry-title">The Optimization of the Theory of Multi-armed Bandit with Multiple Players</div>
+        </div>
+        <div class="entry-date">2020.12 – 2021.06</div>
+      </div>
+      <div class="entry">
+        <div class="entry-main">
+          <div class="entry-title">Research on Network Medical Health Information Screening in Big Data Environment</div>
+        </div>
+        <div class="entry-date">2019.08 – 2020.08</div>
+      </div>
+      <div class="entry">
+        <div class="entry-main">
+          <div class="entry-title">Choosing Lagrange Interpolation Points with a Self-adaption Method</div>
+        </div>
+        <div class="entry-date">2019.06 – 2019.08</div>
+      </div>
+    </div>
 
-</body></html>
+    <div class="subgroup">
+      <div class="subgroup-label">Work</div>
+      <div class="entry">
+        <div class="entry-main">
+          <div class="entry-title">Algorithm Developer (Recommendation), <a href="https://www.kuaishou.com/en" target="_blank" rel="noopener">Kuaishou Technology</a></div>
+        </div>
+        <div class="entry-date">2024.07 – 2024.12</div>
+      </div>
+      <div class="entry">
+        <div class="entry-main">
+          <div class="entry-title">Algorithm Developer, <a href="https://www.meituan.com/" target="_blank" rel="noopener">Meituan</a></div>
+        </div>
+        <div class="entry-date">2023.06 – 2023.09</div>
+      </div>
+      <div class="entry">
+        <div class="entry-main">
+          <div class="entry-title">Teaching Assistant, Mathematical Statistics</div>
+        </div>
+        <div class="entry-date">2022.03 – 2022.07</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="education">
+    <h2 class="section-title">Education</h2>
+    <div class="entry">
+      <div class="entry-main">
+        <div class="entry-title">Mathematical Institute, Leiden University</div>
+        <div class="entry-sub">PhD in Statistics</div>
+      </div>
+      <div class="entry-date">2025.01 – Present</div>
+    </div>
+    <div class="entry">
+      <div class="entry-main">
+        <div class="entry-title">School of Statistics, Renmin University of China</div>
+        <div class="entry-sub">M.Sc. in Statistics</div>
+      </div>
+      <div class="entry-date">2021.09 – 2024.06</div>
+    </div>
+    <div class="entry">
+      <div class="entry-main">
+        <div class="entry-title">Department of Mathematics, Nanjing University</div>
+        <div class="entry-sub">B.Sc. in Mathematics</div>
+      </div>
+      <div class="entry-date">2017.09 – 2021.06</div>
+    </div>
+  </section>
+
+  <section id="publications">
+    <h2 class="section-title">Publications</h2>
+    <ul class="pub-list">
+      <li>Wei Li, Yuan Liu, Shanshan Luo, and Zhi Geng. "Causal Inference With Outcomes Truncated by Death and Missing Not at Random." <em>Statistics in Medicine</em> 44, no. 10-12 (2025): e70126.</li>
+      <li>Presentation at <a href="https://www.safjr.org/" target="_blank" rel="noopener">SAfJR 2026</a>: "Assessing the Causal Effect of Dynamic Treatment Adjustments on Survival in Ewing Sarcoma: A Two-step Longitudinal Approach Using Latent Markov and Marginal Structural Models."</li>
+    </ul>
+  </section>
+
+  <section id="awards">
+    <h2 class="section-title">Awards</h2>
+    <ul class="award-list">
+      <li><span>Second-Class Scholarship, Renmin University of China</span><span class="award-year">2022</span></li>
+      <li><span>The 23rd Forum of Sciences and Art, Nanjing University — paper: "Choosing Lagrange Interpolation Points with a Self-adaption Method"</span><span class="award-year">2019</span></li>
+      <li><span>National Second-Class, China Undergraduate Mathematical Contest in Modeling</span><span class="award-year">2019</span></li>
+      <li><span>Outstanding Student, Nanjing University</span><span class="award-year">2019</span></li>
+      <li><span>First-Class Scholarship, Nanjing University</span><span class="award-year">2019</span></li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <span>&copy; 2026 Yuan Liu</span>
+  <a href="https://github.com/yuanEnS" target="_blank" rel="noopener">github.com/yuanEnS</a>
+</footer>
+
+</body>
+</html>

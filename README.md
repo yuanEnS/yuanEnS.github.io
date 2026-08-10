@@ -1,11 +1,7 @@
-## Enjoy & Share!
-- 👋 Hi, I'm yuan, a graduate student learning causal inference in China.
-- 👀I'm interested in psychology.  Psychology is not a technique to read mind, but a way to live a better life. Besides, I love creating. Creating itself is satisfied enough, whatever the result. And this github.io is one of my work. Enjoy what we are doing, and share our ideas.
-Oh, specifically, I love singing, though in a primary level. And I like reading in my spare time, and swimming, and so on.
+# yuanEnS.github.io
 
-- 🌱 I'm currently learning singing, and explore different kinds of music, rocks currently.
+Personal homepage / CV of Yuan Liu (刘源), PhD candidate at the Mathematical Institute, Leiden University.
 
-- 💞️I'm looking to collarborate with people with open mind. Let's exchange our ideas and create new ideas!
+Live at [yuanens.github.io](https://yuanens.github.io).
 
-- 📫My facebook is facebook.com/yuanEnS, and my wechat id is yuan_20200818, welcome to contact me!
-
+A single static page (`index.html` + `style.css`), no build step — just push to `main` and GitHub Pages serves it.
