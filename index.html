@@ -1,171 +1,264 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Yuan Liu / 刘源</title>
-<meta name="description" content="Yuan Liu (刘源) — PhD candidate, Mathematical Institute, Leiden University. Causal inference, survival analysis, machine learning." />
-<meta name="keywords" content="Yuan Liu, Leiden University, Mathematical Institute, Causal Inference, Machine Learning, Survival Analysis" />
-<link rel="icon" href="images/profile.jpg" type="image/jpeg" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>游戏园 · 打开就能玩的网页小游戏 | gamesyuan</title>
+<meta name="description" content="游戏园（gamesyuan）是一个免费的网页小游戏站，不用下载、不用注册。中国象棋支持人机对战（入门 / 业余 / 大师）、在线快速匹配、好友房间和多套棋盘主题，手机电脑都能玩。">
+<meta name="keywords" content="游戏园,gamesyuan,网页小游戏,在线象棋,中国象棋,象棋人机对战,象棋在线对战,免费小游戏">
+<link rel="canonical" href="https://gamesyuan.com/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#FBF6EE">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:title" content="游戏园 · 打开就能玩的网页小游戏">
+<meta property="og:description" content="免费在线中国象棋：人机对战、快速匹配、好友房间。不用下载，不用注册。">
+<meta property="og:url" content="https://gamesyuan.com/">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "游戏园",
+      "alternateName": "gamesyuan",
+      "url": "https://gamesyuan.com/",
+      "inLanguage": "zh-CN"
+    },
+    {
+      "@type": "VideoGame",
+      "name": "中国象棋 · 游戏园",
+      "url": "https://gamesyuan.com/xiangqi/",
+      "description": "免费在线中国象棋，支持人机对战、在线快速匹配和好友房间。",
+      "genre": ["棋类", "策略"],
+      "gamePlatform": ["Web browser", "WeChat Mini Game"],
+      "playMode": ["SinglePlayer", "MultiPlayer"],
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "游戏园的游戏要钱吗？", "acceptedAnswer": { "@type": "Answer", "text": "全部免费，打开网页就能玩，不需要注册账号。" } },
+        { "@type": "Question", "name": "需要下载安装吗？", "acceptedAnswer": { "@type": "Answer", "text": "不需要。手机、平板、电脑的浏览器都能直接玩。" } },
+        { "@type": "Question", "name": "怎么和朋友在线下象棋？", "acceptedAnswer": { "@type": "Answer", "text": "进入中国象棋，点「创建房间」得到 4 位房间号，发给朋友，朋友点「加入房间」输入房间号即可。也可以点「快速匹配」，系统会自动配对正在找棋友的人。" } },
+        { "@type": "Question", "name": "象棋电脑有多强？", "acceptedAnswer": { "@type": "Answer", "text": "有入门、业余、大师三档难度。入门适合刚学会走棋的新手，大师会全力计算，适合有一定水平的棋友。" } }
+      ]
+    }
+  ]
+}
+</script>
+
+<style>
+  :root {
+    --bg: #FBF6EE;
+    --card: #FFFDF8;
+    --primary: #C62828;
+    --primary-soft: rgba(198, 40, 40, 0.08);
+    --text: #3A2A1E;
+    --muted: #8A7560;
+    --line: rgba(198, 40, 40, 0.35);
+    --decor: rgba(120, 90, 60, 0.07);
+    --board: #F0DAB2;
+    --board-line: #6B4A2B;
+    --kai: "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Songti SC", serif;
+    --sans: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16191F;
+      --card: #20242C;
+      --primary: #EF5350;
+      --primary-soft: rgba(239, 83, 80, 0.12);
+      --text: #E8EAED;
+      --muted: #9AA1AD;
+      --line: rgba(239, 83, 80, 0.4);
+      --decor: rgba(255, 255, 255, 0.04);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16191F;
+    --card: #20242C;
+    --primary: #EF5350;
+    --primary-soft: rgba(239, 83, 80, 0.12);
+    --text: #E8EAED;
+    --muted: #9AA1AD;
+    --line: rgba(239, 83, 80, 0.4);
+    --decor: rgba(255, 255, 255, 0.04);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.7 var(--sans);
+  }
+  a { color: inherit; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+
+  header { padding: 20px 0; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--primary); color: #FFF4E6;
+    font: 22px/1 var(--kai);
+    box-shadow: inset 0 0 0 3px var(--primary), inset 0 0 0 4.5px #FFF4E6;
+  }
+  .logo-name { font: 26px/1 var(--kai); color: var(--primary); }
+  .logo-sub { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+  nav { display: flex; gap: 18px; font-size: 15px; }
+  nav a { text-decoration: none; color: var(--muted); }
+  nav a:hover { color: var(--primary); }
+
+  .hero { padding: 40px 0 28px; }
+  .hero h1 { margin: 0 0 12px; font: 40px/1.25 var(--kai); color: var(--text); }
+  .hero h1 em { font-style: normal; color: var(--primary); }
+  .hero p { margin: 0 0 24px; max-width: 34em; color: var(--muted); font-size: 17px; }
+  .btn {
+    display: inline-block; padding: 12px 26px; border-radius: 10px;
+    background: var(--primary); color: #fff; text-decoration: none;
+    font: 18px/1.2 var(--kai);
+  }
+  .btn:hover { filter: brightness(1.08); }
+
+  h2 { font: 26px/1.3 var(--kai); margin: 40px 0 16px; }
+  .games { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .game {
+    display: flex; flex-direction: column;
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 14px;
+    overflow: hidden; text-decoration: none; transition: transform .15s, box-shadow .15s;
+  }
+  a.game:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08); }
+  .game svg { display: block; width: 100%; height: auto; }
+  .game-body { padding: 14px 16px 18px; }
+  .game-title { font: 22px/1.3 var(--kai); color: var(--primary); margin: 0 0 4px; }
+  .game-desc { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { padding: 2px 10px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-size: 13px; }
+  .game.soon { border-style: dashed; justify-content: center; align-items: center; min-height: 220px; text-align: center; padding: 24px; }
+  .game.soon .game-title { color: var(--muted); }
+
+  .about { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px 28px; }
+  .about h3 { font: 18px/1.4 var(--kai); margin: 0 0 4px; color: var(--primary); }
+  .about p { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
+
+  footer { margin-top: 48px; padding: 24px 0 40px; border-top: 1px solid var(--decor); color: var(--muted); font-size: 13px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
+
+  @media (max-width: 560px) {
+    .hero { padding-top: 16px; }
+    .hero h1 { font-size: 30px; }
+    nav { gap: 12px; font-size: 14px; }
+    .logo-sub { display: none; }
+  }
+</style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-inner">
-    <div class="nav-mark">YL</div>
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#education">Education</a></li>
-      <li><a href="#publications">Publications</a></li>
-      <li><a href="#awards">Awards</a></li>
-    </ul>
+<header>
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="游戏园首页">
+      <span class="logo-mark" aria-hidden="true">游</span>
+      <span>
+        <span class="logo-name">游戏园</span><br>
+        <span class="logo-sub">gamesyuan.com</span>
+      </span>
+    </a>
+    <nav>
+      <a href="#games">游戏</a>
+      <a href="#about">关于</a>
+      <a href="https://github.com/yuanEnS" rel="noopener">GitHub</a>
+    </nav>
   </div>
-</nav>
+</header>
 
-<main>
-
-  <section class="hero" id="top">
-    <img class="hero-photo" src="images/profile.jpg" alt="Yuan Liu" />
-    <div class="hero-text">
-      <h1>Yuan Liu <span class="zh">刘源</span></h1>
-      <div class="hero-role">PhD Candidate, Mathematical Institute, Leiden University</div>
-      <div class="hero-links">
-        <a href="mailto:yuan_nju@outlook.com">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg>
-          yuan_nju@outlook.com
-        </a>
-        <a href="https://github.com/yuanEnS" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.85-2.34 4.7-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
-          yuanEnS
-        </a>
-        <a href="https://www.universiteitleiden.nl/en/science/mathematics" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 2 8l10 5 10-5-10-5Z"/><path d="M6 10.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-5.5"/></svg>
-          Leiden University
-        </a>
-      </div>
-    </div>
+<main class="wrap">
+  <section class="hero">
+    <h1>打开就能玩的<em>小游戏</em></h1>
+    <p>不用下载，不用注册。和电脑过招，或者一键匹配正在找棋友的人。手机、平板、电脑都能玩。</p>
+    <a class="btn" href="/xiangqi/">开始下象棋</a>
   </section>
 
-  <section id="about">
-    <h2 class="section-title">About</h2>
-    <div class="bio">
-      <p>I am a PhD candidate at the <a href="https://www.universiteitleiden.nl/en/science/mathematics" target="_blank" rel="noopener">Mathematical Institute, Leiden University</a>, currently focused on causal inference and survival analysis.</p>
-      <p>Born in 1999 in Yantai, China — a city well known for its apples. Outside research I enjoy reading, across history, fiction, and beyond. Feel free to get in touch if you have any questions.</p>
-    </div>
-    <div class="tags">
-      <span class="tag">Survival Analysis</span>
-      <span class="tag">Causal Inference</span>
-      <span class="tag">Missing Data</span>
-      <span class="tag">Instrumental Variable</span>
-      <span class="tag">Truncation by Death</span>
-      <span class="tag">Proxy Variable</span>
-      <span class="tag">Machine Learning</span>
-      <span class="tag">Longitudinal Data</span>
-    </div>
-  </section>
-
-  <section id="experience">
-    <h2 class="section-title">Work and Teaching</h2>
-    
-          <div class="entry">
-        <div class="entry-main">
-          <div class="entry-title">Teaching in Leiden University Colledge, Introduction to Statistics, <a href="https://www.universiteitleiden.nl/en/governance-and-global-affairs/leiden-university-college-the-hague" target="_blank" rel="noopener">Leiden University Colledge</a></div>
+  <h2 id="games">全部游戏</h2>
+  <div class="games">
+    <a class="game" href="/xiangqi/">
+      <!-- 象棋缩略图：一角棋盘和三枚棋子 -->
+      <svg viewBox="0 0 320 170" role="img" aria-label="中国象棋棋盘">
+        <rect width="320" height="170" fill="#F0DAB2"/>
+        <g stroke="#6B4A2B" stroke-width="1" opacity="0.75">
+          <path d="M0 25H320M0 65H320M0 105H320M0 145H320"/>
+          <path d="M20 0V170M60 0V170M100 0V170M140 0V170M180 0V170M220 0V170M260 0V170M300 0V170"/>
+          <path d="M140 25L220 105M220 25L140 105"/>
+        </g>
+        <g font-family="KaiTi, STKaiti, 'Kaiti SC', serif" font-size="24" text-anchor="middle">
+          <g transform="translate(100 65)">
+            <circle r="19" fill="#1F1F1F" stroke="rgba(0,0,0,.35)"/>
+            <circle r="15.5" fill="none" stroke="rgba(255,240,220,.6)"/>
+            <text y="8" fill="#FFF4E6">馬</text>
+          </g>
+          <g transform="translate(180 105)">
+            <circle r="19" fill="#C62828" stroke="rgba(0,0,0,.35)"/>
+            <circle r="15.5" fill="none" stroke="rgba(255,240,220,.75)"/>
+            <text y="8" fill="#FFF4E6">帥</text>
+          </g>
+          <g transform="translate(260 65)">
+            <circle r="19" fill="#C62828" stroke="rgba(0,0,0,.35)"/>
+            <circle r="15.5" fill="none" stroke="rgba(255,240,220,.75)"/>
+            <text y="8" fill="#FFF4E6">炮</text>
+          </g>
+        </g>
+      </svg>
+      <div class="game-body">
+        <h3 class="game-title">中国象棋</h3>
+        <p class="game-desc">人机对战三档难度，在线快速匹配，好友房间约战，5 套棋盘主题。</p>
+        <div class="tags">
+          <span class="tag">人机对战</span>
+          <span class="tag">快速匹配</span>
+          <span class="tag">好友房间</span>
         </div>
-        <div class="entry-date"> 2026.08 - 2026.10</div>
       </div>
-      <div class="entry">
-        <div class="entry-main">
-          <div class="entry-title">Teaching in Leiden University Colledge, Introduction to Statistics, <a href="https://www.universiteitleiden.nl/en/governance-and-global-affairs/leiden-university-college-the-hague" target="_blank" rel="noopener">Leiden University Colledge</a></div>
-        </div>
-        <div class="entry-date">2025.08 – 2025.10</div>
+    </a>
+    <div class="game soon">
+      <div>
+        <h3 class="game-title">更多游戏</h3>
+        <p class="game-desc">正在制作中，敬请期待。</p>
       </div>
-      <div class="entry">
-        <div class="entry-main">
-          <div class="entry-title">Algorithm Developer (Recommendation), <a href="https://www.kuaishou.com/en" target="_blank" rel="noopener">Kuaishou Technology</a></div>
-        </div>
-        <div class="entry-date">2024.07 – 2024.12</div>
-      </div>
-      <div class="entry">
-        <div class="entry-main">
-          <div class="entry-title">Algorithm Developer, <a href="https://www.meituan.com/" target="_blank" rel="noopener">Meituan</a></div>
-        </div>
-        <div class="entry-date">2023.06 – 2023.09</div>
-      </div>
-      <div class="entry">
-        <div class="entry-main">
-          <div class="entry-title">Teaching Assistant, Mathematical Statistics</div>
-        </div>
-        <div class="entry-date">2022.03 – 2022.07</div>
-  </section>
-
-  <section id="education">
-    <h2 class="section-title">Education</h2>
-       <div class="entry">
-      <div class="entry-main">
-        <div class="entry-title">University College Dublin</div>
-        <div class="entry-sub">Una Europe Summer School, AI and Creativity</div>
-      </div>
-      <div class="entry-date">2026.06</div>
     </div>
-    <div class="entry">
-      <div class="entry-main">
-        <div class="entry-title">Mathematical Institute, Leiden University</div>
-        <div class="entry-sub">PhD in Statistics</div>
-      </div>
-      <div class="entry-date">2025.01 – Present</div>
-    </div>
-    <div class="entry">
-      <div class="entry-main">
-        <div class="entry-title">School of Statistics, Renmin University of China</div>
-        <div class="entry-sub">M.Sc. in Statistics</div>
-      </div>
-      <div class="entry-date">2021.09 – 2024.06</div>
-    </div>
-    <div class="entry">
-      <div class="entry-main">
-        <div class="entry-title">Department of Mathematics, Nanjing University</div>
-        <div class="entry-sub">B.Sc. in Mathematics</div>
-      </div>
-      <div class="entry-date">2017.09 – 2021.06</div>
-    </div>
-  </section>
+  </div>
 
-  <section id="publications">
-    <h2 class="section-title">Publications</h2>
-    <ul class="pub-list">
-      <li>Yuan Liu, Marta Fiocco, Laura Kirton, Piers Gaunt, Bernadette Brennan, Johannes HM Merks, and Marta Spreafico. Assessing the effect of chemotherapy dose reductions and time delay on event-free survival in Ewing Sarcoma: a retrospective analysis of the Euro Ewing 2012 trial. <em>European Journal of Cancer</em> (2026): 117057. </li>
-      <li>Wei Li, Yuan Liu, Shanshan Luo, and Zhi Geng. Causal Inference With Outcomes Truncated by Death and Missing Not at Random. <em>Statistics in Medicine</em> 44, no. 10-12 (2025): e70126.</li>
-    </ul>
-  </section>
-    <section id="presentations">
-    <h2 class="section-title">Conference and Presentation</h2>
-    <ul class="pub-list">
-      <li><a href="https://iscbgmds2026.info/" target="_blank" rel="noopener">ISCB GMDS 2026</a>: A two-step causal inference approach for survival outcomes under time-varying latent confounding.</li>
-      <li><a href="https://www.safjr.org/" target="_blank" rel="noopener">SAfJR 2026</a>: Assessing the Causal Effect of Dynamic Treatment Adjustments on Survival in Ewing Sarcoma: A Two-step Longitudinal Approach Using Latent Markov and Marginal Structural Models.</li>
-    </ul>
-  </section>
-
-  <section id="awards">
-    <h2 class="section-title">Awards</h2>
-    <ul class="award-list">
-      <li><span>Second-Class Scholarship, Renmin University of China</span><span class="award-year">2022</span></li>
-      <li><span>The 23rd Forum of Sciences and Art, Nanjing University — paper: "Choosing Lagrange Interpolation Points with a Self-adaption Method"</span><span class="award-year">2019</span></li>
-      <li><span>National Second-Class, China Undergraduate Mathematical Contest in Modeling</span><span class="award-year">2019</span></li>
-      <li><span>Outstanding Student, Nanjing University</span><span class="award-year">2019</span></li>
-      <li><span>First-Class Scholarship, Nanjing University</span><span class="award-year">2019</span></li>
-    </ul>
-  </section>
-
+  <h2 id="about">关于游戏园</h2>
+  <div class="about">
+    <div>
+      <h3>完全免费</h3>
+      <p>所有游戏免费，打开网页就能玩，不需要注册账号，也不用安装任何东西。</p>
+    </div>
+    <div>
+      <h3>和朋友在线下象棋</h3>
+      <p>点「创建房间」得到 4 位房间号发给朋友，朋友点「加入房间」输入即可。也可以点「快速匹配」，系统自动配对正在找棋友的人。</p>
+    </div>
+    <div>
+      <h3>电脑陪你练棋</h3>
+      <p>象棋电脑分入门、业余、大师三档。新手从入门开始，下不过还能悔棋、看提示。</p>
+    </div>
+    <div>
+      <h3>手机电脑都能玩</h3>
+      <p>适配手机竖屏和电脑浏览器，还有黑白主题，墨水屏阅读器上也能看清棋盘。</p>
+    </div>
+  </div>
 </main>
 
 <footer>
-  <span>&copy; 2026 Yuan Liu</span>
-  <a href="https://github.com/yuanEnS" target="_blank" rel="noopener">github.com/yuanEnS</a>
+  <div class="wrap">
+    <span>© 2026 游戏园 gamesyuan.com</span>
+    <span>源码：<a href="https://github.com/yuanEnS/xiangqi" rel="noopener">github.com/yuanEnS/xiangqi</a> · <a href="/resume/">作者简历</a></span>
+  </div>
 </footer>
 
 </body>
