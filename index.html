@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>游戏园 · 打开就能玩的网页小游戏 | gamesyuan</title>
-<meta name="description" content="游戏园（gamesyuan）是一个免费的网页小游戏站，不用下载、不用注册。中国象棋支持人机对战（入门 / 业余 / 大师）、在线快速匹配、好友房间和多套棋盘主题，手机电脑都能玩。">
-<meta name="keywords" content="游戏园,gamesyuan,网页小游戏,在线象棋,中国象棋,象棋人机对战,象棋在线对战,免费小游戏">
+<meta name="description" content="游戏园（gamesyuan）是一个免费的网页小游戏站，不用下载、不用注册。中国象棋、五子棋都支持人机对战（入门 / 业余 / 大师）、在线快速匹配、好友房间和多套棋盘主题，手机电脑都能玩。">
+<meta name="keywords" content="游戏园,gamesyuan,网页小游戏,在线象棋,中国象棋,象棋人机对战,象棋在线对战,五子棋,在线五子棋,五子棋人机对战,免费小游戏">
 <link rel="canonical" href="https://gamesyuan.com/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#FBF6EE">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="游戏园">
 <meta property="og:title" content="游戏园 · 打开就能玩的网页小游戏">
-<meta property="og:description" content="免费在线中国象棋：人机对战、快速匹配、好友房间。不用下载，不用注册。">
+<meta property="og:description" content="免费在线中国象棋、五子棋：人机对战、快速匹配、好友房间。不用下载，不用注册。">
 <meta property="og:url" content="https://gamesyuan.com/">
 <meta property="og:image" content="https://gamesyuan.com/og.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -36,6 +36,16 @@
       "description": "免费在线中国象棋，支持人机对战、在线快速匹配和好友房间。",
       "genre": ["棋类", "策略"],
       "gamePlatform": ["Web browser", "WeChat Mini Game"],
+      "playMode": ["SinglePlayer", "MultiPlayer"],
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
+    },
+    {
+      "@type": "VideoGame",
+      "name": "五子棋 · 游戏园",
+      "url": "https://gamesyuan.com/wuziqi/",
+      "description": "免费在线五子棋，支持人机对战、在线快速匹配和好友房间，15 路标准棋盘。",
+      "genre": ["棋类", "策略"],
+      "gamePlatform": ["Web browser"],
       "playMode": ["SinglePlayer", "MultiPlayer"],
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
     },
@@ -218,6 +228,40 @@
       <div class="game-body">
         <h3 class="game-title">中国象棋</h3>
         <p class="game-desc">人机对战三档难度，在线快速匹配，好友房间约战，5 套棋盘主题。</p>
+        <div class="tags">
+          <span class="tag">人机对战</span>
+          <span class="tag">快速匹配</span>
+          <span class="tag">好友房间</span>
+        </div>
+      </div>
+    </a>
+    <a class="game" href="/wuziqi/">
+      <!-- 五子棋缩略图：一角棋盘和几枚黑白子 -->
+      <svg viewBox="0 0 320 170" role="img" aria-label="五子棋棋盘">
+        <rect width="320" height="170" fill="#E2C48F"/>
+        <g stroke="#5E3D22" stroke-width="1" opacity="0.7">
+          <path d="M0 15H320M0 45H320M0 75H320M0 105H320M0 135H320M0 165H320"/>
+          <path d="M10 0V170M40 0V170M70 0V170M100 0V170M130 0V170M160 0V170M190 0V170M220 0V170M250 0V170M280 0V170M310 0V170"/>
+        </g>
+        <circle cx="160" cy="75" r="3" fill="#5E3D22"/>
+        <defs>
+          <radialGradient id="stone-b" cx="35%" cy="30%"><stop offset="0" stop-color="#5C574F"/><stop offset="1" stop-color="#1C1A17"/></radialGradient>
+          <radialGradient id="stone-w" cx="35%" cy="30%"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9E3D6"/></radialGradient>
+        </defs>
+        <g stroke="rgba(0,0,0,.25)">
+          <circle cx="100" cy="135" r="13" fill="url(#stone-b)"/>
+          <circle cx="130" cy="105" r="13" fill="url(#stone-b)"/>
+          <circle cx="160" cy="75" r="13" fill="url(#stone-b)"/>
+          <circle cx="190" cy="45" r="13" fill="url(#stone-b)"/>
+          <circle cx="130" cy="75" r="13" fill="url(#stone-w)"/>
+          <circle cx="160" cy="105" r="13" fill="url(#stone-w)"/>
+          <circle cx="190" cy="75" r="13" fill="url(#stone-w)"/>
+          <circle cx="220" cy="15" r="13" fill="url(#stone-w)"/>
+        </g>
+      </svg>
+      <div class="game-body">
+        <h3 class="game-title">五子棋</h3>
+        <p class="game-desc">15 路标准棋盘，人机对战三档难度，在线快速匹配，好友房间约战。</p>
         <div class="tags">
           <span class="tag">人机对战</span>
           <span class="tag">快速匹配</span>

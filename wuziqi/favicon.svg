@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="30" fill="#C62828"/>
+  <circle cx="32" cy="32" r="24" fill="none" stroke="#FFF4E6" stroke-width="2.5"/>
+  <text x="32" y="43" font-size="30" text-anchor="middle" fill="#FFF4E6" font-family="KaiTi, STKaiti, serif" font-weight="bold">相</text>
+</svg>
