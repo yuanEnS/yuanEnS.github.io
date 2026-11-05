@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>账号与排行榜 · 象棋五子棋积分榜 | 游戏园</title>
+<meta name="description" content="游戏园积分排行榜：中国象棋、五子棋快速匹配的等级分排名。用 Google 或邮箱登录，积分可以跨设备保存。">
+<link rel="canonical" href="https://gamesyuan.com/account/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#FBF6EE">
+<style>
+  :root {
+    --bg: #FBF6EE;
+    --card: #FFFDF8;
+    --primary: #C62828;
+    --primary-soft: rgba(198, 40, 40, 0.08);
+    --on-primary: #fff;
+    --text: #3A2C1E;
+    --muted: #8A7560;
+    --line: rgba(120, 90, 60, 0.22);
+    --sans: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    --kai: "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Songti SC", serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16191F;
+      --card: #20242C;
+      --primary: #EF5350;
+      --primary-soft: rgba(239, 83, 80, 0.12);
+      --on-primary: #16191F;
+      --text: #E8EAED;
+      --muted: #9AA1AD;
+      --line: rgba(255, 255, 255, 0.14);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16191F;
+    --card: #20242C;
+    --primary: #EF5350;
+    --primary-soft: rgba(239, 83, 80, 0.12);
+    --on-primary: #16191F;
+    --text: #E8EAED;
+    --muted: #9AA1AD;
+    --line: rgba(255, 255, 255, 0.14);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--sans); }
+  a { color: var(--primary); }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 18px; padding-bottom: 6px; }
+  .logo { font: 700 22px var(--kai); color: var(--primary); text-decoration: none; }
+  nav { display: flex; gap: 16px; font-size: 15px; }
+  nav a { color: var(--muted); text-decoration: none; }
+  h1 { font: 700 28px/1.3 var(--kai); margin: 18px 0 14px; }
+  h2 { font: 700 20px/1.3 var(--kai); margin: 0 0 12px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 16px; margin-bottom: 16px; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .row { display: flex; gap: 8px; }
+  .row input { flex: 1; min-width: 0; }
+  input { font: inherit; color: var(--text); background: var(--bg); padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; }
+  input:focus-visible, button:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+  button { font: inherit; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--primary); background: var(--primary); color: var(--on-primary); cursor: pointer; white-space: nowrap; }
+  button.plain { background: transparent; color: var(--primary); }
+  button.quiet { background: transparent; color: var(--muted); border-color: var(--line); }
+  button:disabled { opacity: 0.55; cursor: default; }
+  #name-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  #name { font: 700 22px var(--kai); overflow-wrap: anywhere; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 0; }
+  .stat { background: var(--primary-soft); border-radius: 10px; padding: 10px 12px; }
+  .stat b { display: block; font-size: 24px; color: var(--primary); font-variant-numeric: tabular-nums; }
+  .login { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+  #profile[hidden] + .login { margin-top: 0; padding-top: 0; border-top: none; }
+  #google-button { min-height: 44px; margin-bottom: 12px; }
+  #email-form { display: grid; gap: 8px; }
+  #message { margin: 10px 0 0; font-size: 14px; color: var(--primary); }
+  #message:empty { display: none; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .tabs button[aria-selected="false"] { background: transparent; color: var(--primary); }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+  th { text-align: right; font-weight: 400; color: var(--muted); font-size: 13px; padding: 4px 6px; }
+  td { text-align: right; padding: 8px 6px; border-top: 1px solid var(--line); }
+  th:nth-child(1), td:nth-child(1) { text-align: center; width: 40px; }
+  th:nth-child(2), td:nth-child(2) { text-align: left; overflow-wrap: anywhere; }
+  footer { padding: 8px 0 32px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="logo" href="/">游戏园</a>
+    <nav>
+      <a href="/xiangqi/">象棋</a>
+      <a href="/wuziqi/">五子棋</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>账号与排行榜</h1>
+
+  <section id="account">
+    <div id="profile" hidden>
+      <div id="name-line">
+        <span id="name"></span>
+        <button class="plain" id="rename-open" type="button">改昵称</button>
+      </div>
+      <form class="row" id="rename-form" hidden>
+        <input id="rename-input" maxlength="12" aria-label="新昵称" autocomplete="off">
+        <button type="submit">保存</button>
+      </form>
+      <div class="muted" id="identity"></div>
+      <div class="stats" id="stats"></div>
+    </div>
+
+    <div class="login" id="login" hidden>
+      <h2 id="login-title">登录</h2>
+      <p class="muted" id="login-text"></p>
+      <div id="google-button" hidden></div>
+      <form id="email-form" hidden>
+        <div class="row">
+          <input id="email" type="email" placeholder="邮箱" autocomplete="email" aria-label="邮箱" required>
+          <button class="plain" id="send-code" type="button">发验证码</button>
+        </div>
+        <div class="row">
+          <input id="code" inputmode="numeric" maxlength="6" placeholder="6 位验证码" autocomplete="one-time-code" aria-label="验证码">
+          <button type="submit">登录</button>
+        </div>
+        <span class="muted">收不到的话，看看垃圾邮件文件夹。</span>
+      </form>
+      <p class="muted" id="login-closed" hidden>登录功能即将开通。</p>
+    </div>
+
+    <p id="message" role="status"></p>
+
+    <div class="actions" id="actions" hidden>
+      <button class="quiet" id="logout" type="button">退出登录</button>
+      <button class="quiet" id="delete" type="button">删除账号</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>积分排行榜</h2>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-game="xiangqi" aria-selected="true">象棋</button>
+      <button type="button" role="tab" data-game="gomoku" aria-selected="false">五子棋</button>
+    </div>
+    <table>
+      <thead><tr><th>名次</th><th>棋手</th><th>积分</th><th>胜</th><th>负</th></tr></thead>
+      <tbody id="rank"></tbody>
+    </table>
+    <p class="muted" id="rank-empty" hidden>还没有人上榜，去下一局快速匹配吧。</p>
+    <p class="muted">只有快速匹配的对局计分，初始 1200 分。走满 6 步后中途离开算输；同一对手每天最多计 3 局，好友房间和人机对战不计分。</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap"><a href="/privacy/">隐私说明</a> · © 2026 游戏园 gamesyuan.com</div>
+</footer>
+
+<script>
+  const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
+  const API = LOCAL ? 'http://127.0.0.1:8787/api' : 'https://api.gamesyuan.com/api';
+  const TOKEN_KEY = 'xiangqi:token'; // 和游戏共用，见 wx-adapter.js 的存储前缀
+  const GAME_NAMES = { xiangqi: '象棋', gomoku: '五子棋' };
+  const $ = id => document.getElementById(id);
+
+  function getToken() {
+    try {
+      return JSON.parse(localStorage.getItem(TOKEN_KEY)) || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function setToken(token) {
+    try {
+      if (token) localStorage.setItem(TOKEN_KEY, JSON.stringify(token));
+      else localStorage.removeItem(TOKEN_KEY);
+    } catch (e) {}
+  }
+
+  async function api(path, body) {
+    const token = getToken();
+    const headers = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+    if (body) headers['Content-Type'] = 'application/json';
+    const res = await fetch(API + path, { method: body ? 'POST' : 'GET', headers, body: body && JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok) throw Object.assign(new Error(data.error || '请求失败'), { status: res.status });
+    return data;
+  }
+
+  function say(text) {
+    $('message').textContent = text || '';
+  }
+
+  // 出错时把提示显示出来，按钮在请求期间不能重复点
+  async function run(button, task) {
+    say('');
+    if (button) button.disabled = true;
+    try {
+      await task();
+    } catch (err) {
+      say(err instanceof TypeError ? '连不上服务器，请稍后再试' : err.message);
+    }
+    if (button) button.disabled = false;
+  }
+
+  function showStats(ratings) {
+    $('stats').replaceChildren(...Object.keys(GAME_NAMES).map(game => {
+      const r = ratings[game];
+      const box = document.createElement('div');
+      box.className = 'stat';
+      const score = document.createElement('b');
+      score.textContent = r.rating;
+      const line = document.createElement('span');
+      line.className = 'muted';
+      line.textContent = `${GAME_NAMES[game]} · ${r.rank ? `第 ${r.rank} 名` : '未上榜'} · ${r.wins} 胜 ${r.losses} 负${r.draws ? ` ${r.draws} 和` : ''}`;
+      box.append(score, line);
+      return box;
+    }));
+  }
+
+  function showProfile(data) {
+    const signedIn = !!data;
+    const guest = signedIn && data.user.guest;
+    $('profile').hidden = !signedIn;
+    $('login').hidden = signedIn && !guest;
+    $('actions').hidden = !signedIn;
+    $('logout').hidden = guest; // 游客退出就找不回来了
+    $('login-title').textContent = guest ? '保存你的积分' : '登录';
+    $('login-text').textContent = guest
+      ? '你现在是游客，积分只保存在这个浏览器里。登录后积分保留，换设备也能接着玩。'
+      : '已有账号就登录；第一次玩不用登录，快速匹配时会自动创建游客账号。';
+    if (!signedIn) return;
+    $('name').textContent = data.user.name;
+    $('identity').textContent = guest ? '游客账号' : data.user.email;
+    showStats(data.ratings);
+  }
+
+  async function refresh() {
+    if (!getToken()) return showProfile(null);
+    try {
+      showProfile(await api('/me'));
+    } catch (err) {
+      if (err.status !== 401) throw err;
+      setToken('');
+      showProfile(null);
+    }
+  }
+
+  async function finishLogin(result) {
+    setToken(result.token);
+    $('code').value = '';
+    await refresh();
+    say(result.switched ? '已登录原有账号，这台设备上的游客积分没有合并。' : '登录成功');
+  }
+
+  async function loadRank(game) {
+    document.querySelectorAll('[data-game]').forEach(tab => tab.setAttribute('aria-selected', tab.dataset.game === game));
+    const { list } = await api(`/rank?game=${game}`);
+    $('rank-empty').hidden = list.length > 0;
+    $('rank').replaceChildren(...list.map((p, i) => {
+      const tr = document.createElement('tr');
+      for (const value of [i + 1, p.name, p.rating, p.wins, p.losses]) {
+        const td = document.createElement('td');
+        td.textContent = value;
+        tr.appendChild(td);
+      }
+      return tr;
+    }));
+  }
+
+  function loadGoogle(clientId) {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    // 国内网络可能加载不了，这时只显示邮箱登录
+    script.onload = () => {
+      google.accounts.id.initialize({
+        client_id: clientId,
+        callback: ({ credential }) => run(null, async () => finishLogin(await api('/login/google', { credential }))),
+      });
+      $('google-button').hidden = false;
+      google.accounts.id.renderButton($('google-button'), { theme: 'outline', size: 'large', text: 'continue_with', locale: 'zh_CN' });
+    };
+    document.head.appendChild(script);
+  }
+
+  $('send-code').addEventListener('click', e => run(e.target, async () => {
+    const result = await api('/login/email/send', { email: $('email').value });
+    say(result.testCode ? `本地测试验证码：${result.testCode}` : '验证码已发送，10 分钟内有效');
+    $('code').focus();
+  }));
+
+  $('email-form').addEventListener('submit', e => {
+    e.preventDefault();
+    run(e.submitter, async () => finishLogin(await api('/login/email/verify', { email: $('email').value, code: $('code').value })));
+  });
+
+  $('rename-open').addEventListener('click', () => {
+    $('rename-form').hidden = false;
+    $('name-line').style.display = 'none';
+    $('rename-input').value = $('name').textContent;
+    $('rename-input').focus();
+  });
+
+  $('rename-form').addEventListener('submit', e => {
+    e.preventDefault();
+    run(e.submitter, async () => {
+      showProfile(await api('/me', { name: $('rename-input').value }));
+      $('rename-form').hidden = true;
+      $('name-line').style.display = '';
+      loadRank(document.querySelector('[aria-selected="true"]').dataset.game);
+      say('昵称已修改');
+    });
+  });
+
+  $('logout').addEventListener('click', e => run(e.target, async () => {
+    await api('/logout', {});
+    setToken('');
+    showProfile(null);
+  }));
+
+  $('delete').addEventListener('click', e => {
+    if (!confirm('删除后积分和战绩都找不回来，确定吗？')) return;
+    run(e.target, async () => {
+      await api('/delete', {});
+      setToken('');
+      showProfile(null);
+      say('账号已删除');
+      loadRank(document.querySelector('[aria-selected="true"]').dataset.game);
+    });
+  });
+
+  document.querySelectorAll('[data-game]').forEach(tab => {
+    tab.addEventListener('click', () => run(null, () => loadRank(tab.dataset.game)));
+  });
+
+  run(null, async () => {
+    const [config] = await Promise.all([api('/config'), refresh(), loadRank('xiangqi')]);
+    $('email-form').hidden = !config.email;
+    $('login-closed').hidden = !!(config.email || config.google);
+    if (config.google) loadGoogle(config.google);
+  });
+</script>
+</body>
+</html>

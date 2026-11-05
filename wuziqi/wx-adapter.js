@@ -127,6 +127,10 @@
       return loadedFonts[path] || null;
     },
 
+    openAccountPage() {
+      location.href = '/account/';
+    },
+
     connectSocket({ url }) {
       const ws = new WebSocket(url);
       return {
