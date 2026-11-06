@@ -18,6 +18,7 @@
 
 - `index.html`：首页
 - `wuziqi/`：五子棋网页（自动生成）
+- `life/`：博客「园中小记」。文章在 Cloudflare D1 里，在 `/life/write/` 用作者账号登录后写，不用改这个仓库
 - `resume/`：作者简历
 - `CNAME`：自定义域名 gamesyuan.com
 - `sitemap.xml` / `robots.txt`：给搜索引擎

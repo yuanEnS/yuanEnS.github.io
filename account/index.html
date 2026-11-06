@@ -257,6 +257,8 @@
     $('code').value = '';
     await refresh();
     say(result.switched ? '已登录原有账号，这台设备上的游客积分没有合并。' : '登录成功');
+    const back = new URLSearchParams(location.search).get('back');
+    if (back && /^\/[^/\\]/.test(back)) location.href = back;
   }
 
   async function loadRank(game) {

@@ -20,6 +20,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
@@ -59,6 +60,7 @@ a { color: inherit; }
 .entry h2 a:hover { color: var(--primary); }
 .entry p { margin: 0; color: var(--soft); line-height: 1.85; }
 .empty { color: var(--muted); padding: 32px 0; }
+.empty a { color: var(--primary); }
 
 /* 文章页 */
 .head { padding: 68px 0 36px; text-align: center; }
@@ -68,16 +70,13 @@ a { color: inherit; }
 .body { font-size: 20px; line-height: 2.1; text-align: justify; line-break: strict; }
 .body p { margin: 0 0 1.05em; text-indent: 2em; }
 .body h2 { margin: 2.1em 0 0.7em; font-size: 26px; line-height: 1.5; font-weight: 400; color: var(--primary); text-align: left; }
-.body h3 { margin: 1.8em 0 0.5em; font-size: 22px; line-height: 1.5; font-weight: 400; text-align: left; }
 .body blockquote { margin: 1.8em 0; padding: 2px 0 2px 1.1em; border-left: 3px solid var(--primary); color: var(--soft); text-align: left; }
 .body blockquote p { margin: 0; text-indent: 0; }
 .body hr { width: 7px; height: 7px; margin: 2.6em auto; border: 0; background: var(--primary); transform: rotate(45deg); }
-.body ul, .body ol { margin: 0 0 1.05em; padding-left: 2em; }
 .body img { display: block; max-width: 100%; height: auto; margin: 1.8em auto 0.6em; border-radius: 6px; }
 .body .caption { margin: 0 0 1.8em; text-indent: 0; text-align: center; color: var(--muted); font-size: 16px; }
 .body a { color: var(--primary); text-underline-offset: 3px; }
 .body strong { font-weight: 400; color: var(--primary); }
-.body em { font-style: normal; text-emphasis: dot; -webkit-text-emphasis: dot; text-emphasis-position: under right; -webkit-text-emphasis-position: under right; }
 .end { margin: 44px 0 0; text-align: right; }
 .end .seal { width: 34px; height: 34px; font-size: 22px; }
 
@@ -91,7 +90,36 @@ a { color: inherit; }
 .foot a { text-decoration: none; }
 .foot a:hover { color: var(--primary); }
 
-a:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; border-radius: 2px; }
+/* 写文章 */
+.write-title { margin: 44px 0 20px; font-size: 34px; line-height: 1.4; font-weight: 400; }
+.field {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 8px;
+  background: var(--card); color: var(--text); font: 17px/1.6 var(--kai);
+}
+.field.title { font-size: 24px; margin-bottom: 12px; }
+.field-row { display: grid; grid-template-columns: 180px 1fr; gap: 12px; margin-bottom: 12px; }
+.field-row label { display: block; color: var(--muted); font-size: 15px; line-height: 1.8; }
+textarea.field { display: block; resize: vertical; min-height: 340px; font-size: 19px; line-height: 1.9; }
+.tools, .buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.tools { margin-bottom: 8px; }
+.tools #preview-toggle { margin-left: auto; }
+.page button {
+  padding: 7px 14px; border: 1px solid var(--rule); border-radius: 8px; background: transparent;
+  color: var(--soft); font: 16px/1.5 var(--kai); cursor: pointer;
+}
+.page button:hover { border-color: var(--primary); color: var(--primary); }
+.page button.primary { padding: 8px 26px; border-color: var(--primary); background: var(--primary); color: #FFF4E6; }
+.page button.primary:hover { color: #FFF4E6; filter: brightness(1.08); }
+.page button.danger { margin-left: auto; color: var(--primary); }
+.page button:disabled { opacity: 0.55; cursor: default; }
+.preview { min-height: 340px; padding: 8px 12px; border: 1px dashed var(--rule); border-radius: 8px; }
+.note { min-height: 1.8em; margin: 8px 0; color: var(--primary); font-size: 16px; line-height: 1.8; }
+.all-posts { margin-top: 56px; }
+.post-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); text-decoration: none; line-height: 1.6; }
+.post-row:hover { color: var(--primary); }
+.post-row small { flex: none; color: var(--muted); font-size: 15px; }
+
+a:focus-visible, button:focus-visible, .field:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; border-radius: 2px; }
 
 @media (max-width: 560px) {
   body { font-size: 18px; }
@@ -102,4 +130,6 @@ a:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; border
   .head h1 { font-size: 31px; }
   .body { font-size: 19px; line-height: 2; }
   .body h2 { font-size: 24px; }
+  .field-row { grid-template-columns: 1fr; }
+  .write-title { margin-top: 28px; }
 }

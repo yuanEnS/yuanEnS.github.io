@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>写文章 | 园中小记</title>
+<meta name="description" content="园中小记的写作页面。">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#FBF6EE">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/life/life.css">
+</head>
+<body>
+<div class="page">
+<nav class="top"><a href="/life/">← 园中小记</a></nav>
+<p class="empty" id="gate" role="status">正在打开…</p>
+
+<main id="editor" hidden>
+  <h1 class="write-title" id="heading">写文章</h1>
+  <form id="form">
+    <input class="field title" id="title" maxlength="100" placeholder="标题" aria-label="标题" autocomplete="off">
+    <div class="field-row">
+      <label>日期 <input class="field" id="date" type="date" required></label>
+      <label>标签 <input class="field" id="tags" maxlength="100" placeholder="随笔 旅行（可不填）" autocomplete="off"></label>
+    </div>
+    <div class="tools" role="toolbar" aria-label="排版">
+      <button type="button" data-tool="heading">小标题</button>
+      <button type="button" data-tool="quote">引用</button>
+      <button type="button" data-tool="strong">重点</button>
+      <button type="button" data-tool="rule">分隔线</button>
+      <button type="button" id="preview-toggle" aria-pressed="false">预览</button>
+    </div>
+    <textarea class="field" id="text" rows="16" placeholder="写点什么。空一行就是新的一段。" aria-label="正文"></textarea>
+    <div class="body preview" id="preview" hidden></div>
+    <p class="note" id="message" role="status"></p>
+    <div class="buttons">
+      <button class="primary" id="publish" type="submit">发布</button>
+      <button type="button" id="save-draft">存为草稿</button>
+      <button type="button" id="new-post" hidden>写新文章</button>
+      <button type="button" class="danger" id="remove" hidden>删除</button>
+    </div>
+  </form>
+
+  <h2 class="year all-posts">全部文章</h2>
+  <div id="posts"></div>
+</main>
+
+<footer class="foot"><a href="/life/">园中小记</a></footer>
+</div>
+<script src="/life/life.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const AUTOSAVE_KEY = 'life:autosave';
+  let currentId = null;
+
+  function today() {
+    const now = new Date();
+    return new Date(now - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  }
+
+  function say(text) {
+    $('message').textContent = text;
+  }
+
+  function values() {
+    return { title: $('title').value, date: $('date').value, tags: $('tags').value, body: $('text').value };
+  }
+
+  function fill(post) {
+    currentId = post.id || null;
+    $('title').value = post.title || '';
+    $('date').value = post.date || today();
+    $('tags').value = post.tags || '';
+    $('text').value = post.body || '';
+    $('heading').textContent = currentId ? '修改文章' : '写文章';
+    $('new-post').hidden = $('remove').hidden = !currentId;
+    $('publish').textContent = currentId && !post.draft ? '保存修改' : '发布';
+    $('save-draft').textContent = currentId && !post.draft ? '改成草稿' : '存为草稿';
+    showEditor();
+  }
+
+  // 没保存的内容留在这台设备上，页面意外关掉也不会丢
+  function autosave() {
+    try {
+      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify({ id: currentId, ...values() }));
+    } catch (e) {}
+  }
+
+  function clearAutosave() {
+    try {
+      localStorage.removeItem(AUTOSAVE_KEY);
+    } catch (e) {}
+  }
+
+  function readAutosave() {
+    try {
+      return JSON.parse(localStorage.getItem(AUTOSAVE_KEY));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function showEditor() {
+    $('preview').hidden = true;
+    $('text').hidden = false;
+    $('preview-toggle').setAttribute('aria-pressed', 'false');
+    $('preview-toggle').textContent = '预览';
+  }
+
+  // 在光标处排版：选中文字时包住它，整行的格式加在行首
+  function insert(before, after = '', placeholder = '') {
+    const text = $('text');
+    const start = text.selectionStart, end = text.selectionEnd;
+    const chosen = text.value.slice(start, end) || placeholder;
+    text.setRangeText(before + chosen + after, start, end, 'end');
+    text.focus();
+    text.setSelectionRange(start + before.length, start + before.length + chosen.length);
+    autosave();
+  }
+
+  function newBlock() {
+    const text = $('text');
+    const head = text.value.slice(0, text.selectionStart);
+    if (!head) return '';
+    return head.endsWith('\n\n') ? '' : head.endsWith('\n') ? '\n' : '\n\n';
+  }
+
+  const TOOLS = {
+    heading: () => insert(`${newBlock()}## `, '\n\n', '小标题'),
+    quote: () => insert(`${newBlock()}> `, '\n\n', '引用的话'),
+    strong: () => insert('**', '**', '重点'),
+    rule: () => insert(`${newBlock()}---\n\n`),
+  };
+
+  async function submit(button, draft, done) {
+    say('');
+    button.disabled = true;
+    try {
+      const { id } = await api('/life/save', { id: currentId, ...values(), draft });
+      clearAutosave();
+      fill({ id, ...values(), draft: draft ? 1 : 0 });
+      history.replaceState(null, '', `/life/write/?id=${id}`);
+      await loadPosts();
+      say(done);
+    } catch (err) {
+      say(errorText(err));
+    }
+    button.disabled = false;
+  }
+
+  async function loadPosts() {
+    const { list } = await api('/life/admin');
+    $('posts').replaceChildren(...list.map(post => {
+      const row = document.createElement('a');
+      row.className = 'post-row';
+      row.href = `/life/write/?id=${post.id}`;
+      const title = document.createElement('span');
+      title.textContent = post.title;
+      const meta = document.createElement('small');
+      meta.textContent = `${dateParts(post.date).monthDay}${post.draft ? ' · 草稿' : ''}`;
+      row.append(title, meta);
+      return row;
+    }));
+  }
+
+  function blocked(text, link) {
+    const gate = $('gate');
+    gate.textContent = text;
+    if (link) {
+      const a = document.createElement('a');
+      a.href = link.href;
+      a.textContent = link.text;
+      gate.append(' ', a);
+    }
+  }
+
+  async function start() {
+    if (!getToken()) return blocked('写文章要先登录。', { href: '/account/?back=/life/write/', text: '去登录' });
+    await loadPosts();
+    const id = new URLSearchParams(location.search).get('id');
+    const saved = readAutosave();
+    if (id) {
+      const { post } = await api(`/life/post?id=${encodeURIComponent(id)}`);
+      const restore = saved && saved.id === post.id && saved.body !== post.body;
+      fill(post);
+      if (restore) {
+        Object.assign(post, saved);
+        fill(post);
+        say('已恢复上次没保存的内容。');
+      }
+    } else {
+      const restore = saved && !saved.id && (saved.title || saved.body);
+      fill(restore ? saved : {});
+      if (restore) say('已恢复上次没保存的内容。');
+    }
+    $('gate').hidden = true;
+    $('editor').hidden = false;
+  }
+
+  document.querySelectorAll('[data-tool]').forEach(button => {
+    button.addEventListener('click', () => TOOLS[button.dataset.tool]());
+  });
+
+  $('preview-toggle').addEventListener('click', () => {
+    const on = $('preview').hidden;
+    if (on) $('preview').innerHTML = renderBody($('text').value) || '<p>还没有内容。</p>';
+    $('preview').hidden = !on;
+    $('text').hidden = on;
+    $('preview-toggle').setAttribute('aria-pressed', String(on));
+    $('preview-toggle').textContent = on ? '继续写' : '预览';
+  });
+
+  $('form').addEventListener('input', autosave);
+  $('form').addEventListener('submit', e => {
+    e.preventDefault();
+    submit($('publish'), false, '已发布。');
+  });
+  $('save-draft').addEventListener('click', e => submit(e.target, true, '已存为草稿，别人看不到。'));
+
+  $('new-post').addEventListener('click', () => {
+    clearAutosave();
+    history.replaceState(null, '', '/life/write/');
+    fill({});
+    say('');
+    $('title').focus();
+  });
+
+  $('remove').addEventListener('click', async e => {
+    if (!confirm(`删除《${$('title').value}》？删除后找不回来。`)) return;
+    e.target.disabled = true;
+    try {
+      await api('/life/delete', { id: currentId });
+      clearAutosave();
+      history.replaceState(null, '', '/life/write/');
+      fill({});
+      await loadPosts();
+      say('已删除。');
+    } catch (err) {
+      say(errorText(err));
+    }
+    e.target.disabled = false;
+  });
+
+  start().catch(err => {
+    if (err.status === 401) blocked('登录已过期。', { href: '/account/?back=/life/write/', text: '重新登录' });
+    else if (err.status === 403) blocked('这个页面只有作者能用。');
+    else blocked(errorText(err));
+  });
+</script>
+</body>
+</html>

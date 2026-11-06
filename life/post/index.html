@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>园中小记</title>
+<meta name="description" content="园中小记：写写日常，也写写想法。">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#FBF6EE">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/life/life.css">
+</head>
+<body>
+<div class="page">
+<nav class="top"><a href="/life/">← 园中小记</a><a id="edit" hidden>修改</a></nav>
+<article id="article" hidden>
+  <header class="head">
+    <h1 id="title"></h1>
+    <p class="meta" id="meta"></p>
+  </header>
+  <div class="body" id="body"></div>
+  <p class="end"><span class="seal" aria-hidden="true">记</span></p>
+</article>
+<p class="empty" id="status" role="status">正在打开…</p>
+<nav class="pager" id="pager" hidden></nav>
+<footer class="foot"><a href="/life/">园中小记</a> · <a href="/">游戏园</a></footer>
+</div>
+<script src="/life/life.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const id = new URLSearchParams(location.search).get('id');
+
+  function pagerLink(post, label, className) {
+    const link = document.createElement('a');
+    link.className = className;
+    link.href = `/life/post/?id=${post.id}`;
+    const small = document.createElement('small');
+    small.textContent = label;
+    link.append(small, post.title);
+    return link;
+  }
+
+  function show({ post, newer, older }) {
+    document.title = `${post.title} | 园中小记`;
+    $('title').textContent = post.title;
+    const parts = [cnDate(post.date), ...post.tags.split(/\s+/).filter(Boolean)];
+    if (post.draft) parts.push('草稿');
+    $('meta').replaceChildren(...parts.map(text => {
+      const span = document.createElement('span');
+      span.textContent = text;
+      return span;
+    }));
+    $('body').innerHTML = renderBody(post.body);
+    const links = [];
+    if (older) links.push(pagerLink(older, '上一篇', 'prev'));
+    if (newer) links.push(pagerLink(newer, '下一篇', 'next'));
+    $('pager').replaceChildren(...links);
+    $('pager').hidden = !links.length;
+    $('article').hidden = false;
+    $('status').hidden = true;
+  }
+
+  api(`/life/post?id=${encodeURIComponent(id)}`).then(show).catch(err => {
+    $('status').textContent = errorText(err);
+  });
+
+  $('edit').href = `/life/write/?id=${encodeURIComponent(id)}`;
+  showAuthorLink($('edit'));
+</script>
+</body>
+</html>
