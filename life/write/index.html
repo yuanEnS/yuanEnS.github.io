@@ -33,6 +33,14 @@
     </div>
     <textarea class="field" id="text" rows="16" placeholder="写点什么。空一行就是新的一段。" aria-label="正文"></textarea>
     <div class="body preview" id="preview" hidden></div>
+    <label class="rights-pick">版权声明
+      <select class="field" id="rights">
+        <option value="">不声明</option>
+        <option value="credit">原创，转载请注明作者和出处</option>
+        <option value="ask">原创，未经作者同意请勿转载</option>
+      </select>
+    </label>
+    <label class="check"><input type="checkbox" id="public" checked> 公开，所有人都能看到（不勾就只有自己能看，也不上地图）</label>
     <label class="check"><input type="checkbox" id="place" checked> 在世界园地图上显示我的大致位置（按网络判断，精确到约 50 公里）</label>
     <p class="note" id="message" role="status"></p>
     <div class="buttons">
@@ -42,7 +50,7 @@
       <button type="button" class="danger" id="remove" hidden>删除</button>
     </div>
     <p class="hint" id="quota" hidden>今天已经发布过一篇了，这篇可以先存为草稿，明天再发布。</p>
-    <p class="hint">每人每天发布一篇（按北京时间算），修改已发布的文章不算。文章和昵称所有人都能看到，不合适的内容会被删除。</p>
+    <p class="hint">每人每天发布一篇（按北京时间算），修改已发布的文章不算。公开的文章和昵称所有人都能看到，不合适的内容会被删除。</p>
   </form>
 
   <h2 class="year all-posts">我的文章</h2>
@@ -58,6 +66,7 @@
   let currentId = null;
   let counted = false; // 这篇已经占过发布名额，再发布不受每天一篇的限制
   let wroteToday = false;
+  let lastRights = ''; // 新文章默认沿用自己上一篇的版权声明
 
   function today() {
     const now = new Date();
@@ -75,7 +84,7 @@
   }
 
   function values() {
-    return { title: $('title').value, date: $('date').value, tags: $('tags').value, body: $('text').value };
+    return { title: $('title').value, date: $('date').value, tags: $('tags').value, body: $('text').value, rights: $('rights').value, public: $('public').checked };
   }
 
   function fill(post) {
@@ -85,6 +94,8 @@
     $('date').value = post.date || today();
     $('tags').value = post.tags || '';
     $('text').value = post.body || '';
+    $('rights').value = post.rights ?? lastRights;
+    $('public').checked = post.public ?? !post.hidden;
     $('heading').textContent = currentId ? '修改文章' : '写文章';
     $('new-post').hidden = $('remove').hidden = !currentId;
     $('publish').textContent = currentId && !post.draft ? '保存修改' : '发布';
@@ -167,6 +178,8 @@
     const mine = await api('/life/mine');
     const { list } = mine;
     wroteToday = mine.wroteToday;
+    const own = list.find(post => post.author_id !== null);
+    lastRights = own ? own.rights : '';
     $('posts').replaceChildren(...list.map(post => {
       const row = document.createElement('a');
       row.className = 'post-row';
@@ -174,7 +187,7 @@
       const title = document.createElement('span');
       title.textContent = post.title;
       const meta = document.createElement('small');
-      meta.textContent = `${dateParts(post.date).monthDay}${post.draft ? ' · 草稿' : ''}`;
+      meta.textContent = `${dateParts(post.date).monthDay}${post.draft ? ' · 草稿' : post.hidden ? ' · 仅自己可见' : ''}`;
       row.append(title, meta);
       return row;
     }));
@@ -233,7 +246,7 @@
   $('form').addEventListener('input', autosave);
   $('form').addEventListener('submit', e => {
     e.preventDefault();
-    submit($('publish'), false, '已发布。');
+    submit($('publish'), false, $('public').checked ? '已发布。' : '已发布，只有你自己能看到。');
   });
   $('save-draft').addEventListener('click', e => submit(e.target, true, '已存为草稿，别人看不到。'));
 

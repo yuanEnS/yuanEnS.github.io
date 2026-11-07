@@ -20,7 +20,7 @@
 - `games/`：游戏园，游戏列表
 - `wuziqi/`：五子棋网页（自动生成）
 - `life/`：生活园入口。下面有世界园 `world/`（地图和气泡，`map.js`，陆地点阵在 `land.js`）和私人园 `personal/`（自己或某位作者的文章，`?author=昵称`）。文章在 Cloudflare D1 里，正式账号都能在 `/life/write/` 写，每人每天发布一篇
-- `resume/`：作者简历
+- `resume/`：作者简历（不从站内链接，直接用网址访问）
 - `CNAME`：自定义域名 gamesyuan.com
 - `sitemap.xml` / `robots.txt`：给搜索引擎
 - `og.png`：分享到社交平台时显示的预览图

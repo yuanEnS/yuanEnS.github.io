@@ -188,6 +188,10 @@ textarea.field { display: block; resize: vertical; min-height: 340px; font-size:
 .note { min-height: 1.8em; margin: 8px 0; color: var(--primary); font-size: 16px; line-height: 1.8; }
 .check { display: flex; align-items: baseline; gap: 8px; margin: 10px 0 0; color: var(--soft); font-size: 16px; line-height: 1.7; cursor: pointer; }
 .check input { accent-color: var(--primary); }
+.rights-pick { display: flex; align-items: center; gap: 10px; margin: 12px 0 0; color: var(--soft); font-size: 16px; }
+.rights-pick .field { flex: 1; min-width: 0; width: auto; }
+.rights { margin: 1.6em 0 0; padding: 12px 14px; border-left: 3px solid var(--primary); background: var(--card, transparent); color: var(--muted); font-size: 15px; line-height: 1.8; text-align: left; overflow-wrap: anywhere; }
+.rights a { color: var(--primary); }
 .hint { margin: 10px 0 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
 #quota { color: var(--primary); }
 .all-posts { margin-top: 56px; }
