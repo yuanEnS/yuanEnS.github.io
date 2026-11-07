@@ -106,6 +106,7 @@
   let editing = null; // 正在改的条目
   let picked = null; // 旅行地图上选中的地方
   let map = null;
+  const openStories = new Set(); // 展开了的旅行故事，保存后重画时保持展开
 
   const canWrite = () => ['owner', 'member'].includes(data.garden.role);
   const kind = () => KIND[data.garden.kind];
@@ -197,7 +198,12 @@
   function ensureMap() {
     if (map) return map;
     map = gardenMap($('map'), {
-      onPin: item => document.getElementById(`item-${item.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      onPin: item => {
+        const article = document.getElementById(`item-${item.id}`);
+        if (!article) return;
+        if (article.expand) article.expand();
+        article.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      },
       onPick: (lat, lon) => {
         picked = { lat, lon };
         showPick();
@@ -210,7 +216,7 @@
     $('map-wrap').hidden = false;
     ensureMap().setPins(items);
     $('map-hint').textContent = items.length
-      ? `去过 ${items.length} 个地方。点地图上的红点，跳到那段故事。`
+      ? `去过 ${items.length} 个地方。点地图上的红点，打开那段故事。`
       : '';
     // 新的旅行在前面，没填日期的放最后
     const sorted = [...items].sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.id - a.id);
@@ -219,15 +225,50 @@
       article.id = `item-${item.id}`;
       const time = el('time', '', [item.date ? cnDate(item.date) : '', byline(item)].filter(Boolean).join(' · '));
       if (item.date) time.dateTime = item.date;
-      const title = el('h2', '', item.title);
+      const title = el('h2');
+      const open = el('button', 'trip-title', item.title);
+      open.type = 'button';
+      title.append(open);
       article.append(time, title);
-      if (item.body) {
+      const actions = el('div', 'trip-actions');
+      // 平时只露出开头一句，后面还有内容的才能点标题或「读全文」展开
+      let head = item.body ? excerpt(item.body, 60) : '';
+      const more = item.body && (head.endsWith('…') || item.body.trim().split(/\n\s*\n/).length > 1 || !head);
+      if (more && head && !head.endsWith('…')) head += '…';
+      if (item.body && !more) {
+        article.append(el('p', 'trip-summary', head));
+        open.disabled = true;
+      } else if (item.body) {
+        const summary = el('p', 'trip-summary', head);
         const body = el('div', 'body');
-        body.innerHTML = renderBody(item.body);
-        article.append(body);
+        body.id = `story-${item.id}`;
+        const toggle = el('button', 'link-button', '');
+        toggle.type = 'button';
+        const show = expanded => {
+          if (expanded) openStories.add(item.id);
+          else openStories.delete(item.id);
+          if (expanded && !body.innerHTML) body.innerHTML = renderBody(item.body);
+          body.hidden = !expanded;
+          summary.hidden = expanded || !summary.textContent;
+          toggle.textContent = expanded ? '收起' : '读全文';
+          open.setAttribute('aria-expanded', String(expanded));
+          toggle.setAttribute('aria-expanded', String(expanded));
+        };
+        open.setAttribute('aria-controls', body.id);
+        toggle.setAttribute('aria-controls', body.id);
+        open.addEventListener('click', () => show(body.hidden));
+        toggle.addEventListener('click', () => show(body.hidden));
+        article.expand = () => show(true);
+        body.hidden = true;
+        article.append(summary, body);
+        actions.append(toggle);
+        show(openStories.has(item.id));
+      } else {
+        open.disabled = true;
       }
       const edit = editButton(item);
-      if (edit) article.append(edit);
+      if (edit) actions.append(edit);
+      if (actions.childNodes.length) article.append(actions);
       return article;
     });
   }

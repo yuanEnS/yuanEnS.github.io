@@ -315,3 +315,15 @@ a.garden-card:hover { border-color: var(--primary); }
 }
 .settings textarea.field { min-height: 0; font-size: 17px; }
 .item-form textarea.field { min-height: 140px; font-size: 17px; }
+.trip { padding: 24px 0 20px; }
+.trip h2 { margin: 4px 0 6px; font-size: 26px; }
+.page .trip-title {
+  font-size: inherit; letter-spacing: inherit;
+  padding: 0 !important; border: 0 !important; background: none; color: inherit !important;
+  font: inherit; text-align: left; line-height: inherit; cursor: pointer;
+}
+.page .trip-title:hover:not(:disabled) { color: var(--primary) !important; }
+.trip-title:disabled { cursor: default; }
+.trip-summary { font-size: 17px; }
+.trip .body { margin-top: 8px; }
+.trip-actions { display: flex; gap: 18px; margin-top: 6px; }
