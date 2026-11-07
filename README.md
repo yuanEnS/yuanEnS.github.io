@@ -1,6 +1,6 @@
 # 游戏园 · gamesyuan.com
 
-打开就能玩的网页小游戏站。这个仓库是网站首页（游戏列表）。游戏的源码都在 [yuanEnS/xiangqi](https://github.com/yuanEnS/xiangqi) 仓库里：
+主页有两个入口：生活园（`/life/`）和游戏园（`/games/`）。这个仓库是主页、游戏列表和生活园。游戏的源码都在 [yuanEnS/xiangqi](https://github.com/yuanEnS/xiangqi) 仓库里：
 
 | 游戏 | 地址 | 怎么发布 |
 |---|---|---|
@@ -12,13 +12,14 @@
 ## 加一个新游戏
 
 1. 在 xiangqi 仓库里写好游戏，打包到本仓库的一个新目录（或者单独建一个仓库开启 Pages，会自动出现在 `https://gamesyuan.com/仓库名/`）。
-2. 在 `index.html` 的「全部游戏」里加一张卡片，在 `sitemap.xml` 里加一个 `<url>`。
+2. 在 `games/index.html` 的「全部游戏」里加一张卡片，在 `sitemap.xml` 里加一个 `<url>`。
 
 ## 文件
 
-- `index.html`：首页
+- `index.html`：主页，生活园和游戏园两个入口
+- `games/`：游戏园，游戏列表
 - `wuziqi/`：五子棋网页（自动生成）
-- `life/`：博客「园中小记」。文章在 Cloudflare D1 里，在 `/life/write/` 用作者账号登录后写，不用改这个仓库
+- `life/`：生活园入口。下面有世界园 `world/`（地图和气泡，`map.js`，陆地点阵在 `land.js`）和私人园 `personal/`（自己或某位作者的文章，`?author=昵称`）。文章在 Cloudflare D1 里，正式账号都能在 `/life/write/` 写，每人每天发布一篇
 - `resume/`：作者简历
 - `CNAME`：自定义域名 gamesyuan.com
 - `sitemap.xml` / `robots.txt`：给搜索引擎

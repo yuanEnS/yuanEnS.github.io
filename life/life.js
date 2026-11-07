@@ -1,4 +1,4 @@
-// 园中小记共用的代码：接口、排版、日期
+// 生活园共用的代码：接口、排版、日期
 const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
 const API = LOCAL ? 'http://127.0.0.1:8787/api' : 'https://api.gamesyuan.com/api';
 const TOKEN_KEY = 'xiangqi:token'; // 和游戏、账号页共用
@@ -37,7 +37,7 @@ function safeUrl(url) {
 
 function inline(text) {
   return escapeHtml(text)
-    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, label, url) => `<a href="${safeUrl(url)}" rel="noopener">${label}</a>`)
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, label, url) => `<a href="${safeUrl(url)}" rel="noopener nofollow ugc">${label}</a>`)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 }
 
@@ -51,7 +51,7 @@ function renderBody(text) {
     if (/^-{3,}$/.test(first)) return '<hr>';
     if (image) {
       const caption = image[1] ? `<p class="caption">${inline(image[1])}</p>` : '';
-      return `<img src="${escapeHtml(safeUrl(image[2]))}" alt="${escapeHtml(image[1])}" loading="lazy">${caption}`;
+      return `<img src="${escapeHtml(safeUrl(image[2]))}" alt="${escapeHtml(image[1])}" loading="lazy" referrerpolicy="no-referrer">${caption}`;
     }
     if (first.startsWith('>')) {
       return `<blockquote><p>${lines.map(line => inline(line.replace(/^>\s*/, ''))).join('<br>')}</p></blockquote>`;
@@ -87,11 +87,55 @@ function cnDate(date) {
   return `${cnYear(year)}年${monthDay}`;
 }
 
-// 登录的是作者时，显示写文章的入口
-async function showAuthorLink(link) {
-  if (!getToken()) return;
-  try {
-    await api('/life/admin');
-    link.hidden = false;
-  } catch (e) {}
+function authorUrl(name) {
+  return `/life/personal/?author=${encodeURIComponent(name)}`;
+}
+
+function showMessage(target, text) {
+  const p = document.createElement('p');
+  p.className = 'empty';
+  p.textContent = text;
+  target.replaceChildren(p);
+}
+
+function postEntry(post, showAuthor) {
+  const article = document.createElement('article');
+  article.className = 'entry';
+  const time = document.createElement('time');
+  time.dateTime = post.date;
+  time.textContent = `${dateParts(post.date).monthDay}${post.draft ? ' · 草稿' : ''}`;
+  if (showAuthor) {
+    const link = document.createElement('a');
+    link.href = authorUrl(post.author);
+    link.textContent = post.author;
+    time.append(' · ', link);
+  }
+  const title = document.createElement('h2');
+  const link = document.createElement('a');
+  link.href = `/life/post/?id=${post.id}`;
+  link.textContent = post.title;
+  title.append(link);
+  const summary = document.createElement('p');
+  summary.textContent = excerpt(post.head);
+  article.append(time, title, summary);
+  return article;
+}
+
+// 按年份分组的文章列表
+function showPosts(target, posts, { empty, author = true }) {
+  if (!posts.length) return showMessage(target, empty);
+  const nodes = [];
+  let year = null;
+  for (const post of posts) {
+    const y = dateParts(post.date).year;
+    if (y !== year) {
+      year = y;
+      const heading = document.createElement('h2');
+      heading.className = 'year';
+      heading.textContent = cnYear(y);
+      nodes.push(heading);
+    }
+    nodes.push(postEntry(post, author));
+  }
+  target.replaceChildren(...nodes);
 }

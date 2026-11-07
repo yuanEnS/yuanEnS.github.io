@@ -3,313 +3,50 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>游戏园 · 打开就能玩的网页小游戏 | gamesyuan</title>
-<meta name="description" content="游戏园（gamesyuan）是一个免费的网页小游戏站，不用下载、不用注册。中国象棋、五子棋都支持人机对战（入门 / 业余 / 大师）、在线快速匹配、好友房间和多套棋盘主题，手机电脑都能玩。">
-<meta name="keywords" content="游戏园,gamesyuan,网页小游戏,在线象棋,中国象棋,象棋人机对战,象棋在线对战,五子棋,在线五子棋,五子棋人机对战,免费小游戏">
+<title>gamesyuan · 生活园与游戏园</title>
+<meta name="description" content="gamesyuan 有两个园子：生活园，写写日常，看看世界各地的作者；游戏园，打开就能玩中国象棋和五子棋。">
 <link rel="canonical" href="https://gamesyuan.com/">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#FBF6EE">
-
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="游戏园">
-<meta property="og:title" content="游戏园 · 打开就能玩的网页小游戏">
-<meta property="og:description" content="免费在线中国象棋、五子棋：人机对战、快速匹配、好友房间。不用下载，不用注册。">
+<meta property="og:site_name" content="gamesyuan">
+<meta property="og:title" content="gamesyuan · 生活园与游戏园">
+<meta property="og:description" content="gamesyuan 有两个园子：生活园，写写日常，看看世界各地的作者；游戏园，打开就能玩中国象棋和五子棋。">
 <meta property="og:url" content="https://gamesyuan.com/">
 <meta property="og:image" content="https://gamesyuan.com/og.png">
-<meta name="twitter:card" content="summary_large_image">
-
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#FBF6EE">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/life/life.css">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "name": "游戏园",
-      "alternateName": "gamesyuan",
-      "url": "https://gamesyuan.com/",
-      "inLanguage": "zh-CN"
-    },
-    {
-      "@type": "VideoGame",
-      "name": "中国象棋 · 游戏园",
-      "url": "https://gamesyuan.com/xiangqi/",
-      "description": "免费在线中国象棋，支持人机对战、在线快速匹配和好友房间。",
-      "genre": ["棋类", "策略"],
-      "gamePlatform": ["Web browser", "WeChat Mini Game"],
-      "playMode": ["SinglePlayer", "MultiPlayer"],
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
-    },
-    {
-      "@type": "VideoGame",
-      "name": "五子棋 · 游戏园",
-      "url": "https://gamesyuan.com/wuziqi/",
-      "description": "免费在线五子棋，支持人机对战、在线快速匹配和好友房间，15 路标准棋盘。",
-      "genre": ["棋类", "策略"],
-      "gamePlatform": ["Web browser"],
-      "playMode": ["SinglePlayer", "MultiPlayer"],
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
-    },
-    {
-      "@type": "FAQPage",
-      "mainEntity": [
-        { "@type": "Question", "name": "游戏园的游戏要钱吗？", "acceptedAnswer": { "@type": "Answer", "text": "全部免费，打开网页就能玩，不需要注册账号。" } },
-        { "@type": "Question", "name": "需要下载安装吗？", "acceptedAnswer": { "@type": "Answer", "text": "不需要。手机、平板、电脑的浏览器都能直接玩。" } },
-        { "@type": "Question", "name": "怎么和朋友在线下象棋？", "acceptedAnswer": { "@type": "Answer", "text": "进入中国象棋，点「创建房间」得到 4 位房间号，发给朋友，朋友点「加入房间」输入房间号即可。也可以点「快速匹配」，系统会自动配对正在找棋友的人。" } },
-        { "@type": "Question", "name": "象棋电脑有多强？", "acceptedAnswer": { "@type": "Answer", "text": "有入门、业余、大师三档难度。入门适合刚学会走棋的新手，大师会全力计算，适合有一定水平的棋友。" } }
-      ]
-    }
-  ]
+  "@type": "WebSite",
+  "name": "gamesyuan",
+  "alternateName": "游戏园",
+  "url": "https://gamesyuan.com/",
+  "inLanguage": "zh-CN"
 }
 </script>
-
-<style>
-  :root {
-    --bg: #FBF6EE;
-    --card: #FFFDF8;
-    --primary: #C62828;
-    --primary-soft: rgba(198, 40, 40, 0.08);
-    --text: #3A2A1E;
-    --muted: #8A7560;
-    --line: rgba(198, 40, 40, 0.35);
-    --decor: rgba(120, 90, 60, 0.07);
-    --board: #F0DAB2;
-    --board-line: #6B4A2B;
-    --kai: "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Songti SC", serif;
-    --sans: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #16191F;
-      --card: #20242C;
-      --primary: #EF5350;
-      --primary-soft: rgba(239, 83, 80, 0.12);
-      --text: #E8EAED;
-      --muted: #9AA1AD;
-      --line: rgba(239, 83, 80, 0.4);
-      --decor: rgba(255, 255, 255, 0.04);
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #16191F;
-    --card: #20242C;
-    --primary: #EF5350;
-    --primary-soft: rgba(239, 83, 80, 0.12);
-    --text: #E8EAED;
-    --muted: #9AA1AD;
-    --line: rgba(239, 83, 80, 0.4);
-    --decor: rgba(255, 255, 255, 0.04);
-  }
-
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font: 16px/1.7 var(--sans);
-  }
-  a { color: inherit; }
-  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
-
-  header { padding: 20px 0; }
-  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .logo-mark {
-    width: 40px; height: 40px; border-radius: 50%;
-    display: grid; place-items: center;
-    background: var(--primary); color: #FFF4E6;
-    font: 22px/1 var(--kai);
-    box-shadow: inset 0 0 0 3px var(--primary), inset 0 0 0 4.5px #FFF4E6;
-  }
-  .logo-name { font: 26px/1 var(--kai); color: var(--primary); }
-  .logo-sub { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
-  nav { display: flex; gap: 18px; font-size: 15px; }
-  nav a { text-decoration: none; color: var(--muted); }
-  nav a:hover { color: var(--primary); }
-
-  .hero { padding: 40px 0 28px; }
-  .hero h1 { margin: 0 0 12px; font: 40px/1.25 var(--kai); color: var(--text); }
-  .hero h1 em { font-style: normal; color: var(--primary); }
-  .hero p { margin: 0 0 24px; max-width: 34em; color: var(--muted); font-size: 17px; }
-  .btn {
-    display: inline-block; padding: 12px 26px; border-radius: 10px;
-    background: var(--primary); color: #fff; text-decoration: none;
-    font: 18px/1.2 var(--kai);
-  }
-  .btn:hover { filter: brightness(1.08); }
-
-  h2 { font: 26px/1.3 var(--kai); margin: 40px 0 16px; }
-  .games { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-  .game {
-    display: flex; flex-direction: column;
-    background: var(--card); border: 1.5px solid var(--line); border-radius: 14px;
-    overflow: hidden; text-decoration: none; transition: transform .15s, box-shadow .15s;
-  }
-  a.game:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08); }
-  .game svg { display: block; width: 100%; height: auto; }
-  .game-body { padding: 14px 16px 18px; }
-  .game-title { font: 22px/1.3 var(--kai); color: var(--primary); margin: 0 0 4px; }
-  .game-desc { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
-  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag { padding: 2px 10px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-size: 13px; }
-  .game.soon { border-style: dashed; justify-content: center; align-items: center; min-height: 220px; text-align: center; padding: 24px; }
-  .game.soon .game-title { color: var(--muted); }
-
-  .about { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px 28px; }
-  .about h3 { font: 18px/1.4 var(--kai); margin: 0 0 4px; color: var(--primary); }
-  .about p { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
-
-  footer { margin-top: 48px; padding: 24px 0 40px; border-top: 1px solid var(--decor); color: var(--muted); font-size: 13px; }
-  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
-
-  @media (max-width: 560px) {
-    .hero { padding-top: 16px; }
-    .hero h1 { font-size: 30px; }
-    nav { gap: 12px; font-size: 14px; }
-    .logo-sub { display: none; }
-  }
-</style>
 </head>
 <body>
-
-<header>
-  <div class="wrap">
-    <a class="logo" href="/" aria-label="游戏园首页">
-      <span class="logo-mark" aria-hidden="true">游</span>
-      <span>
-        <span class="logo-name">游戏园</span><br>
-        <span class="logo-sub">gamesyuan.com</span>
-      </span>
-    </a>
-    <nav>
-      <a href="#games">游戏</a>
-      <a href="/account/">排行榜</a>
-      <a href="/life/">生活</a>
-      <a href="#about">关于</a>
-      <a href="https://github.com/yuanEnS" rel="noopener">GitHub</a>
-    </nav>
-  </div>
+<div class="page">
+<header class="masthead">
+  <span class="seal" aria-hidden="true">园</span>
+  <h1>gamesyuan</h1>
+  <p>写写生活，下下棋。</p>
 </header>
-
-<main class="wrap">
-  <section class="hero">
-    <h1>打开就能玩的<em>小游戏</em></h1>
-    <p>不用下载，不用注册。和电脑过招，或者一键匹配正在找棋友的人。手机、平板、电脑都能玩。</p>
-    <a class="btn" href="/xiangqi/">开始下象棋</a>
-  </section>
-
-  <h2 id="games">全部游戏</h2>
-  <div class="games">
-    <a class="game" href="/xiangqi/">
-      <!-- 象棋缩略图：一角棋盘和三枚棋子 -->
-      <svg viewBox="0 0 320 170" role="img" aria-label="中国象棋棋盘">
-        <rect width="320" height="170" fill="#F0DAB2"/>
-        <g stroke="#6B4A2B" stroke-width="1" opacity="0.75">
-          <path d="M0 25H320M0 65H320M0 105H320M0 145H320"/>
-          <path d="M20 0V170M60 0V170M100 0V170M140 0V170M180 0V170M220 0V170M260 0V170M300 0V170"/>
-          <path d="M140 25L220 105M220 25L140 105"/>
-        </g>
-        <g font-family="KaiTi, STKaiti, 'Kaiti SC', serif" font-size="24" text-anchor="middle">
-          <g transform="translate(100 65)">
-            <circle r="19" fill="#1F1F1F" stroke="rgba(0,0,0,.35)"/>
-            <circle r="15.5" fill="none" stroke="rgba(255,240,220,.6)"/>
-            <text y="8" fill="#FFF4E6">馬</text>
-          </g>
-          <g transform="translate(180 105)">
-            <circle r="19" fill="#C62828" stroke="rgba(0,0,0,.35)"/>
-            <circle r="15.5" fill="none" stroke="rgba(255,240,220,.75)"/>
-            <text y="8" fill="#FFF4E6">帥</text>
-          </g>
-          <g transform="translate(260 65)">
-            <circle r="19" fill="#C62828" stroke="rgba(0,0,0,.35)"/>
-            <circle r="15.5" fill="none" stroke="rgba(255,240,220,.75)"/>
-            <text y="8" fill="#FFF4E6">炮</text>
-          </g>
-        </g>
-      </svg>
-      <div class="game-body">
-        <h3 class="game-title">中国象棋</h3>
-        <p class="game-desc">人机对战三档难度，在线快速匹配，好友房间约战，5 套棋盘主题。</p>
-        <div class="tags">
-          <span class="tag">人机对战</span>
-          <span class="tag">快速匹配</span>
-          <span class="tag">好友房间</span>
-        </div>
-      </div>
-    </a>
-    <a class="game" href="/wuziqi/">
-      <!-- 五子棋缩略图：一角棋盘和几枚黑白子 -->
-      <svg viewBox="0 0 320 170" role="img" aria-label="五子棋棋盘">
-        <rect width="320" height="170" fill="#E2C48F"/>
-        <g stroke="#5E3D22" stroke-width="1" opacity="0.7">
-          <path d="M0 15H320M0 45H320M0 75H320M0 105H320M0 135H320M0 165H320"/>
-          <path d="M10 0V170M40 0V170M70 0V170M100 0V170M130 0V170M160 0V170M190 0V170M220 0V170M250 0V170M280 0V170M310 0V170"/>
-        </g>
-        <circle cx="160" cy="75" r="3" fill="#5E3D22"/>
-        <defs>
-          <radialGradient id="stone-b" cx="35%" cy="30%"><stop offset="0" stop-color="#5C574F"/><stop offset="1" stop-color="#1C1A17"/></radialGradient>
-          <radialGradient id="stone-w" cx="35%" cy="30%"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9E3D6"/></radialGradient>
-        </defs>
-        <g stroke="rgba(0,0,0,.25)">
-          <circle cx="100" cy="135" r="13" fill="url(#stone-b)"/>
-          <circle cx="130" cy="105" r="13" fill="url(#stone-b)"/>
-          <circle cx="160" cy="75" r="13" fill="url(#stone-b)"/>
-          <circle cx="190" cy="45" r="13" fill="url(#stone-b)"/>
-          <circle cx="130" cy="75" r="13" fill="url(#stone-w)"/>
-          <circle cx="160" cy="105" r="13" fill="url(#stone-w)"/>
-          <circle cx="190" cy="75" r="13" fill="url(#stone-w)"/>
-          <circle cx="220" cy="15" r="13" fill="url(#stone-w)"/>
-        </g>
-      </svg>
-      <div class="game-body">
-        <h3 class="game-title">五子棋</h3>
-        <p class="game-desc">15 路标准棋盘，人机对战三档难度，在线快速匹配，好友房间约战。</p>
-        <div class="tags">
-          <span class="tag">人机对战</span>
-          <span class="tag">快速匹配</span>
-          <span class="tag">好友房间</span>
-        </div>
-      </div>
-    </a>
-    <div class="game soon">
-      <div>
-        <h3 class="game-title">更多游戏</h3>
-        <p class="game-desc">正在制作中，敬请期待。</p>
-      </div>
-    </div>
-  </div>
-
-  <h2 id="about">关于游戏园</h2>
-  <div class="about">
-    <div>
-      <h3>完全免费</h3>
-      <p>所有游戏免费，打开网页就能玩，不需要注册账号，也不用安装任何东西。</p>
-    </div>
-    <div>
-      <h3>和朋友在线下象棋</h3>
-      <p>点「创建房间」得到 4 位房间号发给朋友，朋友点「加入房间」输入即可。也可以点「快速匹配」，系统自动配对正在找棋友的人。</p>
-    </div>
-    <div>
-      <h3>电脑陪你练棋</h3>
-      <p>象棋电脑分入门、业余、大师三档。新手从入门开始，下不过还能悔棋、看提示。</p>
-    </div>
-    <div>
-      <h3>手机电脑都能玩</h3>
-      <p>适配手机竖屏和电脑浏览器，还有黑白主题，墨水屏阅读器上也能看清棋盘。</p>
-    </div>
-    <div>
-      <h3>还不会下象棋？</h3>
-      <p>看一页<a href="/xiangqi/rules.html">中国象棋规则入门</a>：七种棋子怎么走、怎样算赢、棋谱怎么读，十分钟就能上手。</p>
-    </div>
-  </div>
+<main class="doors">
+  <a class="door" href="/life/">
+    <span class="seal" aria-hidden="true">生</span>
+    <span class="door-name">生活园<small>life</small></span>
+    <span class="door-text">写写日常，看看世界各地的作者。</span>
+  </a>
+  <a class="door" href="/games/">
+    <span class="seal" aria-hidden="true">游</span>
+    <span class="door-name">游戏园<small>games</small></span>
+    <span class="door-text">中国象棋、五子棋，打开就能玩。</span>
+  </a>
 </main>
-
-<footer>
-  <div class="wrap">
-    <span>© 2026 游戏园 gamesyuan.com</span>
-    <span>源码：<a href="https://github.com/yuanEnS/xiangqi" rel="noopener">github.com/yuanEnS/xiangqi</a> · <a href="/privacy/">隐私说明</a> · <a href="/resume/">作者简历</a></span>
-  </div>
-</footer>
-
+<footer class="foot"><a href="/account/">账号</a> · <a href="/privacy/">隐私说明</a> · <a href="/resume/">作者简历</a> · <a href="https://github.com/yuanEnS" rel="noopener">GitHub</a></footer>
+</div>
 </body>
 </html>

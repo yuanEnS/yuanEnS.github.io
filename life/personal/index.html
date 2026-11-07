@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>私人园 | 生活园</title>
+<meta name="description" content="私人园：一位作者一篇一篇写下的文章。">
+<link rel="canonical" href="https://gamesyuan.com/life/personal/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="gamesyuan">
+<meta property="og:title" content="私人园">
+<meta property="og:description" content="私人园：一位作者一篇一篇写下的文章。">
+<meta property="og:url" content="https://gamesyuan.com/life/personal/">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#FBF6EE">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/life/life.css">
+</head>
+<body>
+<div class="page">
+<nav class="top"><a href="/life/">← 生活园</a><a href="/life/write/">写文章</a></nav>
+<header class="masthead">
+  <span class="seal" aria-hidden="true">私</span>
+  <h1>私人园</h1>
+  <p id="owner">一篇一篇，都是自己写的。</p>
+</header>
+<main id="list"><p class="empty" role="status">正在打开…</p></main>
+<footer class="foot"><a href="/life/">生活园</a> · <a href="/">首页</a></footer>
+</div>
+<script src="/life/life.js"></script>
+<script>
+  // 不带参数是自己的园子，含草稿；?author=昵称 是别人的园子，只有公开的文章
+  const list = document.getElementById('list');
+  const author = new URLSearchParams(location.search).get('author');
+
+  function showOwner(name) {
+    document.getElementById('owner').textContent = `${name}的园子`;
+    document.title = `${name}的园子 | 生活园`;
+  }
+
+  function askLogin(text) {
+    showMessage(list, text);
+    const link = document.createElement('a');
+    link.href = '/account/?back=/life/personal/';
+    link.textContent = '去登录';
+    list.firstChild.append(' ', link);
+  }
+
+  async function start() {
+    if (author) {
+      showOwner(author);
+      const { list: posts } = await api(`/life/posts?author=${encodeURIComponent(author)}`);
+      return showPosts(list, posts, { empty: '这位作者还没有文章。', author: false });
+    }
+    if (!getToken()) return askLogin('登录后，这里就是你自己的园子。');
+    const mine = await api('/life/mine');
+    showOwner(mine.name);
+    showPosts(list, mine.list, { empty: '还没有文章，写下第一篇吧。', author: false });
+  }
+
+  start().catch(err => {
+    if (err.status === 401) askLogin('登录已过期。');
+    else if (err.status === 403) askLogin('游客账号没有私人园，用邮箱或 Google 登录后再来。');
+    else showMessage(list, errorText(err));
+  });
+</script>
+</body>
+</html>

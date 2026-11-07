@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>世界园 | 生活园</title>
+<meta name="description" content="世界园：世界地图上看作者们在哪里，随机遇见一位作者，读大家最新写的文章。">
+<link rel="canonical" href="https://gamesyuan.com/life/world/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:title" content="世界园">
+<meta property="og:description" content="世界各地的作者，都在这张地图上。">
+<meta property="og:url" content="https://gamesyuan.com/life/world/">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#FBF6EE">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/life/life.css">
+</head>
+<body>
+<div class="page">
+<nav class="top"><a href="/life/">← 生活园</a><a href="/life/write/">写文章</a></nav>
+<header class="masthead">
+  <span class="seal" aria-hidden="true">世</span>
+  <h1>世界园</h1>
+  <p>世界各地的作者，都在这张地图上。</p>
+</header>
+<section class="globe-wrap" aria-label="作者地图">
+  <div class="globe" id="globe">
+    <canvas role="img" aria-label="世界地图"></canvas>
+    <div class="bubbles"></div>
+    <div class="map-tip" hidden></div>
+  </div>
+  <div class="globe-foot">
+    <p id="globe-summary" role="status"></p>
+    <div class="heat-key"><span>作者少</span><i aria-hidden="true"></i><span>多</span></div>
+  </div>
+</section>
+<h2 class="section-title">最新文章</h2>
+<main id="list"><p class="empty" role="status">正在打开…</p></main>
+<footer class="foot"><a href="/life/">生活园</a> · <a href="/">首页</a></footer>
+</div>
+<script src="/life/life.js"></script>
+<script src="/life/land.js"></script>
+<script src="/life/map.js"></script>
+<script>
+  const list = document.getElementById('list');
+  api('/life/posts')
+    .then(({ list: posts }) => showPosts(list, posts, { empty: '还没有文章。' }))
+    .catch(err => showMessage(list, errorText(err)));
+</script>
+</body>
+</html>

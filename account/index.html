@@ -90,7 +90,7 @@
 <body>
 <header>
   <div class="wrap">
-    <a class="logo" href="/">游戏园</a>
+    <a class="logo" href="/games/">游戏园</a>
     <nav>
       <a href="/xiangqi/">象棋</a>
       <a href="/wuziqi/">五子棋</a>
@@ -328,7 +328,7 @@
   }));
 
   $('delete').addEventListener('click', e => {
-    if (!confirm('删除后积分和战绩都找不回来，确定吗？')) return;
+    if (!confirm('删除后积分、战绩和写过的文章都找不回来，确定吗？')) return;
     run(e.target, async () => {
       await api('/delete', {});
       setToken('');

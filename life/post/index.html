@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>园中小记</title>
-<meta name="description" content="园中小记：写写日常，也写写想法。">
+<title>生活园</title>
+<meta name="description" content="生活园：写写日常，也写写想法。">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="游戏园">
 <meta property="og:image" content="https://gamesyuan.com/og.png">
@@ -15,7 +15,7 @@
 </head>
 <body>
 <div class="page">
-<nav class="top"><a href="/life/">← 园中小记</a><a id="edit" hidden>修改</a></nav>
+<nav class="top"><a href="/life/world/">← 世界园</a><a id="edit" hidden>修改</a></nav>
 <article id="article" hidden>
   <header class="head">
     <h1 id="title"></h1>
@@ -26,7 +26,7 @@
 </article>
 <p class="empty" id="status" role="status">正在打开…</p>
 <nav class="pager" id="pager" hidden></nav>
-<footer class="foot"><a href="/life/">园中小记</a> · <a href="/">游戏园</a></footer>
+<footer class="foot"><a href="/life/">生活园</a> · <a href="/">首页</a></footer>
 </div>
 <script src="/life/life.js"></script>
 <script>
@@ -44,11 +44,16 @@
   }
 
   function show({ post, newer, older }) {
-    document.title = `${post.title} | 园中小记`;
+    document.title = `${post.title} | 生活园`;
     $('title').textContent = post.title;
     const parts = [cnDate(post.date), ...post.tags.split(/\s+/).filter(Boolean)];
     if (post.draft) parts.push('草稿');
-    $('meta').replaceChildren(...parts.map(text => {
+    const author = document.createElement('a');
+    author.href = authorUrl(post.author);
+    author.textContent = post.author;
+    const byline = document.createElement('span');
+    byline.append(author);
+    $('meta').replaceChildren(byline, ...parts.map(text => {
       const span = document.createElement('span');
       span.textContent = text;
       return span;
@@ -59,6 +64,7 @@
     if (newer) links.push(pagerLink(newer, '下一篇', 'next'));
     $('pager').replaceChildren(...links);
     $('pager').hidden = !links.length;
+    $('edit').hidden = !post.canEdit;
     $('article').hidden = false;
     $('status').hidden = true;
   }
@@ -68,7 +74,6 @@
   });
 
   $('edit').href = `/life/write/?id=${encodeURIComponent(id)}`;
-  showAuthorLink($('edit'));
 </script>
 </body>
 </html>

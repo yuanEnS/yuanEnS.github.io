@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>写文章 | 园中小记</title>
-<meta name="description" content="园中小记的写作页面。">
+<title>写文章 | 生活园</title>
+<meta name="description" content="生活园的写作页面。">
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#FBF6EE">
@@ -13,7 +13,7 @@
 </head>
 <body>
 <div class="page">
-<nav class="top"><a href="/life/">← 园中小记</a></nav>
+<nav class="top"><a href="/life/personal/">← 私人园</a></nav>
 <p class="empty" id="gate" role="status">正在打开…</p>
 
 <main id="editor" hidden>
@@ -33,6 +33,7 @@
     </div>
     <textarea class="field" id="text" rows="16" placeholder="写点什么。空一行就是新的一段。" aria-label="正文"></textarea>
     <div class="body preview" id="preview" hidden></div>
+    <label class="check"><input type="checkbox" id="place" checked> 在世界园地图上显示我的大致位置（按网络判断，精确到约 50 公里）</label>
     <p class="note" id="message" role="status"></p>
     <div class="buttons">
       <button class="primary" id="publish" type="submit">发布</button>
@@ -40,19 +41,23 @@
       <button type="button" id="new-post" hidden>写新文章</button>
       <button type="button" class="danger" id="remove" hidden>删除</button>
     </div>
+    <p class="hint" id="quota" hidden>今天已经发布过一篇了，这篇可以先存为草稿，明天再发布。</p>
+    <p class="hint">每人每天发布一篇（按北京时间算），修改已发布的文章不算。文章和昵称所有人都能看到，不合适的内容会被删除。</p>
   </form>
 
-  <h2 class="year all-posts">全部文章</h2>
+  <h2 class="year all-posts">我的文章</h2>
   <div id="posts"></div>
 </main>
 
-<footer class="foot"><a href="/life/">园中小记</a></footer>
+<footer class="foot"><a href="/life/">生活园</a></footer>
 </div>
 <script src="/life/life.js"></script>
 <script>
   const $ = id => document.getElementById(id);
   const AUTOSAVE_KEY = 'life:autosave';
   let currentId = null;
+  let counted = false; // 这篇已经占过发布名额，再发布不受每天一篇的限制
+  let wroteToday = false;
 
   function today() {
     const now = new Date();
@@ -63,12 +68,19 @@
     $('message').textContent = text;
   }
 
+  function showQuota() {
+    const spent = wroteToday && !counted;
+    $('publish').disabled = spent;
+    $('quota').hidden = !spent;
+  }
+
   function values() {
     return { title: $('title').value, date: $('date').value, tags: $('tags').value, body: $('text').value };
   }
 
   function fill(post) {
     currentId = post.id || null;
+    counted = !!post.counted;
     $('title').value = post.title || '';
     $('date').value = post.date || today();
     $('tags').value = post.tags || '';
@@ -78,6 +90,7 @@
     $('publish').textContent = currentId && !post.draft ? '保存修改' : '发布';
     $('save-draft').textContent = currentId && !post.draft ? '改成草稿' : '存为草稿';
     showEditor();
+    showQuota();
   }
 
   // 没保存的内容留在这台设备上，页面意外关掉也不会丢
@@ -137,9 +150,9 @@
     say('');
     button.disabled = true;
     try {
-      const { id } = await api('/life/save', { id: currentId, ...values(), draft });
+      const { id, counted: spent } = await api('/life/save', { id: currentId, ...values(), draft, place: $('place').checked });
       clearAutosave();
-      fill({ id, ...values(), draft: draft ? 1 : 0 });
+      fill({ id, ...values(), draft: draft ? 1 : 0, counted: spent });
       history.replaceState(null, '', `/life/write/?id=${id}`);
       await loadPosts();
       say(done);
@@ -147,10 +160,13 @@
       say(errorText(err));
     }
     button.disabled = false;
+    showQuota();
   }
 
   async function loadPosts() {
-    const { list } = await api('/life/admin');
+    const mine = await api('/life/mine');
+    const { list } = mine;
+    wroteToday = mine.wroteToday;
     $('posts').replaceChildren(...list.map(post => {
       const row = document.createElement('a');
       row.className = 'post-row';
@@ -162,6 +178,7 @@
       row.append(title, meta);
       return row;
     }));
+    return mine;
   }
 
   function blocked(text, link) {
@@ -177,11 +194,13 @@
 
   async function start() {
     if (!getToken()) return blocked('写文章要先登录。', { href: '/account/?back=/life/write/', text: '去登录' });
-    await loadPosts();
+    const { placeOff } = await loadPosts();
+    if (placeOff) $('place').checked = false;
     const id = new URLSearchParams(location.search).get('id');
     const saved = readAutosave();
     if (id) {
       const { post } = await api(`/life/post?id=${encodeURIComponent(id)}`);
+      if (!post.canEdit) return blocked('这篇文章不是你写的，不能修改。');
       const restore = saved && saved.id === post.id && saved.body !== post.body;
       fill(post);
       if (restore) {
@@ -244,7 +263,7 @@
 
   start().catch(err => {
     if (err.status === 401) blocked('登录已过期。', { href: '/account/?back=/life/write/', text: '重新登录' });
-    else if (err.status === 403) blocked('这个页面只有作者能用。');
+    else if (err.status === 403) blocked(err.message, { href: '/account/?back=/life/write/', text: '去登录' });
     else blocked(errorText(err));
   });
 </script>

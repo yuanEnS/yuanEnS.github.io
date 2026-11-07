@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>园中小记 | 游戏园</title>
-<meta name="description" content="园中小记：写写日常，也写写想法。">
+<title>生活园 | gamesyuan</title>
+<meta name="description" content="生活园：世界园里看世界各地的作者，私人园里一篇一篇写自己的文章。">
 <link rel="canonical" href="https://gamesyuan.com/life/">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="游戏园">
-<meta property="og:title" content="园中小记">
-<meta property="og:description" content="写写日常，也写写想法。">
+<meta property="og:site_name" content="gamesyuan">
+<meta property="og:title" content="生活园">
+<meta property="og:description" content="生活园：世界园里看世界各地的作者，私人园里一篇一篇写自己的文章。">
 <meta property="og:url" content="https://gamesyuan.com/life/">
 <meta property="og:image" content="https://gamesyuan.com/og.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -19,62 +19,25 @@
 </head>
 <body>
 <div class="page">
-<nav class="top"><a href="/">← 游戏园</a><a id="write" href="/life/write/" hidden>写文章</a></nav>
+<nav class="top"><a href="/">← 首页</a><a href="/life/write/">写文章</a></nav>
 <header class="masthead">
-  <span class="seal" aria-hidden="true">记</span>
-  <h1>园中小记</h1>
-  <p>写写日常，也写写想法。</p>
+  <span class="seal" aria-hidden="true">生</span>
+  <h1>生活园</h1>
+  <p>写写日常，也写写想法。每人每天一篇。</p>
 </header>
-<main id="list"><p class="empty" role="status">正在打开…</p></main>
-<footer class="foot"><a href="/">游戏园</a></footer>
+<main class="doors">
+  <a class="door" href="/life/world/">
+    <span class="seal" aria-hidden="true">世</span>
+    <span class="door-name">世界园<small>world</small></span>
+    <span class="door-text">世界地图上的作者，随机遇见一位。</span>
+  </a>
+  <a class="door" href="/life/personal/">
+    <span class="seal" aria-hidden="true">私</span>
+    <span class="door-name">私人园<small>personal</small></span>
+    <span class="door-text">一篇一篇，都是自己写的。</span>
+  </a>
+</main>
+<footer class="foot"><a href="/">首页</a></footer>
 </div>
-<script src="/life/life.js"></script>
-<script>
-  const list = document.getElementById('list');
-
-  function entry(post) {
-    const article = document.createElement('article');
-    article.className = 'entry';
-    const time = document.createElement('time');
-    time.dateTime = post.date;
-    time.textContent = dateParts(post.date).monthDay;
-    const title = document.createElement('h2');
-    const link = document.createElement('a');
-    link.href = `/life/post/?id=${post.id}`;
-    link.textContent = post.title;
-    title.append(link);
-    const summary = document.createElement('p');
-    summary.textContent = excerpt(post.head);
-    article.append(time, title, summary);
-    return article;
-  }
-
-  function message(text) {
-    const p = document.createElement('p');
-    p.className = 'empty';
-    p.textContent = text;
-    list.replaceChildren(p);
-  }
-
-  api('/life/posts').then(({ list: posts }) => {
-    if (!posts.length) return message('还没有文章。');
-    const nodes = [];
-    let year = null;
-    for (const post of posts) {
-      const y = dateParts(post.date).year;
-      if (y !== year) {
-        year = y;
-        const heading = document.createElement('h2');
-        heading.className = 'year';
-        heading.textContent = cnYear(y);
-        nodes.push(heading);
-      }
-      nodes.push(entry(post));
-    }
-    list.replaceChildren(...nodes);
-  }).catch(err => message(errorText(err)));
-
-  showAuthorLink(document.getElementById('write'));
-</script>
 </body>
 </html>
