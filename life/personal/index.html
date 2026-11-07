@@ -4,15 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>私人园 | 生活园</title>
-<meta name="description" content="私人园：一位作者的文章，还有心愿单、旅行地图、纪念日这些园地。">
+<meta name="description" content="私人园：一位作者的文章，还有心愿单、旅行地图、纪念日和自己起名的园地。">
 <link rel="canonical" href="https://gamesyuan.com/life/personal/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="gamesyuan">
 <meta property="og:title" content="私人园">
-<meta property="og:description" content="私人园：一位作者的文章，还有心愿单、旅行地图、纪念日这些园地。">
+<meta property="og:description" content="私人园：一位作者的文章，还有心愿单、旅行地图、纪念日和自己起名的园地。">
 <meta property="og:url" content="https://gamesyuan.com/life/personal/">
 <meta property="og:image" content="https://gamesyuan.com/og.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
 <meta name="theme-color" content="#FBF6EE">
 <link rel="stylesheet" href="/life/fonts/kai.css">
 <link rel="stylesheet" href="/life/life.css">
@@ -37,12 +43,13 @@
         <label><input type="radio" name="kind" value="wish" checked><b>心愿单</b><small>想做的事，一件件勾掉</small></label>
         <label><input type="radio" name="kind" value="travel"><b>旅行地图</b><small>在地图上标出去过的地方，写下旅行故事</small></label>
         <label><input type="radio" name="kind" value="dates"><b>纪念日</b><small>记住重要的日子，数着过了多少天</small></label>
+        <label><input type="radio" name="kind" value="notes"><b>其他</b><small>自己起名，写文章、随笔，里面还能再开小园地</small></label>
       </fieldset>
       <input class="field" id="new-title" maxlength="40" placeholder="起个名字，比如：我们的心愿" aria-label="园地名字" autocomplete="off" required>
       <label class="check"><input type="checkbox" id="new-public"> 公开，所有人都能看到（不勾就只有你和一起写的人能看）</label>
       <p class="note" id="new-message" role="status"></p>
       <div class="buttons"><button class="primary" type="submit">开园地</button></div>
-      <p class="hint">开好以后，可以在园地设置里按昵称邀请朋友一起写。</p>
+      <p class="hint">开好以后，可以在园地设置里按昵称邀请朋友一起写。每块园地里还能开小园地，比如「旅行」里放「2024 欧洲」。</p>
     </form>
   </details>
 </section>
@@ -69,7 +76,7 @@
     list.firstChild.append(' ', link);
   }
 
-  const KINDS = { wish: ['愿', '心愿单'], travel: ['行', '旅行地图'], dates: ['念', '纪念日'] };
+  const KINDS = { wish: ['愿', '心愿单'], travel: ['行', '旅行地图'], dates: ['念', '纪念日'], notes: ['记', ''] };
 
   function gardenCard(garden, { owned = true, invite = false } = {}) {
     const card = document.createElement(invite ? 'div' : 'a');
@@ -82,7 +89,8 @@
     const name = document.createElement('strong');
     name.textContent = garden.title;
     const meta = document.createElement('small');
-    const parts = [KINDS[garden.kind][1], `${garden.items} 条`];
+    const parts = [KINDS[garden.kind][1], `${garden.items} ${garden.kind === 'notes' ? '篇' : '条'}`].filter(Boolean);
+    if (garden.children) parts.push(`${garden.children} 块小园地`);
     if (garden.members) parts.push(`${garden.members + 1} 人一起写`);
     if (!owned) parts.push(`${garden.owner}的`);
     if (!invite && !author) parts.push(garden.public ? '公开' : '不公开');

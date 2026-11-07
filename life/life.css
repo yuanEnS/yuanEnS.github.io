@@ -238,7 +238,7 @@ a.garden-card:hover { border-color: var(--primary); }
 .new-garden, .settings { margin-top: 18px; border-top: 1px solid var(--rule); padding-top: 14px; }
 .new-garden summary, .settings summary { cursor: pointer; color: var(--primary); font-size: 18px; line-height: 1.8; }
 .new-garden form, .settings form { margin-top: 14px; }
-.kind-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 12px; padding: 0; border: 0; }
+.kind-pick { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0 0 12px; padding: 0; border: 0; }
 .kind-pick legend { margin-bottom: 8px; color: var(--muted); font-size: 15px; }
 .kind-pick label {
   display: block; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--card); cursor: pointer;
@@ -336,3 +336,14 @@ a.garden-card:hover { border-color: var(--primary); }
 .place-choice small { display: block; color: var(--muted); font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
 .place-search .hint { margin-top: 6px; font-size: 14px; }
 .search-row button, .invite-form button { flex: none; white-space: nowrap; }
+
+/* 园中园 */
+.masthead .crumbs { margin: 0 0 4px; color: var(--muted); font-size: 15px; line-height: 1.7; overflow-wrap: anywhere; }
+.masthead .crumbs a { color: var(--muted); }
+.masthead .crumbs a:hover { color: var(--primary); }
+.children { margin: 28px 0 8px; }
+.children .new-garden { margin-top: 12px; }
+
+/* 首页「装到手机」 */
+.install { margin: 0 0 8px; color: var(--muted); font-size: 16px; line-height: 1.8; text-align: center; }
+.install button { margin-left: 6px; }

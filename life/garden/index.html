@@ -4,9 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>园地 | 生活园</title>
-<meta name="description" content="私人园里的一块园地：心愿单、旅行地图或纪念日，可以和朋友一起写。">
+<meta name="description" content="私人园里的一块园地：心愿单、旅行地图、纪念日或自己起名的园地，可以和朋友一起写。">
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
 <meta name="theme-color" content="#FBF6EE">
 <link rel="stylesheet" href="/life/fonts/kai.css">
 <link rel="stylesheet" href="/life/life.css">
@@ -19,6 +25,7 @@
 <main id="garden" hidden>
   <header class="masthead garden-head">
     <span class="seal" id="seal" aria-hidden="true">园</span>
+    <p class="crumbs" id="crumbs" hidden></p>
     <h1 id="title"></h1>
     <p id="intro"></p>
     <p class="meta" id="people"></p>
@@ -39,6 +46,27 @@
 
   <p class="progress" id="progress" hidden></p>
   <div id="items"></div>
+
+  <section class="children" id="children-wrap" hidden aria-labelledby="children-title">
+    <h2 class="section-title" id="children-title">园中园</h2>
+    <div class="garden-grid" id="children"></div>
+    <details class="new-garden" id="new-child" hidden>
+      <summary>在这里开一块小园地</summary>
+      <form id="child-form">
+        <fieldset class="kind-pick">
+          <legend>种什么</legend>
+          <label><input type="radio" name="child-kind" value="notes" checked><b>其他</b><small>自己起名，写文章、随笔</small></label>
+          <label><input type="radio" name="child-kind" value="wish"><b>心愿单</b><small>想做的事，一件件勾掉</small></label>
+          <label><input type="radio" name="child-kind" value="travel"><b>旅行地图</b><small>标出去过的地方，写旅行故事</small></label>
+          <label><input type="radio" name="child-kind" value="dates"><b>纪念日</b><small>记住重要的日子</small></label>
+        </fieldset>
+        <input class="field" id="child-title" maxlength="40" placeholder="起个名字，比如：2024 欧洲" aria-label="小园地的名字" autocomplete="off" required>
+        <p class="note" id="child-message" role="status"></p>
+        <div class="buttons"><button class="primary" type="submit">开小园地</button></div>
+        <p class="hint" id="child-hint"></p>
+      </form>
+    </details>
+  </section>
 
   <form class="item-form" id="item-form" hidden>
     <h2 class="year" id="form-title">添一条</h2>
@@ -70,16 +98,19 @@
     <form id="garden-form">
       <input class="field" id="garden-title" maxlength="40" aria-label="园地名字" autocomplete="off">
       <textarea class="field" id="garden-intro" rows="2" maxlength="300" placeholder="一句介绍（可不填）" aria-label="介绍"></textarea>
-      <label class="check"><input type="checkbox" id="garden-public"> 公开，所有人都能看到，会出现在我的私人园里</label>
+      <label class="check" id="public-wrap"><input type="checkbox" id="garden-public"> 公开，所有人都能看到，会出现在我的私人园里</label>
+      <p class="hint" id="nested-hint" hidden></p>
       <div class="buttons"><button class="primary" type="submit">保存设置</button></div>
     </form>
-    <h3>一起写的人</h3>
-    <div id="members"></div>
-    <form class="invite-form" id="invite-form">
-      <input class="field" id="invite-name" maxlength="12" placeholder="对方的昵称" aria-label="邀请的昵称" autocomplete="off">
-      <button type="submit">邀请</button>
-    </form>
-    <p class="hint">对方在自己的私人园里答应后，就能添加和修改条目。一起写的人只能删自己写的条目，你能删任何一条。</p>
+    <div id="people-settings">
+      <h3>一起写的人</h3>
+      <div id="members"></div>
+      <form class="invite-form" id="invite-form">
+        <input class="field" id="invite-name" maxlength="12" placeholder="对方的昵称" aria-label="邀请的昵称" autocomplete="off">
+        <button type="submit">邀请</button>
+      </form>
+      <p class="hint">对方在自己的私人园里答应后，就能添加和修改条目，也能开小园地。一起写的人只能删自己写的条目和自己开的小园地，你都能删。里面的小园地也跟着这里的设置。</p>
+    </div>
     <p class="note" id="settings-message" role="status"></p>
     <div class="buttons"><button type="button" class="danger" id="garden-delete">删除整块园地</button></div>
   </details>
@@ -108,7 +139,12 @@
       seal: '念', add: '记一个日子', title: '比如：第一次见面', date: '日期', body: '写几句（可不填）',
       empty: '还没有纪念日。',
     },
+    notes: {
+      seal: '记', add: '写一篇', title: '标题', date: '日期（可不填）', body: '正文。空一行就是新的一段。',
+      empty: '还没有文章。', name: '其他',
+    },
   };
+  const KIND_NAME = { wish: '心愿单', travel: '旅行地图', dates: '纪念日', notes: '' };
 
   let data = null; // 接口返回的 { garden, members, items }
   let editing = null; // 正在改的条目
@@ -222,15 +258,25 @@
     return map;
   }
 
+  // 新的在前面，没填日期的放最后
+  const newestFirst = items => [...items].sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.id - a.id);
+
   function showTravel(items) {
     $('map-wrap').hidden = false;
     ensureMap().setPins(items);
     $('map-hint').textContent = items.length
       ? `去过 ${items.length} 个地方。点地图上的红点，打开那段故事。`
       : '';
-    // 新的旅行在前面，没填日期的放最后
-    const sorted = [...items].sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.id - a.id);
-    return sorted.map(item => {
+    return newestFirst(items).map(story);
+  }
+
+  function showNotes(items) {
+    return newestFirst(items).map(story);
+  }
+
+  // 一行标题 + 开头一句，点开读全文。旅行故事和「其他」园地的文章都这样
+  function story(item) {
+    {
       const article = el('article', 'entry trip');
       article.id = `item-${item.id}`;
       const time = el('time', '', [item.date ? cnDate(item.date) : '', byline(item)].filter(Boolean).join(' · '));
@@ -280,7 +326,7 @@
       if (edit) actions.append(edit);
       if (actions.childNodes.length) article.append(actions);
       return article;
-    });
+    }
   }
 
   function showDates(items) {
@@ -370,16 +416,29 @@
   // ---------- 整页 ----------
 
   function showHead() {
-    const { garden, members } = data;
+    const { garden, members, path } = data;
     document.title = `${garden.title} | 生活园`;
+    // 小园地：上面显示从最外面一层层进来的路
+    $('crumbs').hidden = !path.length;
+    $('crumbs').replaceChildren(...path.flatMap((step, i) => {
+      const link = el('a', '', step.title);
+      link.href = `/life/garden/?id=${step.id}`;
+      return i ? [' › ', link] : [link];
+    }), path.length ? ' ›' : '');
     $('title').textContent = garden.title;
     $('intro').textContent = garden.intro;
     $('intro').hidden = !garden.intro;
     $('seal').textContent = kind().seal;
     $('badge').textContent = garden.public ? '公开' : '只有一起写的人能看';
     const mine = garden.role === 'owner';
-    $('back').href = mine || garden.role === 'member' ? '/life/personal/' : authorUrl(garden.owner);
-    $('back').textContent = mine || garden.role === 'member' ? '← 我的私人园' : `← ${garden.owner}的园子`;
+    const parent = path[path.length - 1];
+    if (parent) {
+      $('back').href = `/life/garden/?id=${parent.id}`;
+      $('back').textContent = `← ${parent.title}`;
+    } else {
+      $('back').href = mine || garden.role === 'member' ? '/life/personal/' : authorUrl(garden.owner);
+      $('back').textContent = mine || garden.role === 'member' ? '← 我的私人园' : `← ${garden.owner}的园子`;
+    }
     const joined = members.filter(m => m.joined).map(m => m.name);
     const owner = el('a', '', garden.owner);
     owner.href = authorUrl(garden.owner);
@@ -388,15 +447,47 @@
     $('invite-bar').hidden = garden.role !== 'invited';
     $('invite-text').textContent = `${garden.owner}邀请你一起写这块园地。`;
     $('item-form').hidden = !canWrite();
-    $('settings').hidden = !mine;
-    $('leave-wrap').hidden = garden.role !== 'member';
+    // 最外面的园地只有主人能设置；小园地一起写的人都能改名字
+    $('settings').hidden = path.length ? !canWrite() : !mine;
+    $('leave-wrap').hidden = garden.role !== 'member' || !!path.length;
+  }
+
+  function childCard(child) {
+    const card = el('a', 'garden-card');
+    card.href = `/life/garden/?id=${child.id}`;
+    const seal = el('span', 'seal', KIND[child.kind].seal);
+    seal.setAttribute('aria-hidden', 'true');
+    const parts = [];
+    if (KIND_NAME[child.kind]) parts.push(KIND_NAME[child.kind]);
+    parts.push(`${child.items} ${child.kind === 'notes' ? '篇' : '条'}`);
+    if (child.children) parts.push(`${child.children} 块小园地`);
+    const text = el('span');
+    text.append(el('strong', '', child.title), el('small', '', parts.join(' · ')));
+    card.append(seal, text);
+    return card;
+  }
+
+  function showChildren() {
+    const { garden, children } = data;
+    const canAdd = canWrite() && garden.canNest;
+    $('children-wrap').hidden = !children.length && !canAdd;
+    $('children').replaceChildren(...children.map(childCard));
+    $('children').hidden = !children.length;
+    $('new-child').hidden = !canAdd;
+    $('child-hint').textContent = `小园地跟着「${data.path.length ? data.path[0].title : garden.title}」：一起写的人一样，${garden.public ? '一样公开' : '一样不公开'}。园中园最多三层。`;
   }
 
   function showSettings() {
-    const { garden, members } = data;
+    const { garden, members, path } = data;
     $('garden-title').value = garden.title;
     $('garden-intro').value = garden.intro;
     $('garden-public').checked = !!garden.public;
+    const nested = !!path.length;
+    $('public-wrap').hidden = nested;
+    $('people-settings').hidden = nested;
+    $('nested-hint').hidden = !nested;
+    $('nested-hint').textContent = nested ? `公开与否、一起写的人，都在最外面的「${path[0].title}」里设置。` : '';
+    $('garden-delete').hidden = !(garden.role === 'owner' || garden.created);
     $('members').replaceChildren(...(members.length ? members.map(member => {
       const row = el('div', 'member');
       row.append(el('span', '', member.name), el('small', '', member.joined ? '一起写' : '等对方答应'));
@@ -416,7 +507,8 @@
     const items = data.items;
     $('map-wrap').hidden = type !== 'travel';
     $('progress').hidden = true;
-    const nodes = type === 'wish' ? showWish(items) : type === 'travel' ? showTravel(items) : showDates(items);
+    const show = { wish: showWish, travel: showTravel, dates: showDates, notes: showNotes }[type];
+    const nodes = show(items);
     if (!nodes.length) nodes.push(el('p', 'empty', canWrite() ? `${kind().empty}在下面添第一条吧。` : kind().empty));
     $('items').className = `items items-${type}`;
     $('items').replaceChildren(...nodes);
@@ -430,6 +522,8 @@
     $('item-body').setAttribute('aria-label', '内容');
     $('date-label').firstChild.textContent = `${kind().date} `;
     $('item-date').required = type === 'dates';
+    $('item-body').maxLength = type === 'notes' ? 20000 : 5000;
+    $('item-body').rows = type === 'notes' ? 12 : 5;
     $('done-wrap').hidden = type !== 'wish';
     $('pick-text').hidden = type !== 'travel';
     $('place-search').hidden = type !== 'travel';
@@ -440,7 +534,8 @@
     data = await api(`/garden/view?id=${encodeURIComponent(gardenId)}`);
     showHead();
     showItems();
-    if (data.garden.role === 'owner') showSettings();
+    showChildren();
+    if (!$('settings').hidden) showSettings();
   }
 
   async function act(run, messageId) {
@@ -549,11 +644,28 @@
     }
   });
 
+  $('child-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    $('child-message').textContent = '';
+    try {
+      const { id } = await api('/garden/save', {
+        parent: data.garden.id,
+        kind: e.target.querySelector('[name=child-kind]:checked').value,
+        title: $('child-title').value,
+      });
+      location.href = `/life/garden/?id=${id}`;
+    } catch (err) {
+      $('child-message').textContent = errorText(err);
+    }
+  });
+
   $('garden-delete').addEventListener('click', async () => {
-    if (!confirm(`删除「${data.garden.title}」和里面的全部条目？删除后找不回来。`)) return;
+    const inner = data.children.length ? '、里面的小园地' : '';
+    if (!confirm(`删除「${data.garden.title}」${inner}和全部条目？删除后找不回来。`)) return;
     try {
       await api('/garden/delete', { id: data.garden.id });
-      location.href = '/life/personal/';
+      const parent = data.path[data.path.length - 1];
+      location.href = parent ? `/life/garden/?id=${parent.id}` : '/life/personal/';
     } catch (err) {
       $('settings-message').textContent = errorText(err);
     }

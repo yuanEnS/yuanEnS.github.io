@@ -7,6 +7,12 @@
 <meta name="description" content="游戏园收集哪些信息、怎么使用，以及如何删除账号。">
 <link rel="canonical" href="https://gamesyuan.com/privacy/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
 <style>
   :root { --bg: #FBF6EE; --text: #3A2C1E; --muted: #8A7560; --primary: #C62828; }
   @media (prefers-color-scheme: dark) {
@@ -38,6 +44,7 @@
     <li><strong>园地：</strong>你在私人园里开的心愿单、旅行地图、纪念日，以及里面的内容。默认只有你和你邀请的人能看到，改成公开后所有人都能看到。旅行地图上的地点是你自己在地图上选或者搜出来的，不是自动定位。搜地名时，搜的词经我们的服务器转给 OpenStreetMap 查坐标，不会带上你的 IP 和账号，我们也不保存搜过的词。</li>
     <li><strong>大致位置：</strong>发布文章时，如果勾选了「在世界园地图上显示」，我们会根据你的网络判断大致位置，只保存取整到约 50 公里的坐标和国家，并和你的昵称、最新文章一起显示在地图上。取消勾选后再发布或保存已发布的文章，位置会被删除。不勾选就不保存。</li>
     <li><strong>登录令牌：</strong>保存在你的浏览器里，服务器只保存它的哈希值。</li>
+    <li><strong>手机上的缓存：</strong>把网站装到手机桌面后，打开过的页面、字体和图片会存在你自己的手机或电脑上，方便没网时打开。这些不会发给我们，清除浏览器数据或删掉 app 就没了。</li>
     <li><strong>IP 地址的哈希值：</strong>只用来限制请求频率、防止滥用，短时间后自动清除。</li>
   </ul>
   <p>使用 Google 登录时，我们只读取邮箱地址，不读取你的 Google 通讯录、云端硬盘等其他数据。</p>
