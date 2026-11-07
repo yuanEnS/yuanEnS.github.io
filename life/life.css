@@ -327,3 +327,12 @@ a.garden-card:hover { border-color: var(--primary); }
 .trip-summary { font-size: 17px; }
 .trip .body { margin-top: 8px; }
 .trip-actions { display: flex; gap: 18px; margin-top: 6px; }
+.place-search { margin-bottom: 14px; }
+.search-row { display: flex; gap: 8px; }
+.search-row .field { margin: 0 !important; }
+.place-results { display: grid; gap: 6px; margin-top: 8px; }
+.page .place-choice { display: block; width: 100%; padding: 8px 12px; text-align: left; background: var(--card); }
+.place-choice strong { display: block; font-weight: 400; font-size: 17px; color: var(--text); }
+.place-choice small { display: block; color: var(--muted); font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.place-search .hint { margin-top: 6px; font-size: 14px; }
+.search-row button, .invite-form button { flex: none; white-space: nowrap; }

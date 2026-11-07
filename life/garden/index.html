@@ -42,6 +42,14 @@
 
   <form class="item-form" id="item-form" hidden>
     <h2 class="year" id="form-title">添一条</h2>
+    <div class="place-search" id="place-search" hidden>
+      <div class="search-row">
+        <input class="field" id="place-q" maxlength="60" placeholder="搜城市或地点，比如：丽江、Kiruna" aria-label="搜索城市或地点" autocomplete="off" enterkeyhint="search">
+        <button type="button" id="place-go">搜索</button>
+      </div>
+      <div class="place-results" id="place-results" role="list"></div>
+      <p class="hint">搜不到就在上面的地图上点一下。外国地名用英文搜更准。地点数据 © OpenStreetMap。</p>
+    </div>
     <input class="field" id="item-title" maxlength="100" autocomplete="off">
     <div class="field-row">
       <label id="date-label">日期 <input class="field" id="item-date" type="date"></label>
@@ -106,6 +114,7 @@
   let editing = null; // 正在改的条目
   let picked = null; // 旅行地图上选中的地方
   let map = null;
+  let pickedLabel = ''; // 搜索选中的地方的全名
   const openStories = new Set(); // 展开了的旅行故事，保存后重画时保持展开
 
   const canWrite = () => ['owner', 'member'].includes(data.garden.role);
@@ -206,6 +215,7 @@
       },
       onPick: (lat, lon) => {
         picked = { lat, lon };
+        pickedLabel = '';
         showPick();
       },
     });
@@ -315,7 +325,10 @@
   function resetForm() {
     editing = null;
     picked = null;
+    pickedLabel = '';
     if (map) map.setPick(null);
+    $('place-q').value = '';
+    $('place-results').replaceChildren();
     $('item-title').value = '';
     $('item-body').value = '';
     $('item-date').value = data.garden.kind === 'dates' ? today() : '';
@@ -330,8 +343,8 @@
   function showPick() {
     if (data.garden.kind !== 'travel') return;
     $('pick-text').textContent = picked
-      ? '已选好地方，红圈就是。点地图别处可以改。'
-      : '在上面的地图上点一下，选出这个地方。';
+      ? `${pickedLabel ? `已选：${pickedLabel}。` : '已选好地方，地图上的红圈就是。'}点地图别处可以改。`
+      : '搜一下，或者在上面的地图上点一下，选出这个地方。';
   }
 
   function startEdit(item) {
@@ -346,6 +359,7 @@
     $('item-message').textContent = '';
     if (data.garden.kind === 'travel') {
       picked = { lat: item.lat, lon: item.lon };
+      pickedLabel = '';
       map.setPick(item.lat, item.lon);
       showPick();
     }
@@ -418,6 +432,7 @@
     $('item-date').required = type === 'dates';
     $('done-wrap').hidden = type !== 'wish';
     $('pick-text').hidden = type !== 'travel';
+    $('place-search').hidden = type !== 'travel';
     if (type === 'travel') ensureMap().picking(canWrite());
   }
 
@@ -469,6 +484,44 @@
       $('item-message').textContent = '已保存。';
     }
     button.disabled = false;
+  });
+
+  // 搜地名：选一个结果就定好位置，标题空着的话顺便填上
+  async function searchPlace() {
+    const q = $('place-q').value.trim();
+    if (!q) return;
+    const results = $('place-results');
+    const button = $('place-go');
+    button.disabled = true;
+    results.replaceChildren(el('p', 'hint', '正在搜…'));
+    try {
+      const { list } = await api(`/garden/geo?q=${encodeURIComponent(q)}`);
+      results.replaceChildren(...(list.length ? list.map(place => {
+        const choice = el('button', 'place-choice');
+        choice.type = 'button';
+        choice.setAttribute('role', 'listitem');
+        choice.append(el('strong', '', place.name), el('small', '', place.label));
+        choice.addEventListener('click', () => {
+          picked = { lat: place.lat, lon: place.lon };
+          pickedLabel = place.label;
+          ensureMap().setPick(place.lat, place.lon);
+          if (!$('item-title').value.trim()) $('item-title').value = place.name;
+          results.replaceChildren();
+          showPick();
+          $('item-message').textContent = '';
+        });
+        return choice;
+      }) : [el('p', 'hint', '没搜到。换个写法试试，外国地名用英文更准，或者直接在地图上点。')]));
+    } catch (err) {
+      results.replaceChildren(el('p', 'note', errorText(err)));
+    }
+    button.disabled = false;
+  }
+  $('place-go').addEventListener('click', searchPlace);
+  $('place-q').addEventListener('keydown', e => {
+    if (e.key !== 'Enter' || e.isComposing) return;
+    e.preventDefault();
+    searchPlace();
   });
 
   $('item-cancel').addEventListener('click', resetForm);
