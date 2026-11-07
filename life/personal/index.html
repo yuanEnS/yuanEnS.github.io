@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>私人园 | 生活园</title>
-<meta name="description" content="私人园：一位作者一篇一篇写下的文章。">
+<meta name="description" content="私人园：一位作者的文章，还有心愿单、旅行地图、纪念日这些园地。">
 <link rel="canonical" href="https://gamesyuan.com/life/personal/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="gamesyuan">
 <meta property="og:title" content="私人园">
-<meta property="og:description" content="私人园：一位作者一篇一篇写下的文章。">
+<meta property="og:description" content="私人园：一位作者的文章，还有心愿单、旅行地图、纪念日这些园地。">
 <meta property="og:url" content="https://gamesyuan.com/life/personal/">
 <meta property="og:image" content="https://gamesyuan.com/og.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -25,6 +25,28 @@
   <h1>私人园</h1>
   <p id="owner">一篇一篇，都是自己写的。</p>
 </header>
+<section class="gardens" id="gardens" hidden aria-labelledby="gardens-title">
+  <h2 class="section-title" id="gardens-title">园地</h2>
+  <div id="invites"></div>
+  <div class="garden-grid" id="garden-list"></div>
+  <details class="new-garden" id="new-garden" hidden>
+    <summary>开一块新园地</summary>
+    <form id="new-garden-form">
+      <fieldset class="kind-pick">
+        <legend>种什么</legend>
+        <label><input type="radio" name="kind" value="wish" checked><b>心愿单</b><small>想做的事，一件件勾掉</small></label>
+        <label><input type="radio" name="kind" value="travel"><b>旅行地图</b><small>在地图上标出去过的地方，写下旅行故事</small></label>
+        <label><input type="radio" name="kind" value="dates"><b>纪念日</b><small>记住重要的日子，数着过了多少天</small></label>
+      </fieldset>
+      <input class="field" id="new-title" maxlength="40" placeholder="起个名字，比如：我们的心愿" aria-label="园地名字" autocomplete="off" required>
+      <label class="check"><input type="checkbox" id="new-public"> 公开，所有人都能看到（不勾就只有你和一起写的人能看）</label>
+      <p class="note" id="new-message" role="status"></p>
+      <div class="buttons"><button class="primary" type="submit">开园地</button></div>
+      <p class="hint">开好以后，可以在园地设置里按昵称邀请朋友一起写。</p>
+    </form>
+  </details>
+</section>
+<h2 class="section-title posts-title" id="posts-title" hidden>文章</h2>
 <main id="list"><p class="empty" role="status">正在打开…</p></main>
 <footer class="foot"><a href="/life/">生活园</a> · <a href="/">首页</a></footer>
 </div>
@@ -47,15 +69,104 @@
     list.firstChild.append(' ', link);
   }
 
+  const KINDS = { wish: ['愿', '心愿单'], travel: ['行', '旅行地图'], dates: ['念', '纪念日'] };
+
+  function gardenCard(garden, { owned = true, invite = false } = {}) {
+    const card = document.createElement(invite ? 'div' : 'a');
+    card.className = `garden-card${invite ? ' invite' : ''}`;
+    if (!invite) card.href = `/life/garden/?id=${garden.id}`;
+    const seal = document.createElement('span');
+    seal.className = 'seal';
+    seal.setAttribute('aria-hidden', 'true');
+    seal.textContent = KINDS[garden.kind][0];
+    const name = document.createElement('strong');
+    name.textContent = garden.title;
+    const meta = document.createElement('small');
+    const parts = [KINDS[garden.kind][1], `${garden.items} 条`];
+    if (garden.members) parts.push(`${garden.members + 1} 人一起写`);
+    if (!owned) parts.push(`${garden.owner}的`);
+    if (!invite && !author) parts.push(garden.public ? '公开' : '不公开');
+    meta.textContent = parts.join(' · ');
+    const text = document.createElement('span');
+    text.append(name, meta);
+    card.append(seal, text);
+    if (invite) {
+      const note = document.createElement('p');
+      note.textContent = `${garden.owner}邀请你一起写`;
+      const look = document.createElement('a');
+      look.href = `/life/garden/?id=${garden.id}`;
+      look.textContent = '去看看';
+      const yes = document.createElement('button');
+      yes.type = 'button';
+      yes.className = 'primary';
+      yes.textContent = '答应';
+      const no = document.createElement('button');
+      no.type = 'button';
+      no.textContent = '不了';
+      const reply = async accept => {
+        yes.disabled = no.disabled = true;
+        try {
+          await api('/garden/answer', { id: garden.id, accept });
+          await showGardens();
+        } catch (err) {
+          note.textContent = errorText(err);
+          yes.disabled = no.disabled = false;
+        }
+      };
+      yes.addEventListener('click', () => reply(true));
+      no.addEventListener('click', () => reply(false));
+      const buttons = document.createElement('div');
+      buttons.className = 'buttons';
+      buttons.append(yes, no, look);
+      text.append(note, buttons);
+    }
+    return card;
+  }
+
+  async function showGardens() {
+    const section = document.getElementById('gardens');
+    if (author) {
+      const { list: gardens } = await api(`/garden/list?author=${encodeURIComponent(author)}`);
+      document.getElementById('garden-list').replaceChildren(...gardens.map(g => gardenCard(g)));
+      section.hidden = !gardens.length;
+    } else {
+      const { list: gardens, invites } = await api('/garden/list');
+      document.getElementById('invites').replaceChildren(...invites.map(g => gardenCard(g, { owned: false, invite: true })));
+      document.getElementById('garden-list').replaceChildren(...gardens.map(g => gardenCard(g, { owned: !!g.owned })));
+      document.getElementById('new-garden').hidden = false;
+      document.getElementById('new-garden').open = !gardens.length && !invites.length;
+      section.hidden = false;
+    }
+    document.getElementById('posts-title').hidden = section.hidden;
+  }
+
+  document.getElementById('new-garden-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const message = document.getElementById('new-message');
+    message.textContent = '';
+    try {
+      const { id } = await api('/garden/save', {
+        kind: e.target.querySelector('[name=kind]:checked').value,
+        title: document.getElementById('new-title').value,
+        public: document.getElementById('new-public').checked,
+      });
+      location.href = `/life/garden/?id=${id}`;
+    } catch (err) {
+      message.textContent = errorText(err);
+    }
+  });
+
   async function start() {
     if (author) {
       showOwner(author);
+      showGardens().catch(() => {});
       const { list: posts } = await api(`/life/posts?author=${encodeURIComponent(author)}`);
       return showPosts(list, posts, { empty: '这位作者还没有文章。', author: false });
     }
     if (!getToken()) return askLogin('登录后，这里就是你自己的园子。');
     const mine = await api('/life/mine');
     showOwner(mine.name);
+    await showGardens();
     showPosts(list, mine.list, { empty: '还没有文章，写下第一篇吧。', author: false });
   }
 

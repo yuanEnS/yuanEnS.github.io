@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>园地 | 生活园</title>
+<meta name="description" content="私人园里的一块园地：心愿单、旅行地图或纪念日，可以和朋友一起写。">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#FBF6EE">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/life/life.css">
+</head>
+<body>
+<div class="page">
+<nav class="top"><a id="back" href="/life/personal/">← 私人园</a><span id="badge"></span></nav>
+<p class="empty" id="status" role="status">正在打开…</p>
+
+<main id="garden" hidden>
+  <header class="masthead garden-head">
+    <span class="seal" id="seal" aria-hidden="true">园</span>
+    <h1 id="title"></h1>
+    <p id="intro"></p>
+    <p class="meta" id="people"></p>
+  </header>
+
+  <div class="invite-bar" id="invite-bar" hidden>
+    <p id="invite-text"></p>
+    <div class="buttons">
+      <button class="primary" type="button" id="accept">答应，一起写</button>
+      <button type="button" id="decline">不了</button>
+    </div>
+  </div>
+
+  <section class="globe-wrap" id="map-wrap" hidden aria-label="旅行地图">
+    <div class="globe trip-map" id="map"></div>
+    <p class="hint" id="map-hint"></p>
+  </section>
+
+  <p class="progress" id="progress" hidden></p>
+  <div id="items"></div>
+
+  <form class="item-form" id="item-form" hidden>
+    <h2 class="year" id="form-title">添一条</h2>
+    <input class="field" id="item-title" maxlength="100" autocomplete="off">
+    <div class="field-row">
+      <label id="date-label">日期 <input class="field" id="item-date" type="date"></label>
+      <label class="check" id="done-wrap" hidden><input type="checkbox" id="item-done"> 已经实现了</label>
+      <p class="hint" id="pick-text" hidden></p>
+    </div>
+    <textarea class="field" id="item-body" rows="5" maxlength="5000"></textarea>
+    <p class="note" id="item-message" role="status"></p>
+    <div class="buttons">
+      <button class="primary" type="submit" id="item-save">保存</button>
+      <button type="button" id="item-cancel" hidden>不改了</button>
+      <button type="button" class="danger" id="item-delete" hidden>删除这一条</button>
+    </div>
+  </form>
+
+  <details class="settings" id="settings" hidden>
+    <summary>园地设置</summary>
+    <form id="garden-form">
+      <input class="field" id="garden-title" maxlength="40" aria-label="园地名字" autocomplete="off">
+      <textarea class="field" id="garden-intro" rows="2" maxlength="300" placeholder="一句介绍（可不填）" aria-label="介绍"></textarea>
+      <label class="check"><input type="checkbox" id="garden-public"> 公开，所有人都能看到，会出现在我的私人园里</label>
+      <div class="buttons"><button class="primary" type="submit">保存设置</button></div>
+    </form>
+    <h3>一起写的人</h3>
+    <div id="members"></div>
+    <form class="invite-form" id="invite-form">
+      <input class="field" id="invite-name" maxlength="12" placeholder="对方的昵称" aria-label="邀请的昵称" autocomplete="off">
+      <button type="submit">邀请</button>
+    </form>
+    <p class="hint">对方在自己的私人园里答应后，就能添加和修改条目。一起写的人只能删自己写的条目，你能删任何一条。</p>
+    <p class="note" id="settings-message" role="status"></p>
+    <div class="buttons"><button type="button" class="danger" id="garden-delete">删除整块园地</button></div>
+  </details>
+
+  <div class="buttons leave" id="leave-wrap" hidden><button type="button" id="leave">退出这块园地</button></div>
+</main>
+
+<footer class="foot"><a href="/life/">生活园</a> · <a href="/life/personal/">私人园</a></footer>
+</div>
+<script src="/life/life.js"></script>
+<script src="/life/land.js"></script>
+<script src="/life/garden-map.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const gardenId = new URLSearchParams(location.search).get('id');
+  const KIND = {
+    wish: {
+      seal: '愿', add: '许个心愿', title: '想做的事', date: '实现的日子', body: '为什么想做、想和谁一起（可不填）',
+      empty: '还没有心愿。',
+    },
+    travel: {
+      seal: '行', add: '记一个地方', title: '地方，比如：京都', date: '去的日子', body: '旅行故事。空一行就是新的一段。',
+      empty: '还没有去过的地方。',
+    },
+    dates: {
+      seal: '念', add: '记一个日子', title: '比如：第一次见面', date: '日期', body: '写几句（可不填）',
+      empty: '还没有纪念日。',
+    },
+  };
+
+  let data = null; // 接口返回的 { garden, members, items }
+  let editing = null; // 正在改的条目
+  let picked = null; // 旅行地图上选中的地方
+  let map = null;
+
+  const canWrite = () => ['owner', 'member'].includes(data.garden.role);
+  const kind = () => KIND[data.garden.kind];
+
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function today() {
+    const now = new Date();
+    return new Date(now - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  }
+
+  function dayNumber(date) {
+    const [y, m, d] = date.split('-').map(Number);
+    return Date.UTC(y, m - 1, d) / 86400000;
+  }
+
+  // 下一个周年：今年的这一天过了就算明年的。2 月 29 日在平年算 3 月 1 日
+  function nextAnniversary(date) {
+    const [, m, d] = date.split('-').map(Number);
+    const now = today();
+    let year = Number(now.slice(0, 4));
+    const at = y => new Date(Date.UTC(y, m - 1, d)).toISOString().slice(0, 10);
+    if (at(year) < now) year++;
+    const next = at(year);
+    return { days: dayNumber(next) - dayNumber(now), years: year - Number(date.slice(0, 4)) };
+  }
+
+  function byline(item) {
+    const parts = [];
+    if (item.author) parts.push(item.author);
+    return parts.join(' · ');
+  }
+
+  function editButton(item) {
+    if (!canWrite()) return null;
+    const button = el('button', 'link-button', '修改');
+    button.type = 'button';
+    button.addEventListener('click', () => startEdit(item));
+    return button;
+  }
+
+  // ---------- 三种园地的样子 ----------
+
+  function showWish(items) {
+    const done = items.filter(item => item.done).length;
+    $('progress').hidden = !items.length;
+    $('progress').textContent = `已经实现 ${done} / ${items.length}`;
+    // 没实现的在前面
+    const sorted = [...items].sort((a, b) => a.done - b.done || a.id - b.id);
+    return sorted.map(item => {
+      const row = el('div', `wish${item.done ? ' done' : ''}`);
+      const box = el('input');
+      box.type = 'checkbox';
+      box.checked = !!item.done;
+      box.disabled = !canWrite();
+      box.setAttribute('aria-label', `${item.title}，${item.done ? '已实现' : '没实现'}`);
+      box.addEventListener('change', async () => {
+        box.disabled = true;
+        try {
+          await api('/garden/item', {
+            garden: data.garden.id, id: item.id, title: item.title, body: item.body,
+            date: box.checked && !item.date ? today() : item.date, done: box.checked,
+          });
+          await load();
+        } catch (err) {
+          box.checked = !box.checked;
+          box.disabled = false;
+          alert(errorText(err));
+        }
+      });
+      const text = el('div', 'wish-text');
+      text.append(el('strong', '', item.title));
+      if (item.body) text.append(el('p', '', item.body));
+      const meta = [byline(item)];
+      if (item.done && item.date) meta.push(`${cnDate(item.date)}实现`);
+      text.append(el('small', '', meta.filter(Boolean).join(' · ')));
+      row.append(box, text);
+      const edit = editButton(item);
+      if (edit) row.append(edit);
+      return row;
+    });
+  }
+
+  function ensureMap() {
+    if (map) return map;
+    map = gardenMap($('map'), {
+      onPin: item => document.getElementById(`item-${item.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      onPick: (lat, lon) => {
+        picked = { lat, lon };
+        showPick();
+      },
+    });
+    return map;
+  }
+
+  function showTravel(items) {
+    $('map-wrap').hidden = false;
+    ensureMap().setPins(items);
+    $('map-hint').textContent = items.length
+      ? `去过 ${items.length} 个地方。点地图上的红点，跳到那段故事。`
+      : '';
+    // 新的旅行在前面，没填日期的放最后
+    const sorted = [...items].sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.id - a.id);
+    return sorted.map(item => {
+      const article = el('article', 'entry trip');
+      article.id = `item-${item.id}`;
+      const time = el('time', '', [item.date ? cnDate(item.date) : '', byline(item)].filter(Boolean).join(' · '));
+      if (item.date) time.dateTime = item.date;
+      const title = el('h2', '', item.title);
+      article.append(time, title);
+      if (item.body) {
+        const body = el('div', 'body');
+        body.innerHTML = renderBody(item.body);
+        article.append(body);
+      }
+      const edit = editButton(item);
+      if (edit) article.append(edit);
+      return article;
+    });
+  }
+
+  function showDates(items) {
+    const now = today();
+    const rows = items.map(item => ({ item, next: nextAnniversary(item.date) }));
+    // 将来的日子按还有几天排在前面，过去的按下一个周年排
+    rows.sort((a, b) => {
+      const da = a.item.date > now ? dayNumber(a.item.date) - dayNumber(now) : a.next.days;
+      const db = b.item.date > now ? dayNumber(b.item.date) - dayNumber(now) : b.next.days;
+      return da - db;
+    });
+    return rows.map(({ item, next }) => {
+      const card = el('div', 'date-card');
+      const big = el('p', 'date-count');
+      const small = el('p', 'date-next');
+      const gap = dayNumber(now) - dayNumber(item.date);
+      if (gap < 0) {
+        big.append('还有 ', el('b', '', String(-gap)), ' 天');
+        small.textContent = cnDate(item.date);
+      } else if (gap === 0) {
+        big.append(el('b', '', '就是今天'));
+        small.textContent = cnDate(item.date);
+      } else {
+        big.append('已经 ', el('b', '', String(gap)), ' 天');
+        small.textContent = next.days === 0
+          ? `今天是 ${next.years} 周年`
+          : `${cnDate(item.date)} · ${next.years} 周年还有 ${next.days} 天`;
+      }
+      card.append(el('h2', '', item.title), big, small);
+      if (item.body) card.append(el('p', 'date-note', item.body));
+      const foot = el('div', 'date-foot');
+      foot.append(el('small', '', byline(item)));
+      const edit = editButton(item);
+      if (edit) foot.append(edit);
+      card.append(foot);
+      return card;
+    });
+  }
+
+  // ---------- 表单 ----------
+
+  function resetForm() {
+    editing = null;
+    picked = null;
+    if (map) map.setPick(null);
+    $('item-title').value = '';
+    $('item-body').value = '';
+    $('item-date').value = data.garden.kind === 'dates' ? today() : '';
+    $('item-done').checked = false;
+    $('form-title').textContent = kind().add;
+    $('item-cancel').hidden = true;
+    $('item-delete').hidden = true;
+    $('item-message').textContent = '';
+    showPick();
+  }
+
+  function showPick() {
+    if (data.garden.kind !== 'travel') return;
+    $('pick-text').textContent = picked
+      ? '已选好地方，红圈就是。点地图别处可以改。'
+      : '在上面的地图上点一下，选出这个地方。';
+  }
+
+  function startEdit(item) {
+    editing = item;
+    $('item-title').value = item.title;
+    $('item-body').value = item.body;
+    $('item-date').value = item.date;
+    $('item-done').checked = !!item.done;
+    $('form-title').textContent = '修改';
+    $('item-cancel').hidden = false;
+    $('item-delete').hidden = !(item.mine || data.garden.role === 'owner');
+    $('item-message').textContent = '';
+    if (data.garden.kind === 'travel') {
+      picked = { lat: item.lat, lon: item.lon };
+      map.setPick(item.lat, item.lon);
+      showPick();
+    }
+    $('item-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    $('item-title').focus({ preventScroll: true });
+  }
+
+  // ---------- 整页 ----------
+
+  function showHead() {
+    const { garden, members } = data;
+    document.title = `${garden.title} | 生活园`;
+    $('title').textContent = garden.title;
+    $('intro').textContent = garden.intro;
+    $('intro').hidden = !garden.intro;
+    $('seal').textContent = kind().seal;
+    $('badge').textContent = garden.public ? '公开' : '只有一起写的人能看';
+    const mine = garden.role === 'owner';
+    $('back').href = mine || garden.role === 'member' ? '/life/personal/' : authorUrl(garden.owner);
+    $('back').textContent = mine || garden.role === 'member' ? '← 我的私人园' : `← ${garden.owner}的园子`;
+    const joined = members.filter(m => m.joined).map(m => m.name);
+    const owner = el('a', '', garden.owner);
+    owner.href = authorUrl(garden.owner);
+    $('people').replaceChildren('主人 ', owner, joined.length ? ` · 一起写：${joined.join('、')}` : '');
+
+    $('invite-bar').hidden = garden.role !== 'invited';
+    $('invite-text').textContent = `${garden.owner}邀请你一起写这块园地。`;
+    $('item-form').hidden = !canWrite();
+    $('settings').hidden = !mine;
+    $('leave-wrap').hidden = garden.role !== 'member';
+  }
+
+  function showSettings() {
+    const { garden, members } = data;
+    $('garden-title').value = garden.title;
+    $('garden-intro').value = garden.intro;
+    $('garden-public').checked = !!garden.public;
+    $('members').replaceChildren(...(members.length ? members.map(member => {
+      const row = el('div', 'member');
+      row.append(el('span', '', member.name), el('small', '', member.joined ? '一起写' : '等对方答应'));
+      const out = el('button', 'link-button', member.joined ? '请对方离开' : '撤回邀请');
+      out.type = 'button';
+      out.addEventListener('click', async () => {
+        if (!confirm(`${out.textContent}：${member.name}？`)) return;
+        await act(() => api('/garden/remove', { id: garden.id, name: member.name }), 'settings-message');
+      });
+      row.append(out);
+      return row;
+    }) : [el('p', 'hint', '还没有邀请别人。')]));
+  }
+
+  function showItems() {
+    const { kind: type } = data.garden;
+    const items = data.items;
+    $('map-wrap').hidden = type !== 'travel';
+    $('progress').hidden = true;
+    const nodes = type === 'wish' ? showWish(items) : type === 'travel' ? showTravel(items) : showDates(items);
+    if (!nodes.length) nodes.push(el('p', 'empty', canWrite() ? `${kind().empty}在下面添第一条吧。` : kind().empty));
+    $('items').className = `items items-${type}`;
+    $('items').replaceChildren(...nodes);
+  }
+
+  function setupForm() {
+    const type = data.garden.kind;
+    $('item-title').placeholder = kind().title;
+    $('item-title').setAttribute('aria-label', kind().title);
+    $('item-body').placeholder = kind().body;
+    $('item-body').setAttribute('aria-label', '内容');
+    $('date-label').firstChild.textContent = `${kind().date} `;
+    $('item-date').required = type === 'dates';
+    $('done-wrap').hidden = type !== 'wish';
+    $('pick-text').hidden = type !== 'travel';
+    if (type === 'travel') ensureMap().picking(canWrite());
+  }
+
+  async function load() {
+    data = await api(`/garden/view?id=${encodeURIComponent(gardenId)}`);
+    showHead();
+    showItems();
+    if (data.garden.role === 'owner') showSettings();
+  }
+
+  async function act(run, messageId) {
+    $(messageId).textContent = '';
+    try {
+      await run();
+      await load();
+      return true;
+    } catch (err) {
+      $(messageId).textContent = errorText(err);
+      return false;
+    }
+  }
+
+  async function start() {
+    if (!gardenId) throw Object.assign(new Error('这块园地不存在'), { status: 404 });
+    await load();
+    setupForm();
+    if (canWrite()) resetForm();
+    $('status').hidden = true;
+    $('garden').hidden = false;
+  }
+
+  $('item-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const button = $('item-save');
+    button.disabled = true;
+    const body = {
+      garden: data.garden.id,
+      id: editing ? editing.id : undefined,
+      title: $('item-title').value,
+      body: $('item-body').value,
+      date: $('item-date').value,
+      done: $('item-done').checked,
+      ...(picked || {}),
+    };
+    if (data.garden.kind === 'wish' && body.done && !body.date) body.date = today();
+    const ok = await act(() => api('/garden/item', body), 'item-message');
+    if (ok) {
+      resetForm();
+      $('item-message').textContent = '已保存。';
+    }
+    button.disabled = false;
+  });
+
+  $('item-cancel').addEventListener('click', resetForm);
+  $('item-delete').addEventListener('click', async () => {
+    if (!editing || !confirm(`删除「${editing.title}」？删除后找不回来。`)) return;
+    if (await act(() => api('/garden/item/delete', { id: editing.id }), 'item-message')) resetForm();
+  });
+
+  $('garden-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const ok = await act(() => api('/garden/save', {
+      id: data.garden.id, title: $('garden-title').value, intro: $('garden-intro').value, public: $('garden-public').checked,
+    }), 'settings-message');
+    if (ok) $('settings-message').textContent = '设置已保存。';
+  });
+
+  $('invite-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = $('invite-name').value.trim();
+    if (!name) return;
+    const ok = await act(() => api('/garden/invite', { id: data.garden.id, name }), 'settings-message');
+    if (ok) {
+      $('invite-name').value = '';
+      $('settings-message').textContent = `已邀请${name}，等对方在私人园里答应。`;
+    }
+  });
+
+  $('garden-delete').addEventListener('click', async () => {
+    if (!confirm(`删除「${data.garden.title}」和里面的全部条目？删除后找不回来。`)) return;
+    try {
+      await api('/garden/delete', { id: data.garden.id });
+      location.href = '/life/personal/';
+    } catch (err) {
+      $('settings-message').textContent = errorText(err);
+    }
+  });
+
+  async function answer(accept) {
+    try {
+      await api('/garden/answer', { id: data.garden.id, accept });
+      if (!accept) return (location.href = '/life/personal/');
+      await load();
+      setupForm();
+      resetForm();
+    } catch (err) {
+      alert(errorText(err));
+    }
+  }
+  $('accept').addEventListener('click', () => answer(true));
+  $('decline').addEventListener('click', () => answer(false));
+
+  $('leave').addEventListener('click', async () => {
+    if (!confirm('退出这块园地？你写过的条目会留在这里。')) return;
+    try {
+      await api('/garden/remove', { id: data.garden.id });
+      location.href = '/life/personal/';
+    } catch (err) {
+      alert(errorText(err));
+    }
+  });
+
+  start().catch(err => {
+    const status = $('status');
+    status.textContent = err.status === 404
+      ? '这块园地不存在，或者只有一起写的人能看。'
+      : errorText(err);
+    if (err.status === 404 && !getToken()) {
+      const link = el('a', '', '登录后再看');
+      link.href = `/account/?back=${encodeURIComponent(location.pathname + location.search)}`;
+      status.append(' ', link);
+    }
+  });
+</script>
+</body>
+</html>
