@@ -1,0 +1,121 @@
+/* 游戏园网页小游戏共用的样式：配色和游戏园首页一致，支持深色模式 */
+:root {
+  --bg: #FBF6EE;
+  --card: #FFFDF8;
+  --primary: #C62828;
+  --primary-soft: rgba(198, 40, 40, 0.08);
+  --text: #3A2A1E;
+  --muted: #8A7560;
+  --line: rgba(198, 40, 40, 0.35);
+  --rule: rgba(120, 90, 60, 0.2);
+  --board: #E9CF9F;
+  --board-dark: #D9B97F;
+  --board-line: #6B4A2B;
+  --water: #9CC7D8;
+  --ok: #2E7D32;
+  --kai: "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Songti SC", serif;
+  --sans: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16191F; --card: #20242C; --primary: #EF5350; --primary-soft: rgba(239, 83, 80, 0.12);
+    --text: #E8EAED; --muted: #9AA1AD; --line: rgba(239, 83, 80, 0.4); --rule: rgba(255, 255, 255, 0.12);
+    --board: #8A6E45; --board-dark: #7A603A; --board-line: #2B1E10; --water: #3F6A7C; --ok: #81C784;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.7 var(--sans); }
+a { color: inherit; }
+button, input, select { font: inherit; color: inherit; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 16px 40px; }
+
+.bar { display: flex; align-items: center; gap: 12px; padding: 16px 0 8px; }
+.bar .back { color: var(--muted); text-decoration: none; font-size: 15px; white-space: nowrap; }
+.bar .back:hover { color: var(--primary); }
+.bar h1 { flex: 1; margin: 0; font: 28px/1.3 var(--kai); color: var(--primary); text-align: center; }
+.bar .rules-btn { flex: none; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  min-height: 40px; padding: 6px 16px; border-radius: 10px; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--card); color: var(--text); font-size: 15px; white-space: nowrap;
+}
+.btn:hover { border-color: var(--primary); color: var(--primary); }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: #FFF4E6; }
+.btn.primary:hover { color: #FFF4E6; filter: brightness(1.08); }
+.btn:disabled { opacity: .45; cursor: default; pointer-events: none; }
+.btn.small { min-height: 34px; padding: 4px 12px; font-size: 14px; }
+
+/* 选项：一排按钮，选中的是红色 */
+.seg { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.seg button { min-height: 36px; padding: 4px 14px; border-radius: 999px; border: 1.5px solid var(--rule); background: var(--card); cursor: pointer; font-size: 15px; }
+.seg button[aria-pressed="true"] { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+.panel { display: grid; gap: 8px; margin: 4px 0 10px; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 12px; background: var(--card); }
+.panel .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.panel .label { color: var(--muted); font-size: 14px; min-width: 3em; }
+.room-input { width: 6.5em; min-height: 36px; padding: 4px 10px; border-radius: 10px; border: 1.5px solid var(--rule); background: var(--bg); }
+
+.status { min-height: 1.7em; margin: 6px 0; text-align: center; font: 19px/1.6 var(--kai); }
+.status b { color: var(--primary); font-weight: 400; }
+.sub { margin: 0 0 8px; text-align: center; color: var(--muted); font-size: 14px; }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 12px 0; }
+
+.board-wrap { display: flex; justify-content: center; }
+
+/* 规则说明 */
+dialog.rules {
+  width: min(560px, calc(100vw - 24px)); max-height: calc(100vh - 48px); padding: 0;
+  border: 1.5px solid var(--line); border-radius: 16px; background: var(--card); color: var(--text);
+}
+dialog.rules::backdrop { background: rgba(0, 0, 0, .35); }
+dialog.rules .inner { padding: 18px 20px 20px; }
+dialog.rules h2 { margin: 0 0 8px; font: 24px/1.3 var(--kai); color: var(--primary); }
+dialog.rules h3 { margin: 16px 0 4px; font: 18px/1.4 var(--kai); }
+dialog.rules p, dialog.rules li { font-size: 15px; }
+dialog.rules ul, dialog.rules ol { padding-left: 1.3em; margin: 4px 0; }
+dialog.rules .close-row { display: flex; justify-content: flex-end; margin-top: 14px; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 10;
+  max-width: calc(100vw - 32px); padding: 8px 18px; border-radius: 999px;
+  background: var(--text); color: var(--bg); font-size: 15px; pointer-events: none;
+  opacity: 0; transition: opacity .2s;
+}
+.toast.show { opacity: 1; }
+.muted { color: var(--muted); }
+.foot { margin-top: 28px; text-align: center; color: var(--muted); font-size: 14px; }
+.foot a { color: var(--muted); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 480px) {
+  .bar h1 { font-size: 24px; }
+  .status { font-size: 17px; }
+}
+
+/* 黑白屏（墨水屏、灰度）：纯黑白，不用颜色区分任何东西，没有阴影和动画。
+   墨水屏会自动打开（或者在象棋里选过「黑白」主题），每个游戏标题栏也有「黑白」按钮 */
+:root[data-ink] {
+  --bg: #FFFFFF; --card: #FFFFFF; --primary: #000000; --primary-soft: #FFFFFF;
+  --text: #000000; --muted: #000000; --line: #000000; --rule: #000000;
+  --board: #FFFFFF; --board-dark: #FFFFFF; --board-line: #000000; --water: #FFFFFF; --ok: #000000;
+  color-scheme: light;
+}
+:root[data-ink] *, :root[data-ink] *::before, :root[data-ink] *::after {
+  animation: none !important; transition: none !important; box-shadow: none !important; text-shadow: none !important;
+}
+:root[data-ink] .btn { border: 2px solid #000; }
+:root[data-ink] .btn.primary { background: #000; color: #FFF; }
+:root[data-ink] .seg button { border: 2px solid #000; }
+:root[data-ink] .seg button[aria-pressed="true"] { background: #000; color: #FFF; }
+:root[data-ink] .seg button[aria-pressed="true"]::before { content: "✓ "; }
+:root[data-ink] .status b { text-decoration: underline; }
+:root[data-ink] dialog.rules { border: 2px solid #000; }
+:root[data-ink] .toast { background: #000; color: #FFF; border: 2px solid #FFF; outline: 2px solid #000; }
+.ink-only { display: none; }
+:root[data-ink] .ink-only { display: block; }
+:root[data-ink] .color-only { display: none; }
+.ink-btn[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }

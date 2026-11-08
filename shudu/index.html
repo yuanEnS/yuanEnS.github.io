@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/games/kit/kit.css">
+<title>数独 · 每日一题与三档难度 | 游戏园</title>
+<meta name="description" content="免费在线数独：每天一道所有人都一样的每日数独，也可以随便练，简单、中等、困难三档，每道题都只有唯一解。支持笔记、检查和提示。">
+<link rel="canonical" href="https://gamesyuan.com/shudu/">
+<meta property="og:title" content="数独 · 游戏园">
+<meta property="og:description" content="每日一题和三档难度，每道题只有唯一解。支持笔记、检查和提示。">
+<meta property="og:url" content="https://gamesyuan.com/shudu/">
+<style>
+  .sudoku {
+    --size: min(92vw, 468px);
+    width: var(--size); height: var(--size); display: grid; grid-template-columns: repeat(9, 1fr);
+    border: 3px solid var(--text); border-radius: 6px; background: var(--card); user-select: none; -webkit-user-select: none;
+  }
+  .sudoku button {
+    position: relative; padding: 0; border: 0; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    background: transparent; display: grid; place-items: center; cursor: pointer;
+    font: calc(var(--size) / 15) / 1 var(--sans); color: var(--primary);
+  }
+  .sudoku button.given { color: var(--text); font-weight: 700; }
+  .sudoku button.c2, .sudoku button.c5 { border-right: 2.5px solid var(--text); }
+  .sudoku button.r2, .sudoku button.r5 { border-bottom: 2.5px solid var(--text); }
+  .sudoku button.peer { background: var(--primary-soft); }
+  .sudoku button.same { background: rgba(242, 183, 5, .28); }
+  .sudoku button.selected { background: rgba(242, 183, 5, .55); }
+  .sudoku button.wrong::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: 14%; border-bottom: 3px solid var(--primary); }
+  .notes { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; padding: 2px; }
+  .notes span { display: grid; place-items: center; font: calc(var(--size) / 38) / 1 var(--sans); color: var(--muted); }
+  .pad { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; width: min(92vw, 468px); margin: 12px auto 0; }
+  .pad button {
+    height: 52px; min-width: 0; padding: 0; border: 1.5px solid var(--line); border-radius: 10px; background: var(--card); cursor: pointer;
+    font: 22px/1 var(--sans);
+  }
+  .pad button small { display: block; margin-top: 2px; font-size: 10px; color: var(--muted); }
+  .pad button:disabled { opacity: .35; }
+  .tools { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 10px 0; }
+  .tools .btn[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .top { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 4px 0; }
+  /* 黑白屏：选中格是粗黑框，同一行列宫是点状底纹，填错的格子下面有粗线 */
+  [data-ink] .sudoku { border-color: #000; }
+  [data-ink] .sudoku button { color: #000; border-color: #000; }
+  [data-ink] .sudoku button.given { font-weight: 800; }
+  [data-ink] .sudoku button:not(.given) { font-style: italic; }
+  [data-ink] .sudoku button.peer { background: radial-gradient(#000 0.8px, transparent 1px) 0 0 / 6px 6px; }
+  [data-ink] .sudoku button.same { background: #FFF; text-decoration: underline; }
+  [data-ink] .sudoku button.selected { background: #FFF; outline: 4px solid #000; outline-offset: -4px; z-index: 1; }
+  [data-ink] .sudoku button.wrong::after { border-bottom: 4px double #000; }
+  [data-ink] .notes span { color: #000; }
+  [data-ink] .pad button { border: 2px solid #000; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <a class="back" href="/games/">← 游戏园</a>
+    <h1>数独</h1>
+    <button type="button" class="btn small rules-btn">规则</button>
+  </header>
+  <div class="panel">
+    <div class="row"><span class="label">题目</span><div class="seg" id="mode"></div></div>
+  </div>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <div class="board-wrap"><div class="sudoku" id="board" role="grid" aria-label="数独棋盘"></div></div>
+  <div class="pad" id="pad" aria-label="填数字"></div>
+  <div class="tools">
+    <button type="button" class="btn" id="notes" aria-pressed="false">笔记</button>
+    <button type="button" class="btn" id="erase">擦掉</button>
+    <button type="button" class="btn" id="check">检查</button>
+    <button type="button" class="btn" id="hint">提示一格</button>
+    <button type="button" class="btn" id="undo">撤销</button>
+    <button type="button" class="btn primary" id="new">换一题</button>
+  </div>
+  <p class="sub" id="sub"></p>
+  <p class="foot"><a href="/games/">游戏园</a></p>
+</div>
+
+<dialog class="rules" id="rules" aria-labelledby="rules-title">
+  <div class="inner">
+    <h2 id="rules-title">数独怎么玩</h2>
+    <p>9×9 的格子，分成 9 个 3×3 的「宫」（粗线围起来的小方块）。有些格子已经填好了数字。</p>
+    <h3>规则只有一条</h3>
+    <p>把空格填上 1–9，让<strong>每一行、每一列、每一宫</strong>里，1 到 9 都各出现一次，不重复也不缺。</p>
+    <h3>怎么填</h3>
+    <ul>
+      <li>先点一个空格，再点下面的数字。电脑上也可以直接按数字键，方向键换格子。</li>
+      <li><strong>笔记</strong>：打开后点数字是在格子里记小字，记下「这里可能是几」，再点一次去掉。</li>
+      <li><strong>检查</strong>：把填错的格子标出来（下面画线）。<strong>提示一格</strong>：替你填对一个格子。</li>
+      <li>数字键下面的小字是这个数字还差几个没填。</li>
+    </ul>
+    <h3>从哪里下手</h3>
+    <ul>
+      <li>找已经填得多的行、列、宫，看缺哪几个数。</li>
+      <li>盯住一个数字，比如 5：看看哪一宫还没有 5，它只能放在哪几个格子里。</li>
+    </ul>
+    <h3>题目</h3>
+    <p><strong>每日一题</strong>每天北京时间零点换，所有人做的是同一道。<strong>简单、中等、困难</strong>随时换新题。每道题都只有一个答案，不用猜。</p>
+    <div class="close-row"><button type="button" class="btn primary close">知道了</button></div>
+  </div>
+</dialog>
+
+<script src="/games/kit/kit.js"></script>
+<script>
+  const { el, store, toast, seeded, shuffle, today, timeText } = Kit;
+  const $ = id => document.getElementById(id);
+  const MODES = [['daily', '每日一题'], ['easy', '简单'], ['medium', '中等'], ['hard', '困难']];
+  const CLUES = { easy: 40, medium: 32, hard: 26, daily: 30 };
+
+  // ---------- 出题 ----------
+  const peers = Array.from({ length: 81 }, (_, i) => {
+    const r = Math.floor(i / 9), c = i % 9, set = new Set();
+    for (let k = 0; k < 9; k++) {
+      set.add(r * 9 + k);
+      set.add(k * 9 + c);
+    }
+    const br = r - r % 3, bc = c - c % 3;
+    for (let dr = 0; dr < 3; dr++) for (let dc = 0; dc < 3; dc++) set.add((br + dr) * 9 + bc + dc);
+    set.delete(i);
+    return [...set];
+  });
+
+  function candidates(grid, i) {
+    const used = new Set(peers[i].map(j => grid[j]));
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(n => !used.has(n));
+  }
+
+  // 数一数有几个解，数到 limit 就停
+  function countSolutions(grid, limit) {
+    let best = -1, bestList = null;
+    for (let i = 0; i < 81; i++) {
+      if (grid[i]) continue;
+      const list = candidates(grid, i);
+      if (!list.length) return 0;
+      if (!bestList || list.length < bestList.length) {
+        best = i;
+        bestList = list;
+        if (list.length === 1) break;
+      }
+    }
+    if (best < 0) return 1;
+    let total = 0;
+    for (const n of bestList) {
+      grid[best] = n;
+      total += countSolutions(grid, limit - total);
+      grid[best] = 0;
+      if (total >= limit) break;
+    }
+    return total;
+  }
+
+  function fill(grid, random) {
+    const i = grid.indexOf(0);
+    if (i < 0) return true;
+    for (const n of shuffle(candidates(grid, i), random)) {
+      grid[i] = n;
+      if (fill(grid, random)) return true;
+    }
+    grid[i] = 0;
+    return false;
+  }
+
+  function generate(clues, random) {
+    const solution = Array(81).fill(0);
+    fill(solution, random);
+    const puzzle = [...solution];
+    let filled = 81;
+    for (const i of shuffle([...Array(81).keys()], random)) {
+      if (filled <= clues) break;
+      const keep = puzzle[i];
+      puzzle[i] = 0;
+      if (countSolutions([...puzzle], 2) !== 1) puzzle[i] = keep;
+      else filled--;
+    }
+    return { puzzle, solution };
+  }
+
+  // ---------- 状态 ----------
+  let mode = store.get('shudu:mode', 'daily');
+  let game = null; // { id, puzzle, solution, values, notes, started, elapsed, done, hints }
+  let selected = null;
+  let notesOn = false;
+  let undoStack = [];
+  let timer = null;
+
+  function newGame(force) {
+    const id = mode === 'daily' ? `daily-${today()}` : mode;
+    const saved = store.get(`shudu:game:${mode}`, null);
+    if (!force && saved && saved.id === id) {
+      game = saved;
+    } else {
+      const random = mode === 'daily' ? seeded(`shudu-${today()}`) : Math.random;
+      const { puzzle, solution } = generate(CLUES[mode], random);
+      game = { id, puzzle, solution, values: [...puzzle], notes: Array.from({ length: 81 }, () => []), elapsed: 0, done: false, hints: 0 };
+    }
+    undoStack = [];
+    selected = game.values.findIndex(v => !v);
+    game.wrong = [];
+    save();
+    draw();
+    tick();
+  }
+
+  function save() {
+    store.set(`shudu:game:${mode}`, game);
+  }
+
+  function tick() {
+    clearInterval(timer);
+    const start = Date.now() - game.elapsed;
+    timer = setInterval(() => {
+      if (game.done || document.hidden) return;
+      game.elapsed = Date.now() - start;
+      status();
+    }, 1000);
+  }
+
+  // ---------- 显示 ----------
+  const boardEl = $('board');
+  const cells = Array.from({ length: 81 }, (_, i) => {
+    const r = Math.floor(i / 9), c = i % 9;
+    const cell = el('button', { type: 'button', role: 'gridcell', className: `${c % 3 === 2 && c < 8 ? `c${c}` : ''} ${r % 3 === 2 && r < 8 ? `r${r}` : ''}` });
+    cell.addEventListener('click', () => {
+      selected = i;
+      draw();
+    });
+    boardEl.append(cell);
+    return cell;
+  });
+  const padButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => {
+    const button = el('button', { type: 'button', 'aria-label': `填 ${n}` }, String(n), el('small'));
+    button.addEventListener('click', () => put(n));
+    $('pad').append(button);
+    return button;
+  });
+
+  function status() {
+    const label = MODES.find(m => m[0] === mode)[1];
+    const time = timeText(game.elapsed);
+    $('status').textContent = game.done ? `完成了！用时 ${time}${game.hints ? `，用了 ${game.hints} 次提示` : ''}` : `${label}${mode === 'daily' ? ` · ${today()}` : ''} · ${time}`;
+  }
+
+  function draw() {
+    const { values, puzzle, notes } = game;
+    const sel = selected !== null && selected >= 0 ? selected : null;
+    const selValue = sel !== null ? values[sel] : 0;
+    cells.forEach((cell, i) => {
+      const value = values[i];
+      cell.classList.toggle('given', !!puzzle[i]);
+      cell.classList.toggle('selected', i === sel);
+      cell.classList.toggle('peer', sel !== null && peers[sel].includes(i));
+      cell.classList.toggle('same', !!selValue && value === selValue && i !== sel);
+      cell.classList.toggle('wrong', game.wrong.includes(i));
+      if (value) {
+        cell.replaceChildren(String(value));
+      } else if (notes[i].length) {
+        const box = el('div', { className: 'notes' });
+        for (let n = 1; n <= 9; n++) box.append(el('span', { text: notes[i].includes(n) ? String(n) : '' }));
+        cell.replaceChildren(box);
+      } else {
+        cell.replaceChildren();
+      }
+      const r = Math.floor(i / 9) + 1, c = (i % 9) + 1;
+      cell.setAttribute('aria-label', `${r} 行 ${c} 列，${value ? `${value}${puzzle[i] ? '（题目给的）' : ''}` : notes[i].length ? `空，笔记 ${notes[i].join(' ')}` : '空'}`);
+    });
+    padButtons.forEach((button, k) => {
+      const left = 9 - values.filter(v => v === k + 1).length;
+      button.querySelector('small').textContent = left > 0 ? String(left) : '';
+      button.disabled = game.done || left <= 0;
+    });
+    $('notes').setAttribute('aria-pressed', String(notesOn));
+    $('undo').disabled = !undoStack.length || game.done;
+    ['erase', 'check', 'hint', 'notes'].forEach(id => ($(id).disabled = game.done));
+    status();
+  }
+
+  // ---------- 操作 ----------
+  function editable() {
+    return !game.done && selected !== null && selected >= 0 && !game.puzzle[selected];
+  }
+
+  function record() {
+    undoStack.push({ values: [...game.values], notes: game.notes.map(n => [...n]) });
+    if (undoStack.length > 200) undoStack.shift();
+  }
+
+  function put(n) {
+    if (!editable()) return toast(game.done ? '已经完成了' : '先点一个空格');
+    record();
+    const i = selected;
+    game.wrong = game.wrong.filter(w => w !== i);
+    if (notesOn) {
+      if (game.values[i]) return draw();
+      const list = game.notes[i];
+      game.notes[i] = list.includes(n) ? list.filter(x => x !== n) : [...list, n].sort();
+    } else {
+      game.values[i] = game.values[i] === n ? 0 : n;
+      game.notes[i] = [];
+      // 同一行列宫里的笔记顺手去掉这个数
+      if (game.values[i]) for (const j of peers[i]) game.notes[j] = game.notes[j].filter(x => x !== n);
+    }
+    finishIfDone();
+    save();
+    draw();
+  }
+
+  function finishIfDone() {
+    if (game.values.every((v, i) => v === game.solution[i])) {
+      game.done = true;
+      selected = null;
+      const key = `shudu:done:${game.id}`;
+      if (mode === 'daily') store.set(key, game.elapsed);
+      toast('全部填对了！');
+    } else if (game.values.every(v => v)) {
+      toast('填满了，但有地方不对，点「检查」看看');
+    }
+  }
+
+  $('erase').addEventListener('click', () => {
+    if (!editable()) return;
+    record();
+    game.values[selected] = 0;
+    game.notes[selected] = [];
+    game.wrong = game.wrong.filter(w => w !== selected);
+    save();
+    draw();
+  });
+  $('notes').addEventListener('click', () => {
+    notesOn = !notesOn;
+    draw();
+  });
+  $('check').addEventListener('click', () => {
+    game.wrong = game.values.map((v, i) => (v && v !== game.solution[i] ? i : -1)).filter(i => i >= 0);
+    toast(game.wrong.length ? `有 ${game.wrong.length} 个格子填错了，下面画了线` : '目前填的都对');
+    draw();
+  });
+  $('hint').addEventListener('click', () => {
+    let i = editable() && game.values[selected] !== game.solution[selected] ? selected : -1;
+    if (i < 0) i = game.values.findIndex((v, k) => v !== game.solution[k]);
+    if (i < 0) return;
+    record();
+    selected = i;
+    game.values[i] = game.solution[i];
+    game.notes[i] = [];
+    game.wrong = game.wrong.filter(w => w !== i);
+    game.hints++;
+    finishIfDone();
+    save();
+    draw();
+  });
+  $('undo').addEventListener('click', () => {
+    const last = undoStack.pop();
+    if (!last) return;
+    game.values = last.values;
+    game.notes = last.notes;
+    save();
+    draw();
+  });
+  $('new').addEventListener('click', () => {
+    if (mode === 'daily') return toast('每日一题明天才换。想多做，选简单、中等或困难');
+    if (!game.done && game.values.some((v, i) => v && !game.puzzle[i]) && !confirm('换一题？这一题的进度会丢掉。')) return;
+    newGame(true);
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.target.closest('dialog, select, input')) return;
+    if (/^[1-9]$/.test(e.key)) return put(Number(e.key));
+    if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') return $('erase').click();
+    const dirs = { ArrowUp: -9, ArrowDown: 9, ArrowLeft: -1, ArrowRight: 1 };
+    if (dirs[e.key] && selected !== null) {
+      e.preventDefault();
+      const next = (selected ?? 0) + dirs[e.key];
+      if (next >= 0 && next < 81 && !(Math.abs(dirs[e.key]) === 1 && Math.floor(next / 9) !== Math.floor(selected / 9))) {
+        selected = next;
+        draw();
+        cells[selected].focus();
+      }
+    }
+  });
+
+  MODES.forEach(([value, label]) => {
+    const button = el('button', { type: 'button', 'aria-pressed': String(value === mode), text: label });
+    button.addEventListener('click', () => {
+      mode = value;
+      store.set('shudu:mode', mode);
+      $('mode').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      newGame(false);
+    });
+    $('mode').append(button);
+  });
+
+  Kit.setupRules('shudu');
+  newGame(false);
+</script>
+</body>
+</html>

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>游戏园 · 打开就能玩的网页小游戏 | gamesyuan</title>
-<meta name="description" content="游戏园（gamesyuan）是一个免费的网页小游戏站，不用下载、不用注册。中国象棋、五子棋都支持人机对战（入门 / 业余 / 大师）、在线快速匹配、好友房间和多套棋盘主题，手机电脑都能玩。">
-<meta name="keywords" content="游戏园,gamesyuan,网页小游戏,在线象棋,中国象棋,象棋人机对战,象棋在线对战,五子棋,在线五子棋,五子棋人机对战,免费小游戏">
+<meta name="description" content="游戏园（gamesyuan）是一个免费的网页小游戏站，不用下载、不用注册。中国象棋、五子棋、黑白棋、四子连珠、斗兽棋支持人机对战和联网对弈；还有华容道、数独、扫雷、24 点、诗词填字、成语接龙。手机电脑都能玩，墨水屏也看得清。">
+<meta name="keywords" content="游戏园,gamesyuan,网页小游戏,在线象棋,中国象棋,五子棋,黑白棋,翻转棋,四子连珠,斗兽棋,华容道,数独,扫雷,24点,诗词填字,成语接龙,免费小游戏">
 <link rel="canonical" href="https://gamesyuan.com/games/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/manifest.webmanifest">
@@ -14,6 +14,12 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <script src="/pwa.js" defer></script>
+<script>
+  try {
+    const ink = JSON.parse(localStorage.getItem('games:ink'));
+    if (ink === true || (ink === null && matchMedia('(monochrome)').matches)) document.documentElement.setAttribute('data-ink', '');
+  } catch (e) {}
+</script>
 <meta name="theme-color" content="#FBF6EE">
 
 <meta property="og:type" content="website">
@@ -99,6 +105,14 @@
     --decor: rgba(255, 255, 255, 0.04);
   }
 
+  /* 在任何一个小游戏里打开过「黑白」，这里也跟着变成黑白 */
+  :root[data-ink] {
+    --bg: #FFFFFF; --card: #FFFFFF; --primary: #000000; --primary-soft: #FFFFFF; --text: #000000;
+    --muted: #000000; --line: #000000; --decor: transparent; --board: #FFFFFF;
+  }
+  :root[data-ink] .tag { border: 1px solid #000; }
+  :root[data-ink] .btn { color: #FFF; }
+  :root[data-ink] a.game:hover { box-shadow: none; transform: none; }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body {
@@ -151,6 +165,8 @@
   .game-desc { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
   .tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .tag { padding: 2px 10px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-size: 13px; }
+  .thumb { display: grid; place-items: center; aspect-ratio: 320 / 170; background: var(--board, #F0DAB2); border-bottom: 1.5px solid var(--line); }
+  .thumb span { font: 64px/1 var(--kai); color: var(--primary); letter-spacing: .04em; }
   .game.soon { border-style: dashed; justify-content: center; align-items: center; min-height: 220px; text-align: center; padding: 24px; }
   .game.soon .game-title { color: var(--muted); }
 
@@ -271,12 +287,78 @@
         </div>
       </div>
     </a>
-    <div class="game soon">
-      <div>
-        <h3 class="game-title">更多游戏</h3>
-        <p class="game-desc">正在制作中，敬请期待。</p>
+    <a class="game" href="/heibai/">
+      <div class="thumb" aria-hidden="true"><span>●○</span></div>
+      <div class="game-body">
+        <h3 class="game-title">黑白棋</h3>
+        <p class="game-desc">夹住对方的子翻成自己的颜色，最后子多的赢。</p>
+        <div class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></div>
       </div>
-    </div>
+    </a>
+    <a class="game" href="/sizi/">
+      <div class="thumb" aria-hidden="true"><span>四</span></div>
+      <div class="game-body">
+        <h3 class="game-title">四子连珠</h3>
+        <p class="game-desc">竖着放子，横竖斜先连成四个的赢。</p>
+        <div class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></div>
+      </div>
+    </a>
+    <a class="game" href="/doushou/">
+      <div class="thumb" aria-hidden="true"><span>象</span></div>
+      <div class="game-body">
+        <h3 class="game-title">斗兽棋</h3>
+        <p class="game-desc">象狮虎豹狼狗猫鼠，大的吃小的，老鼠能吃大象。</p>
+        <div class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></div>
+      </div>
+    </a>
+    <a class="game" href="/huarong/">
+      <div class="thumb" aria-hidden="true"><span>曹</span></div>
+      <div class="game-body">
+        <h3 class="game-title">华容道</h3>
+        <p class="game-desc">挪开武将和小兵，让曹操从出口逃出去。14 关从易到难。</p>
+        <div class="tags"><span class="tag">单人益智</span><span class="tag">提示</span></div>
+      </div>
+    </a>
+    <a class="game" href="/shudu/">
+      <div class="thumb" aria-hidden="true"><span>九</span></div>
+      <div class="game-body">
+        <h3 class="game-title">数独</h3>
+        <p class="game-desc">每行、每列、每宫 1–9 各一次。每日一题，三档难度。</p>
+        <div class="tags"><span class="tag">每日一题</span><span class="tag">笔记</span></div>
+      </div>
+    </a>
+    <a class="game" href="/saolei/">
+      <div class="thumb" aria-hidden="true"><span>雷</span></div>
+      <div class="game-body">
+        <h3 class="game-title">扫雷</h3>
+        <p class="game-desc">根据数字推理哪里有雷。手机可以长按插旗。</p>
+        <div class="tags"><span class="tag">三档难度</span><span class="tag">单人</span></div>
+      </div>
+    </a>
+    <a class="game" href="/24dian/">
+      <div class="thumb" aria-hidden="true"><span>24</span></div>
+      <div class="game-body">
+        <h3 class="game-title">24 点</h3>
+        <p class="game-desc">四张牌，加减乘除算出 24。每日五题和练习。</p>
+        <div class="tags"><span class="tag">每日五题</span><span class="tag">算术</span></div>
+      </div>
+    </a>
+    <a class="game" href="/shici/">
+      <div class="thumb" aria-hidden="true"><span>诗</span></div>
+      <div class="game-body">
+        <h3 class="game-title">诗词填字</h3>
+        <p class="game-desc">古诗名句空了两个字，挑出来填上。</p>
+        <div class="tags"><span class="tag">每日五句</span><span class="tag">唐诗宋词</span></div>
+      </div>
+    </a>
+    <a class="game" href="/chengyu/">
+      <div class="thumb" aria-hidden="true"><span>龙</span></div>
+      <div class="game-body">
+        <h3 class="game-title">成语接龙</h3>
+        <p class="game-desc">用上一个成语的最后一个字接下一个。</p>
+        <div class="tags"><span class="tag">和电脑接</span><span class="tag">自己接</span></div>
+      </div>
+    </a>
   </div>
 
   <h2 id="about">关于游戏园</h2>

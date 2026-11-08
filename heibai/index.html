@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/games/kit/kit.css">
+<title>黑白棋 · 人机对战与联网对弈 | 游戏园</title>
+<meta name="description" content="免费在线黑白棋（翻转棋）：8×8 棋盘，人机对战三档难度、本地双人、联网快速匹配和好友房间。不用下载，打开就玩。">
+<link rel="canonical" href="https://gamesyuan.com/heibai/">
+<meta property="og:title" content="黑白棋 · 游戏园">
+<meta property="og:description" content="夹住对方的棋子翻成自己的颜色，最后子多的赢。人机、双人、联网都能玩。">
+<meta property="og:url" content="https://gamesyuan.com/heibai/">
+<style>
+  .othello {
+    --size: min(92vw, 480px);
+    width: var(--size); height: var(--size); padding: 6px; border-radius: 12px;
+    display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); gap: 2px;
+    background: var(--board-line); box-shadow: 0 6px 18px rgba(0, 0, 0, .12);
+  }
+  .othello button {
+    position: relative; padding: 0; border: 0; border-radius: 3px; background: var(--board);
+    display: grid; place-items: center; cursor: default;
+  }
+  .othello button.hint { cursor: pointer; }
+  .othello button.hint::after {
+    content: ""; width: 26%; height: 26%; border-radius: 50%; background: rgba(0, 0, 0, .22);
+  }
+  .othello button.hint:hover::after { background: rgba(198, 40, 40, .55); }
+  .disc {
+    width: 84%; height: 84%; border-radius: 50%; transition: background .25s;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, .35);
+  }
+  .disc.b { background: radial-gradient(circle at 35% 30%, #5C574F, #1C1A17 70%); }
+  .disc.w { background: radial-gradient(circle at 35% 30%, #FFFFFF, #E2DCCD 75%); }
+  .disc.flipped { animation: flip .3s ease; }
+  @keyframes flip { 0% { transform: scaleX(1); } 50% { transform: scaleX(.1); } 100% { transform: scaleX(1); } }
+  .last::before {
+    content: ""; position: absolute; z-index: 1; width: 14%; height: 14%; border-radius: 50%; background: var(--primary);
+  }
+  .score { display: flex; justify-content: center; gap: 22px; margin: 2px 0 6px; font: 18px/1.5 var(--kai); }
+  .score span { display: inline-flex; align-items: center; gap: 6px; }
+  .score i { display: inline-block; width: 16px; height: 16px; border-radius: 50%; }
+  /* 黑白屏：白子加黑边，可下的位置是黑点，上一步是带白边的小方块 */
+  [data-ink] .othello { background: #000; padding: 3px; }
+  [data-ink] .othello button { background: #FFF; border-radius: 0; }
+  [data-ink] .disc.b { background: #000; }
+  [data-ink] .disc.w { background: #FFF; border: 2.5px solid #000; }
+  [data-ink] .othello button.hint::after { background: #000; width: 20%; height: 20%; }
+  [data-ink] .last::before { width: 22%; height: 22%; border-radius: 0; background: #FFF; outline: 2px solid #000; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <a class="back" href="/games/">← 游戏园</a>
+    <h1>黑白棋</h1>
+    <button type="button" class="btn small rules-btn">规则</button>
+  </header>
+  <div id="modes"></div>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <div class="score" id="score" aria-label="子数"></div>
+  <div class="board-wrap"><div class="othello" id="board" role="grid" aria-label="黑白棋棋盘"></div></div>
+  <p class="sub" id="sub"></p>
+  <div class="actions" id="actions"></div>
+  <p class="foot"><a href="/games/">游戏园</a> · <a href="/account/">账号与排行榜</a></p>
+</div>
+
+<dialog class="rules" id="rules" aria-labelledby="rules-title">
+  <div class="inner">
+    <h2 id="rules-title">黑白棋怎么玩</h2>
+    <p>8×8 的棋盘，开局中间摆着黑白各两枚。黑棋先走，双方轮流放子。</p>
+    <h3>怎么放子</h3>
+    <ul>
+      <li>新放的子要和自己已有的子<strong>夹住</strong>对方的子：横、竖、斜都可以，中间必须全是对方的子、没有空格。</li>
+      <li>被夹住的子全部<strong>翻成自己的颜色</strong>。一步可以同时朝几个方向翻。</li>
+      <li>能放的地方会有小圆点提示。一个子都翻不了的地方不能放。</li>
+    </ul>
+    <h3>没处可下</h3>
+    <p>一方没有能放的地方，就跳过这一方，由对方接着下。</p>
+    <h3>怎样算赢</h3>
+    <p>双方都没处可下（通常是棋盘下满了）时，数一数子，多的一方赢，一样多就是和棋。</p>
+    <h3>小窍门</h3>
+    <ul>
+      <li><strong>四个角</strong>最宝贵：角上的子永远不会被翻回去。</li>
+      <li>挨着角的三个格子要小心，放在那里常常会把角送给对方。</li>
+      <li>前期子多不一定好，留给自己更多能走的地方更重要。</li>
+    </ul>
+    <h3>三种玩法</h3>
+    <p><strong>人机</strong>和电脑下，可以悔棋；<strong>双人</strong>两个人在同一台设备上轮流下；<strong>联网</strong>可以快速匹配陌生棋友（计积分），也可以建房间把房间号发给朋友。</p>
+    <div class="close-row"><button type="button" class="btn primary close">知道了</button></div>
+  </div>
+</dialog>
+
+<script src="/games/rules/othello.js"></script>
+<script src="/games/kit/kit.js"></script>
+<script>
+  const { el } = Kit;
+  const { SIZE, flips, movesFor, other } = Othello;
+  const NAMES = { b: '黑棋', w: '白棋' };
+
+  // ---------- 电脑 ----------
+  // 位置分：角最好，挨着角的格子最差
+  const WEIGHTS = [
+    [100, -20, 10, 5, 5, 10, -20, 100],
+    [-20, -50, -2, -2, -2, -2, -50, -20],
+    [10, -2, 1, 1, 1, 1, -2, 10],
+    [5, -2, 1, 0, 0, 1, -2, 5],
+    [5, -2, 1, 0, 0, 1, -2, 5],
+    [10, -2, 1, 1, 1, 1, -2, 10],
+    [-20, -50, -2, -2, -2, -2, -50, -20],
+    [100, -20, 10, 5, 5, 10, -20, 100],
+  ];
+
+  function evaluate(board, side, mobility) {
+    let score = 0;
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+      const cell = board[r][c];
+      if (cell === side) score += WEIGHTS[r][c];
+      else if (cell) score -= WEIGHTS[r][c];
+    }
+    if (mobility) score += 6 * (movesFor(board, side).length - movesFor(board, other(side)).length);
+    return score;
+  }
+
+  function finalScore(board, side) {
+    let diff = 0;
+    for (const row of board) for (const cell of row) diff += cell === side ? 1 : cell ? -1 : 0;
+    return diff * 1000;
+  }
+
+  // 轮到 side 走，返回对 side 来说的分数
+  function search(board, side, depth, alpha, beta, mobility) {
+    const moves = movesFor(board, side);
+    if (!moves.length) {
+      if (!movesFor(board, other(side)).length) return finalScore(board, side);
+      return -search(board, other(side), depth, -beta, -alpha, mobility);
+    }
+    if (depth === 0) return evaluate(board, side, mobility);
+    moves.sort((a, b) => WEIGHTS[b[0]][b[1]] - WEIGHTS[a[0]][a[1]]);
+    for (const [r, c] of moves) {
+      const flipped = flips(board, r, c, side);
+      board[r][c] = side;
+      for (const [fr, fc] of flipped) board[fr][fc] = side;
+      const score = -search(board, other(side), depth - 1, -beta, -alpha, mobility);
+      board[r][c] = '';
+      for (const [fr, fc] of flipped) board[fr][fc] = other(side);
+      if (score > alpha) alpha = score;
+      if (alpha >= beta) break;
+    }
+    return alpha;
+  }
+
+  function ai(game, level) {
+    const moves = game.legalMoves();
+    if (!moves.length) return null;
+    if (level === 0) {
+      // 入门：一半时候随便走，一半时候翻得最多
+      if (Math.random() < 0.5) return moves[Math.floor(Math.random() * moves.length)];
+      return moves.reduce((best, m) => (flips(game.board, m[0], m[1], game.turn).length > flips(game.board, best[0], best[1], game.turn).length ? m : best));
+    }
+    const board = game.board.map(row => [...row]);
+    const empties = board.flat().filter(cell => !cell).length;
+    const depth = level === 1 ? 3 : empties <= 10 ? empties : 5;
+    const side = game.turn;
+    let best = null, bestScore = -Infinity;
+    for (const [r, c] of Kit.shuffle([...moves])) {
+      const flipped = flips(board, r, c, side);
+      board[r][c] = side;
+      for (const [fr, fc] of flipped) board[fr][fc] = side;
+      const score = -search(board, other(side), depth - 1, -Infinity, -bestScore, level === 2);
+      board[r][c] = '';
+      for (const [fr, fc] of flipped) board[fr][fc] = other(side);
+      if (score > bestScore) {
+        bestScore = score;
+        best = [r, c];
+      }
+    }
+    return best;
+  }
+
+  // ---------- 棋盘 ----------
+  const boardEl = document.getElementById('board');
+  const cells = [];
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      const cell = el('button', { type: 'button', role: 'gridcell' });
+      cell.addEventListener('click', () => view && view.play([r, c]));
+      cells.push(cell);
+      boardEl.append(cell);
+    }
+  }
+  const COLS = 'ABCDEFGH';
+  let view = null;
+  let shownHistory = -1;
+
+  function draw(game, v) {
+    view = v;
+    const hints = v.canPlay ? game.legalMoves() : [];
+    const isHint = (r, c) => hints.some(m => m[0] === r && m[1] === c);
+    const fresh = game.history.length !== shownHistory;
+    shownHistory = game.history.length;
+    const flipped = fresh ? game.lastFlips : [];
+    cells.forEach((cell, i) => {
+      const r = Math.floor(i / SIZE), c = i % SIZE;
+      const stone = game.board[r][c];
+      cell.replaceChildren();
+      cell.className = isHint(r, c) ? 'hint' : '';
+      if (game.lastMove && game.lastMove[0] === r && game.lastMove[1] === c) cell.classList.add('last');
+      if (stone) {
+        const disc = el('span', { className: `disc ${stone}` });
+        if (flipped.some(f => f[0] === r && f[1] === c)) disc.classList.add('flipped');
+        cell.append(disc);
+      }
+      cell.disabled = !isHint(r, c);
+      cell.setAttribute('aria-label', `${COLS[c]}${r + 1}${stone ? `，${NAMES[stone]}` : isHint(r, c) ? '，可以放' : ''}`);
+    });
+    const { b, w } = game.count();
+    const score = document.getElementById('score');
+    score.replaceChildren(
+      el('span', {}, el('i', { className: 'disc b' }), `黑 ${b}`),
+      el('span', {}, el('i', { className: 'disc w' }), `白 ${w}`),
+    );
+  }
+
+  Kit.setupRules('heibai');
+  Kit.duel({
+    kind: 'othello',
+    Game: Othello.Game,
+    sides: ['b', 'w'],
+    sideNames: NAMES,
+    draw,
+    ai,
+    reasons: { count: '数子定胜负' },
+    note: game => (game.passed && !game.winner ? `${NAMES[game.passed]}没处可下，跳过一次` : ''),
+  });
+</script>
+</body>
+</html>

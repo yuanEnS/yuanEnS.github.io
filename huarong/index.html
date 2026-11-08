@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/games/kit/kit.css">
+<title>华容道 · 经典滑块益智游戏 | 游戏园</title>
+<meta name="description" content="免费在线华容道：挪动武将和小兵，让曹操从出口逃出去。14 关从易到难，含经典「横刀立马」，可以悔棋、看提示，最少步数自动算出。">
+<link rel="canonical" href="https://gamesyuan.com/huarong/">
+<meta property="og:title" content="华容道 · 游戏园">
+<meta property="og:description" content="挪动武将和小兵，让曹操从下面的出口逃出去。14 关从易到难。">
+<meta property="og:url" content="https://gamesyuan.com/huarong/">
+<style>
+  .hrd-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 12px; margin: 4px 0 6px; }
+  .hrd-top select { min-height: 40px; padding: 4px 10px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--card); font-size: 16px; }
+  .counter { text-align: center; font: 18px/1.5 var(--kai); }
+  .counter b { font-weight: 400; color: var(--primary); }
+  .hrd {
+    --cell: min(21vw, 92px);
+    position: relative; width: calc(var(--cell) * 4 + 16px); height: calc(var(--cell) * 5 + 16px);
+    padding: 8px; border-radius: 12px; background: var(--board-line); touch-action: none; user-select: none; -webkit-user-select: none;
+  }
+  .hrd .floor { position: absolute; inset: 8px; border-radius: 4px; background: var(--board-dark); }
+  /* 出口：底边中间两格没有边框 */
+  .hrd .exit {
+    position: absolute; left: calc(8px + var(--cell)); bottom: 0; width: calc(var(--cell) * 2); height: 8px;
+    background: var(--bg);
+  }
+  .hrd .exit-label { position: absolute; left: 0; right: 0; bottom: -26px; text-align: center; color: var(--muted); font: 15px/1 var(--kai); }
+  .piece {
+    position: absolute; display: grid; place-items: center; padding: 0; border: 0; border-radius: 8px; cursor: pointer;
+    font: calc(var(--cell) * .3) / 1.1 var(--kai); color: #3A2A1E; background: #F3DDB3;
+    box-shadow: inset 0 0 0 2px rgba(107, 74, 43, .55), 0 2px 3px rgba(0, 0, 0, .25);
+    transition: left .12s, top .12s;
+    writing-mode: horizontal-tb;
+  }
+  .piece.v { writing-mode: vertical-rl; letter-spacing: .2em; }
+  .piece.cao { background: #C62828; color: #FFF4E6; font-size: calc(var(--cell) * .42); box-shadow: inset 0 0 0 3px rgba(255, 244, 230, .6), 0 2px 4px rgba(0, 0, 0, .3); }
+  .piece.bing { font-size: calc(var(--cell) * .34); background: #EBD8B5; }
+  .piece.selected { outline: 3px solid #F2B705; outline-offset: -3px; }
+  .piece.hint { outline: 3px dashed var(--primary); outline-offset: -5px; }
+  .ghost { position: absolute; border: 3px dashed var(--primary); border-radius: 8px; pointer-events: none; }
+  .won .piece.cao { animation: out .6s ease-in forwards; }
+  @keyframes out { to { transform: translateY(calc(var(--cell) * 2.2)); opacity: 0; } }
+  /* 黑白屏：棋子白底黑框，曹操黑底白字加双线框 */
+  [data-ink] .hrd { background: #000; }
+  [data-ink] .hrd .floor { background: #FFF; }
+  [data-ink] .piece { background: #FFF; color: #000; border: 2.5px solid #000; }
+  [data-ink] .piece.bing { background: #FFF; border-radius: 50%; }
+  [data-ink] .piece.cao { background: #000; color: #FFF; outline: 3px double #FFF; outline-offset: -7px; }
+  [data-ink] .piece.selected { outline: 4px solid #000; outline-offset: 2px; z-index: 2; }
+  [data-ink] .piece.cao.selected { outline: 4px solid #000; outline-offset: 2px; }
+  [data-ink] .piece.hint, [data-ink] .ghost { outline: 3px dashed #000; border-color: #000; }
+  [data-ink] .hrd .exit { background: #FFF; border-top: 3px dashed #000; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <a class="back" href="/games/">← 游戏园</a>
+    <h1>华容道</h1>
+    <button type="button" class="btn small rules-btn">规则</button>
+  </header>
+  <div class="hrd-top">
+    <label class="sr-only" for="level">选关</label>
+    <select id="level"></select>
+  </div>
+  <p class="counter" id="counter" role="status" aria-live="polite"></p>
+  <div class="board-wrap"><div class="hrd" id="board" aria-label="华容道棋盘"><div class="floor"></div><div class="exit"></div><span class="exit-label">出口</span></div></div>
+  <div class="actions" style="margin-top: 34px">
+    <button type="button" class="btn" id="undo">悔一步</button>
+    <button type="button" class="btn" id="hint">提示</button>
+    <button type="button" class="btn" id="restart">重来</button>
+    <button type="button" class="btn primary" id="next" hidden>下一关</button>
+  </div>
+  <p class="sub" id="sub"></p>
+  <p class="foot"><a href="/games/">游戏园</a></p>
+</div>
+
+<dialog class="rules" id="rules" aria-labelledby="rules-title">
+  <div class="inner">
+    <h2 id="rules-title">华容道怎么玩</h2>
+    <p>传说赤壁之战后，曹操败走华容道，被关羽、张飞这些武将挡住了去路。你的任务是<strong>挪开挡路的棋子，让曹操从下面的出口逃出去</strong>。</p>
+    <h3>怎么挪</h3>
+    <ul>
+      <li>棋子只能<strong>上下左右平移</strong>到空格里，不能跳过别的棋子，也不能拿起来。</li>
+      <li><strong>点一下</strong>棋子：只有一个方向能走时直接走过去；能走好几个方向时，它会被框起来，再点想去的空格。</li>
+      <li>也可以按住棋子<strong>往要去的方向一划</strong>。</li>
+      <li>点空格：如果只有一个棋子能挪过来，它就自己过来。</li>
+    </ul>
+    <h3>怎样算赢</h3>
+    <p>大红块「曹操」挪到最下面中间、对着出口的位置，就逃出去了。</p>
+    <h3>步数</h3>
+    <p>同一个棋子连着挪几格、中间拐弯，都只算<strong>一步</strong>，这也是华容道传统的算法。每关都标着最少要几步，比如经典的「横刀立马」最少 81 步。</p>
+    <h3>卡住了？</h3>
+    <p>点「提示」会用虚线框出下一步该挪哪个棋子、挪到哪里（按最少步数算）。「悔一步」可以退回去。</p>
+    <div class="close-row"><button type="button" class="btn primary close">知道了</button></div>
+  </div>
+</dialog>
+
+<script src="/huarong/huarong.js"></script>
+<script src="/games/kit/kit.js"></script>
+<script>
+  const { el, store, toast } = Kit;
+  const { W, H, parse, kindOf, reach, moved, solve, solved } = Huarong;
+  // 关卡：程序从易到难挑出来的局面（最少步数都算过），第 11 关是传统的「横刀立马」
+  const LEVELS = [
+    { name: '牛刀小试', rows: ['EEFF', 'BBDD', 'HCC.', 'I.AA', 'GJAA'], min: 3 },
+    { name: '让开一条路', rows: ['.FFJ', 'EEI.', 'DDBB', 'AACC', 'AAGH'], min: 6 },
+    { name: '左右逢源', rows: ['BBJH', '.DDI', 'EFCC', 'EFAA', 'G.AA'], min: 10 },
+    { name: '层层把守', rows: ['EEFF', 'AABB', 'AADD', 'HCCJ', 'G.I.'], min: 15 },
+    { name: '兵临城下', rows: ['FFJ.', 'I.DD', 'AAEE', 'AABB', 'CCGH'], min: 21 },
+    { name: '五将拦路', rows: ['AAGI', 'AAEE', 'BBFF', 'DDHJ', 'CC..'], min: 28 },
+    { name: '一线生机', rows: ['FFGJ', 'IEEH', 'AADD', 'AACC', '.BB.'], min: 36 },
+    { name: '困守高台', rows: ['H.FF', 'AAJI', 'AA.G', 'DDEE', 'BBCC'], min: 45 },
+    { name: '重重关隘', rows: ['IAA.', 'GAA.', 'FFEE', 'DDBB', 'HCCJ'], min: 55 },
+    { name: '迂回曲折', rows: ['IDDH', 'FAA.', 'FAAE', 'GBBE', '.CCJ'], min: 66 },
+    { name: '横刀立马', rows: ['ZAAY', 'ZAAY', 'MGGX', 'MabX', 'c..d'], min: 81, classic: true,
+      names: { A: '曹操', Z: '张飞', Y: '赵云', M: '马超', G: '关羽', X: '黄忠' } },
+    { name: '九曲回肠', rows: ['IFAA', '.FAA', 'BBGE', 'HDDE', 'J.CC'], min: 100 },
+    { name: '步步为营', rows: ['JAAG', 'FAAE', 'FBBE', 'DD.H', 'I.CC'], min: 120 },
+    { name: '天罗地网', rows: ['EHAA', 'E.AA', 'BBF.', 'CCFI', 'DDGJ'], min: 135 },
+  ];
+  const GENERALS = ['关羽', '张飞', '赵云', '马超', '黄忠'];
+
+  const boardEl = document.getElementById('board');
+  const $ = id => document.getElementById(id);
+  let level = 0;
+  let pieces = [];
+  let names = {};
+  let history = []; // { i, from: [r, c], to: [r, c], newStep }
+  let steps = 0;
+  let lastPiece = null;
+  let selected = null;
+  let won = false;
+  let nodes = [];
+  let hintTimer = null;
+  const best = store.get('huarong:best', {});
+
+  function cellSize() {
+    return boardEl.querySelector('.floor').getBoundingClientRect().width / W;
+  }
+
+  function nameFor(p, lvl) {
+    if (lvl.names && lvl.names[p.id]) return lvl.names[p.id];
+    const k = kindOf(p);
+    if (k === 'C') return '曹操';
+    if (k === 'S') return '兵';
+    return null;
+  }
+
+  function load(index) {
+    level = index;
+    store.set('huarong:level', index);
+    const lvl = LEVELS[index];
+    pieces = parse(lvl.rows);
+    names = {};
+    // 横着的武将先排关羽
+    const generals = pieces.filter(p => !['C', 'S'].includes(kindOf(p))).sort((a, b) => (b.w - a.w));
+    let g = 0;
+    for (const p of pieces) names[p.id] = nameFor(p, lvl);
+    for (const p of generals) if (!names[p.id]) names[p.id] = GENERALS[g++ % GENERALS.length];
+    history = [];
+    steps = 0;
+    lastPiece = null;
+    selected = null;
+    won = false;
+    boardEl.classList.remove('won');
+    nodes.forEach(n => n.remove());
+    nodes = pieces.map((p, i) => {
+      const k = kindOf(p);
+      const node = el('button', {
+        type: 'button',
+        className: `piece${k === 'C' ? ' cao' : k === 'S' ? ' bing' : k === 'V' ? ' v' : ''}`,
+        text: names[p.id],
+      });
+      node.addEventListener('pointerdown', e => press(e, i));
+      node.addEventListener('keydown', e => key(e, i));
+      boardEl.append(node);
+      return node;
+    });
+    $('level').value = String(index);
+    draw();
+  }
+
+  function draw() {
+    const size = 100 / W;
+    pieces.forEach((p, i) => {
+      const node = nodes[i];
+      node.style.left = `calc(8px + var(--cell) * ${p.c} + 2px)`;
+      node.style.top = `calc(8px + var(--cell) * ${p.r} + 2px)`;
+      node.style.width = `calc(var(--cell) * ${p.w} - 4px)`;
+      node.style.height = `calc(var(--cell) * ${p.h} - 4px)`;
+      node.classList.toggle('selected', selected === i);
+      node.setAttribute('aria-label', `${names[p.id]}，第 ${p.r + 1} 行第 ${p.c + 1} 列${selected === i ? '，已选中，用方向键挪' : ''}`);
+    });
+    const lvl = LEVELS[level];
+    const record = best[level];
+    $('counter').innerHTML = '';
+    $('counter').append(
+      `第 ${level + 1} 关「${lvl.name}」 · 已走 `, el('b', { text: String(steps) }), ` 步 · 最少 ${lvl.min} 步`,
+    );
+    $('sub').textContent = won
+      ? `曹操逃出去了！用了 ${steps} 步${steps <= lvl.min ? '，正好是最少步数' : ''}。`
+      : record ? `你的最好成绩：${record} 步` : '';
+    $('undo').disabled = !history.length || won;
+    $('hint').disabled = won;
+    $('next').hidden = !won || level === LEVELS.length - 1;
+  }
+
+  function fillLevels() {
+    $('level').replaceChildren(...LEVELS.map((lvl, i) => el('option', {
+      value: String(i),
+      text: `第 ${i + 1} 关 · ${lvl.name}（最少 ${lvl.min} 步）${best[i] ? ' ✓' : ''}`,
+    })));
+  }
+
+  function moveTo(i, r, c) {
+    const p = pieces[i];
+    if (p.r === r && p.c === c) return;
+    const newStep = lastPiece !== i;
+    history.push({ i, from: [p.r, p.c], to: [r, c], newStep, lastPiece });
+    if (newStep) steps++;
+    lastPiece = i;
+    pieces = moved(pieces, i, r, c);
+    selected = null;
+    clearHint();
+    if (solved(pieces)) {
+      won = true;
+      boardEl.classList.add('won');
+      if (!best[level] || steps < best[level]) {
+        best[level] = steps;
+        store.set('huarong:best', best);
+        fillLevels();
+        $('level').value = String(level);
+      }
+      toast('曹操逃出去了！');
+    }
+    draw();
+  }
+
+  // 一格之内能去的位置
+  function oneStep(i) {
+    const p = pieces[i];
+    return reach(pieces, i).filter(([r, c]) => Math.abs(r - p.r) + Math.abs(c - p.c) === 1);
+  }
+
+  function tapPiece(i) {
+    if (won) return;
+    const options = oneStep(i);
+    if (options.length === 1 && selected !== i) {
+      moveTo(i, ...options[0]);
+    } else if (options.length) {
+      selected = selected === i ? null : i;
+      draw();
+    } else {
+      selected = null;
+      draw();
+      toast('这个棋子现在挪不动');
+    }
+  }
+
+  function tapCell(r, c) {
+    if (won) return;
+    if (selected !== null) {
+      // 选中的棋子挪到能盖住这一格的位置，离得近的优先
+      const p = pieces[selected];
+      const spots = reach(pieces, selected)
+        .filter(([pr, pc]) => r >= pr && r < pr + p.h && c >= pc && c < pc + p.w)
+        .sort((a, b) => Math.abs(a[0] - p.r) + Math.abs(a[1] - p.c) - Math.abs(b[0] - p.r) - Math.abs(b[1] - p.c));
+      if (spots.length) return moveTo(selected, ...spots[0]);
+    }
+    // 只有一个棋子能一格挪过来，就挪它
+    const movers = [];
+    pieces.forEach((p, i) => {
+      for (const [pr, pc] of oneStep(i)) {
+        if (r >= pr && r < pr + p.h && c >= pc && c < pc + p.w) movers.push([i, pr, pc]);
+      }
+    });
+    if (movers.length === 1) moveTo(...movers[0]);
+    else if (movers.length > 1) toast('好几个棋子都能过来，先点要挪的那个');
+  }
+
+  // 按下：划动就朝那个方向挪一格，没怎么动就当作点了一下
+  function press(e, i) {
+    e.preventDefault();
+    const x0 = e.clientX, y0 = e.clientY;
+    const up = ev => {
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+      const dx = ev.clientX - x0, dy = ev.clientY - y0;
+      if (Math.hypot(dx, dy) < cellSize() * 0.25) return tapPiece(i);
+      const [dr, dc] = Math.abs(dx) > Math.abs(dy) ? [0, Math.sign(dx)] : [Math.sign(dy), 0];
+      const p = pieces[i];
+      const target = oneStep(i).find(([r, c]) => r === p.r + dr && c === p.c + dc);
+      if (target) moveTo(i, ...target);
+    };
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+  }
+
+  // 键盘：选中后用方向键挪
+  function key(e, i) {
+    const dirs = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
+    if (!dirs[e.key]) return;
+    e.preventDefault();
+    const [dr, dc] = dirs[e.key];
+    const p = pieces[i];
+    const target = oneStep(i).find(([r, c]) => r === p.r + dr && c === p.c + dc);
+    if (target) {
+      moveTo(i, ...target);
+      nodes[i].focus();
+    }
+  }
+
+  boardEl.addEventListener('click', e => {
+    if (e.target.closest('.piece')) return;
+    const rect = boardEl.querySelector('.floor').getBoundingClientRect();
+    const size = rect.width / W;
+    const c = Math.floor((e.clientX - rect.left) / size), r = Math.floor((e.clientY - rect.top) / size);
+    if (r >= 0 && r < H && c >= 0 && c < W) tapCell(r, c);
+  });
+
+  function clearHint() {
+    clearTimeout(hintTimer);
+    boardEl.querySelectorAll('.ghost').forEach(n => n.remove());
+    nodes.forEach(n => n.classList.remove('hint'));
+  }
+
+  $('hint').addEventListener('click', () => {
+    clearHint();
+    const result = solve(pieces);
+    if (!result || !result.first) return toast('算不出来，试试重来');
+    const i = pieces.findIndex(p => p.id === result.first.id);
+    const p = pieces[i];
+    nodes[i].classList.add('hint');
+    const ghost = el('div', { className: 'ghost' });
+    ghost.style.left = `calc(8px + var(--cell) * ${result.first.c} + 2px)`;
+    ghost.style.top = `calc(8px + var(--cell) * ${result.first.r} + 2px)`;
+    ghost.style.width = `calc(var(--cell) * ${p.w} - 4px)`;
+    ghost.style.height = `calc(var(--cell) * ${p.h} - 4px)`;
+    boardEl.append(ghost);
+    $('sub').textContent = `提示：把「${names[p.id]}」挪到虚线框那里。从这里出发最少还要 ${result.steps} 步。`;
+    hintTimer = setTimeout(clearHint, 4000);
+  });
+
+  $('undo').addEventListener('click', () => {
+    const last = history.pop();
+    if (!last) return;
+    pieces = moved(pieces, last.i, ...last.from);
+    if (last.newStep) steps--;
+    lastPiece = last.lastPiece;
+    selected = null;
+    clearHint();
+    draw();
+  });
+  $('restart').addEventListener('click', () => load(level));
+  $('next').addEventListener('click', () => load(level + 1));
+  $('level').addEventListener('change', e => load(Number(e.target.value)));
+
+  Kit.setupRules('huarong');
+  fillLevels();
+  load(Math.min(store.get('huarong:level', 0), LEVELS.length - 1));
+</script>
+</body>
+</html>

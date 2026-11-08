@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/games/kit/kit.css">
+<title>扫雷 · 初级中级高级 | 游戏园</title>
+<meta name="description" content="免费在线扫雷：初级、中级、高级三档，第一下永远不会踩雷。手机上可以切换插旗模式或长按插旗，电脑上右键插旗、双击翻开周围。">
+<link rel="canonical" href="https://gamesyuan.com/saolei/">
+<meta property="og:title" content="扫雷 · 游戏园">
+<meta property="og:description" content="根据数字推理出哪里有雷，把没有雷的格子全部翻开。三档难度，手机电脑都好玩。">
+<meta property="og:url" content="https://gamesyuan.com/saolei/">
+<style>
+  .mine-info { display: flex; justify-content: center; gap: 20px; margin: 4px 0 8px; font: 19px/1.5 var(--kai); }
+  .field-wrap { display: flex; justify-content: safe center; overflow-x: auto; padding-bottom: 4px; }
+  .field {
+    --cols: 9; --cell: min(calc((92vw - 8px) / var(--cols)), 40px);
+    display: grid; grid-template-columns: repeat(var(--cols), var(--cell)); gap: 0;
+    border: 3px solid var(--board-line); background: var(--board-line); user-select: none; -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  .field button {
+    width: var(--cell); height: var(--cell); padding: 0; border: 0; display: grid; place-items: center; cursor: pointer;
+    font: 700 calc(var(--cell) * .55) / 1 var(--sans); color: var(--text);
+    background: #D9C29A; box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .45), inset -2px -2px 0 rgba(0, 0, 0, .18);
+    -webkit-touch-callout: none;
+  }
+  .field button.open { background: var(--card); box-shadow: inset 0 0 0 .5px rgba(107, 74, 43, .25); cursor: default; }
+  .field button.boom { background: #E57373; }
+  .field button.flag::after { content: "⚑"; color: var(--primary); font-weight: 400; }
+  .field button.mine::after { content: "✱"; color: var(--text); }
+  .field button.badflag::after { content: "✕"; color: var(--primary); }
+  .n1 { color: #1E5AA8 !important; } .n2 { color: #2E7D32 !important; } .n3 { color: #C62828 !important; }
+  .n4 { color: #283593 !important; } .n5 { color: #8E2424 !important; } .n6 { color: #00838F !important; }
+  .n7 { color: #3A2A1E !important; } .n8 { color: #757575 !important; }
+  .dig .btn[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+  /* 黑白屏：没翻开的格子是斜线底纹，翻开的是白底，数字统一黑色，踩到的雷用粗框 */
+  [data-ink] .field { border-color: #000; background: #FFF; }
+  [data-ink] .field button { border-right: 1px solid #000; border-bottom: 1px solid #000; }
+  [data-ink] .field button { background: repeating-linear-gradient(45deg, #FFF 0 4px, #000 4px 5px); color: #000; }
+  [data-ink] .field button.open { background: #FFF; }
+  [data-ink] .field button.flag, [data-ink] .field button.mine, [data-ink] .field button.badflag { background: #FFF; }
+  [data-ink] .field button.flag::after, [data-ink] .field button.badflag::after { color: #000; }
+  [data-ink] .field button.boom { background: #FFF; outline: 4px solid #000; outline-offset: -4px; }
+  [data-ink] .field button[class*="n"] { color: #000 !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <a class="back" href="/games/">← 游戏园</a>
+    <h1>扫雷</h1>
+    <button type="button" class="btn small rules-btn">规则</button>
+  </header>
+  <div class="panel">
+    <div class="row"><span class="label">难度</span><div class="seg" id="levels"></div></div>
+  </div>
+  <div class="mine-info"><span id="left"></span><span id="clock"></span></div>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <div class="field-wrap"><div class="field" id="field" role="grid" aria-label="雷区"></div></div>
+  <div class="actions dig">
+    <button type="button" class="btn" id="mode" aria-pressed="false">插旗模式</button>
+    <button type="button" class="btn primary" id="restart">新的一局</button>
+  </div>
+  <p class="sub" id="best"></p>
+  <p class="foot"><a href="/games/">游戏园</a></p>
+</div>
+
+<dialog class="rules" id="rules" aria-labelledby="rules-title">
+  <div class="inner">
+    <h2 id="rules-title">扫雷怎么玩</h2>
+    <p>格子下面藏着一些雷。目标是<strong>把所有没有雷的格子都翻开</strong>，一个雷也不踩。</p>
+    <h3>数字是什么意思</h3>
+    <p>翻开的格子上如果有数字，表示它<strong>周围 8 个格子里一共有几个雷</strong>。没有数字（空白）就是周围一个雷都没有，会自动帮你把周围也翻开。</p>
+    <h3>怎么操作</h3>
+    <ul>
+      <li><strong>点一下</strong>：翻开格子。第一下永远不会踩雷。</li>
+      <li><strong>插旗</strong>：确定是雷的格子插上旗，免得误点。手机上<strong>长按</strong>格子，或者打开下面的「插旗模式」再点；电脑上<strong>右键</strong>。</li>
+      <li><strong>翻开周围</strong>：一个数字周围插的旗已经和数字一样多时，点这个数字（电脑上也可以双击），会把它周围其余的格子一起翻开。</li>
+    </ul>
+    <h3>怎么推理</h3>
+    <ul>
+      <li>「1」旁边只剩一个没翻开的格子，那个格子就是雷。</li>
+      <li>一个数字周围的雷都找齐了，它周围其余的格子就都安全。</li>
+    </ul>
+    <h3>难度</h3>
+    <p>初级 9×9、10 个雷；中级 16×16、40 个雷；高级 16×30、99 个雷（手机上是竖着的长条，可以上下滑）。</p>
+    <div class="close-row"><button type="button" class="btn primary close">知道了</button></div>
+  </div>
+</dialog>
+
+<script src="/games/kit/kit.js"></script>
+<script>
+  const { el, store, toast, timeText } = Kit;
+  const $ = id => document.getElementById(id);
+  const LEVELS = {
+    easy: { name: '初级', rows: 9, cols: 9, mines: 10 },
+    medium: { name: '中级', rows: 16, cols: 16, mines: 40 },
+    hard: { name: '高级', rows: 30, cols: 16, mines: 99 },
+  };
+  let levelKey = store.get('saolei:level', 'easy');
+  let L, mines, open, flags, started, over, startTime, endTime, timer, flagMode = false, cells = [];
+  const best = store.get('saolei:best', {});
+
+  const index = (r, c) => r * L.cols + c;
+  function around(i) {
+    const r = Math.floor(i / L.cols), c = i % L.cols, list = [];
+    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+      if (!dr && !dc) continue;
+      const rr = r + dr, cc = c + dc;
+      if (rr >= 0 && rr < L.rows && cc >= 0 && cc < L.cols) list.push(index(rr, cc));
+    }
+    return list;
+  }
+  const count = i => around(i).filter(j => mines.has(j)).length;
+
+  function newGame() {
+    L = LEVELS[levelKey];
+    mines = new Set();
+    open = new Set();
+    flags = new Set();
+    started = false;
+    over = null; // 'win' | 'lose'
+    clearInterval(timer);
+    startTime = 0;
+    endTime = 0;
+    const field = $('field');
+    field.style.setProperty('--cols', L.cols);
+    cells = Array.from({ length: L.rows * L.cols }, (_, i) => {
+      const cell = el('button', { type: 'button', role: 'gridcell' });
+      bind(cell, i);
+      return cell;
+    });
+    field.replaceChildren(...cells);
+    draw();
+  }
+
+  // 第一下点的格子和它周围都不放雷，这样一开局就能翻开一片
+  function layMines(first) {
+    const safe = new Set([first, ...around(first)]);
+    const spots = [...Array(L.rows * L.cols).keys()].filter(i => !safe.has(i));
+    for (let k = 0; k < L.mines; k++) {
+      const j = k + Math.floor(Math.random() * (spots.length - k));
+      [spots[k], spots[j]] = [spots[j], spots[k]];
+      mines.add(spots[k]);
+    }
+    started = true;
+    startTime = Date.now();
+    timer = setInterval(drawClock, 1000);
+  }
+
+  function reveal(i) {
+    if (over || flags.has(i)) return;
+    if (!started) layMines(i);
+    if (open.has(i)) return chord(i);
+    if (mines.has(i)) return lose(i);
+    const queue = [i];
+    while (queue.length) {
+      const j = queue.pop();
+      if (open.has(j) || flags.has(j)) continue;
+      open.add(j);
+      if (count(j) === 0) for (const k of around(j)) if (!open.has(k)) queue.push(k);
+    }
+    if (open.size === L.rows * L.cols - L.mines) win();
+    draw();
+  }
+
+  // 点已经翻开的数字：周围旗子数够了，就把其余的翻开
+  function chord(i) {
+    const n = count(i);
+    if (!n) return;
+    const near = around(i);
+    if (near.filter(j => flags.has(j)).length !== n) return;
+    for (const j of near) {
+      if (open.has(j) || flags.has(j)) continue;
+      if (mines.has(j)) return lose(j);
+      reveal(j);
+      if (over) return;
+    }
+    draw();
+  }
+
+  function toggleFlag(i) {
+    if (over || open.has(i)) return;
+    if (flags.has(i)) flags.delete(i);
+    else flags.add(i);
+    if (navigator.vibrate) navigator.vibrate(15);
+    draw();
+  }
+
+  function lose(i) {
+    over = 'lose';
+    endTime = Date.now();
+    clearInterval(timer);
+    cells[i].classList.add('boom');
+    draw();
+    toast('踩到雷了');
+  }
+
+  function win() {
+    over = 'win';
+    endTime = Date.now();
+    clearInterval(timer);
+    const time = endTime - startTime;
+    for (const m of mines) flags.add(m);
+    if (!best[levelKey] || time < best[levelKey]) {
+      best[levelKey] = time;
+      store.set('saolei:best', best);
+    }
+    toast('全部扫完了！');
+  }
+
+  function bind(cell, i) {
+    let pressTimer = null, longPressed = false;
+    cell.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      if (!longPressed) toggleFlag(i);
+    });
+    cell.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse') return;
+      longPressed = false;
+      pressTimer = setTimeout(() => {
+        longPressed = true;
+        toggleFlag(i);
+      }, 420);
+    });
+    const cancel = () => clearTimeout(pressTimer);
+    cell.addEventListener('pointerup', cancel);
+    cell.addEventListener('pointerleave', cancel);
+    cell.addEventListener('pointercancel', cancel);
+    cell.addEventListener('click', () => {
+      if (longPressed) {
+        longPressed = false;
+        return;
+      }
+      if (flagMode && !open.has(i)) toggleFlag(i);
+      else reveal(i);
+    });
+    cell.addEventListener('dblclick', () => open.has(i) && chord(i));
+  }
+
+  function drawClock() {
+    const time = started ? (endTime || Date.now()) - startTime : 0;
+    $('clock').textContent = `用时 ${timeText(time)}`;
+  }
+
+  function draw() {
+    cells.forEach((cell, i) => {
+      const isOpen = open.has(i);
+      const n = isOpen && !mines.has(i) ? count(i) : 0;
+      let cls = isOpen ? `open${n ? ` n${n}` : ''}` : '';
+      let label = '没翻开';
+      if (isOpen) label = n ? `${n}` : '空白';
+      if (flags.has(i)) {
+        cls += ' flag';
+        label = '插了旗';
+      }
+      if (over === 'lose') {
+        if (mines.has(i) && !flags.has(i)) {
+          cls = 'open mine';
+          label = '雷';
+        }
+        if (flags.has(i) && !mines.has(i)) {
+          cls = 'open badflag';
+          label = '旗插错了';
+        }
+      }
+      const boom = cell.classList.contains('boom');
+      cell.className = cls + (boom ? ' boom' : '');
+      cell.textContent = n ? String(n) : '';
+      const r = Math.floor(i / L.cols) + 1, c = (i % L.cols) + 1;
+      cell.setAttribute('aria-label', `${r} 行 ${c} 列，${label}`);
+    });
+    $('left').textContent = `剩余雷 ${L.mines - flags.size}`;
+    drawClock();
+    $('status').textContent = over === 'win' ? '全部扫完了！' : over === 'lose' ? '踩到雷了，再来一局吧' : started ? '' : '点任意一格开始';
+    $('mode').setAttribute('aria-pressed', String(flagMode));
+    $('mode').textContent = flagMode ? '插旗模式：开' : '插旗模式';
+    $('best').textContent = best[levelKey] ? `${L.name}最快 ${timeText(best[levelKey])}` : '';
+  }
+
+  Object.entries(LEVELS).forEach(([key, level]) => {
+    const button = el('button', { type: 'button', 'aria-pressed': String(key === levelKey), text: `${level.name} ${level.mines}雷` });
+    button.addEventListener('click', () => {
+      if (started && !over && !confirm('放弃这一局？')) return;
+      levelKey = key;
+      store.set('saolei:level', key);
+      $('levels').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      newGame();
+    });
+    $('levels').append(button);
+  });
+  $('mode').addEventListener('click', () => {
+    flagMode = !flagMode;
+    draw();
+  });
+  $('restart').addEventListener('click', () => {
+    if (started && !over && !confirm('放弃这一局，重新开始？')) return;
+    newGame();
+  });
+
+  Kit.setupRules('saolei');
+  newGame();
+</script>
+</body>
+</html>

@@ -83,7 +83,7 @@
   #message { margin: 10px 0 0; font-size: 14px; color: var(--primary); }
   #message:empty { display: none; }
   .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-  .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
   .tabs button[aria-selected="false"] { background: transparent; color: var(--primary); }
   table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
   th { text-align: right; font-weight: 400; color: var(--muted); font-size: 13px; padding: 4px 6px; }
@@ -100,6 +100,7 @@
     <nav>
       <a href="/xiangqi/">象棋</a>
       <a href="/wuziqi/">五子棋</a>
+      <a href="/games/">更多</a>
     </nav>
   </div>
 </header>
@@ -152,6 +153,9 @@
     <div class="tabs" role="tablist">
       <button type="button" role="tab" data-game="xiangqi" aria-selected="true">象棋</button>
       <button type="button" role="tab" data-game="gomoku" aria-selected="false">五子棋</button>
+      <button type="button" role="tab" data-game="othello" aria-selected="false">黑白棋</button>
+      <button type="button" role="tab" data-game="connect4" aria-selected="false">四子连珠</button>
+      <button type="button" role="tab" data-game="jungle" aria-selected="false">斗兽棋</button>
     </div>
     <table>
       <thead><tr><th>名次</th><th>棋手</th><th>积分</th><th>胜</th><th>负</th></tr></thead>
@@ -170,7 +174,7 @@
   const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
   const API = LOCAL ? 'http://127.0.0.1:8787/api' : 'https://api.gamesyuan.com/api';
   const TOKEN_KEY = 'xiangqi:token'; // 和游戏共用，见 wx-adapter.js 的存储前缀
-  const GAME_NAMES = { xiangqi: '象棋', gomoku: '五子棋' };
+  const GAME_NAMES = { xiangqi: '象棋', gomoku: '五子棋', othello: '黑白棋', connect4: '四子连珠', jungle: '斗兽棋' };
   const $ = id => document.getElementById(id);
 
   function getToken() {
@@ -216,7 +220,9 @@
   }
 
   function showStats(ratings) {
-    $('stats').replaceChildren(...Object.keys(GAME_NAMES).map(game => {
+    // 象棋、五子棋总是显示；新棋下过才显示
+    const shown = Object.keys(GAME_NAMES).filter(game => ratings[game] && (['xiangqi', 'gomoku'].includes(game) || ratings[game].games));
+    $('stats').replaceChildren(...shown.map(game => {
       const r = ratings[game];
       const box = document.createElement('div');
       box.className = 'stat';

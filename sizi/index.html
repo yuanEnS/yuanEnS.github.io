@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/games/kit/kit.css">
+<title>四子连珠 · 人机对战与联网对弈 | 游戏园</title>
+<meta name="description" content="免费在线四子连珠：竖着放子，横竖斜先连成四个的赢。人机对战三档难度、本地双人、联网快速匹配和好友房间。">
+<link rel="canonical" href="https://gamesyuan.com/sizi/">
+<meta property="og:title" content="四子连珠 · 游戏园">
+<meta property="og:description" content="选一列放子，子会落到最下面。横、竖、斜先连成四个的赢。">
+<meta property="og:url" content="https://gamesyuan.com/sizi/">
+<style>
+  .c4 {
+    --w: min(92vw, 490px);
+    width: var(--w); padding: 8px; border-radius: 14px; background: #2F5D8A;
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; box-shadow: 0 6px 18px rgba(0, 0, 0, .15);
+  }
+  .c4 .col {
+    display: grid; grid-template-rows: repeat(6, 1fr); gap: 0; padding: 0; border: 0; border-radius: 10px;
+    background: transparent; cursor: default;
+  }
+  .c4 .col.open { cursor: pointer; }
+  .c4 .col.open:hover, .c4 .col.open:focus-visible { background: rgba(255, 255, 255, .12); outline: none; }
+  .c4 .hole { aspect-ratio: 1; display: grid; place-items: center; }
+  .c4 .hole span {
+    width: 80%; height: 80%; border-radius: 50%; background: var(--bg);
+    box-shadow: inset 0 3px 4px rgba(0, 0, 0, .25);
+  }
+  .c4 .hole span.r { background: radial-gradient(circle at 35% 30%, #EF6B5B, #B71C1C 72%); box-shadow: inset 0 -3px 4px rgba(0, 0, 0, .25); }
+  .c4 .hole span.y { background: radial-gradient(circle at 35% 30%, #FFE680, #E0A800 72%); box-shadow: inset 0 -3px 4px rgba(0, 0, 0, .2); }
+  .c4 .hole span.drop { animation: drop .35s ease-in; }
+  @keyframes drop { from { transform: translateY(var(--from)); } to { transform: none; } }
+  .c4 .hole span.win { outline: 3px solid #FFF4E6; outline-offset: 2px; }
+  .c4 .hole span.last::after { content: ""; display: block; width: 22%; height: 22%; margin: 39%; border-radius: 50%; background: rgba(255, 255, 255, .7); }
+  .legend { display: flex; justify-content: center; gap: 20px; margin: 0 0 6px; font: 17px/1.5 var(--kai); }
+  .legend i { display: inline-block; width: 15px; height: 15px; margin-right: 6px; border-radius: 50%; vertical-align: -2px; }
+  .legend i.r { background: #C62828; }
+  .legend i.y { background: #E0A800; }
+  /* 黑白屏：红棋是实心黑子，黄棋是白子加粗黑圈和中间一点，空格是细虚线圈 */
+  [data-ink] .c4 { background: #FFF; border: 3px solid #000; }
+  [data-ink] .c4 .col.open:hover, [data-ink] .c4 .col.open:focus-visible { background: #FFF; outline: 2px dashed #000; outline-offset: -2px; }
+  [data-ink] .c4 .hole span { background: #FFF; border: 1.5px dashed #000; }
+  [data-ink] .c4 .hole span.r, [data-ink] .legend i.r { background: #000; border: 2px solid #000; }
+  [data-ink] .c4 .hole span.y, [data-ink] .legend i.y { background: radial-gradient(circle, #000 0 16%, #FFF 17%); border: 3.5px solid #000; }
+  [data-ink] .c4 .hole span.win { outline: 3px solid #000; outline-offset: 2px; }
+  [data-ink] .c4 .hole span.last::after { background: #FFF; outline: 2px solid #000; border-radius: 0; }
+  [data-ink] .c4 .hole span.y.last::after { background: #000; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <a class="back" href="/games/">← 游戏园</a>
+    <h1>四子连珠</h1>
+    <button type="button" class="btn small rules-btn">规则</button>
+  </header>
+  <div id="modes"></div>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <div class="legend"><span><i class="r"></i>红棋先走</span><span><i class="y"></i>黄棋后走</span></div>
+  <div class="board-wrap"><div class="c4" id="board" aria-label="四子连珠棋盘，点一列放子"></div></div>
+  <p class="sub" id="sub"></p>
+  <div class="actions" id="actions"></div>
+  <p class="foot"><a href="/games/">游戏园</a> · <a href="/account/">账号与排行榜</a></p>
+</div>
+
+<dialog class="rules" id="rules" aria-labelledby="rules-title">
+  <div class="inner">
+    <h2 id="rules-title">四子连珠怎么玩</h2>
+    <p>棋盘竖着立起来，有 7 列、每列 6 格。红棋先走，双方轮流放子。</p>
+    <h3>怎么放子</h3>
+    <ul>
+      <li>每次<strong>选一列</strong>，点这一列的任意位置。</li>
+      <li>子会像掉下去一样，落到这一列<strong>最下面的空格</strong>。</li>
+      <li>一列放满 6 个就不能再放了。</li>
+    </ul>
+    <h3>怎样算赢</h3>
+    <p>自己的子<strong>横着、竖着或斜着</strong>连成四个，就赢了。42 格全放满还没人连成，就是和棋。</p>
+    <h3>小窍门</h3>
+    <ul>
+      <li>中间那一列最重要，能连出的方向最多。</li>
+      <li>每走一步前看看：对方下一步会不会连成四个？要先堵住。</li>
+      <li>同时做出两个「再放一个就赢」的地方，对方只能堵一个。</li>
+    </ul>
+    <h3>三种玩法</h3>
+    <p><strong>人机</strong>和电脑下，可以悔棋；<strong>双人</strong>两个人在同一台设备上轮流下；<strong>联网</strong>可以快速匹配陌生棋友（计积分），也可以建房间把房间号发给朋友。</p>
+    <div class="close-row"><button type="button" class="btn primary close">知道了</button></div>
+  </div>
+</dialog>
+
+<script src="/games/rules/connect4.js"></script>
+<script src="/games/kit/kit.js"></script>
+<script>
+  const { el } = Kit;
+  const { ROWS, COLS, fourAt, dropRow, other } = Connect4;
+  const NAMES = { r: '红棋', y: '黄棋' };
+  const ORDER = [3, 2, 4, 1, 5, 0, 6]; // 先试中间的列
+
+  // ---------- 电脑 ----------
+  // 每四个连着的格子算一个「窗口」：只有自己的子就加分，越多越好
+  const WINDOWS = [];
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    for (const [dr, dc] of [[0, 1], [1, 0], [1, 1], [1, -1]]) {
+      const cells = [0, 1, 2, 3].map(k => [r + dr * k, c + dc * k]);
+      if (cells.every(([rr, cc]) => rr >= 0 && rr < ROWS && cc >= 0 && cc < COLS)) WINDOWS.push(cells);
+    }
+  }
+  const WINDOW_SCORE = [0, 1, 6, 40];
+
+  function evaluate(board, side) {
+    let score = 0;
+    for (const cells of WINDOWS) {
+      let mine = 0, theirs = 0;
+      for (const [r, c] of cells) {
+        if (board[r][c] === side) mine++;
+        else if (board[r][c]) theirs++;
+      }
+      if (mine && !theirs) score += WINDOW_SCORE[mine];
+      else if (theirs && !mine) score -= WINDOW_SCORE[theirs];
+    }
+    for (let r = 0; r < ROWS; r++) score += board[r][3] === side ? 3 : board[r][3] ? -3 : 0;
+    return score;
+  }
+
+  // 轮到 side，返回对 side 的分数。赢得越早分越高
+  function search(board, side, depth, alpha, beta, filled) {
+    if (filled === ROWS * COLS) return 0;
+    if (depth === 0) return evaluate(board, side);
+    for (const c of ORDER) {
+      const r = dropRow(board, c);
+      if (r < 0) continue;
+      board[r][c] = side;
+      const score = fourAt(board, r, c) ? 10000 + depth : -search(board, other(side), depth - 1, -beta, -alpha, filled + 1);
+      board[r][c] = '';
+      if (score > alpha) alpha = score;
+      if (alpha >= beta) break;
+    }
+    return alpha;
+  }
+
+  function winningColumn(board, side) {
+    for (const c of ORDER) {
+      const r = dropRow(board, c);
+      if (r < 0) continue;
+      board[r][c] = side;
+      const win = fourAt(board, r, c);
+      board[r][c] = '';
+      if (win) return c;
+    }
+    return null;
+  }
+
+  function ai(game, level) {
+    const moves = game.legalMoves();
+    if (!moves.length) return null;
+    const board = game.board.map(row => [...row]);
+    const side = game.turn;
+    if (level === 0) {
+      // 入门：能赢就赢，看到对方要赢多半会堵，其余随便放
+      const win = winningColumn(board, side);
+      if (win !== null) return win;
+      const block = winningColumn(board, other(side));
+      if (block !== null && Math.random() < 0.7) return block;
+      return moves[Math.floor(Math.random() * moves.length)];
+    }
+    const depth = level === 1 ? 4 : 8;
+    const filled = game.history.length;
+    let best = null, bestScore = -Infinity;
+    const order = ORDER.filter(c => moves.includes(c));
+    for (const c of order) {
+      const r = dropRow(board, c);
+      board[r][c] = side;
+      const score = fourAt(board, r, c) ? 100000 : -search(board, other(side), depth - 1, -Infinity, -bestScore + 1, filled + 1);
+      board[r][c] = '';
+      // 分数一样时偶尔换一列，免得每局都一样
+      if (score > bestScore || (score === bestScore && Math.random() < 0.3)) {
+        bestScore = score;
+        best = c;
+      }
+    }
+    return best;
+  }
+
+  // ---------- 棋盘 ----------
+  const boardEl = document.getElementById('board');
+  const columns = [];
+  for (let c = 0; c < COLS; c++) {
+    const column = el('button', { type: 'button', className: 'col' });
+    for (let r = 0; r < ROWS; r++) column.append(el('div', { className: 'hole' }, el('span')));
+    column.addEventListener('click', () => view && view.play(c));
+    columns.push(column);
+    boardEl.append(column);
+  }
+  let view = null;
+  let shown = -1;
+
+  function draw(game, v) {
+    view = v;
+    const fresh = game.history.length !== shown && game.history.length > shown;
+    shown = game.history.length;
+    const win = game.winLine || [];
+    columns.forEach((column, c) => {
+      const open = v.canPlay && game.canMove(c);
+      column.classList.toggle('open', open);
+      column.disabled = !open;
+      const filled = game.board.filter(row => row[c]).length;
+      column.setAttribute('aria-label', `第 ${c + 1} 列，${open ? `放这一列（已有 ${filled} 个）` : filled === ROWS ? '满了' : `已有 ${filled} 个`}`);
+      [...column.children].forEach((hole, r) => {
+        const span = hole.firstChild;
+        const stone = game.board[r][c];
+        span.className = stone || '';
+        if (win.some(([wr, wc]) => wr === r && wc === c)) span.classList.add('win');
+        if (game.lastMove && game.lastMove[0] === r && game.lastMove[1] === c) {
+          span.classList.add('last');
+          if (fresh) {
+            span.style.setProperty('--from', `${-(r + 1) * 110}%`);
+            span.classList.add('drop');
+          }
+        }
+      });
+    });
+  }
+
+  Kit.setupRules('sizi');
+  Kit.duel({
+    kind: 'connect4',
+    Game: Connect4.Game,
+    sides: ['r', 'y'],
+    sideNames: NAMES,
+    draw,
+    ai,
+    reasons: { four: '连成四子', full: '棋盘下满了' },
+  });
+</script>
+</body>
+</html>

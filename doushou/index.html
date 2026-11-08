@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/games/kit/kit.css">
+<title>斗兽棋 · 人机对战与联网对弈 | 游戏园</title>
+<meta name="description" content="免费在线斗兽棋：象狮虎豹狼狗猫鼠，大的吃小的，老鼠能吃大象，先进对方兽穴的赢。人机对战三档难度、本地双人、联网快速匹配和好友房间。">
+<link rel="canonical" href="https://gamesyuan.com/doushou/">
+<meta property="og:title" content="斗兽棋 · 游戏园">
+<meta property="og:description" content="象狮虎豹狼狗猫鼠，大的吃小的，老鼠能吃大象。先走进对方兽穴的赢。">
+<meta property="og:url" content="https://gamesyuan.com/doushou/">
+<style>
+  .jungle {
+    --w: min(92vw, 434px);
+    width: var(--w); padding: 5px; border-radius: 12px; background: var(--board-line);
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; box-shadow: 0 6px 18px rgba(0, 0, 0, .12);
+  }
+  .jungle button {
+    position: relative; aspect-ratio: 1; padding: 0; border: 0; border-radius: 4px;
+    background: #C9DDB0; display: grid; place-items: center; cursor: default; color: var(--board-line);
+  }
+  .jungle button.water { background: var(--water); }
+  .jungle button.trap, .jungle button.den { background: #E8D3A6; }
+  .jungle .mark { position: absolute; font: 13px/1 var(--kai); opacity: .55; }
+  .jungle .den .mark { font-size: 18px; opacity: .7; }
+  .jungle .piece {
+    position: relative; z-index: 1; width: 86%; height: 86%; border-radius: 50%;
+    display: grid; place-items: center; font: calc(var(--w) / 13) / 1 var(--kai); color: #FFF4E6;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, .35), inset 0 0 0 2px rgba(255, 244, 230, .55);
+  }
+  .jungle .piece.r { background: #C62828; }
+  .jungle .piece.b { background: #2F5D8A; }
+  .jungle .piece small { position: absolute; right: 9%; bottom: 6%; font: 10px/1 var(--sans); opacity: .85; }
+  .jungle button.pick { cursor: pointer; }
+  .jungle button.selected .piece { outline: 3px solid #F2B705; outline-offset: 1px; }
+  .jungle button.target { cursor: pointer; }
+  .jungle button.target::after {
+    content: ""; position: absolute; z-index: 2; width: 30%; height: 30%; border-radius: 50%; background: rgba(242, 183, 5, .85);
+  }
+  .jungle button.from { box-shadow: inset 0 0 0 3px rgba(242, 183, 5, .7); }
+  .jungle button.to { box-shadow: inset 0 0 0 3px rgba(242, 183, 5, .95); }
+  /* 黑白屏：红方黑底白字，蓝方白底黑字；河是斜线，选中是粗黑框 */
+  [data-ink] .jungle { background: #000; padding: 3px; }
+  [data-ink] .jungle button { background: #FFF; border-radius: 0; color: #000; }
+  [data-ink] .jungle button.water { background: repeating-linear-gradient(135deg, #FFF 0 5px, #000 5px 6.5px); }
+  [data-ink] .jungle button.trap, [data-ink] .jungle button.den { background: #FFF; }
+  [data-ink] .jungle .mark { opacity: 1; }
+  [data-ink] .jungle .piece.r { background: #000; color: #FFF; box-shadow: inset 0 0 0 2px #FFF !important; outline: 2px solid #000; }
+  [data-ink] .jungle .piece.b { background: #FFF; color: #000; border: 2.5px solid #000; }
+  [data-ink] .jungle button.selected .piece { outline: 4px double #000; outline-offset: 2px; }
+  [data-ink] .jungle button.target::after { background: #FFF; border: 3px solid #000; }
+  [data-ink] .jungle button.from { outline: 2px dashed #000; outline-offset: -4px; }
+  [data-ink] .jungle button.to { outline: 3px solid #000; outline-offset: -5px; }
+  .ranks { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; margin: 0 0 6px; color: var(--muted); font: 15px/1.6 var(--kai); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <a class="back" href="/games/">← 游戏园</a>
+    <h1>斗兽棋</h1>
+    <button type="button" class="btn small rules-btn">规则</button>
+  </header>
+  <div id="modes"></div>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <p class="ranks">象 8 › 狮 7 › 虎 6 › 豹 5 › 狼 4 › 狗 3 › 猫 2 › 鼠 1 · 鼠吃象</p>
+  <p class="sub ink-only">黑白模式：红方是黑底白字，蓝方是白底黑字；斜线格子是河。</p>
+  <div class="board-wrap"><div class="jungle" id="board" role="grid" aria-label="斗兽棋棋盘"></div></div>
+  <p class="sub" id="sub"></p>
+  <div class="actions" id="actions"></div>
+  <p class="foot"><a href="/games/">游戏园</a> · <a href="/account/">账号与排行榜</a></p>
+</div>
+
+<dialog class="rules" id="rules" aria-labelledby="rules-title">
+  <div class="inner">
+    <h2 id="rules-title">斗兽棋怎么玩</h2>
+    <p>棋盘 7 列 9 行，红方在下、蓝方在上，红方先走。每方 8 只动物，目标是走进对方的<strong>兽穴</strong>（标着「穴」的格子）。</p>
+    <h3>怎么走</h3>
+    <ul>
+      <li>先点自己的一只动物，再点亮着的格子。每次只能<strong>上下左右走一格</strong>，不能斜着走。</li>
+      <li>自己的兽穴不能进。</li>
+    </ul>
+    <h3>谁吃谁</h3>
+    <ul>
+      <li>从大到小：<strong>象 8、狮 7、虎 6、豹 5、狼 4、狗 3、猫 2、鼠 1</strong>。大的能吃小的，一样大的也能互吃。</li>
+      <li>例外：<strong>鼠能吃象</strong>，象却不能吃鼠。</li>
+    </ul>
+    <h3>河</h3>
+    <ul>
+      <li>棋盘中间两块蓝色的是河。只有<strong>鼠能下河</strong>。</li>
+      <li>鼠在河里时，不能吃岸上的动物，岸上的动物也吃不到它。</li>
+      <li><strong>狮、虎能跳河</strong>：横着或竖着一下跳到河对岸。如果要跳过的水里有鼠（不管哪一方的），就不能跳。</li>
+    </ul>
+    <h3>陷阱</h3>
+    <p>兽穴旁边三个标着「阱」的格子是陷阱。动物走进<strong>对方的陷阱</strong>后就失去了力量，对方任何一只动物都能吃掉它。走出陷阱就恢复。</p>
+    <h3>怎样算赢</h3>
+    <ul>
+      <li>走进对方的兽穴；</li>
+      <li>或者把对方的动物全吃光，或者让对方无路可走。</li>
+      <li>双方连续 100 步（各 50 步）都没有吃子，算和棋。</li>
+    </ul>
+    <h3>三种玩法</h3>
+    <p><strong>人机</strong>和电脑下，可以悔棋；<strong>双人</strong>两个人在同一台设备上轮流下；<strong>联网</strong>可以快速匹配陌生棋友（计积分），也可以建房间把房间号发给朋友。执蓝方时棋盘会倒过来，自己的动物总在下面。</p>
+    <div class="close-row"><button type="button" class="btn primary close">知道了</button></div>
+  </div>
+</dialog>
+
+<script src="/games/rules/jungle.js"></script>
+<script src="/games/kit/kit.js"></script>
+<script>
+  const { el } = Kit;
+  const { ROWS, COLS, NAMES, DEN, movesFor, targets, isWater, isDen, trapOwner, other } = Jungle;
+  const SIDE_NAMES = { r: '红方', b: '蓝方' };
+
+  // ---------- 电脑 ----------
+  const VALUE = [0, 55, 30, 35, 45, 55, 80, 90, 100];
+
+  function evaluate(game, side) {
+    let score = 0;
+    const { board } = game;
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      const piece = board[r][c];
+      if (!piece) continue;
+      const [dr, dc] = DEN[other(piece.side)];
+      const distance = Math.abs(r - dr) + Math.abs(c - dc);
+      let value = VALUE[piece.rank] + (12 - distance) * (piece.rank === 1 ? 1 : 2);
+      if (distance === 1) value += 40; // 贴着对方兽穴
+      if (trapOwner(r, c) === other(piece.side)) value += 10;
+      score += piece.side === side ? value : -value;
+    }
+    return score;
+  }
+
+  function ordered(game) {
+    const { board } = game;
+    const moves = game.legalMoves();
+    const weight = ([, to]) => (isDen(to[0], to[1]) ? 1000 : board[to[0]][to[1]] ? 100 + board[to[0]][to[1]].rank : 0);
+    return moves.sort((a, b) => weight(b) - weight(a));
+  }
+
+  function search(game, depth, alpha, beta) {
+    const side = game.turn;
+    if (game.winner) return game.winner === 'draw' ? 0 : game.winner === side ? 10000 + depth : -10000 - depth;
+    if (depth === 0) return evaluate(game, side);
+    for (const move of ordered(game)) {
+      game.move(move);
+      const score = -search(game, depth - 1, -beta, -alpha);
+      game.undo();
+      if (score > alpha) alpha = score;
+      if (alpha >= beta) break;
+    }
+    return alpha;
+  }
+
+  function copyGame(game) {
+    const copy = new Jungle.Game();
+    copy.board = game.board.map(row => row.map(p => p && { ...p }));
+    copy.turn = game.turn;
+    copy.quiet = game.quiet;
+    return copy;
+  }
+
+  function ai(game, level) {
+    const moves = game.legalMoves();
+    if (!moves.length) return null;
+    const sim = copyGame(game);
+    if (level === 0) {
+      // 入门：能进兽穴就进，能吃就多半吃，否则随便走
+      const den = moves.find(([, to]) => isDen(to[0], to[1]));
+      if (den) return den;
+      const eat = moves.filter(([, to]) => game.board[to[0]][to[1]]);
+      if (eat.length && Math.random() < 0.7) return eat[Math.floor(Math.random() * eat.length)];
+      return moves[Math.floor(Math.random() * moves.length)];
+    }
+    const depth = level === 1 ? 2 : 4;
+    let best = null, bestScore = -Infinity;
+    for (const move of Kit.shuffle(ordered(sim))) {
+      sim.move(move);
+      const score = -search(sim, depth - 1, -Infinity, -bestScore);
+      sim.undo();
+      if (score > bestScore) {
+        bestScore = score;
+        best = move;
+      }
+    }
+    return best;
+  }
+
+  // ---------- 棋盘 ----------
+  const boardEl = document.getElementById('board');
+  const cells = [];
+  for (let i = 0; i < ROWS * COLS; i++) {
+    const cell = el('button', { type: 'button', role: 'gridcell' });
+    cell.addEventListener('click', () => tap(i));
+    cells.push(cell);
+    boardEl.append(cell);
+  }
+  let view = null;
+  let current = null;
+  let selected = null; // [行, 列]
+
+  // 屏幕上第 i 格对应棋盘上的哪一格：执蓝方时倒过来
+  function at(i) {
+    const r = Math.floor(i / COLS), c = i % COLS;
+    return view && view.flip ? [ROWS - 1 - r, COLS - 1 - c] : [r, c];
+  }
+
+  function tap(i) {
+    if (!view || !view.canPlay) return;
+    const [r, c] = at(i);
+    const piece = current.board[r][c];
+    if (selected && targets(current.board, selected[0], selected[1]).some(t => t[0] === r && t[1] === c)) {
+      const move = [selected, [r, c]];
+      selected = null;
+      view.play(move);
+      return;
+    }
+    selected = piece && piece.side === current.turn ? [r, c] : null;
+    draw(current, view);
+  }
+
+  function draw(game, v) {
+    if (game !== current || !v.canPlay) selected = null;
+    current = game;
+    view = v;
+    const moves = v.canPlay && selected ? targets(game.board, selected[0], selected[1]) : [];
+    const last = game.lastMove;
+    cells.forEach((cell, i) => {
+      const [r, c] = at(i);
+      const piece = game.board[r][c];
+      const classes = [];
+      if (isWater(r, c)) classes.push('water');
+      const trap = trapOwner(r, c);
+      if (trap) classes.push('trap');
+      if (isDen(r, c)) classes.push('den');
+      const pickable = v.canPlay && piece && piece.side === game.turn && targets(game.board, r, c).length;
+      if (pickable) classes.push('pick');
+      if (selected && selected[0] === r && selected[1] === c) classes.push('selected');
+      const isTarget = moves.some(t => t[0] === r && t[1] === c);
+      if (isTarget) classes.push('target');
+      if (last && last[0][0] === r && last[0][1] === c) classes.push('from');
+      if (last && last[1][0] === r && last[1][1] === c) classes.push('to');
+      cell.className = classes.join(' ');
+      cell.disabled = !(pickable || isTarget);
+      const children = [];
+      if (isDen(r, c)) children.push(el('span', { className: 'mark', text: '穴' }));
+      else if (trap) children.push(el('span', { className: 'mark', text: '阱' }));
+      if (piece) children.push(el('span', { className: `piece ${piece.side}` }, NAMES[piece.rank], el('small', { text: String(piece.rank) })));
+      cell.replaceChildren(...children);
+      const where = isDen(r, c) ? '兽穴' : trap ? '陷阱' : isWater(r, c) ? '河' : '';
+      cell.setAttribute('aria-label', `${r + 1} 行 ${c + 1} 列${where ? `，${where}` : ''}${piece ? `，${SIDE_NAMES[piece.side]}${NAMES[piece.rank]}` : ''}${isTarget ? '，可以走到这里' : ''}`);
+    });
+  }
+
+  Kit.setupRules('doushou');
+  Kit.duel({
+    kind: 'jungle',
+    Game: Jungle.Game,
+    sides: ['r', 'b'],
+    sideNames: SIDE_NAMES,
+    draw,
+    ai,
+    reasons: { den: '走进了兽穴', wipe: '动物全被吃光', stuck: '无路可走', quiet: `连续 ${Jungle.QUIET_LIMIT} 步没有吃子` },
+    note: game => (game.winner || game.quiet < 60 ? '' : `已经连续 ${game.quiet} 步没吃子，到 ${Jungle.QUIET_LIMIT} 步算和棋`),
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/games/kit/kit.css">
+<title>成语接龙 · 和电脑接或者自己接 | 游戏园</title>
+<meta name="description" content="成语接龙：用上一个成语的最后一个字，开头接下一个成语。可以和电脑轮流接（三档难度），也可以自己一个人接，看能接多长。">
+<link rel="canonical" href="https://gamesyuan.com/chengyu/">
+<meta property="og:title" content="成语接龙 · 游戏园">
+<meta property="og:description" content="用上一个成语的最后一个字接下一个成语。和电脑比，或者自己挑战最长的龙。">
+<meta property="og:url" content="https://gamesyuan.com/chengyu/">
+<style>
+  .need { margin: 10px 0 4px; text-align: center; color: var(--muted); font-size: 15px; }
+  .need b { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; margin: 0 6px; border: 2px solid var(--primary); border-radius: 10px; color: var(--primary); font: 400 34px/1 var(--kai); vertical-align: middle; }
+  .answer { display: flex; gap: 8px; width: min(92vw, 420px); margin: 10px auto; }
+  .answer input {
+    flex: 1; min-width: 0; min-height: 48px; padding: 6px 14px; border: 2px solid var(--line); border-radius: 12px; background: var(--card);
+    font: 24px/1.2 var(--kai); letter-spacing: .12em;
+  }
+  .chain { list-style: none; width: min(92vw, 420px); margin: 14px auto; padding: 0; }
+  .chain li { display: flex; align-items: baseline; gap: 10px; padding: 6px 4px; border-bottom: 1px solid var(--rule); font: 22px/1.5 var(--kai); }
+  .chain li small { flex: none; width: 3.2em; color: var(--muted); font: 13px/1 var(--sans); }
+  .chain li.me small::before { content: "你"; }
+  .chain li.cpu small::before { content: "电脑"; }
+  .chain li.start small::before { content: "开头"; }
+  .chain li .unlisted { margin-left: auto; color: var(--muted); font: 12px/1 var(--sans); }
+  .chain li.latest { font-size: 26px; }
+  .chain li.latest span:first-of-type { border-bottom: 2px solid var(--primary); }
+  [data-ink] .need b { border: 3px solid #000; color: #000; }
+  [data-ink] .answer input { border-color: #000; }
+  [data-ink] .chain li { border-color: #000; }
+  [data-ink] .chain li.latest span:first-of-type { border-bottom: 3px solid #000; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <a class="back" href="/games/">← 游戏园</a>
+    <h1>成语接龙</h1>
+    <button type="button" class="btn small rules-btn">规则</button>
+  </header>
+  <div class="panel">
+    <div class="row"><span class="label">玩法</span><div class="seg" id="mode"></div></div>
+    <div class="row" id="level-row"><span class="label">电脑</span><div class="seg" id="level"></div></div>
+  </div>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <p class="need" id="need"></p>
+  <form class="answer" id="form" autocomplete="off">
+    <input id="input" maxlength="4" placeholder="输入四字成语" aria-label="输入成语" enterkeyhint="send">
+    <button class="btn primary" type="submit">接</button>
+  </form>
+  <div class="actions">
+    <button type="button" class="btn" id="hint">提示</button>
+    <button type="button" class="btn" id="giveup">接不上了</button>
+    <button type="button" class="btn primary" id="restart">重新开始</button>
+  </div>
+  <p class="sub" id="sub"></p>
+  <ol class="chain" id="chain" reversed></ol>
+  <p class="foot"><a href="/games/">游戏园</a></p>
+</div>
+
+<dialog class="rules" id="rules" aria-labelledby="rules-title">
+  <div class="inner">
+    <h2 id="rules-title">成语接龙怎么玩</h2>
+    <p>用上一个成语的<strong>最后一个字</strong>，作为下一个成语的<strong>第一个字</strong>。比如「一心一<strong>意</strong>」→「<strong>意</strong>气风发」→「<strong>发</strong>扬光大」……</p>
+    <h3>规则</h3>
+    <ul>
+      <li>必须是四字成语，第一个字要和上一个成语的最后一个字<strong>完全相同</strong>（同音字不算）。</li>
+      <li>同一局里用过的成语不能再用。</li>
+      <li>接不上就输了。</li>
+    </ul>
+    <h3>两种玩法</h3>
+    <ul>
+      <li><strong>和电脑接</strong>：你和电脑轮流接。入门的电脑会给你留好接的字；大师会专挑难接的字来为难你。</li>
+      <li><strong>自己接</strong>：一个人一直接下去，看最长能接多少个。</li>
+    </ul>
+    <h3>提示和词库</h3>
+    <p>每局有 3 次「提示」，会告诉你一个能接的成语。游戏的词库收了一千多个常用成语，难免有漏掉的：如果你输入的成语词库里没有，会问你一句，确认是成语就算数。</p>
+    <div class="close-row"><button type="button" class="btn primary close">知道了</button></div>
+  </div>
+</dialog>
+
+<script src="/chengyu/idioms.js"></script>
+<script src="/games/kit/kit.js"></script>
+<script>
+  const { el, store, toast } = Kit;
+  const $ = id => document.getElementById(id);
+  const LIST = IDIOMS.trim().split(/\s+/);
+  const SET = new Set(LIST);
+  const BY_FIRST = new Map();
+  for (const word of LIST) {
+    if (!BY_FIRST.has(word[0])) BY_FIRST.set(word[0], []);
+    BY_FIRST.get(word[0]).push(word);
+  }
+  const HINTS = 3;
+
+  let mode = store.get('chengyu:mode', 'cpu');
+  let level = store.get('chengyu:level', 1);
+  let chain = []; // { word, who: 'start' | 'me' | 'cpu', unlisted }
+  let used = new Set();
+  let over = null; // null | 'win' | 'lose' | 'end'
+  let hintsLeft = HINTS;
+  const best = store.get('chengyu:best', 0);
+  let bestNow = best;
+
+  const last = () => chain[chain.length - 1].word;
+  const need = () => last()[3];
+  // 接上 word 之后，下一个人还有几个成语可接
+  const options = ch => (BY_FIRST.get(ch) || []).filter(w => !used.has(w));
+  const pickRandom = list => list[Math.floor(Math.random() * list.length)];
+
+  function start() {
+    // 开头挑一个后面好接的
+    const good = LIST.filter(w => options(w[3]).length >= 2);
+    chain = [];
+    used = new Set();
+    over = null;
+    hintsLeft = HINTS;
+    const first = pickRandom(good);
+    chain.push({ word: first, who: 'start' });
+    used.add(first);
+    draw();
+    $('input').value = '';
+  }
+
+  function cpuMove() {
+    const list = options(need());
+    if (!list.length) {
+      over = 'win';
+      toast('电脑接不上了，你赢了！');
+      return draw();
+    }
+    let word;
+    const score = w => options(w[3]).filter(x => x !== w).length;
+    if (level === 0) {
+      // 入门：给你留好接的
+      const easy = list.filter(w => score(w) >= 2);
+      word = pickRandom(easy.length ? easy : list);
+    } else if (level === 2) {
+      // 大师：挑后面最难接的
+      const min = Math.min(...list.map(score));
+      word = pickRandom(list.filter(w => score(w) === min));
+    } else {
+      word = pickRandom(list);
+    }
+    chain.push({ word, who: 'cpu' });
+    used.add(word);
+    draw();
+  }
+
+  function submit(word) {
+    if (over) return;
+    word = word.replace(/\s/g, '');
+    if ([...word].length !== 4) return toast('要四个字的成语');
+    if (word[0] !== need()) return toast(`要用「${need()}」开头`);
+    if (used.has(word)) return toast('这个成语这一局用过了');
+    let unlisted = false;
+    if (!SET.has(word)) {
+      if (!confirm(`「${word}」不在词库里。你确定这是一个成语吗？`)) return;
+      unlisted = true;
+    }
+    chain.push({ word, who: 'me', unlisted });
+    used.add(word);
+    $('input').value = '';
+    const mine = chain.filter(c => c.who === 'me').length;
+    if (mode === 'solo' && mine > bestNow) {
+      bestNow = mine;
+      store.set('chengyu:best', bestNow);
+    }
+    draw();
+    if (mode === 'cpu') setTimeout(cpuMove, 500);
+  }
+
+  function draw() {
+    const mine = chain.filter(c => c.who === 'me').length;
+    $('level-row').hidden = mode !== 'cpu';
+    $('need').replaceChildren();
+    if (!over) $('need').append('下一个成语用', el('b', { text: need() }), '开头');
+    $('form').hidden = !!over;
+    $('hint').hidden = !!over;
+    $('giveup').hidden = !!over;
+    $('hint').textContent = `提示（还有 ${hintsLeft} 次）`;
+    $('hint').disabled = !hintsLeft;
+    if (over === 'win') $('status').textContent = `你赢了！一共接了 ${mine} 个`;
+    else if (over === 'lose') $('status').textContent = `电脑赢了，你接了 ${mine} 个`;
+    else if (over === 'end') $('status').textContent = `接了 ${mine} 个成语`;
+    else $('status').textContent = mode === 'cpu' ? (chain[chain.length - 1].who === 'me' ? '电脑在想…' : '轮到你接') : `已经接了 ${mine} 个`;
+    $('sub').textContent = mode === 'solo' && bestNow ? `自己接的最长记录：${bestNow} 个` : '';
+    $('chain').replaceChildren(...[...chain].reverse().map((c, i) => {
+      const item = el('li', { className: `${c.who}${i === 0 ? ' latest' : ''}` }, el('small'), el('span', { text: c.word }));
+      if (c.unlisted) item.append(el('span', { className: 'unlisted', text: '词库外' }));
+      return item;
+    }));
+  }
+
+  $('form').addEventListener('submit', e => {
+    e.preventDefault();
+    submit($('input').value);
+  });
+  $('hint').addEventListener('click', () => {
+    const list = options(need());
+    if (!list.length) {
+      toast(`词库里没有「${need()}」开头、还没用过的成语`);
+      return;
+    }
+    hintsLeft--;
+    // 提示一个后面也好接的
+    const word = list.find(w => options(w[3]).length) || list[0];
+    $('input').value = word;
+    $('input').focus();
+    draw();
+  });
+  $('giveup').addEventListener('click', () => {
+    const list = options(need());
+    over = mode === 'cpu' ? 'lose' : 'end';
+    if (list.length) toast(`可以接：${list.slice(0, 3).join('、')}`);
+    draw();
+  });
+  $('restart').addEventListener('click', start);
+
+  [['cpu', '和电脑接'], ['solo', '自己接']].forEach(([value, label]) => {
+    const button = el('button', { type: 'button', 'aria-pressed': String(value === mode), text: label });
+    button.addEventListener('click', () => {
+      mode = value;
+      store.set('chengyu:mode', mode);
+      $('mode').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      start();
+    });
+    $('mode').append(button);
+  });
+  ['入门', '业余', '大师'].forEach((label, value) => {
+    const button = el('button', { type: 'button', 'aria-pressed': String(value === level), text: label });
+    button.addEventListener('click', () => {
+      level = value;
+      store.set('chengyu:level', level);
+      $('level').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      start();
+    });
+    $('level').append(button);
+  });
+
+  Kit.setupRules('chengyu');
+  start();
+</script>
+</body>
+</html>
