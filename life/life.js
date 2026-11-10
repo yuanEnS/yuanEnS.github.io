@@ -139,3 +139,31 @@ function showPosts(target, posts, { empty, author = true }) {
   }
   target.replaceChildren(...nodes);
 }
+
+// 搜索引擎用的信息：每篇文章、每位作者页有自己的正式地址、标题和简介；不该被搜到的页面标 noindex
+function setMeta({ title, description, canonical, noindex, data }) {
+  const head = document.head;
+  const tag = (selector, create) => head.querySelector(selector) || head.appendChild(create());
+  const meta = (attr, key, value) => {
+    const node = tag(`meta[${attr}="${key}"]`, () => Object.assign(document.createElement('meta'), { [attr === 'name' ? 'name' : 'content']: '' }));
+    node.setAttribute(attr, key);
+    node.setAttribute('content', value);
+  };
+  if (title) {
+    document.title = title;
+    meta('property', 'og:title', title);
+  }
+  if (description) {
+    meta('name', 'description', description);
+    meta('property', 'og:description', description);
+  }
+  if (canonical) {
+    tag('link[rel="canonical"]', () => Object.assign(document.createElement('link'), { rel: 'canonical' })).href = canonical;
+    meta('property', 'og:url', canonical);
+  }
+  if (noindex) meta('name', 'robots', 'noindex');
+  if (data) {
+    const script = tag('script[type="application/ld+json"]', () => Object.assign(document.createElement('script'), { type: 'application/ld+json' }));
+    script.textContent = JSON.stringify(data);
+  }
+}

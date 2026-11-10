@@ -68,6 +68,17 @@
     document.title = `${name}的园子 | 生活园`;
   }
 
+  // 作者页对外，有自己的地址；不带 author 的是自己的园子（要登录），不进搜索结果
+  if (author) {
+    setMeta({
+      title: `${author}的园子 | 生活园`,
+      description: `${author}在生活园写的文章，还有公开的园地。`,
+      canonical: `https://gamesyuan.com${authorUrl(author)}`,
+    });
+  } else {
+    setMeta({ noindex: true });
+  }
+
   function askLogin(text) {
     showMessage(list, text);
     const link = document.createElement('a');

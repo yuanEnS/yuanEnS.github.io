@@ -69,7 +69,28 @@
   }
 
   function show({ post, newer, older }) {
-    document.title = `${post.title} | 生活园`;
+    const url = `https://gamesyuan.com/life/post/?id=${post.id}`;
+    const summary = excerpt(post.body, 110) || post.title;
+    setMeta({
+      title: `${post.title} | 生活园`,
+      description: summary,
+      canonical: url,
+      // 草稿和仅自己可见的文章不进搜索结果（路人本来也打不开）
+      noindex: !!(post.draft || post.hidden),
+      data: post.draft || post.hidden ? null : {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: summary,
+        datePublished: post.date,
+        inLanguage: 'zh-CN',
+        url,
+        mainEntityOfPage: url,
+        author: { '@type': 'Person', name: post.author, url: `https://gamesyuan.com${authorUrl(post.author)}` },
+        publisher: { '@type': 'Organization', name: 'gamesyuan', url: 'https://gamesyuan.com/' },
+        keywords: post.tags.split(/\s+/).filter(Boolean).join(','),
+      },
+    });
     $('title').textContent = post.title;
     const parts = [cnDate(post.date), ...post.tags.split(/\s+/).filter(Boolean)];
     if (post.draft) parts.push('草稿');
@@ -97,6 +118,7 @@
   }
 
   api(`/life/post?id=${encodeURIComponent(id)}`).then(show).catch(err => {
+    setMeta({ noindex: true });
     $('status').textContent = errorText(err);
   });
 
