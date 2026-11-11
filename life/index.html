@@ -25,7 +25,7 @@
 </head>
 <body>
 <div class="page">
-<nav class="top"><a href="/">← 首页</a><a href="/life/write/">写文章</a></nav>
+<nav class="top"><a href="/">← 首页</a><span class="top-links" id="top-links"><a href="/life/write/">写文章</a></span></nav>
 <header class="masthead">
   <span class="seal" aria-hidden="true">生</span>
   <h1>生活园</h1>
@@ -45,5 +45,8 @@
 </main>
 <footer class="foot"><a href="/">首页</a></footer>
 </div>
+<script src="/life/life.js"></script>
+<script src="/life/comments.js"></script>
+<script>showCommentBadge(document.getElementById('top-links'));</script>
 </body>
 </html>

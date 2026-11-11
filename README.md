@@ -19,7 +19,7 @@
 - `index.html`：主页，生活园和游戏园两个入口
 - `games/`：游戏园，游戏列表
 - `wuziqi/`：五子棋网页（自动生成）
-- `life/`：生活园入口。下面有世界园 `world/`（地图和气泡，`map.js`，陆地点阵在 `land.js`）和私人园 `personal/`（自己或某位作者的文章和园地，`?author=昵称`）。园地是心愿单、旅行地图、纪念日，页面在 `life/garden/?id=N`，旅行地图用 `garden-map.js`。文章在 Cloudflare D1 里，正式账号都能在 `/life/write/` 写，每人每天发布一篇
+- `life/`：生活园入口。下面有世界园 `world/`（地图和气泡，`map.js`；国界和中国省界在 `geo.js`，画法在 `geo-draw.js`，由 xiangqi 仓库的 `tools/geo/` 生成）和私人园 `personal/`（自己或某位作者的文章和园地，`?author=昵称`）。园地是心愿单、旅行地图、纪念日，页面在 `life/garden/?id=N`，旅行地图用 `garden-map.js`。文章在 Cloudflare D1 里，正式账号都能在 `/life/write/` 写，每人每天发布一篇
 - `resume/`：作者简历（不从站内链接，直接用网址访问）
 - `CNAME`：自定义域名 gamesyuan.com
 - `sitemap.xml` / `robots.txt`：给搜索引擎

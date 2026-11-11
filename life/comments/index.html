@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>评论消息 | 生活园</title>
+<meta name="robots" content="noindex">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/life/life.css">
+<style>
+  .inbox-section { margin-top: 36px; }
+  .inbox-section h2 { margin: 0 0 6px; font-size: 21px; font-weight: 400; }
+  .inbox-item { padding: 14px 0; border-bottom: 1px solid var(--rule); }
+  .inbox-item.unread .inbox-where::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--primary); vertical-align: 2px; }
+  .inbox-where { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.7; overflow-wrap: anywhere; }
+  .inbox-where a { color: var(--soft); }
+  .mode-pick { display: grid; gap: 8px; margin: 10px 0 0; padding: 4px 16px 14px; border: 1px solid var(--rule); border-radius: 10px; font-size: 16px; }
+  .mode-pick legend { padding: 0 6px; }
+  .mode-pick label { display: flex; gap: 8px; align-items: baseline; }
+  .ban-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
+  .ban-form .field { flex: 1 1 160px; width: auto; }
+  .ban-list { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 12px 0 0; padding: 0; list-style: none; }
+</style>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a href="/life/">← 生活园</a><a href="/life/personal/">私人园</a></nav>
+<header class="masthead">
+  <span class="seal" aria-hidden="true">评</span>
+  <h1>评论消息</h1>
+  <p>别人在你文章下的评论、回复你的话，和等你审核的评论。</p>
+</header>
+<p class="empty" id="status" role="status">正在打开…</p>
+<section class="inbox-section" id="queue-wrap" hidden aria-labelledby="queue-title">
+  <h2 id="queue-title">等你审核</h2>
+  <p class="hint">通过后大家才看得到。广告、骂人、违法的内容请直接删除。</p>
+  <div id="queue"></div>
+</section>
+<section class="inbox-section" id="items-wrap" hidden aria-labelledby="items-title">
+  <h2 id="items-title">评论和回复</h2>
+  <div id="items"></div>
+</section>
+<section class="inbox-section" id="admin" hidden aria-labelledby="admin-title">
+  <h2 id="admin-title">园主设置</h2>
+  <fieldset class="mode-pick" id="mode">
+    <legend class="hint">新评论要不要先审核（园主和文章作者自己的评论不用审）</legend>
+    <label><input type="radio" name="mode" value="all"> 全部先审：每一条都要审核后才公开</label>
+    <label><input type="radio" name="mode" value="first"> 第一次先审：每人第一条审过以后，直接公开</label>
+    <label><input type="radio" name="mode" value="off"> 不审：直接公开（有敏感词的还是要审）</label>
+  </fieldset>
+  <form class="ban-form" id="ban-form">
+    <input class="field" id="ban-name" placeholder="昵称" aria-label="要禁止评论的昵称" required>
+    <label class="hint"><input type="checkbox" id="ban-wipe"> 同时删除他的全部评论</label>
+    <button type="submit">禁止评论</button>
+  </form>
+  <ul class="ban-list" id="bans"></ul>
+</section>
+<footer class="foot"><a href="/life/">生活园</a> · <a href="/">首页</a></footer>
+</div>
+<script src="/life/life.js"></script>
+<script src="/life/comments.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+
+  function where(item, text) {
+    const link = make('a', { href: `/life/post/?id=${item.post}#comment-${item.id}` }, `《${item.title}》`);
+    return make('p', { className: 'inbox-where' },
+      make('a', { href: authorUrl(item.author) }, item.author), ` ${text} `, link, ` · ${commentTime(item.time)}`);
+  }
+
+  function run(path, body, button) {
+    button.disabled = true;
+    return api(path, body).then(() => {
+      load();
+      return true;
+    }).catch(err => {
+      button.disabled = false;
+      alert(errorText(err));
+      return false;
+    });
+  }
+
+  function queueItem(item, admin) {
+    const bar = make('div', { className: 'comment-tools' });
+    const add = (label, handler) => {
+      const b = make('button', { type: 'button', className: 'link-button' }, label);
+      b.addEventListener('click', () => handler(b));
+      bar.append(b);
+    };
+    add('通过', b => run('/life/comments/approve', { id: item.id }, b));
+    add('删除', b => {
+      if (confirm('删除这条评论？')) run('/life/comments/delete', { id: item.id }, b);
+    });
+    if (admin) {
+      add('禁止此人评论', b => {
+        if (confirm(`禁止 ${item.author} 评论，并删除他的全部评论？`)) run('/life/comments/ban', { name: item.author, wipe: true }, b);
+      });
+    }
+    return make('div', { className: 'inbox-item' },
+      where(item, item.parent ? '回复了评论，在' : '评论了'),
+      item.reports ? make('span', { className: 'tag wait' }, `被举报 ${item.reports} 次`) : null,
+      make('p', { className: 'comment-body' }, item.body), bar);
+  }
+
+  function showAdmin(data) {
+    $('admin').hidden = !data.admin;
+    if (!data.admin) return;
+    for (const input of document.querySelectorAll('[name="mode"]')) input.checked = input.value === data.mode;
+    $('bans').replaceChildren(...data.bans.map(name => {
+      const b = make('button', { type: 'button', className: 'link-button' }, '恢复');
+      b.addEventListener('click', () => run('/life/comments/ban', { name, off: true }, b));
+      return make('li', {}, `${name} `, b);
+    }));
+    if (!data.bans.length) $('bans').append(make('li', { className: 'hint' }, '没有被禁止评论的人。'));
+  }
+
+  async function load() {
+    const data = await api('/life/comments/inbox');
+    $('status').hidden = true;
+    $('queue-wrap').hidden = !data.queue.length;
+    $('queue').replaceChildren(...data.queue.map(item => queueItem(item, data.admin)));
+    $('items-wrap').hidden = false;
+    $('items').replaceChildren(...data.items.map(item => make('div', { className: `inbox-item${item.unread ? ' unread' : ''}` },
+      where(item, item.parent ? '回复了你，在' : '评论了你的'),
+      make('p', { className: 'comment-body' }, item.body))));
+    if (!data.items.length) $('items').append(make('p', { className: 'hint' }, '还没有人评论或回复你。'));
+    showAdmin(data);
+    if (data.items.some(item => item.unread)) api('/life/comments/seen', {}).catch(() => {});
+  }
+
+  $('mode').addEventListener('change', e => {
+    api('/life/comments/mode', { mode: e.target.value }).catch(err => alert(errorText(err)));
+  });
+  $('ban-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const wipe = $('ban-wipe').checked;
+    if (wipe && !confirm(`删除 ${$('ban-name').value} 的全部评论？删掉的找不回来。`)) return;
+    run('/life/comments/ban', { name: $('ban-name').value.trim(), wipe }, e.submitter || $('ban-form').querySelector('button')).then(ok => {
+      if (!ok) return;
+      $('ban-name').value = '';
+      $('ban-wipe').checked = false;
+    });
+  });
+
+  if (!getToken()) {
+    $('status').replaceChildren('登录后才能看评论消息。', ' ', make('a', { href: '/account/?back=/life/comments/' }, '去登录'));
+  } else {
+    load().catch(err => {
+      $('status').textContent = err.status === 401 ? '登录已过期，请重新登录。' : errorText(err);
+    });
+  }
+</script>
+</body>
+</html>

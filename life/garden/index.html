@@ -121,7 +121,8 @@
 <footer class="foot"><a href="/life/">生活园</a> · <a href="/life/personal/">私人园</a></footer>
 </div>
 <script src="/life/life.js"></script>
-<script src="/life/land.js"></script>
+<script src="/life/geo.js"></script>
+<script src="/life/geo-draw.js"></script>
 <script src="/life/garden-map.js"></script>
 <script>
   const $ = id => document.getElementById(id);
@@ -263,9 +264,13 @@
 
   function showTravel(items) {
     $('map-wrap').hidden = false;
-    ensureMap().setPins(items);
+    const been = ensureMap().setPins(items);
+    const regions = [
+      been.countries ? `${been.countries} 个国家` : '',
+      been.provinces ? `中国的 ${been.provinces} 个省份` : '',
+    ].filter(Boolean).join('、');
     $('map-hint').textContent = items.length
-      ? `去过 ${items.length} 个地方。点地图上的红点，打开那段故事。`
+      ? `去过 ${items.length} 个地方${regions ? `，走过 ${regions}` : ''}。点地图上的红点，打开那段故事。`
       : '';
     return newestFirst(items).map(story);
   }

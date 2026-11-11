@@ -1,78 +1,36 @@
-// 世界园地图：作者多的地方颜色深，时不时冒出一个气泡，随机挑一位作者。
-// 数据来自 /api/life/map，陆地点阵在 land.js。
+// 世界园地图：作者多的国家颜色深，时不时冒出一个气泡，随机挑一位作者。
+// 按国界上色，数据来自 /api/life/map，国界在 geo.js，画法在 geo-draw.js。
 (() => {
   const root = document.getElementById('globe');
   const canvas = root.querySelector('canvas');
   const layer = root.querySelector('.bubbles');
   const tip = root.querySelector('.map-tip');
   const summary = document.getElementById('globe-summary');
-  const ctx = canvas.getContext('2d');
-
-  const COLS = LAND.rows[0].length;
-  const ROWS = LAND.rows.length;
-  const SPREAD = 7; // 一位作者的热度向外扩散多少度
-  const FULL_HEAT = 12; // 这么多位作者挤在一起时颜色最深，人少时不会一下子烧红
+  const FULL_HEAT = 12; // 一个国家有这么多位作者时颜色最深，人少时不会一下子烧红
   const BUBBLE_EVERY = 2600;
   const BUBBLE_LIFE = 7000;
 
   const quiet = matchMedia('(prefers-reduced-motion: reduce)');
-  const names = (() => {
-    try {
-      return new Intl.DisplayNames(['zh-CN'], { type: 'region' });
-    } catch (e) {
-      return null;
-    }
-  })();
 
   let cells = [];
   let pool = [];
-  let dots = [];
+  let counts = new Map(); // 国家和地区代码 → 作者数
   let hovering = false;
   const live = new Set();
 
-  function countryName(code) {
-    try {
-      return (names && names.of(code)) || code;
-    } catch (e) {
-      return code;
-    }
-  }
-
-  function toX(lon) {
-    return (lon + 180) / (COLS * LAND.step);
-  }
-
-  function toY(lat) {
-    return (LAND.top - lat) / (ROWS * LAND.step);
-  }
-
-  function heatAt(lat, lon) {
-    let sum = 0;
-    for (const cell of cells) {
-      const dLat = lat - cell.lat;
-      let dLon = Math.abs(lon - cell.lon);
-      if (dLon > 180) dLon = 360 - dLon;
-      dLon *= Math.cos(lat * Math.PI / 180);
-      sum += cell.authors * Math.exp(-(dLat * dLat + dLon * dLon) / (2 * SPREAD * SPREAD));
-    }
-    return sum;
-  }
+  const countryName = Geo.countryName;
+  const toX = Geo.toX;
+  const toY = Geo.toY;
 
   // 对数刻度：一位作者也看得见，几十位也分得出深浅
-  function level(heat) {
-    return Math.min(1, Math.log1p(heat) / Math.log1p(FULL_HEAT));
+  function level(n) {
+    return Math.min(1, Math.log1p(n) / Math.log1p(FULL_HEAT));
   }
 
-  function computeDots() {
-    dots = [];
-    LAND.rows.forEach((row, r) => {
-      for (let c = 0; c < COLS; c++) {
-        if (row[c] !== '1') continue;
-        const lat = LAND.top - (r + 0.5) * LAND.step;
-        const lon = -180 + (c + 0.5) * LAND.step;
-        dots.push({ x: (c + 0.5) / COLS, y: (r + 0.5) / ROWS, t: level(heatAt(lat, lon)) });
-      }
-    });
+  // 服务器给的 country 是作者所在地的代码；台湾的作者算在中国台湾，画在中国的版图里
+  function countAuthors() {
+    counts = new Map();
+    for (const cell of cells) counts.set(cell.country, (counts.get(cell.country) || 0) + cell.authors);
   }
 
   function rgb(hex) {
@@ -84,40 +42,24 @@
   }
 
   function draw() {
-    const box = root.getBoundingClientRect();
-    const scale = devicePixelRatio || 1;
-    canvas.width = Math.round(box.width * scale);
-    canvas.height = Math.round(box.height * scale);
-    ctx.setTransform(scale, 0, 0, scale, 0, 0);
-    ctx.clearRect(0, 0, box.width, box.height);
-
+    const { ctx, width, height } = Geo.canvasFor(root, canvas);
     const style = getComputedStyle(root);
     const color = name => rgb(style.getPropertyValue(name).trim());
-    const land = color('--land');
+    const land = style.getPropertyValue('--land').trim();
     const low = color('--heat-low');
     const high = color('--heat-high');
-
-    // 先铺一层晕染，海上的小岛没有陆地点也看得见
-    for (const cell of cells) {
-      const x = toX(cell.lon) * box.width, y = toY(cell.lat) * box.height;
-      const radius = box.width * (0.035 + 0.03 * level(cell.authors));
-      const glow = ctx.createRadialGradient(x, y, 0, x, y, radius);
-      const [r, g, b] = mix(low, high, level(cell.authors));
-      glow.addColorStop(0, `rgba(${r},${g},${b},0.34)`);
-      glow.addColorStop(1, `rgba(${r},${g},${b},0)`);
-      ctx.fillStyle = glow;
-      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
-    }
-
-    const gap = box.width / COLS;
-    for (const dot of dots) {
-      const hot = dot.t > 0.04;
-      const [r, g, b] = hot ? mix(low, high, dot.t) : land;
-      ctx.fillStyle = `rgb(${r},${g},${b})`;
-      ctx.beginPath();
-      ctx.arc(dot.x * box.width, dot.y * box.height, gap * (hot ? 0.3 + 0.16 * dot.t : 0.26), 0, Math.PI * 2);
-      ctx.fill();
-    }
+    const heat = code => {
+      const n = counts.get(code);
+      if (!n) return null;
+      const [r, g, b] = mix(low, high, level(n));
+      return `rgb(${r},${g},${b})`;
+    };
+    Geo.paint(ctx, width, height, {
+      land,
+      line: style.getPropertyValue('--bg').trim(),
+      colorOf: heat,
+      provinceColor: code => (code === 'CN-TW' ? heat('TW') : null),
+    });
   }
 
   function closeBubble(bubble) {
@@ -181,27 +123,21 @@
     bubble.timer = setTimeout(() => closeBubble(bubble), 1500);
   }
 
-  function nearestCell(event) {
-    const box = root.getBoundingClientRect();
-    const px = event.clientX - box.left, py = event.clientY - box.top;
-    let best = null, bestDistance = 26;
-    for (const cell of cells) {
-      const d = Math.hypot(toX(cell.lon) * box.width - px, toY(cell.lat) * box.height - py);
-      if (d < bestDistance) {
-        best = cell;
-        bestDistance = d;
-      }
-    }
-    return best;
-  }
-
   function showTip(event) {
-    const cell = nearestCell(event);
-    tip.hidden = !cell;
-    if (!cell) return;
-    tip.textContent = `${countryName(cell.country)} · ${cell.authors} 位作者`;
-    tip.style.left = `${toX(cell.lon) * 100}%`;
-    tip.style.top = `${toY(cell.lat) * 100}%`;
+    if (event.pointerType === 'touch' || event.target.closest('.bubble')) {
+      tip.hidden = true;
+      return;
+    }
+    const box = root.getBoundingClientRect();
+    const fx = (event.clientX - box.left) / box.width, fy = (event.clientY - box.top) / box.height;
+    const spot = Geo.locate(Geo.toLat(fy), Geo.toLon(fx));
+    tip.hidden = !spot.country;
+    if (!spot.country) return;
+    const code = Geo.regionOf(spot);
+    const n = counts.get(code) || 0;
+    tip.textContent = n ? `${countryName(code)} · ${n} 位作者` : countryName(code);
+    tip.style.left = `${fx * 100}%`;
+    tip.style.top = `${fy * 100}%`;
   }
 
   // 同样的信息用文字再写一遍，看不清颜色或用读屏软件的人也能知道
@@ -212,8 +148,7 @@
       canvas.setAttribute('aria-label', '世界地图，还没有作者');
       return;
     }
-    const byCountry = new Map();
-    for (const cell of cells) byCountry.set(cell.country, (byCountry.get(cell.country) || 0) + cell.authors);
+    const byCountry = counts;
     const top = [...byCountry].sort((a, b) => b[1] - a[1]).slice(0, 5)
       .map(([code, n]) => `${countryName(code)} ${n}`).join('、');
     const more = byCountry.size > 5 ? ' 等' : '';
@@ -231,7 +166,6 @@
     tip.hidden = true;
   });
 
-  computeDots();
   draw();
   new ResizeObserver(draw).observe(root);
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
@@ -239,7 +173,7 @@
   api('/life/map').then(data => {
     cells = data.cells;
     pool = data.bubbles;
-    computeDots();
+    countAuthors();
     draw();
     writeSummary();
     popBubble();
