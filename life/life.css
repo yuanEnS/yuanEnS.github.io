@@ -347,3 +347,12 @@ a.garden-card:hover { border-color: var(--primary); }
 /* 首页「装到手机」 */
 .install { margin: 0 0 8px; color: var(--muted); font-size: 16px; line-height: 1.8; text-align: center; }
 .install button { margin-left: 6px; }
+
+/* 数学公式（KaTeX 排版） */
+.math.display { display: block; margin: 1.1em 0; text-align: center; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.math .katex { font-size: 1.08em; }
+.math.display .katex-display { margin: 0; }
+.math-help { margin: 4px 0 12px; color: var(--muted); font-size: 15px; line-height: 1.8; }
+.math-help summary { cursor: pointer; color: var(--primary); }
+.math-help p { margin: 6px 0; }
+.math-help code { padding: 0 4px; border-radius: 4px; background: rgba(120, 90, 60, .1); font-size: 14px; }

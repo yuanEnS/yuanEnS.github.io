@@ -303,7 +303,10 @@
         const show = expanded => {
           if (expanded) openStories.add(item.id);
           else openStories.delete(item.id);
-          if (expanded && !body.innerHTML) body.innerHTML = renderBody(item.body);
+          if (expanded && !body.innerHTML) {
+            body.innerHTML = renderBody(item.body);
+            renderMath(body);
+          }
           body.hidden = !expanded;
           summary.hidden = expanded || !summary.textContent;
           toggle.textContent = expanded ? '收起' : '读全文';

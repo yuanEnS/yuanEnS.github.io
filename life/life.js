@@ -41,9 +41,34 @@ function inline(text) {
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 }
 
-// 空一行分段。支持：## 小标题、> 引用、--- 分隔线、**重点**、[文字](链接)、![说明](图片地址)
-function renderBody(text) {
-  return text.trim().split(/\n\s*\n/).map(block => {
+// 数学公式：$$...$$ 单独成行居中，$...$ 嵌在句子里，用 LaTeX 写法。\$ 是普通的美元符号。
+// 「花了 $5，又花了 $6」这种不算公式：结束的 $ 后面紧跟数字、或者两头挨着空格的都不算。
+const MATH_MARK = '\u0000';
+function takeMath(text) {
+  const formulas = [];
+  const keep = (tex, display) => {
+    formulas.push({ tex: tex.trim(), display });
+    return `${MATH_MARK}${formulas.length - 1}${MATH_MARK}`;
+  };
+  const out = text
+    .replace(/\\\$/g, '\u0001')
+    .replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => keep(tex, true))
+    .replace(/\$(?!\s)([^$\n]+?)(?<!\s)\$(?!\d)/g, (_, tex) => keep(tex, false));
+  return { text: out, formulas };
+}
+function putMath(html, formulas) {
+  return html
+    .replace(new RegExp(`${MATH_MARK}(\\d+)${MATH_MARK}`, 'g'), (_, i) => {
+      const { tex, display } = formulas[i];
+      return `<span class="math${display ? ' display' : ''}" data-tex="${escapeHtml(tex)}">${escapeHtml(tex)}</span>`;
+    })
+    .replace(/\u0001/g, '$');
+}
+
+// 空一行分段。支持：## 小标题、> 引用、--- 分隔线、**重点**、[文字](链接)、![说明](图片地址)、$公式$
+function renderBody(source) {
+  const { text, formulas } = takeMath(source);
+  const html = text.trim().split(/\n\s*\n/).map(block => {
     const lines = block.split('\n').map(line => line.trim()).filter(Boolean);
     const first = lines[0] || '';
     const image = first.match(/^!\[(.*?)\]\((\S+?)\)$/);
@@ -56,14 +81,55 @@ function renderBody(text) {
     if (first.startsWith('>')) {
       return `<blockquote><p>${lines.map(line => inline(line.replace(/^>\s*/, ''))).join('<br>')}</p></blockquote>`;
     }
+    // 一段里只有一个 $$ 公式，就不用再包一层段落
+    if (lines.length === 1 && new RegExp(`^${MATH_MARK}\\d+${MATH_MARK}$`).test(first) && formulas[Number(first.slice(1, -1))].display) {
+      return first;
+    }
     return `<p>${lines.map(inline).join('<br>')}</p>`;
   }).join('\n');
+  return putMath(html, formulas);
+}
+
+// 把页面上的公式排版。KaTeX 只在有公式时才加载
+const KATEX = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11';
+let katexReady = null;
+function loadKatex() {
+  if (window.katex) return Promise.resolve();
+  if (!katexReady) {
+    katexReady = new Promise((resolve, reject) => {
+      const css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = `${KATEX}/katex.min.css`;
+      document.head.append(css);
+      const script = document.createElement('script');
+      script.src = `${KATEX}/katex.min.js`;
+      script.onload = resolve;
+      script.onerror = () => {
+        katexReady = null;
+        reject(new Error('公式排版没加载出来'));
+      };
+      document.head.append(script);
+    });
+  }
+  return katexReady;
+}
+async function renderMath(root) {
+  const nodes = [...root.querySelectorAll('.math[data-tex]')];
+  if (!nodes.length) return;
+  try {
+    await loadKatex();
+  } catch (e) {
+    return; // 加载不了就显示公式原文
+  }
+  for (const node of nodes) {
+    window.katex.render(node.dataset.tex, node, { displayMode: node.classList.contains('display'), throwOnError: false, output: 'htmlAndMathml' });
+  }
 }
 
 // 列表页的一句话摘要：取第一个普通段落
 function excerpt(text, size = 60) {
   const block = text.split(/\n\s*\n/).map(b => b.trim()).find(b => b && !/^(##|>|!\[|-{3,})/.test(b)) || '';
-  const plain = block.replace(/\*\*/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\s+/g, '');
+  const plain = block.replace(/\\\$/g, '$').replace(/\$\$?([^$]+?)\$\$?/g, '$1').replace(/\*\*/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\s+/g, '');
   return plain.length > size ? `${plain.slice(0, size)}…` : plain;
 }
 

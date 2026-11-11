@@ -35,10 +35,18 @@
       <button type="button" data-tool="quote">引用</button>
       <button type="button" data-tool="strong">重点</button>
       <button type="button" data-tool="rule">分隔线</button>
+      <button type="button" data-tool="math" title="嵌在句子里的公式，比如 $a^2+b^2=c^2$">公式</button>
+      <button type="button" data-tool="mathBlock" title="单独一行、居中的公式">公式块</button>
       <button type="button" id="preview-toggle" aria-pressed="false">预览</button>
     </div>
     <textarea class="field" id="text" rows="16" placeholder="写点什么。空一行就是新的一段。" aria-label="正文"></textarea>
     <div class="body preview" id="preview" hidden></div>
+    <details class="math-help">
+      <summary>怎么写数学公式</summary>
+      <p>用 LaTeX 写法。嵌在句子里：<code>$a^2 + b^2 = c^2$</code>；单独一行居中：上下各一行 <code>$$</code>，中间写公式。点「预览」看排出来的样子。</p>
+      <p>常用：分数 <code>\frac{a}{b}</code>，根号 <code>\sqrt{x}</code>，上标 <code>x^{10}</code>，下标 <code>a_n</code>，求和 <code>\sum_{i=1}^{n}</code>，积分 <code>\int_0^1</code>，希腊字母 <code>\alpha \pi</code>，乘号 <code>\times</code>。</p>
+      <p>想写普通的美元符号，比如「价格 $5」直接写就行；要是被当成公式了，在前面加一个反斜杠：<code>\$</code>。</p>
+    </details>
     <label class="rights-pick">版权声明
       <select class="field" id="rights">
         <option value="">不声明</option>
@@ -161,6 +169,8 @@
     quote: () => insert(`${newBlock()}> `, '\n\n', '引用的话'),
     strong: () => insert('**', '**', '重点'),
     rule: () => insert(`${newBlock()}---\n\n`),
+    math: () => insert('$', '$', 'x^2'),
+    mathBlock: () => insert(`${newBlock()}$$\n`, '\n$$\n\n', '\\frac{a}{b}'),
   };
 
   async function submit(button, draft, done) {
@@ -242,7 +252,10 @@
 
   $('preview-toggle').addEventListener('click', () => {
     const on = $('preview').hidden;
-    if (on) $('preview').innerHTML = renderBody($('text').value) || '<p>还没有内容。</p>';
+    if (on) {
+      $('preview').innerHTML = renderBody($('text').value) || '<p>还没有内容。</p>';
+      renderMath($('preview'));
+    }
     $('preview').hidden = !on;
     $('text').hidden = on;
     $('preview-toggle').setAttribute('aria-pressed', String(on));

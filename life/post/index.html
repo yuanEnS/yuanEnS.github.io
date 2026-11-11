@@ -106,6 +106,7 @@
       return span;
     }));
     $('body').innerHTML = renderBody(post.body);
+    renderMath($('body'));
     showRights(post);
     const links = [];
     if (older) links.push(pagerLink(older, '上一篇', 'prev'));
