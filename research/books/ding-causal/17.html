@@ -1,0 +1,689 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 14 Using the Propensity Score in Regressions for Causal Effects · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="16.html">← 上一章</a><a href="18.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter14">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 14 </span>Using the Propensity Score in Regressions for Causal Effects</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter14.p1.1">Since <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib278" title="">Rosenbaum and Rubin, 1983b ()</a></cite>’s seminal paper, many creative uses of the propensity score have appeared in the literature <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib25" title="">Bang and Robins,, 2005</a>; <a class="ltx_ref" href="35.html#bib.bib261" title="">Robins et al.,, 2007</a>; <a class="ltx_ref" href="35.html#bib.bib318" title="">Van der Laan and Rose,, 2011</a>; <a class="ltx_ref" href="35.html#bib.bib328" title="">Vansteelandt and Daniel,, 2014</a>, e.g.,)</cite>. This chapter discusses two simple methods to use the propensity score:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.I3.i1.p1.1">including the propensity score as a covariate in regressions;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.I3.i2.p1.1">running regressions weighted by the inverse of the propensity score.</p>
+</div></li>
+</ol>
+<p class="ltx_p" id="chapter14.p1.2">I choose to focus on these two methods because of the following reasons:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.I4.i1.p1.1">they are easy to implement, and involve only standard statistical software packages for regressions;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.I4.i2.p1.1">their properties are comparable to many more complex methods;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.I4.i3.p1.1">they can be easily extended to allow for flexible statistical models including machine learning algorithms.</p>
+</div></li>
+</ol>
+</div>
+<section class="ltx_section" id="S72">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">72 </span>Regressions with the propensity score as a covariate</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.p1.1">By Theorem <a class="ltx_ref" href="14.html#Thmtheorem1d" title="Theorem 11.1 ‣ 58.1 Theory ‣ 58 The propensity score as a dimension reduction tool ‣ Chapter 11 The Central Role of the Propensity Score in Observational Studies for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">11.1</span></a>, if ignorability holds conditioning on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, then it also holds conditioning on <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z\ind \{Y(1),Y(0)\}\mid e(X)." class="m" src="m/59b1be973e00.png" style="width:10.74em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S72.p1.2">Analogous to (<a class="ltx_ref" href="13.html#S55.E51" title="In Theorem 10.1 ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">51</span></a>), <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> is also nonparametrically identified by</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=E\Big[E\{Y\mid Z=1,e(X)\}-E\{Y\mid Z=0,e(X)\}\Big]," class="m" src="m/e39d48f98d74.png" style="width:22.57em;vertical-align:-0.77em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S72.p1.3">which motivates methods based on regressions of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.p2.1">The simplest regression specification is the OLS fit of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="\{1,Z,e(X)\}" class="m" src="m/d6290cb5db1c.png" style="width:5.47em;vertical-align:-0.36em"/>, with the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> as an estimator, denoted by <img alt="\tau_{e}" class="m" src="m/30f4422d03e1.png" style="width:1.11em;vertical-align:-0.26em"/>. For simplicity, I will discuss the population OLS:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\arg\min_{a,b,c}E\{Y-a-bZ-ce(X)\}^{2}" class="m" src="m/f351bdc5170c.png" style="width:14.65em;vertical-align:-1.01em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S72.p2.2">with <img alt="\tau_{e}" class="m" src="m/30f4422d03e1.png" style="width:1.11em;vertical-align:-0.26em"/> defined as the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/>.
+It is consistent for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> if we have a correct propensity score model and the outcome model is indeed linear in <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/>. The more interesting result is that <img alt="\tau_{e}" class="m" src="m/30f4422d03e1.png" style="width:1.11em;vertical-align:-0.26em"/> estimates <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/> introduced in Chapter <a class="ltx_ref" href="16.html#S70" title="70 Other estimands ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">70</span></a> if we have a correct propensity score model even if the outcome model is completely misspecified.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1g">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 14.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1g.p1.1"><span class="ltx_text ltx_font_italic">If <img alt="Z\ind \{Y(1),Y(0)\}\mid X" class="m" src="m/94d90f50061c.png" style="width:9.23em;vertical-align:-0.36em"/>, then the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> in the population OLS fit of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="\{1,Z,e(X)\}" class="m" src="m/d6290cb5db1c.png" style="width:5.47em;vertical-align:-0.36em"/> equals</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{e}=\tau_{\textsc{O}}=\frac{E\{h_{\textsc{O}}(X)\tau(X)\}}{E\{h_{\textsc{O}}(X)\}}," class="m" src="m/34b311ae1e9c.png" style="width:12.29em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem1g.p1.2"><span class="ltx_text ltx_font_italic">recalling that <img alt="h_{\textsc{O}}(X)=e(X)\{1-e(X)\}" class="m" src="m/9f932c97f915.png" style="width:11.49em;vertical-align:-0.36em"/> and <img alt="\tau(X)=E\{Y(1)-Y(0)\mid X\}" class="m" src="m/f8d4450b24f7.png" style="width:12.72em;vertical-align:-0.36em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.p3.1">An unusual feature of Theorem <a class="ltx_ref" href="#Thmtheorem1g" title="Theorem 14.1 ‣ 72 Regressions with the propensity score as a covariate ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a> is that the overlap condition is not needed anymore. Even if some units have propensity score <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/> equaling <img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/> or <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/>, their associated weight <img alt="e(X)\{1-e(X)\}" class="m" src="m/de610fbe59b1.png" style="width:7.25em;vertical-align:-0.36em"/> is zero so they do not contribute anything to the final parameter <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/>.</p>
+</div>
+<div class="ltx_para ltx_noindent">
+<p class="ltx_p" id="S72.p4.1"><span class="ltx_text ltx_font_bold">Proof of Theorem <a class="ltx_ref" href="#Thmtheorem1g" title="Theorem 14.1 ‣ 72 Regressions with the propensity score as a covariate ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>:</span>
+I will use the FWL theorem reviewed in Section <a class="ltx_ref" href="34.html#chapter31.A3" title="Appendix 31.C Frisch–Waugh–Lovell Theorem ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31.C</span></a> to prove Theorem <a class="ltx_ref" href="#Thmtheorem1g" title="Theorem 14.1 ‣ 72 Regressions with the propensity score as a covariate ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>. By the FWL theorem, we can obtain <img alt="\tau_{e}" class="m" src="m/30f4422d03e1.png" style="width:1.11em;vertical-align:-0.26em"/> in two steps:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.I1.i1.p1.1">we obtain the residual <img alt="\tilde{Z}" class="m" src="m/1317d246a0e9.png" style="width:0.99em;vertical-align:-0.12em"/> from the OLS fit of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> on <img alt="\{1,e(X)\}" class="m" src="m/5605e87c3354.png" style="width:4.34em;vertical-align:-0.36em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.I1.i2.p1.1">we obtain <img alt="\tau_{e}" class="m" src="m/30f4422d03e1.png" style="width:1.11em;vertical-align:-0.26em"/> from the OLS fit of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="\tilde{Z}" class="m" src="m/1317d246a0e9.png" style="width:0.99em;vertical-align:-0.12em"/>.</p>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.p5.1">We can use the result on covariance in Chapter <a class="ltx_ref" href="33.html#chapter30.A1.SS5" title="30.A.5 Tower property and variance decomposition ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.A.5</span></a> to simplify the coefficient of <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/> in the OLS fit of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> on <img alt="\{1,e(X)\}" class="m" src="m/5605e87c3354.png" style="width:4.34em;vertical-align:-0.36em"/> is</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\frac{\textup{cov}\{Z,e(X)\}}{\textup{var}\{e(X)\}}" class="m" src="m/2323c4fc5dee.png" style="width:6.22em;vertical-align:-1.06em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{E[\textup{cov}\{Z,e(X)\mid X\}]+\textup{cov}\{E(Z\mid X),e(X)\}}{\textup{var}\{e(X)\}}" class="m" src="m/8ff9570f16cb.png" style="width:19.63em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{0+\textup{var}\{e(X)\}}{\textup{var}\{e(X)\}}=1," class="m" src="m/bb15f1bf17d4.png" style="width:8.82em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S72.p5.2">so the intercept is <img alt="E(Z)-E\{e(X)\}=0" class="m" src="m/a684142bb7c6.png" style="width:9.56em;vertical-align:-0.36em"/> and the residual is <img alt="\tilde{Z}=Z-e(X)" class="m" src="m/d513c85a277d.png" style="width:6.46em;vertical-align:-0.36em"/>. This makes sense since <img alt="Z-e(X)" class="m" src="m/257f8532ca92.png" style="width:4.36em;vertical-align:-0.36em"/> is uncorrelated with any function of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.p6.1">Therefore, we can obtain <img alt="\tau_{e}" class="m" src="m/30f4422d03e1.png" style="width:1.11em;vertical-align:-0.26em"/> from the univariate OLS fit of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on a centered variable <img alt="Z-e(X)" class="m" src="m/257f8532ca92.png" style="width:4.36em;vertical-align:-0.36em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{e}=\frac{\textup{cov}\{Z-e(X),Y\}}{\textup{var}\{Z-e(X)\}}." class="m" src="m/f1a74f943e3e.png" style="width:10.77em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S72.p6.2">The denominator simplifies to</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{var}\{Z-e(X)\}" class="m" src="m/090adfd62403.png" style="width:6.72em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Z-e(X)\}^{2}" class="m" src="m/caa1619bcbc5.png" style="width:6.60em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Z+e(X)^{2}-2Ze(X)\}" class="m" src="m/9435c904a07e.png" style="width:11.23em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{e(X)+e(X)^{2}-2e(X)^{2}\}" class="m" src="m/65763870e9b9.png" style="width:12.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{h_{\textsc{O}}(X)\}." class="m" src="m/0d27388bada3.png" style="width:5.20em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S72.p6.3">The numerator simplifies to</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{cov}\{Z-e(X),Y\}" class="m" src="m/48f023477d27.png" style="width:8.05em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E[\{Z-e(X)\}Y]" class="m" src="m/537aff33ee6b.png" style="width:7.52em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E[\{Z-e(X)\}ZY(1)]+E[\{Z-e(X)\}(1-Z)Y(0)]" class="m" src="m/89ec25f17009.png" style="width:22.57em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\quad\quad\quad\quad(\text{by }Y=ZY(1)+(1-Z)Y(0))" class="m" src="m/76eb2d3e9e6f.png" style="width:17.92em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E[\{Z-Ze(X)\}Y(1)]-E[e(X)(1-Z)Y(0)]" class="m" src="m/1465167dc48a.png" style="width:19.61em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E[Z\{1-e(X)\}Y(1)]-E[e(X)(1-Z)Y(0)]" class="m" src="m/48d7780dbc37.png" style="width:19.34em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E[e(X)\{1-e(X)\}\mu_{1}(X)]-E[e(X)\{1-e(X)\}\mu_{0}(X)]" class="m" src="m/2912b72e2610.png" style="width:23.68em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\quad\quad\quad\quad(\text{tower property and ignorability})" class="m" src="m/61e1921a54b3.png" style="width:18.77em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{h_{\textsc{O}}(X)\tau(X)\}." class="m" src="m/7d72e20a547d.png" style="width:7.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S72.p6.4">The conclusion follows.
+ <img alt="\square" class="m" src="m/57d1afee0594.png" style="width:1.01em;vertical-align:-0.12em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.p7.1">From the proof of Theorem <a class="ltx_ref" href="#Thmtheorem1g" title="Theorem 14.1 ‣ 72 Regressions with the propensity score as a covariate ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>, we can simply run the OLS of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on the centered treatment <img alt="Z-e(X)" class="m" src="m/257f8532ca92.png" style="width:4.36em;vertical-align:-0.36em"/>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib195" title="">Lee, (2018)</a></cite> proposed this procedure. Moreover, we can also include <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> in the OLS fit which may improve efficiency in finite samples. However, this does not change the estimand, which is still <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/>. I summarize these two results in the corollary below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_corollary" id="Thmcorollary1">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Corollary 14.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmcorollary1.p1.1"><span class="ltx_text ltx_font_italic">If <img alt="Z\ind \{Y(1),Y(0)\}\mid X" class="m" src="m/94d90f50061c.png" style="width:9.23em;vertical-align:-0.36em"/>, then</span></p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">(1)</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.I2.ix1.p1.1"><span class="ltx_text ltx_font_italic">the coefficient of </span><img alt="Z-e(X)" class="m" src="m/257f8532ca92.png" style="width:4.36em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> in the population OLS fit of </span><img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_italic"> on </span><img alt="Z-e(X)" class="m" src="m/257f8532ca92.png" style="width:4.36em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> or </span><img alt="\{1,Z-e(X)\}" class="m" src="m/f6962faf479f.png" style="width:6.31em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> equals </span><img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_italic">;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">(2)</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.I2.ix2.p1.1"><span class="ltx_text ltx_font_italic">the coefficient of </span><img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_italic"> in the population OLS fit of </span><img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_italic"> on </span><img alt="\{1,Z,e(X),X\}" class="m" src="m/a191f88e2bca.png" style="width:6.82em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> equals </span><img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_italic">.</span></p>
+</div></li>
+</ol>
+</div>
+</div>
+<div class="ltx_para ltx_noindent">
+<p class="ltx_p" id="S72.p8.1"><span class="ltx_text ltx_font_bold">Proof of Corollary <a class="ltx_ref" href="#Thmcorollary1" title="Corollary 14.1 ‣ 72 Regressions with the propensity score as a covariate ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>:</span>
+(1) The first result is an intermediate step in the proof of Theorem <a class="ltx_ref" href="#Thmtheorem1g" title="Theorem 14.1 ‣ 72 Regressions with the propensity score as a covariate ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>. The second result holds because regressing <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="Z-e(X)" class="m" src="m/257f8532ca92.png" style="width:4.36em;vertical-align:-0.36em"/> or <img alt="\{1,Z-e(X)\}" class="m" src="m/f6962faf479f.png" style="width:6.31em;vertical-align:-0.36em"/> does not change the coefficient of <img alt="Z-e(X)" class="m" src="m/257f8532ca92.png" style="width:4.36em;vertical-align:-0.36em"/> since it has mean zero.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.p9.1">(2) We can use the FWL theorem again. We can first obtain the residual from the population OLS of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> on <img alt="\{1,e(X),X\}" class="m" src="m/a7db0db9e010.png" style="width:5.69em;vertical-align:-0.36em"/>, which is <img alt="Z-e(X)" class="m" src="m/257f8532ca92.png" style="width:4.36em;vertical-align:-0.36em"/> because</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z-e(X)=Z-0-1\cdot e(X)-0^{\mkern-1.5mu\mathsf{T}}X" class="m" src="m/2215687ce870.png" style="width:15.88em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S72.p9.2">and <img alt="Z-e(X)" class="m" src="m/257f8532ca92.png" style="width:4.36em;vertical-align:-0.36em"/> is uncorrelated with any functions of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>.
+Then the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> in the population OLS fit of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="\{1,Z,e(X),X\}" class="m" src="m/a191f88e2bca.png" style="width:6.82em;vertical-align:-0.36em"/> equals the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> in the population OLS fit of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="Z-e(X)" class="m" src="m/257f8532ca92.png" style="width:4.36em;vertical-align:-0.36em"/>.
+ <img alt="\square" class="m" src="m/57d1afee0594.png" style="width:1.01em;vertical-align:-0.12em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.p10.1">Theorem <a class="ltx_ref" href="#Thmtheorem1g" title="Theorem 14.1 ‣ 72 Regressions with the propensity score as a covariate ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a> motivates a two-step estimator for <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/>:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.I3.i1.p1.1">fit a propensity score model to obtain <img alt="\hat{e}(X_{i})" class="m" src="m/b8f9d0ed1d89.png" style="width:2.63em;vertical-align:-0.36em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.I3.i2.p1.1">run OLS of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,X_{i},\hat{e}(X_{i}))" class="m" src="m/42c1baabb1cf.png" style="width:5.97em;vertical-align:-0.36em"/> to obtain the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/>.</p>
+</div></li>
+</ol>
+<p class="ltx_p" id="S72.p10.2">Corollary <a class="ltx_ref" href="#Thmcorollary1" title="Corollary 14.1 ‣ 72 Regressions with the propensity score as a covariate ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>(1) motivates a two-step estimator for <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/>:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.I4.i1.p1.1">fit a propensity score model to obtain <img alt="\hat{e}(X_{i})" class="m" src="m/b8f9d0ed1d89.png" style="width:2.63em;vertical-align:-0.36em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.I4.i2.p1.1">run OLS of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="Z_{i}-\hat{e}(X_{i})" class="m" src="m/9cb3f1fc4d45.png" style="width:4.87em;vertical-align:-0.36em"/> to obtain the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/>.</p>
+</div></li>
+</ol>
+<p class="ltx_p" id="S72.p10.3">Corollary <a class="ltx_ref" href="#Thmcorollary1" title="Corollary 14.1 ‣ 72 Regressions with the propensity score as a covariate ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>(1) motivates another two-step estimator for <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/>:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.I5.i1.p1.1">fit a propensity score model to obtain <img alt="\hat{e}(X_{i})" class="m" src="m/b8f9d0ed1d89.png" style="width:2.63em;vertical-align:-0.36em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.I5.i2.p1.1">run OLS of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},\hat{e}(X_{i}),X_{i})" class="m" src="m/08e774457d79.png" style="width:7.42em;vertical-align:-0.36em"/> to obtain the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/>.</p>
+</div></li>
+</ol>
+<p class="ltx_p" id="S72.p10.4">Although OLS is convenient for obtaining point estimators, the corresponding standard errors are incorrect due to the uncertainty in the first step estimation of the propensity score. We can use the bootstrap to approximate the standard errors.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.p11.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib265" title="">Robins et al., (1992)</a></cite> discussed many OLS estimators based on the propensity score. The above results seem special cases of their general theory although they did not point out the connection with the estimand under the overlap weight, which was resurrected by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib202" title="">Li et al., 2018a ()</a></cite>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib195" title="">Lee, (2018)</a></cite> proposed to regress <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="Z-e(X)" class="m" src="m/257f8532ca92.png" style="width:4.36em;vertical-align:-0.36em"/> from a different perspective without making connections to the existing results in <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib265" title="">Robins et al., (1992)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib202" title="">Li et al., 2018a ()</a></cite>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S72.p12.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib278" title="">Rosenbaum and Rubin, 1983b ()</a></cite> proposed to estimate the average causal effect based on the OLS fit of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="\{1,Z,e(X),Ze(X)\}" class="m" src="m/4b9e3b4afeda.png" style="width:8.82em;vertical-align:-0.36em"/>. When this outcome model is correct, their estimator is consistent for the average causal effect. However, when the model is incorrect, the corresponding estimator has a much more complicated interpretation. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib212" title="">Little and An, (2004)</a></cite> suggested constructing estimators based on the OLS of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and a flexible function<sup><a href="#fn-chapter14-34" id="fn-chapter14-34-ref">34</a></sup> of <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/> and showed it enjoys certain double robustness property. Due to the complexity of implementation, I omit the discussion.</p>
+</div>
+</section>
+<section class="ltx_section" id="S73">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">73 </span>Regressions weighted by the inverse of the propensity score</h4>
+<section class="ltx_subsection" id="S73.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">73.1 </span>Average causal effect</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS1.p1.1">We first re-examine the Hajek estimator of <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}^{\textup{hajek}}=\frac{\sum_{i=1}^{n}\frac{Z_{i}Y_{i}}{\hat{e}(X_{i})}}{\sum_{i=1}^{n}\frac{Z_{i}}{\hat{e}(X_{i})}}-\frac{\sum_{i=1}^{n}\frac{(1-Z_{i})Y_{i}}{1-\hat{e}(X_{i})}}{\sum_{i=1}^{n}\frac{1-Z_{i}}{1-\hat{e}(X_{i})}}," class="m" src="m/2a6a448dc57b.png" style="width:16.94em;vertical-align:-1.42em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S73.SS1.p1.2">which equals the difference between the weighted means of the outcomes in the treatment and control groups. Numerically, it is identical to the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the following weighted least squares (WLS) of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i})" class="m" src="m/18337d1572e2.png" style="width:2.96em;vertical-align:-0.36em"/>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_proposition" id="Thmproposition1d">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Proposition 14.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmproposition1d.p1.1"><img alt="\hat{\tau}^{\textup{hajek}}" class="m" src="m/5ef0c91ec980.png" style="width:2.75em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_italic"> equals <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> from the following WLS:</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\hat{\alpha},\hat{\beta})=\arg\min_{\alpha,\beta}\sum_{i=1}^{n}w_{i}(Y_{i}-\alpha-\beta Z_{i})^{2}" class="m" src="m/113b5da411b7.png" style="width:16.98em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmproposition1d.p1.2"><span class="ltx_text ltx_font_italic">with weights</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S73.E74"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle w_{i}=\frac{Z_{i}}{\hat{e}(X_{i})}+\frac{1-Z_{i}}{1-\hat{e}(X_{i})}=\begin{cases}\frac{1}{\hat{e}(X_{i})}&amp;\text{ if }Z_{i}=1;\\
+\frac{1}{1-\hat{e}(X_{i})}&amp;\text{ if }Z_{i}=0.\end{cases}" class="m" src="m/872596b6cc18.png" style="width:21.73em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(74)</span></td></tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS1.p2.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib163" title="">Imbens, (2004)</a></cite> pointed out the result in Proposition <a class="ltx_ref" href="#Thmproposition1d" title="Proposition 14.1 ‣ 73.1 Average causal effect ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>. I leave it as a Problem <a class="ltx_ref" href="#S74.SS0.SSS0.P1" title="14.1 Hajek estimators as WLS estimators ‣ 74 Homework problems ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>.
+By Proposition <a class="ltx_ref" href="#Thmproposition1d" title="Proposition 14.1 ‣ 73.1 Average causal effect ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>, it is convenient to obtain <img alt="\hat{\tau}^{\textup{hajek}}" class="m" src="m/5ef0c91ec980.png" style="width:2.75em;vertical-align:-0.12em"/> based on WLS. However, due to the uncertainty in the estimated propensity score, the standard error reported by WLS is incorrect for the true standard error of <img alt="\hat{\tau}^{\textup{hajek}}" class="m" src="m/5ef0c91ec980.png" style="width:2.75em;vertical-align:-0.12em"/>. The bootstrap provides a convenient approximation to the true standard error.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS1.p3.1">Why does the WLS give a consistent estimator for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>? Recall that in the CRE with a constant propensity score, we can simply use the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the OLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i})" class="m" src="m/18337d1572e2.png" style="width:2.96em;vertical-align:-0.36em"/> to estimate <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>. In observational studies, units have different probabilities of receiving the treatment and control, respectively. If we weight the treated units by <img alt="1/e(X_{i})" class="m" src="m/565ae6db3e60.png" style="width:3.64em;vertical-align:-0.36em"/> and the control units by <img alt="1/\{1-e(X_{i})\}" class="m" src="m/f0e07293aa51.png" style="width:6.36em;vertical-align:-0.36em"/>, then both treated and control groups can represent the whole population. Thus, by weighting, we effectively have a pseudo-randomized experiment. Consequently, the difference between the weighted means is consistent for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>. The numerical equivalence of <img alt="\hat{\tau}^{\textup{hajek}}" class="m" src="m/5ef0c91ec980.png" style="width:2.75em;vertical-align:-0.12em"/> and WLS is not only a fun numerical fact itself but also useful for motivating more complex estimators with covariate adjustment. I give one extension below.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS1.p4.1">Recall that in the CRE, we can use the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the OLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i},Z_{i}X_{i})" class="m" src="m/d721a39908e3.png" style="width:7.20em;vertical-align:-0.36em"/> to estimate <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>, where the covariates are centered with <img alt="\bar{X}=0" class="m" src="m/9c61142e9121.png" style="width:2.96em;vertical-align:-0.12em"/>. This is <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator which uses covariates to improve efficiency. A natural extension to observational studies is to estimate <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> using the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the WLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i},Z_{i}X_{i})" class="m" src="m/d721a39908e3.png" style="width:7.20em;vertical-align:-0.36em"/> with weights defined in (<a class="ltx_ref" href="#S73.E74" title="In Proposition 14.1 ‣ 73.1 Average causal effect ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">74</span></a>). <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib144" title="">Hirano and Imbens, (2001)</a></cite> used this estimator in an application.
+The fully interacted linear model is equivalent to two separate linear models for the treated and control groups.
+If the linear models</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z=1,X)=\beta_{10}+\beta_{1x}^{\mkern-1.5mu\mathsf{T}}X,\quad E(Y\mid Z=0,X)=\beta_{00}+\beta_{0x}^{\mkern-1.5mu\mathsf{T}}X," class="m" src="m/745c69634d66.png" style="width:28.84em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S73.SS1.p4.2">are correctly specified, then both OLS and WLS give consistent estimators for the coefficients and the estimators of the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> are consistent for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>. More interestingly, the estimator of the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> based on WLS is also consistent for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> if the propensity score model is correct and the outcome model is incorrect. That is, the estimator based on WLS is doubly robust. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib261" title="">Robins et al., (2007)</a></cite> discussed this property and attributed this result to M. Joffe’s unpublished paper. I will give more details below.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS1.p5.1">Let <img alt="e(X_{i},\hat{\alpha})" class="m" src="m/bc78eca2278b.png" style="width:3.73em;vertical-align:-0.36em"/> be the fitted propensity score and <img alt="(\mu_{1}(X_{i},\hat{\beta}_{1}),\mu_{0}(X_{i},\hat{\beta}_{0}))" class="m" src="m/a73cf7157117.png" style="width:10.36em;vertical-align:-0.36em"/> be the fitted values of the outcome means based on the WLS. The outcome regression estimator is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}^{\text{reg}}_{\text{wls}}=\frac{1}{n}\sum_{i=1}^{n}\mu_{1}(X_{i},\hat{\beta}_{1})-\frac{1}{n}\sum_{i=1}^{n}\mu_{0}(X_{i},\hat{\beta}_{0})" class="m" src="m/e973ed0f8bbe.png" style="width:18.60em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S73.SS1.p5.2">and the doubly robust estimator for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}^{\text{dr}}_{\text{wls}}=\hat{\tau}^{\text{reg}}_{\text{wls}}+\frac{1}{n}\sum_{i=1}^{n}\frac{Z_{i}\{Y_{i}-\mu_{1}(X_{i},\hat{\beta}_{1})\}}{e(X_{i},\hat{\alpha})}-\frac{1}{n}\sum_{i=1}^{n}\frac{(1-Z_{i})\{Y_{i}-\mu_{0}(X_{i},\hat{\beta}_{0})\}}{1-e(X_{i},\hat{\alpha})}." class="m" src="m/fb901fe1489e.png" style="width:32.98em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S73.SS1.p5.3">An interesting result is that this doubly robust estimator equals the outcome regression estimator, which reduces to the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the WLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i},Z_{i}X_{i})" class="m" src="m/d721a39908e3.png" style="width:7.20em;vertical-align:-0.36em"/> if we use weights (<a class="ltx_ref" href="#S73.E74" title="In Proposition 14.1 ‣ 73.1 Average causal effect ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">74</span></a>).</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem2d">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 14.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem2d.p1.1"><span class="ltx_text ltx_font_italic">If <img alt="\bar{X}=0" class="m" src="m/9c61142e9121.png" style="width:2.96em;vertical-align:-0.12em"/> and <img alt="(\mu_{1}(X_{i},\hat{\beta}_{1}),\mu_{0}(X_{i},\hat{\beta}_{0}))=(\hat{\beta}_{10}+\hat{\beta}_{1x}^{\mkern-1.5mu\mathsf{T}}X_{i},\hat{\beta}_{00}+\hat{\beta}_{0x}^{\mkern-1.5mu\mathsf{T}}X_{i})" class="m" src="m/4670c649a45a.png" style="width:23.44em;vertical-align:-0.36em"/> based on the WLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i},Z_{i}X_{i})" class="m" src="m/d721a39908e3.png" style="width:7.20em;vertical-align:-0.36em"/> with weights (<a class="ltx_ref" href="#S73.E74" title="In Proposition 14.1 ‣ 73.1 Average causal effect ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">74</span></a>), then</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}^{\textup{dr}}_{\textup{wls}}=\hat{\tau}^{\textup{reg}}_{\textup{wls}}=\hat{\beta}_{10}-\hat{\beta}_{00}," class="m" src="m/f79da0cbb4aa.png" style="width:10.50em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem2d.p1.2"><span class="ltx_text ltx_font_italic">which is the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the WLS fit.</span></p>
+</div>
+</div>
+<div class="ltx_para ltx_noindent">
+<p class="ltx_p" id="S73.SS1.p6.1"><span class="ltx_text ltx_font_bold">Proof of Theorem <a class="ltx_ref" href="#Thmtheorem2d" title="Theorem 14.2 ‣ 73.1 Average causal effect ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.2</span></a>:</span>
+The WLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i},Z_{i}X_{i})" class="m" src="m/d721a39908e3.png" style="width:7.20em;vertical-align:-0.36em"/> is equivalent to two WLS fits based on the treated and control data. Both WLS fits include intercepts, so the weighted residuals have mean 0 (see (<a class="ltx_ref" href="34.html#chapter31.A7.E162" title="In AE.1 Sample WLS with the intercept ‣ Appendix 31.G Homework problems ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">162</span></a>)):</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sum_{i=1}^{n}\frac{Z_{i}(Y_{i}-\hat{\beta}_{10}-\hat{\beta}_{1x}^{\mkern-1.5mu\mathsf{T}}X_{i})}{\hat{e}(X_{i})}=0" class="m" src="m/998e6c03bd5a.png" style="width:13.10em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S73.SS1.p6.2">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sum_{i=1}^{n}\frac{(1-Z_{i})(Y_{i}-\hat{\beta}_{00}-\hat{\beta}_{0x}^{\mkern-1.5mu\mathsf{T}}X_{i})}{1-\hat{e}(X_{i})}=0." class="m" src="m/3366aaa5948e.png" style="width:15.90em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S73.SS1.p6.3">So the difference between <img alt="\hat{\tau}^{\text{dr}}" class="m" src="m/3dc6bf0e889c.png" style="width:1.59em;vertical-align:-0.12em"/> and <img alt="\hat{\tau}^{\text{reg}}" class="m" src="m/00dfe7b87b6c.png" style="width:1.90em;vertical-align:-0.12em"/> is exactly zero. Both reduces to</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\frac{1}{n}\sum_{i=1}^{n}(\hat{\beta}_{10}+\hat{\beta}_{1x}^{\mkern-1.5mu\mathsf{T}}X_{i})-\frac{1}{n}\sum_{i=1}^{n}(\hat{\beta}_{00}+\hat{\beta}_{0x}^{\mkern-1.5mu\mathsf{T}}X_{i})" class="m" src="m/20d48d1bc5e0.png" style="width:18.43em;vertical-align:-1.40em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\hat{\beta}_{10}-\hat{\beta}_{00}+(\hat{\beta}_{1x}-\hat{\beta}_{0x})^{\mkern-1.5mu\mathsf{T}}\bar{X}" class="m" src="m/3e69e681bc8f.png" style="width:11.83em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\hat{\beta}_{10}-\hat{\beta}_{00}" class="m" src="m/ac23a3d87d81.png" style="width:4.29em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S73.SS1.p6.4">with centered covariates. So they both equal the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the WLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i},Z_{i}X_{i})" class="m" src="m/d721a39908e3.png" style="width:7.20em;vertical-align:-0.36em"/>.
+ <img alt="\square" class="m" src="m/57d1afee0594.png" style="width:1.01em;vertical-align:-0.12em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS1.p7.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib115" title="">Freedman and Berk, (2008)</a></cite> discouraged the use of the WLS estimator above based on some simulation studies. They showed that when the outcome model is correct, the WLS estimator is worse than the OLS estimator since the WLS estimator has large variability in their simulation setting with homoskedastic outcomes. This may not be true in general. When the errors have variance proportional to the inverse of the propensity scores, the WLS estimator will be more efficient than the OLS estimator.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS1.p8.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib115" title="">Freedman and Berk, (2008)</a></cite> also showed that the estimated standard error based on the WLS fit is not consistent for the true standard error because it ignores the uncertainty in the estimated propensity score. This can be easily fixed by using the bootstrap to approximate the variance of the WLS estimator.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS1.p9.1">Nevertheless, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib115" title="">Freedman and Berk, (2008)</a></cite> found that “weighting may help under some circumstances” because when the outcome model is incorrect, the WLS estimator is still consistent if the propensity score model is correct.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS1.p10.1">I end this section with Table <a class="ltx_ref" href="#S73.T6" title="Table 6 ‣ 73.1 Average causal effect ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6</span></a> summarizing the regression estimators for causal effects in both randomized experiments and observational studies.</p>
+</div>
+<figure class="ltx_table" id="S73.T6">
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">Table 6</span>: </span><span class="ltx_text" style="font-size:90%;">Regression estimators in CREs and unconfounded observational studies. The weights <img alt="w_{i}" class="m" src="m/2674970933c4.png" style="width:1.28em;vertical-align:-0.26em"/>’s are defined in (<a class="ltx_ref" href="#S73.E74" title="In Proposition 14.1 ‣ 73.1 Average causal effect ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">74</span></a>).
+Assume covariates are centered at <img alt="\bar{X}=0" class="m" src="m/9c61142e9121.png" style="width:2.96em;vertical-align:-0.12em"/>.</span></figcaption>
+<div class="overflow"><table class="ltx_tabular ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_column ltx_th_row ltx_border_l ltx_border_r ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">CRE</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_r ltx_border_t">unconfounded observational studies</th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_l ltx_border_r ltx_border_t">without <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y_{i}\sim(1,Z_{i})" class="m" src="m/0f55dca2f828.png" style="width:5.23em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_r ltx_border_t"><img alt="Y_{i}\sim(1,Z_{i})" class="m" src="m/0f55dca2f828.png" style="width:5.23em;vertical-align:-0.36em"/> with weights <img alt="w_{i}" class="m" src="m/2674970933c4.png" style="width:1.28em;vertical-align:-0.26em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b ltx_border_l ltx_border_r">with <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="Y_{i}\sim(1,Z_{i},X_{i},Z_{i}X_{i})" class="m" src="m/cebf4fbfffaa.png" style="width:9.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b ltx_border_r"><img alt="Y_{i}\sim(1,Z_{i},X_{i},Z_{i}X_{i})" class="m" src="m/cebf4fbfffaa.png" style="width:9.44em;vertical-align:-0.36em"/> with weights <img alt="w_{i}" class="m" src="m/2674970933c4.png" style="width:1.28em;vertical-align:-0.26em"/></td></tr>
+</tbody>
+</table></div>
+</figure>
+</section>
+<section class="ltx_subsection" id="S73.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">73.2 </span>Average causal effect on the treated units</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS2.p1.1">The results for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/> parallel those for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>. First, the Hajek estimator for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{T}}^{\text{hajek}}=\hat{\bar{Y}}(1)-\frac{\sum_{i=1}^{n}\hat{o}(X_{i})(1-Z_{i})Y_{i}}{\sum_{i=1}^{n}\hat{o}(X_{i})(1-Z_{i})}," class="m" src="m/097fdfee6b2d.png" style="width:17.32em;vertical-align:-1.11em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S73.SS2.p1.2">with <img alt="\hat{o}(X_{i})=\hat{e}(X_{i})/\{1-\hat{e}(X_{i})\}" class="m" src="m/b47756caf6cc.png" style="width:12.02em;vertical-align:-0.36em"/>,
+equals the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the following WLS fit <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i})" class="m" src="m/18337d1572e2.png" style="width:2.96em;vertical-align:-0.36em"/>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_proposition" id="Thmproposition2b">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Proposition 14.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmproposition2b.p1.1"><img alt="\hat{\tau}_{\textsc{T}}^{\text{hajek}}" class="m" src="m/267a9bbf6f30.png" style="width:2.75em;vertical-align:-0.41em"/><span class="ltx_text ltx_font_italic"> is numerically identical to <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> in the following WLS:</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\hat{\alpha},\hat{\beta})=\arg\min_{\alpha,\beta}\sum_{i=1}^{n}w_{\textsc{T}i}(Y_{i}-\alpha-\beta Z_{i})^{2}" class="m" src="m/4e311b7f8433.png" style="width:17.54em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmproposition2b.p1.2"><span class="ltx_text ltx_font_italic">with weights</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S73.E75"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle w_{\textsc{T}i}=Z_{i}+(1-Z_{i})\hat{o}(X_{i})=\begin{cases}1&amp;\text{ if }Z_{i}=1;\\
+\hat{o}(X_{i})&amp;\text{ if }Z_{i}=0.\end{cases}" class="m" src="m/ff27ae15b47d.png" style="width:21.39em;vertical-align:-1.37em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(75)</span></td></tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS2.p2.1">Similar to Proposition <a class="ltx_ref" href="#Thmproposition1d" title="Proposition 14.1 ‣ 73.1 Average causal effect ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>, Proposition <a class="ltx_ref" href="#Thmproposition2b" title="Proposition 14.2 ‣ 73.2 Average causal effect on the treated units ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.2</span></a> is a pure linear algebra result. I relegate its proof to Problem <a class="ltx_ref" href="#S74.SS0.SSS0.P1" title="14.1 Hajek estimators as WLS estimators ‣ 74 Homework problems ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S73.SS2.p3.1">Second, if we center covariates at <img alt="\hat{\bar{X}}(1)=0" class="m" src="m/9fc716fa7bc3.png" style="width:4.24em;vertical-align:-0.36em"/>, then we can estimate <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/> using the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the WLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i},Z_{i}X_{i})" class="m" src="m/d721a39908e3.png" style="width:7.20em;vertical-align:-0.36em"/> with weights defined in (<a class="ltx_ref" href="#S73.E75" title="In Proposition 14.2 ‣ 73.2 Average causal effect on the treated units ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">75</span></a>). Similarly, this estimator equals the regression estimator</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{T},\text{wls}}^{\text{reg}}=\hat{\bar{Y}}(1)-\frac{1}{n_{1}}\sum_{i=1}^{n}Z_{i}\mu_{0}(X_{i},\hat{\beta}_{0})," class="m" src="m/0f790e2befb1.png" style="width:16.07em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S73.SS2.p3.2">which also equals the doubly robust estimator</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{T},\text{wls}}^{\text{dr}}=\hat{\tau}_{\textsc{T},\text{wls}}^{\text{reg}}-\frac{1}{n_{1}}\sum_{i=1}^{n}\hat{o}(X_{i})(1-Z_{i})\{Y_{i}-\mu_{0}(X_{i},\hat{\beta}_{0})\}." class="m" src="m/7f3b6182bd34.png" style="width:24.43em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem3c">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 14.3</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem3c.p1.1"><span class="ltx_text ltx_font_italic">If <img alt="\hat{\bar{X}}(1)=0" class="m" src="m/9fc716fa7bc3.png" style="width:4.24em;vertical-align:-0.36em"/> and <img alt="\mu_{0}(X_{i},\hat{\beta}_{0})=\hat{\beta}_{00}+\hat{\beta}_{0x}^{\mkern-1.5mu\mathsf{T}}X_{i}" class="m" src="m/f221c1a13b74.png" style="width:11.27em;vertical-align:-0.36em"/> based on the WLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i},Z_{i}X_{i})" class="m" src="m/d721a39908e3.png" style="width:7.20em;vertical-align:-0.36em"/> with weights (<a class="ltx_ref" href="#S73.E75" title="In Proposition 14.2 ‣ 73.2 Average causal effect on the treated units ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">75</span></a>), then</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{T},\textup{wls}}^{\textup{dr}}=\hat{\tau}_{\textsc{T},\textup{wls}}^{\textup{reg}}=\hat{\beta}_{10}-\hat{\beta}_{00}," class="m" src="m/50da5ed22eb0.png" style="width:12.00em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem3c.p1.2"><span class="ltx_text ltx_font_italic">which is the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the WLS fit.</span></p>
+</div>
+</div>
+<div class="ltx_para ltx_noindent">
+<p class="ltx_p" id="S73.SS2.p4.1"><span class="ltx_text ltx_font_bold">Proof of Theorem <a class="ltx_ref" href="#Thmtheorem3c" title="Theorem 14.3 ‣ 73.2 Average causal effect on the treated units ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.3</span></a>:</span>
+Based on the WLS fits in the treatment and control groups, we have</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S73.E76"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\sum_{i=1}^{n}Z_{i}(Y_{i}-\hat{\beta}_{10}-\hat{\beta}_{1x}^{\mkern-1.5mu\mathsf{T}}X_{i})" class="m" src="m/60b97fe30608.png" style="width:11.03em;vertical-align:-1.40em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 0," class="m" src="m/f9f95a74e5e8.png" style="width:1.01em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(76)</span></td></tr></tbody>
+<tbody id="S73.E77"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\sum_{i=1}^{n}\hat{o}(X_{i})(1-Z_{i})(Y_{i}-\hat{\beta}_{00}-\hat{\beta}_{0x}^{\mkern-1.5mu\mathsf{T}}X_{i})" class="m" src="m/6973ab3475be.png" style="width:15.97em;vertical-align:-1.40em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 0." class="m" src="m/57c9a8b9146f.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(77)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S73.SS2.p4.2">The second result (<a class="ltx_ref" href="#S73.E77" title="In 73.2 Average causal effect on the treated units ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">77</span></a>) ensures that <img alt="\hat{\tau}_{\textsc{T},\text{wls}}^{\text{dr}}=\hat{\tau}_{\textsc{T},\text{wls}}^{\text{reg}}" class="m" src="m/9234914c3de5.png" style="width:6.34em;vertical-align:-0.55em"/>. Both reduces to</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\bar{Y}}(1)-\frac{1}{n_{1}}\sum_{i=1}^{n}Z_{i}(\hat{\beta}_{00}+\hat{\beta}_{0x}^{\mkern-1.5mu\mathsf{T}}X_{i})=\frac{1}{n_{1}}\sum_{i=1}^{n}Z_{i}(Y_{i}-\hat{\beta}_{00}-\hat{\beta}_{0x}^{\mkern-1.5mu\mathsf{T}}X_{i})." class="m" src="m/1349af334998.png" style="width:27.53em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S73.SS2.p4.3">With covariates centered at <img alt="\hat{\bar{X}}(1)=0" class="m" src="m/9fc716fa7bc3.png" style="width:4.24em;vertical-align:-0.36em"/>, the first result (<a class="ltx_ref" href="#S73.E76" title="In 73.2 Average causal effect on the treated units ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">76</span></a>) implies that <img alt="\hat{\bar{Y}}(1)=\hat{\beta}_{10}" class="m" src="m/a54e6f08cc97.png" style="width:5.06em;vertical-align:-0.36em"/> which further simplifies the estimator to <img alt="\hat{\beta}_{10}-\hat{\beta}_{00}" class="m" src="m/8b3407afb8e8.png" style="width:4.29em;vertical-align:-0.31em"/>.
+ <img alt="\square" class="m" src="m/57d1afee0594.png" style="width:1.01em;vertical-align:-0.12em"/></p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S74">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">74 </span>Homework problems</h4>
+<section class="ltx_paragraph" id="S74.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">14.1 </span>Hajek estimators as WLS estimators</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.SS0.SSS0.P1.p1.1">Prove Propositions <a class="ltx_ref" href="#Thmproposition1d" title="Proposition 14.1 ‣ 73.1 Average causal effect ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.1</span></a> and <a class="ltx_ref" href="#Thmproposition2b" title="Proposition 14.2 ‣ 73.2 Average causal effect on the treated units ‣ 73 Regressions weighted by the inverse of the propensity score ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14.2</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.SS0.SSS0.P1.p2.1">Remark: These are special cases of Problem <a class="ltx_ref" href="34.html#chapter31.A7.SS0.SSS0.P3" title="AE.3 Univariate WLS ‣ Appendix 31.G Homework problems ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">AE.3</span></a> on the univariate WLS.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S74.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">14.2 </span>Predictive estimator and doubly robust estimator</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.SS0.SSS0.P2.p1.1">Another outcome regression estimator is the predictive estimator</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}^{\text{pred}}=\hat{\mu}_{1}^{\text{pred}}-\hat{\mu}_{0}^{\text{pred}}" class="m" src="m/9a14e9794208.png" style="width:9.35em;vertical-align:-0.39em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S74.SS0.SSS0.P2.p1.2">where</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\mu}_{1}^{\text{pred}}=\frac{1}{n}\sum_{i=1}^{n}\left\{Z_{i}Y_{i}+(1-Z_{i})\mu_{1}(X_{i},\hat{\beta}_{1})\right\}" class="m" src="m/5a865f413e81.png" style="width:18.84em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S74.SS0.SSS0.P2.p1.3">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\mu}_{0}^{\text{pred}}=\frac{1}{n}\sum_{i=1}^{n}\left\{Z_{i}\mu_{0}(X_{i},\hat{\beta}_{1})+(1-Z_{i})Y_{i}\right\}." class="m" src="m/3d4fe6c346dc.png" style="width:19.27em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S74.SS0.SSS0.P2.p1.4">It differs from the outcome regression estimator discussed before in that it only predicts the counterfactual outcomes but not the observed outcomes.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.SS0.SSS0.P2.p2.1">Show that the doubly robust estimator equals <img alt="\hat{\tau}^{\text{pred}}" class="m" src="m/2d2a4afa620e.png" style="width:2.38em;vertical-align:-0.12em"/> if <img alt="(\mu_{1}(X_{i},\hat{\beta}_{1}),\mu_{0}(X_{i},\hat{\beta}_{1}))=(\hat{\beta}_{10}+\hat{\beta}_{1x}^{\mkern-1.5mu\mathsf{T}}X_{i},\hat{\beta}_{00}+\hat{\beta}_{0x}^{\mkern-1.5mu\mathsf{T}}X_{i})" class="m" src="m/5f8dd8021f63.png" style="width:23.44em;vertical-align:-0.36em"/> are from the WLS fits of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,X_{i})" class="m" src="m/c63893420ce1.png" style="width:3.11em;vertical-align:-0.36em"/> based on the treated and control data, respectively, with weights</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S74.E78"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle w_{i}=Z_{i}/\hat{o}(X_{i})+(1-Z_{i})\hat{o}(X_{i})=\begin{cases}\frac{1}{\hat{o}(X_{i})}=\frac{1-\hat{e}(X_{i})}{\hat{e}(X_{i})}&amp;\text{ if }Z_{i}=1;\\
+\hat{o}(X_{i})=\frac{\hat{e}(X_{i})}{1-\hat{e}(X_{i})}&amp;\text{ if }Z_{i}=0.\end{cases}" class="m" src="m/ca5d53cff969.png" style="width:28.35em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(78)</span></td></tr></tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.SS0.SSS0.P2.p3.1">Remark:
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib48" title="">Cao et al., (2009)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib331" title="">Vermeulen and Vansteelandt, (2015)</a></cite> motivated the weights in (<a class="ltx_ref" href="#S74.E78" title="In 14.2 Predictive estimator and doubly robust estimator ‣ 74 Homework problems ‣ Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">78</span></a>) from other more theoretical perspectives.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S74.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">14.3 </span>Weighted logistic regression with a binary outcome</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.SS0.SSS0.P3.p1.1">With a binary outcome, we can replace linear outcome models with logistic outcome models. Show that with weights in the logistic regressions, the doubly robust estimators equal the outcome regression estimator. The result holds for both <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> and <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S74.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">14.4 </span>Causal inference with a misspecified linear regression</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.SS0.SSS0.P4.p1.1">Define the population OLS of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="(1,Z,X)" class="m" src="m/af815695f427.png" style="width:4.00em;vertical-align:-0.36em"/> as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\beta_{0},\beta_{1},\beta_{2})=\arg\min_{b_{0},b_{1},b_{2}}E(Y-b_{0}-b_{1}Z-b_{2}^{\mkern-1.5mu\mathsf{T}}X)^{2}." class="m" src="m/e79654458e4d.png" style="width:21.83em;vertical-align:-1.01em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S74.SS0.SSS0.P4.p1.2">Recall that <img alt="e(X)=\textup{pr}(Z=1\mid X)" class="m" src="m/d7c623616eee.png" style="width:9.78em;vertical-align:-0.36em"/> is the propensity score, and define <img alt="\tilde{e}(X)=\gamma_{0}+\gamma_{1}^{\mkern-1.5mu\mathsf{T}}X" class="m" src="m/c1fc5ba4ad49.png" style="width:7.88em;vertical-align:-0.36em"/> as the OLS projection of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> with</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\gamma_{0},\gamma_{1})=\arg\min_{c_{0},c_{1}}E(Z-c_{0}-c_{1}^{\mkern-1.5mu\mathsf{T}}X)^{2}." class="m" src="m/c148f78a5c96.png" style="width:16.41em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.I1.i1.p1.1">Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\beta_{1}=\frac{E[\tilde{w}(X)\{\mu_{1}(X)-\mu_{0}(X)\}]}{E\{\tilde{w}(X)\}}+\frac{E[\{e(X)-\tilde{e}(X)\}\mu_{0}(X)]}{E\{\tilde{w}(X)\}}" class="m" src="m/ed69191c17f5.png" style="width:26.35em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S74.I1.i1.p1.2">where <img alt="\tilde{w}(X)=e(X)\{1-\tilde{e}(X)\}" class="m" src="m/f2bac42f6cbe.png" style="width:11.01em;vertical-align:-0.36em"/>.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.I1.i2.p1.1">When <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> contains the dummy variables for a discrete covariate, show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\beta_{1}=\frac{E[w(X)\{\mu_{1}(X)-\mu_{0}(X)\}]}{E\{w(X)\}}" class="m" src="m/955327975a14.png" style="width:14.29em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S74.I1.i2.p1.2">where <img alt="w(X)=e(X)\{1-e(X)\}" class="m" src="m/af8c6575f241.png" style="width:11.01em;vertical-align:-0.36em"/> is the overlap weight introduced in Chapter <a class="ltx_ref" href="16.html#S70" title="70 Other estimands ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">70</span></a>.</p>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.SS0.SSS0.P4.p3.1">Remark: <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib329" title="">Vansteelandt and Dukes, (2022)</a></cite> gave the formula in part 1 without a detailed proof. The result in part 2 was derived many times in the literature <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib12" title="">Angrist,, 1998</a>; <a class="ltx_ref" href="35.html#bib.bib81" title="">Ding,, 2021</a>, e.g.,)</cite>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S74.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">14.5 </span>Analyzing a dataset from the Karolinska Institute</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.SS0.SSS0.P5.p1.1">Revisit Problem <a class="ltx_ref" href="15.html#S66.SS0.SSS0.P5" title="12.5 Analyzing a dataset from the Karolinska Institute ‣ 66 Homework problems ‣ Chapter 12 The Doubly Robust or the Augmented Inverse Propensity Score Weighting Estimator for the Average Causal Effect ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">12.5</span></a>. Estimate <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/> and <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> based on the methods introduced in this Chapter.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S74.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">14.6 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S74.SS0.SSS0.P6.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib183" title="">Kang and Schafer, (2007)</a></cite> gave a critical review of the doubly robust estimator, using simulation to compare it with many other estimators. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib261" title="">Robins et al., (2007)</a></cite> gave a very insightful comment on <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib183" title="">Kang and Schafer, (2007)</a></cite>.</p>
+</div>
+</section>
+</section>
+<section class="footnotes"><h4>脚注</h4><p id="fn-chapter14-34"><a href="#fn-chapter14-34-ref">34</a>. For example, we can include polynomial terms of <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/> in the regression. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib212" title="">Little and An, (2004)</a></cite> suggested using splines.</p></section></section><p class="nav bottom"><a href="index.html">目录</a><a href="16.html">← 上一章</a><a href="18.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

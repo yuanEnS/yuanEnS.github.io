@@ -1,0 +1,541 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="22.html">← 上一章</a><a href="24.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter20">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 20 </span>Overlap in Observational Studies: Difficulties and Opportunities</h3>
+<section class="ltx_section" id="S100">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">100 </span>Implications of overlap</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S100.p1.1">In Part <a class="ltx_ref" href="#Pt3" title="Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">III</span></a> of this book, causal inference with observational studies relies on two critical assumptions: ignorability</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z\ind \{Y(1),Y(0)\}\mid X" class="m" src="m/6bc5ca8fc5bb.png" style="width:9.23em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S100.p1.2">and overlap</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="0&lt;e(X)&lt;1." class="m" src="m/a8bbc618fb27.png" style="width:6.34em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S100.p1.3"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib73" title="">D’Amour et al., (2021)</a></cite> pointed out the tension between these two assumptions: typically, more covariates make the ignorability assumption more plausible (ignoring M-bias discussed in Chapter <a class="ltx_ref" href="19.html#S84.SS1" title="84.1 M-bias ‣ 84 Problems of over-adjustment ‣ Chapter 16 Difficulties of Unconfoundedness in Observational Studies for Causal Effects ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">84.1</span></a>), but more covariates make the overlap assumption less plausible because the treatment becomes more predictable given more covariates.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S100.p2.1">If some units have <img alt="e(X)=0" class="m" src="m/bf6efc26fc45.png" style="width:4.22em;vertical-align:-0.36em"/> or <img alt="e(X)=1" class="m" src="m/7021ba14187a.png" style="width:4.22em;vertical-align:-0.36em"/>, then we have philosophic difficulty in thinking about the counterfactual potential outcomes <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib185" title="">King and Zeng,, 2006</a>)</cite>. In particular, if a unit deterministically receives the treatment, then it may not be meaningful to conceive its potential outcome under the control; if a unit deterministically receives the control, then it may not be meaningful to conceive its potential outcome under the treatment.
+Even if the true propensity score is not exactly <img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/> or <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/>, the estimated propensity score can be very close to <img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/> or <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/> in finite samples, which makes the estimators based on IPW numerically unstable.
+I have discussed this issue in Chapter <a class="ltx_ref" href="14.html#chapter11" title="Chapter 11 The Central Role of the Propensity Score in Observational Studies for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">11</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S100.p3.1">Many statistical analyses in fact require a strict version of overlap:</p>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption1d">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 20.1</span></span><span class="ltx_text ltx_font_bold"> (strict overlap)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption1d.p1.1"><img alt="\eta\leq e(X)\leq 1-\eta" class="m" src="m/8dbceaa43037.png" style="width:7.83em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> for some <img alt="\eta\in(0,1/2)." class="m" src="m/d5bfc7471d2a.png" style="width:5.49em;vertical-align:-0.36em"/></span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S100.p4.1">However, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib73" title="">D’Amour et al., (2021, Corollary 1)</a></cite> showed that Assumption <a class="ltx_ref" href="#Thmassumption1d" title="Assumption 20.1 (strict overlap) ‣ 100 Implications of overlap ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.1</span></a> has very strong implications when the number of covariates is large. For simplicity, I present only one of their results. Let <img alt="X_{k}\ (k=1,\ldots,p)" class="m" src="m/13718fb4e2f4.png" style="width:7.78em;vertical-align:-0.36em"/> be the <img alt="k" class="m" src="m/56c30979d847.png" style="width:0.79em;vertical-align:-0.12em"/>th component of the covariate <img alt="X=(X_{1},\ldots,X_{p})" class="m" src="m/7e4238cf5d22.png" style="width:8.05em;vertical-align:-0.41em"/>, and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="e=\textup{pr}(Z=1)" class="m" src="m/f5aa2b67f239.png" style="width:6.34em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S100.p4.2">be the proportion of the treated units.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1j">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 20.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1j.p1.1"><span class="ltx_text ltx_font_italic">Assumption <a class="ltx_ref" href="#Thmassumption1d" title="Assumption 20.1 (strict overlap) ‣ 100 Implications of overlap ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.1</span></a> implies that <img alt="\eta\leq e\leq 1-\eta" class="m" src="m/8ab4350b9bd2.png" style="width:6.14em;vertical-align:-0.31em"/> and</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S100.E92"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle p^{-1}\sum_{k=1}^{p}\big|E(X_{k}\mid Z=1)-E(X_{k}\mid Z=0)\Big|" class="m" src="m/ca4c8ba68d35.png" style="width:18.12em;vertical-align:-1.42em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="2"><span class="ltx_tag ltx_tag_equation ltx_align_right">(92)</span></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\leq" class="m" src="m/e710b7dc81d4.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle p^{-1/2}C^{1/2}\left\{e\lambda_{1}^{1/2}+(1-e)\lambda_{0}^{1/2}\right\}," class="m" src="m/41f78a69eee5.png" style="width:14.94em;vertical-align:-0.77em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="Thmtheorem1j.p1.2"><span class="ltx_text ltx_font_italic">where</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="C=\frac{(e-\eta)(1-e-\eta)}{e^{2}(1-e)^{2}\eta(1-\eta)}" class="m" src="m/3ea8a1784717.png" style="width:10.48em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem1j.p1.3"><span class="ltx_text ltx_font_italic">is a positive constant depending only on <img alt="(e,\eta)" class="m" src="m/f7664c057f54.png" style="width:2.46em;vertical-align:-0.36em"/>, and <img alt="\lambda_{1}" class="m" src="m/0892faf6ea23.png" style="width:1.25em;vertical-align:-0.26em"/> and <img alt="\lambda_{0}" class="m" src="m/aee16ecd4df2.png" style="width:1.25em;vertical-align:-0.26em"/> are the maximum eigenvalues of the covariance matrices <img alt="\textup{cov}(X\mid Z=1)" class="m" src="m/c4c15d1699ee.png" style="width:6.79em;vertical-align:-0.36em"/> and <img alt="\textup{cov}(X\mid Z=0)" class="m" src="m/8c0a1929b389.png" style="width:6.79em;vertical-align:-0.36em"/>, respectively.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S100.p5.1">What is the order of the maximum eigenvalues in Theorem <a class="ltx_ref" href="#Thmtheorem1j" title="Theorem 20.1 ‣ 100 Implications of overlap ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.1</span></a>? <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib73" title="">D’Amour et al., (2021)</a></cite> showed that it is usually smaller than <img alt="O(p)" class="m" src="m/f3165dbee35d.png" style="width:2.31em;vertical-align:-0.36em"/> unless the components of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> are highly correlated. If the components of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> are highly correlated, then some components are redundant after including other components. If the components of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> are not highly correlated, then the right-hand side converges to zero. So the average difference in means of the covariates is close to zero, that is, the treatment and control groups are nearly balanced in means averaged over all dimensions of the covariates. Mathematically, the left-hand side of (<a class="ltx_ref" href="#S100.E92" title="In Theorem 20.1 ‣ 100 Implications of overlap ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">92</span></a>) converging to zero rules out the possibility that all dimensions of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> have non-vanishing differences in means across the treatment and control groups.
+It is a strong requirement in observational studies with many covariates.</p>
+</div>
+<section class="ltx_subsection" id="S100.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">100.1 </span>Trimming in the presence of limited overlap</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S100.SS1.p1.1">When Assumption <a class="ltx_ref" href="#Thmassumption1d" title="Assumption 20.1 (strict overlap) ‣ 100 Implications of overlap ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.1</span></a> does not hold, it is common to trim the units based on the estimated propensity scores <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib70" title="">Crump et al.,, 2009</a>; <a class="ltx_ref" href="35.html#bib.bib344" title="">Yang and Ding, 2018b, </a>)</cite>. Trimming drops units within regions of little overlap, which changes the population and estimand. The restrictive implications of overlap in Assumption <a class="ltx_ref" href="#Thmassumption1d" title="Assumption 20.1 (strict overlap) ‣ 100 Implications of overlap ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.1</span></a> suggest that trimming must be employed more often and one may need to trim a large proportion of units to achieve desirable overlap in high dimensions.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S100.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">100.2 </span>Outcome modeling in the presence of limited overlap</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S100.SS2.p1.1">The somewhat negative results in <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib73" title="">D’Amour et al., (2021)</a></cite> also highlight the limitation of focusing only on the propensity score in the presence of limited overlap. This in some sense challenges <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib291" title="">Rubin, (2008)</a></cite>’s view that “for objective causal inference, design trumps analysis.” <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib291" title="">Rubin, (2008)</a></cite> argued strongly for the role of the “design” stage in observational studies. The “design” stage focuses on the propensity score which may not satisfy the overlap condition with many covariates.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S100.SS2.p2.1">With high dimensional covariates, outcome modeling becomes more important. In particular, if the outcome means only depend on a function of the original covariates in that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(z)\mid X\}=f_{z}(r(X)),\quad(z=0,1)" class="m" src="m/b2280a989a93.png" style="width:16.60em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S100.SS2.p2.2">then it suffices to control for <img alt="r(X)" class="m" src="m/34f3aa7f5ea5.png" style="width:2.38em;vertical-align:-0.36em"/>, a lower-dimensional summary of the original covariates. See Problem <a class="ltx_ref" href="#S102.SS0.SSS0.P1" title="20.1 A theorem for the role of outcome modeling in the presence of limited overlap ‣ 102 Homework Problems ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.1</span></a> for more details. Due to the dimension reduction, the strict overlap condition on <img alt="r(X)" class="m" src="m/34f3aa7f5ea5.png" style="width:2.38em;vertical-align:-0.36em"/> can be much weaker than the strict overlap condition on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. This is conceptually straightforward, but the corresponding theory and methods are missing.</p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S101">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">101 </span>Causal inference with no overlap: regression discontinuity</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.p1.1">Let us start from the simple case with a univariate <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>.
+An extreme treatment assignment mechanism is a deterministic one:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z=I(X\geq x_{0})," class="m" src="m/0d4ee027942c.png" style="width:7.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S101.p1.2">where <img alt="x_{0}" class="m" src="m/745a16e24c23.png" style="width:1.25em;vertical-align:-0.26em"/> is a predetermined threshold.
+An interesting consequence of this assignment is that the ignorability assumption holds automatically:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z\ind \{Y(1),Y(0)\}\mid X" class="m" src="m/6bc5ca8fc5bb.png" style="width:9.23em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S101.p1.3">because <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> is a deterministic function of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> and a constant is independent of any random variables. However, the overlap assumption is violated by definition:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="e(X)=\textup{pr}(Z=1\mid X)=1(X\geq x_{0})=\begin{cases}1&amp;\text{ if }X\geq x_{0},\\
+0&amp;\text{ if }X&lt;x_{0}.\end{cases}" class="m" src="m/74817e2617f2.png" style="width:24.19em;vertical-align:-1.37em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S101.p1.4">So our analytic strategies discussed in Part <a class="ltx_ref" href="#Pt4" title="Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">IV</span></a> are no longer applicable here. We must change our perspective.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.p2.1">The discussion above seems contrived, with a deterministic treatment assignment. Interestingly, it has many applications in practice and is called <span class="ltx_text ltx_font_italic">regression discontinuity</span>. Below, I first review some canonical examples and then give a mathematical formulation of this type of study.</p>
+</div>
+<section class="ltx_subsection" id="S101.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">101.1 </span>Examples and graphical diagnostics</h5>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 20.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1i.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib313" title="">Thistlethwaite and Campbell, (1960)</a></cite><span class="ltx_text ltx_font_italic"> first proposed the idea of regression-discontinuity analysis. Their motivating example was to study the effect of students’ winning the Certificate of Merit on later career plans, where the Certificate of Merit was determined by whether the Scholarship Qualifying Test score was above a certain threshold. Their initial analysis was mainly graphical. Figure <a class="ltx_ref" href="#S101.F26" title="Figure 26 ‣ 101.1 Examples and graphical diagnostics ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26</span></a> shows one of their graphs.</span></p>
+</div>
+</div>
+<figure class="ltx_figure" id="S101.F26"><img alt="Refer to caption" src="img/rdd_graph_1960_modified.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 26</span>: </span><span class="ltx_text" style="font-size:90%;">A graph from <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib313" title="">Thistlethwaite and Campbell, (1960)</a></cite> with minor modifications of the unclear text in the original paper</span></figcaption>
+</figure>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 20.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2h.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib38" title="">Bor et al., (2014)</a></cite><span class="ltx_text ltx_font_italic"> used regression discontinuity to study the effect of when to start HIV patients with antiretroviral on their mortality, where the treatment is determined by whether the patients’ CD4 counts were below 200 cells/<img alt="\mu" class="m" src="m/de29996a4697.png" style="width:0.84em;vertical-align:-0.31em"/>L (note that CD4 cells are white blood cells that fight infection.)</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 20.3</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample3f.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib50" title="">Carpenter and Dobkin, (2009)</a></cite><span class="ltx_text ltx_font_italic"> studied the effect of alcohol consumption on mortality, which leverages the minimum legal drinking age as a discontinuity for alcohol consumption. They derived mortality data from the National Center for Health Statistics, including the decedent’s date of birth and date of death. They computed the age profile of deaths per 100,000 person-years with outcomes measured by the following nine variables:
+
+<span class="ltx_tabular ltx_guessed_headers ltx_align_middle">
+<span class="ltx_thead">
+<span class="ltx_tr">
+<span class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_th_row ltx_border_t"><span class="ltx_text ltx_font_typewriter">all</span></span>
+<span class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">all deaths, the sum of <span class="ltx_text ltx_font_typewriter">internal</span> and <span class="ltx_text ltx_font_typewriter">external</span></span></span>
+</span>
+<span class="ltx_tbody">
+<span class="ltx_tr">
+<span class="ltx_td ltx_align_center ltx_th ltx_th_row"><span class="ltx_text ltx_font_typewriter">internal</span></span>
+<span class="ltx_td ltx_align_center">deaths due to internal causes</span></span>
+<span class="ltx_tr">
+<span class="ltx_td ltx_align_center ltx_th ltx_th_row"><span class="ltx_text ltx_font_typewriter">external</span></span>
+<span class="ltx_td ltx_align_center">deaths due to external causes, the sum of the rest</span></span>
+<span class="ltx_tr">
+<span class="ltx_td ltx_align_center ltx_th ltx_th_row"><span class="ltx_text ltx_font_typewriter">homicide</span></span>
+<span class="ltx_td ltx_align_center">homicides</span></span>
+<span class="ltx_tr">
+<span class="ltx_td ltx_align_center ltx_th ltx_th_row"><span class="ltx_text ltx_font_typewriter">suicide</span></span>
+<span class="ltx_td ltx_align_center">suicides</span></span>
+<span class="ltx_tr">
+<span class="ltx_td ltx_align_center ltx_th ltx_th_row"><span class="ltx_text ltx_font_typewriter">mva</span></span>
+<span class="ltx_td ltx_align_center">motor vehicle accidents</span></span>
+<span class="ltx_tr">
+<span class="ltx_td ltx_align_center ltx_th ltx_th_row"><span class="ltx_text ltx_font_typewriter">alcohol</span></span>
+<span class="ltx_td ltx_align_center">deaths with a mention of alcohol</span></span>
+<span class="ltx_tr">
+<span class="ltx_td ltx_align_center ltx_th ltx_th_row"><span class="ltx_text ltx_font_typewriter">drugs</span></span>
+<span class="ltx_td ltx_align_center">deaths with a mention of drug use</span></span>
+<span class="ltx_tr">
+<span class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b"><span class="ltx_text ltx_font_typewriter">externalother</span></span>
+<span class="ltx_td ltx_align_center ltx_border_b">deaths due to other external causes</span></span>
+</span>
+</span></span></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample3f.p2.1"><span class="ltx_text ltx_font_italic">Figure <a class="ltx_ref" href="#S101.F27" title="Figure 27 ‣ 101.1 Examples and graphical diagnostics ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">27</span></a> plots the number of deaths per 100,000 person-years for nine measures based on the data used by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib19" title="">Angrist and Pischke, (2014)</a></cite>. From the jumps at age 21, it seems obvious that there is an increase in mortality at age 21, primarily due to motor vehicle accidents. I leave the formal analysis as Problem <a class="ltx_ref" href="#S102.SS0.SSS0.P4" title="20.4 Re-analysis of the data on the minimum legal drinking age ‣ 102 Homework Problems ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.4</span></a>.</span></p>
+</div>
+</div>
+<figure class="ltx_figure" id="S101.F27"><img alt="插图" src="img/mlda_9outcomes.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 27</span>: </span><span class="ltx_text" style="font-size:90%;">Minimum legal drinking age example from <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib50" title="">Carpenter and Dobkin, (2009)</a></cite></span></figcaption>
+</figure>
+</section>
+<section class="ltx_subsection" id="S101.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">101.2 </span>A mathematical formulation of regression discontinuity</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS2.p1.1">The technical term for the variable <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> that determines the treatment is the <span class="ltx_text ltx_font_italic">running variable</span>.
+Intuitively, regression discontinuity can identify a <span class="ltx_text ltx_font_italic">local average causal effect</span> at the cutoff point <img alt="x_{0}" class="m" src="m/745a16e24c23.png" style="width:1.25em;vertical-align:-0.26em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau(x_{0})=E\{Y(1)-Y(0)\mid X=x_{0}\}." class="m" src="m/8c56e9e3f92c.png" style="width:15.47em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S101.SS2.p1.2">In particular, for the potential outcome under treatment, we have</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S101.E93"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid X=x_{0}\}" class="m" src="m/578820265d1b.png" style="width:8.19em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\lim_{\varepsilon\rightarrow 0+}E\{Y(1)\mid X=x_{0}+\varepsilon\}" class="m" src="m/ca829fd6b6d7.png" style="width:12.24em;vertical-align:-0.92em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(93)</span></td></tr></tbody>
+<tbody id="S101.E94"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\lim_{\varepsilon\rightarrow 0+}E\{Y(1)\mid Z=1,X=x_{0}+\varepsilon\}" class="m" src="m/3e890b148500.png" style="width:15.27em;vertical-align:-0.92em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(94)</span></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\lim_{\varepsilon\rightarrow 0+}E(Y\mid Z=1,X=x_{0}+\varepsilon)," class="m" src="m/f6f14a85ddbc.png" style="width:14.04em;vertical-align:-0.92em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(95)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S101.SS2.p1.3">where (<a class="ltx_ref" href="#S101.E93" title="In 101.2 A mathematical formulation of regression discontinuity ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">93</span></a>) holds if <img alt="E\{Y(1)\mid X=x\}" class="m" src="m/d8a4844f4dcb.png" style="width:7.76em;vertical-align:-0.36em"/> is continuous from the right at <img alt="x_{0}" class="m" src="m/745a16e24c23.png" style="width:1.25em;vertical-align:-0.26em"/> and (<a class="ltx_ref" href="#S101.E94" title="In 101.2 A mathematical formulation of regression discontinuity ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">94</span></a>) follows by the definition of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/>. Similarly, for the potential outcome under control, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(0)\mid X=x_{0}\}=\lim_{\varepsilon\rightarrow 0+}E(Y\mid Z=0,X=x_{0}-\varepsilon)" class="m" src="m/a90562dc0311.png" style="width:23.08em;vertical-align:-0.92em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S101.SS2.p1.4">if <img alt="E\{Y(0)\mid X=x\}" class="m" src="m/3ec8f4b4acfd.png" style="width:7.76em;vertical-align:-0.36em"/> is continuous from the left at <img alt="x_{0}" class="m" src="m/745a16e24c23.png" style="width:1.25em;vertical-align:-0.26em"/>.
+So the local average causal effect at <img alt="x_{0}" class="m" src="m/745a16e24c23.png" style="width:1.25em;vertical-align:-0.26em"/> can be identified by the difference of the two limits. I summarize the key identification result below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem2g">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 20.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem2g.p1.1"><span class="ltx_text ltx_font_italic">Assume that the treatment is determined by <img alt="Z=I(X\geq x_{0})" class="m" src="m/00d3f6a2690c.png" style="width:6.87em;vertical-align:-0.36em"/>
+where <img alt="x_{0}" class="m" src="m/745a16e24c23.png" style="width:1.25em;vertical-align:-0.26em"/> is a predetermined threshold.
+Assume that <img alt="E\{Y(1)\mid X=x\}" class="m" src="m/d8a4844f4dcb.png" style="width:7.76em;vertical-align:-0.36em"/> is continuous from the right at <img alt="x_{0}" class="m" src="m/745a16e24c23.png" style="width:1.25em;vertical-align:-0.26em"/> and <img alt="E\{Y(0)\mid X=x\}" class="m" src="m/3ec8f4b4acfd.png" style="width:7.76em;vertical-align:-0.36em"/> is continuous from the left at <img alt="x_{0}" class="m" src="m/745a16e24c23.png" style="width:1.25em;vertical-align:-0.26em"/>. Then the local average treatment effect at <img alt="X=x_{0}" class="m" src="m/335d672959be.png" style="width:3.49em;vertical-align:-0.26em"/> is identified by</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau(x_{0})=\lim_{\varepsilon\rightarrow 0+}E(Y\mid Z=1,X=x_{0}+\varepsilon)-\lim_{\varepsilon\rightarrow 0+}E(Y\mid Z=0,X=x_{0}-\varepsilon)." class="m" src="m/47d57468e92b.png" style="width:32.50em;vertical-align:-0.92em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS2.p2.1">Since the right-hand side of the above equation only involves observables, the parameter <img alt="\tau(x_{0})" class="m" src="m/ee2b19d25af0.png" style="width:2.58em;vertical-align:-0.36em"/> is nonparametrically identified. However, the form of the identification formula is totally different from what we derived before. In particular, the identification formula involves limits of two conditional expectation functions.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S101.SS3">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">101.3 </span>Regressions near the boundary</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS3.p1.1">If we are lucky, graphical diagnostics sometimes can clearly show the causal effect at the cutoff point. However, many outcomes are noisy so graphical diagnostics are not enough in finite samples. Figure <a class="ltx_ref" href="#S101.F28" title="Figure 28 ‣ 101.3 Regressions near the boundary ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">28</span></a> shows two simulated examples with obvious jumps at the cutoff point and two examples without obvious jumps, although the underlying data-generating processes all have discontinuities.</p>
+</div>
+<figure class="ltx_figure" id="S101.F28"><img alt="插图" src="img/rdd_graph.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 28</span>: </span><span class="ltx_text" style="font-size:90%;">Examples of regression discontinuity. The black points are the observed outcomes whereas the grey points are the unobserved counterfactual outcomes.
+In the first column, the data-generating processes result in visible jumps at the cutoff points; in the second column, the jumps are not so visible. In the first row, the data generating processes have constant <img alt="\tau(x)" class="m" src="m/e1e84b8aa8b4.png" style="width:2.14em;vertical-align:-0.36em"/>; in the second row, <img alt="\tau(x)" class="m" src="m/e1e84b8aa8b4.png" style="width:2.14em;vertical-align:-0.36em"/> varies with <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/>.
+</span></figcaption>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS3.p2.1">Assume that <img alt="E(Y\mid Z=1,X=x)=\gamma_{1}+\beta_{1}x" class="m" src="m/d8ba00067f87.png" style="width:14.38em;vertical-align:-0.36em"/> and <img alt="E(Y\mid Z=0,X=x)=\gamma_{0}+\beta_{0}x" class="m" src="m/67015961ac9f.png" style="width:14.38em;vertical-align:-0.36em"/> are linear in <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/>. We can run OLS based on the treated and control data to obtain the fitted lines <img alt="\hat{\gamma}_{1}+\hat{\beta}_{1}x" class="m" src="m/b446f431b531.png" style="width:4.00em;vertical-align:-0.31em"/> and <img alt="\hat{\gamma}_{0}+\hat{\beta}_{0}x" class="m" src="m/53b762812730.png" style="width:4.00em;vertical-align:-0.31em"/>, respectively. We can then estimate the average causal effect at the point <img alt="X=x_{0}" class="m" src="m/335d672959be.png" style="width:3.49em;vertical-align:-0.26em"/> as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}(x_{0})=(\hat{\gamma}_{1}-\hat{\gamma}_{0})+(\hat{\beta}_{1}-\hat{\beta}_{0})x_{0}." class="m" src="m/c7fce39ed38f.png" style="width:14.41em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S101.SS3.p2.2">Numerically, <img alt="\hat{\tau}(x_{0})" class="m" src="m/f241694914eb.png" style="width:2.58em;vertical-align:-0.36em"/> is identical to the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the OLS</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S101.E96"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Y_{i}\sim\{1,Z_{i},X_{i}-x_{0},Z_{i}(X_{i}-x_{0})\}," class="m" src="m/13efe6dff8fa.png" style="width:15.20em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(96)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S101.SS3.p2.3">and it is also identical to the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the OLS</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Y_{i}\sim\{1,Z_{i},R_{i},L_{i}\}," class="m" src="m/7d33c64b50aa.png" style="width:8.72em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(97)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S101.SS3.p2.4">where</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="R_{i}=\max(X_{i}-x_{0},0),\qquad L_{i}=\min(X_{i}-x_{0},0)" class="m" src="m/5cd85c6ca58b.png" style="width:21.22em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S101.SS3.p2.5">indicate the right and left parts of <img alt="X_{i}-x_{0}" class="m" src="m/fc939bae09ef.png" style="width:3.64em;vertical-align:-0.26em"/>, respectively. I leave the algebraic details to Problem <a class="ltx_ref" href="#S102.SS0.SSS0.P2" title="20.2 Linear potential outcome models ‣ 102 Homework Problems ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.2</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS3.p3.1">However, this approach may be sensitive to the violation of the linear model assumption. Theory suggests running regression using only the local observations near the cutoff point<sup><a href="#fn-chapter20-43" id="fn-chapter20-43-ref">43</a></sup>. However, the rules for choosing the “local points” are quite involved. Fortunately, the <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">rdrobust</span> function in the <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">rdrobust</span> package in <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> implements various choices of “local points.” Since choosing the “local points” is the key to regression discontinuity, it seems more sensible to report estimates and confidence intervals based on various choices of the “local points.” This can be viewed as a sensitivity analysis for regression discontinuity.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S101.SS4">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">101.4 </span>An example</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS4.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib192" title="">Lee, (2008)</a></cite> gave a famous example of using regression discontinuity to study the incumbency advantage in the U.S. House.
+He wrote that “incumbents are, by definition, those politicians who were successful in the previous election. If what makes them successful is somewhat persistent over time, they should be expected to be somewhat more successful when running for re-election.” Therefore, this is a fundamentally challenging causal inference problem. The regression discontinuity is a clever study design to study this problem.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS4.p2.1">The running variable is the lagged vote in the previous election centered at <img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/>, and the outcome is the vote in the current election, with units being the congressional districts. The treatment is the binary indicator for being the current incumbent party in a district, determined by the lagged vote. The following <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> code generates Figure <a class="ltx_ref" href="#S101.F29" title="Figure 29 ‣ 101.4 An example ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">29</span></a> that shows the raw data.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">house</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">read</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">csv</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"house.csv"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">plot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">house</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pch</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">19,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">cex</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.1)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">abline</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">v</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">col</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"grey"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+</div>
+</div>
+<figure class="ltx_figure" id="S101.F29"><img alt="插图" src="img/lee2008rdd.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 29</span>: </span><span class="ltx_text" style="font-size:90%;">Raw data of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib192" title="">Lee, (2008)</a></cite> </span></figcaption>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS4.p4.1">The <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">rdrobust</span> function gives three sets of the point estimate and confidence intervals. They all suggest a positive incumbency advantage.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">library</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rdrobust</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">RDDest</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rdrobust</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">house</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">house</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Warning</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">message</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">:</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">In</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rdrobust</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">house</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">house</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">:</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Mass</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">points</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">detected</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">in</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">the</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">running</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">variable</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">cbind</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">RDDest</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">RDDest</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ci</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Coeff</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">CI</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Lower</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">CI</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Upper</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Conventional</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.06372533</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.04224798</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.08520269</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Bias</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Corrected</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.05937028</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.03789292</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.08084763</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Robust</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.05937028</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.03481238</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.08392818</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS4.p6.1">We can also obtain the point estimates and the confidence intervals based on OLS with different choices of the local points defined by <img alt="|X|&lt;h" class="m" src="m/37235e0fa713.png" style="width:3.61em;vertical-align:-0.36em"/> based on the following <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> code.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">house</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">house</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hh</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">seq</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(0.05,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.01)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">local</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sapply</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hh</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">function</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">h</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">){</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Greg</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">house</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">subset</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">abs</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)&lt;=</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">h</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">cbind</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Greg</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[2],</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">confint</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Greg</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">’zTRUE’</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">})</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">plot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">local</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hh</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">type</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"p"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pch</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">19,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">cex</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.3,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ylim</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">range</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">local</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">),</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">xlab</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"h"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ylab</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"point<span class="ltx_text ltx_lst_space"> </span>and<span class="ltx_text ltx_lst_space"> </span>interval<span class="ltx_text ltx_lst_space"> </span>estimates"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">main</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"subset<span class="ltx_text ltx_lst_space"> </span>linear<span class="ltx_text ltx_lst_space"> </span>regression:<span class="ltx_text ltx_lst_space"> </span>|X|&lt;h"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lines</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">local</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hh</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">type</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"p"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pch</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">19,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">cex</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.1)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lines</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">local</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[3,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hh</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">type</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"p"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pch</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">19,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">cex</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.1)</span>
+</div>
+</div>
+<p class="ltx_p" id="S101.SS4.p6.3">Figure <a class="ltx_ref" href="#S101.F30" title="Figure 30 ‣ 101.4 An example ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30</span></a> shows the point estimates and the confidence intervals as a function of <img alt="h" class="m" src="m/88c76da6f176.png" style="width:0.82em;vertical-align:-0.12em"/>. While the point estimates and the confidence intervals are sensitive to the choice of <img alt="h" class="m" src="m/88c76da6f176.png" style="width:0.82em;vertical-align:-0.12em"/>, the qualitative result remains the same as above.</p>
+</div>
+<figure class="ltx_figure" id="S101.F30"><img alt="插图" src="img/rdd_lee.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 30</span>: </span><span class="ltx_text" style="font-size:90%;">Estimates and confidence intervals based on local linear regressions</span></figcaption>
+</figure>
+</section>
+<section class="ltx_subsection" id="S101.SS5">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">101.5 </span>Problems of regression discontinuity</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS5.p1.1">What can go wrong with the regression discontinuity analysis? The technical challenge is to specify the neighborhood near the cutoff point. We have discussed this issue above.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS5.p2.1">In addition, Theorem <a class="ltx_ref" href="#Thmtheorem2g" title="Theorem 20.2 ‣ 101.2 A mathematical formulation of regression discontinuity ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.2</span></a> holds under a continuity condition. It may be violated in practice. For instance, if the mortality rate jumps at the age of 21, then we may not be able to attribute the jumps in Figure <a class="ltx_ref" href="#S101.F27" title="Figure 27 ‣ 101.1 Examples and graphical diagnostics ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">27</span></a> to the change in drinking behavior due to the legal drinking age. However, it is hard to check the violation of the continuity condition empirically.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S101.SS5.p3.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib222" title="">McCrary, (2008)</a></cite> proposed an indirect test for the validity of the regression discontinuity. He suggested checking the density of the running variable at the cutoff point. The discontinuity in the density of the running variable at the cutoff point may suggest that some units were able to manipulate their treatment status perfectly. The <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">DCdensity</span> function in the <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> package <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">rdd</span> implements this test. I omit the details.</p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S102">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">102 </span>Homework Problems</h4>
+<section class="ltx_paragraph" id="S102.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">20.1 </span>A theorem for the role of outcome modeling in the presence of limited overlap</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S102.SS0.SSS0.P1.p1.1">This problem extends the discussion in Section <a class="ltx_ref" href="#S100.SS2" title="100.2 Outcome modeling in the presence of limited overlap ‣ 100 Implications of overlap ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">100.2</span></a>. I state a formal theorem below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem3e">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 20.3</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem3e.p1.1"><span class="ltx_text ltx_font_italic">Assume</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z\ind Y(z)\mid X,\quad(z=0,1)" class="m" src="m/9a8e0f0e101f.png" style="width:11.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem3e.p1.2"><span class="ltx_text ltx_font_italic">and</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(z)\mid X\}=f_{z}(r(X)),\quad(z=0,1)" class="m" src="m/b2280a989a93.png" style="width:16.60em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem3e.p1.3"><span class="ltx_text ltx_font_italic">for some function <img alt="r(X)" class="m" src="m/34f3aa7f5ea5.png" style="width:2.38em;vertical-align:-0.36em"/>.
+The average causal effect <img alt="\tau=E\{Y(1)-Y(0)\}" class="m" src="m/1f7ced1088b6.png" style="width:9.30em;vertical-align:-0.36em"/> can be identified by</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=E\{E(Y\mid Z=1,r(X))-E(Y\mid Z=0,r(X))\}" class="m" src="m/54e75c636efa.png" style="width:21.95em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem3e.p1.4"><span class="ltx_text ltx_font_italic">or</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=E\left\{\frac{ZY}{e(r(X))}\right\}-E\left\{\frac{(1-Z)Y}{1-e(r(X))}\right\}" class="m" src="m/eef7fc1b55a2.png" style="width:17.27em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem3e.p1.5"><span class="ltx_text ltx_font_italic">where <img alt="e(r(X))=\textup{pr}\{Z=1\mid r(X)\}" class="m" src="m/1bd190b20cb7.png" style="width:12.50em;vertical-align:-0.36em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S102.SS0.SSS0.P1.p2.1">Prove Theorem <a class="ltx_ref" href="#Thmtheorem3e" title="Theorem 20.3 ‣ 20.1 A theorem for the role of outcome modeling in the presence of limited overlap ‣ 102 Homework Problems ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.3</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S102.SS0.SSS0.P1.p3.1">Remark: When <img alt="r(X)=X" class="m" src="m/5c8551d20c71.png" style="width:4.63em;vertical-align:-0.36em"/>, Theorem <a class="ltx_ref" href="#Thmtheorem3e" title="Theorem 20.3 ‣ 20.1 A theorem for the role of outcome modeling in the presence of limited overlap ‣ 102 Homework Problems ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.3</span></a> reduces to the standard IPW formula for the average causal effect. When <img alt="r(X)" class="m" src="m/34f3aa7f5ea5.png" style="width:2.38em;vertical-align:-0.36em"/> has a lower dimension than <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, Theorem <a class="ltx_ref" href="#Thmtheorem3e" title="Theorem 20.3 ‣ 20.1 A theorem for the role of outcome modeling in the presence of limited overlap ‣ 102 Homework Problems ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20.3</span></a> has broader applicability if the overlap condition on <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/> fails whereas the overlap condition on <img alt="e(r(X))" class="m" src="m/ab65aac5f7c1.png" style="width:3.64em;vertical-align:-0.36em"/> may still hold.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S102.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">20.2 </span>Linear potential outcome models</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S102.SS0.SSS0.P2.p1.1">This problem gives more details for the numerical equivalence in Section <a class="ltx_ref" href="#S101.SS3" title="101.3 Regressions near the boundary ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">101.3</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S102.SS0.SSS0.P2.p2.1">Show that <img alt="\hat{\tau}(x_{0})" class="m" src="m/f241694914eb.png" style="width:2.58em;vertical-align:-0.36em"/> equals the coefficients of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in OLS fits (<a class="ltx_ref" href="#S101.E96" title="In 101.3 Regressions near the boundary ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">96</span></a>) and (<a class="ltx_ref" href="#S101.E96" title="In 101.3 Regressions near the boundary ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">96</span></a>).</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S102.SS0.SSS0.P2.p3.1">Remark: It is helpful to start with the figures of <img alt="Z_{i}(X_{i}-x_{0})" class="m" src="m/c4684f92ddc2.png" style="width:5.42em;vertical-align:-0.36em"/>, <img alt="L_{i}" class="m" src="m/9cce48435c7a.png" style="width:1.25em;vertical-align:-0.26em"/>, and <img alt="R_{i}" class="m" src="m/1249f1a8e65e.png" style="width:1.32em;vertical-align:-0.26em"/> with <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/> on the x-axis. The conclusion holds by a reparametrization of the OLS regressions.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S102.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">20.3 </span>Simulation for regression discontinuity</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S102.SS0.SSS0.P3.p1.1">In Figure <a class="ltx_ref" href="#S101.F28" title="Figure 28 ‣ 101.3 Regressions near the boundary ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">28</span></a>, the potential outcomes are simulated from linear models. Change them to nonlinear models, and compare different point estimators and confidence intervals, including the biases and variances of the point estimators, and the coverage properties of confidence intervals.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S102.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">20.4 </span>Re-analysis of the data on the minimum legal drinking age</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S102.SS0.SSS0.P4.p1.1">Figure <a class="ltx_ref" href="#S101.F27" title="Figure 27 ‣ 101.1 Examples and graphical diagnostics ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">27</span></a> shows the jumps at the cutoff point.
+Analyze the data <span class="ltx_text ltx_lst_language_R ltx_lstlisting"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mlda</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.<span class="ltx_text ltx_lst_keyword ltx_font_bold">csv</span></span></span> of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib50" title="">Carpenter and Dobkin, (2009)</a></cite>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S102.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">20.5 </span>Re-analysis of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib192" title="">Lee, (2008)</a></cite>’s data</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S102.SS0.SSS0.P5.p1.1">Figure <a class="ltx_ref" href="#S101.F30" title="Figure 30 ‣ 101.4 An example ‣ 101 Causal inference with no overlap: regression discontinuity ‣ Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30</span></a> plots the confidence intervals based on the standard errors assuming homoskedasticity. Generate a figure with confidence intervals based on the EHW standard errors in OLS.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S102.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">20.6 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S102.SS0.SSS0.P6.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib73" title="">D’Amour et al., (2021)</a></cite> discussed the implications of overlap with high dimensional covariates.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S102.SS0.SSS0.P6.p2.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib313" title="">Thistlethwaite and Campbell, (1960)</a></cite>’s original paper on regression discontinuity was re-printed as <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib314" title="">Thistlewaite and Campbell, (2016)</a></cite> with many insightful comments. Coincidentally, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib313" title="">Thistlethwaite and Campbell, (1960)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib282" title="">Rubin, (1974)</a></cite> were both published in the <span class="ltx_text ltx_font_italic">Journal of Educational Psychology</span>.</p>
+</div>
+</section>
+</section>
+<section class="footnotes"><h4>脚注</h4><p id="fn-chapter20-43"><a href="#fn-chapter20-43-ref">43</a>. This is called <span class="ltx_text ltx_font_italic">local linear regression</span> in nonparametric statistics, which belongs to a broader class of <span class="ltx_text ltx_font_italic">local polynomial regression</span> <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib101" title="">Fan and Gijbels,, 1996</a>)</cite>.</p></section></section><p class="nav bottom"><a href="index.html">目录</a><a href="22.html">← 上一章</a><a href="24.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

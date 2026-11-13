@@ -1,0 +1,463 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 9 Bridging Finite and Super Population Causal Inference · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="11.html">← 上一章</a><a href="13.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter9">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 9 </span>Bridging Finite and Super Population Causal Inference</h3>
+
+<div class="ltx_para">
+<p class="ltx_p" id="chapter9.p2.1">We have focused on the finite population perspective in randomized experiments. It treats all the potential outcomes as fixed numbers. Even if the potential outcomes are random variables, we can condition on them under the finite population perspective. The advantages of this perspective are</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S48.I1.i1.p1.1">it focuses on the design of the experiments;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S48.I1.i2.p1.1">it requires minimal assumptions on the data-generating process of the outcomes.</p>
+</div></li>
+</ol>
+<p class="ltx_p" id="chapter9.p2.2">However, it is often criticized for having only <span class="ltx_text ltx_font_italic">internal validity</span> but not necessarily <span class="ltx_text ltx_font_italic">external validity</span>, with informal definitions below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 9.1</span></span><span class="ltx_text ltx_font_bold"> (internal validity)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition1e.p1.1"><span class="ltx_text ltx_font_italic">The statistical analysis is valid for the study samples at hand.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_definition">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 9.2</span></span><span class="ltx_text ltx_font_bold"> (external validity)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition2a.p1.1"><span class="ltx_text ltx_font_italic">The statistical analysis is valid for a broader population beyond the study samples.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter9.p3.1">Obviously, all experimenters want not only the internal validity but also the external validity of their experiments. Since all statistical properties are conditional on the potential outcomes for the units we have, the results are only about the observed units under the finite population perspective. Then a natural question arises: do the finite population results generalize to a bigger population?</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter9.p4.1">This is a fair critique of the finite population framework conditional on the potential outcomes. However, this can be a philosophical question. What we observed is a finite population, so any experimental design and analysis directly give us information about this finite population. Randomization only ensures internal validity given the potential outcomes of these units. The external validity of the results depends on the sampling process of the units. If the finite population is a representative sample of a larger population we are interested in, then of course the experimental results also have external validity. Otherwise, the results based on randomization inference may not generalize. To rigorously discuss this issue, we need to have a framework with two levels of randomness, one due to the sampling process of the units and the other due to the random assignment of the treatment. See <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib230" title="">Miratrix et al., (2018)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib1" title="">Abadie et al., (2020)</a></cite> for formal discussions of this idea.<sup><a href="#fn-chapter9-25" id="fn-chapter9-25-ref">25</a></sup></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter9.p5.1">For some statisticians, this is just a technical problem. We can change the statistical framework, assuming that the units are sampled from a superpopulation. Then all the statements are about the population of interest. This is a convenient framework, although it does not really solve the problem mentioned above. Below, I will introduce this framework for two purposes:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S48.I2.i1.p1.1">it gives a different perspective on randomized experiments;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S48.I2.i2.p1.1">it serves as a bridge between Parts <a class="ltx_ref" href="#Pt2" title="Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">II</span></a> and <a class="ltx_ref" href="#Pt3" title="Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">III</span></a> of this book.</p>
+</div></li>
+</ol>
+<p class="ltx_p" id="chapter9.p5.2">The latter purpose is more important since the superpopulation framework allows us to derive more fruitful results for observational studies in which the treatment is not randomly assigned.</p>
+</div>
+<section class="ltx_section" id="S49">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">49 </span>CRE</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S49.p1.1">Assume</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\{Z_{i},Y_{i}(1),Y_{i}(0),X_{i}\}_{i=1}^{n}\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}\{Z,Y(1),Y(0),X\}" class="m" src="m/50fbcc1f239c.png" style="width:20.33em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S49.p1.2">from a superpopulation. So we can drop the subscript <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/> for quantities of this population. With a little abuse of notation, we define the population average causal effect as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=E\{Y(1)-Y(0)\}=E\{Y(1)\}-E\{Y(0)\}." class="m" src="m/e457c4ae5fc9.png" style="width:19.87em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S49.p1.3">Under the superpopulation framework, we can formulate the CRE as below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition3a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 9.3</span></span><span class="ltx_text ltx_font_bold"> (CRE under the superpopulation framework)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition3a.p1.1"><span class="ltx_text ltx_font_italic">We have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z\ind \{Y(1),Y(0),X\}." class="m" src="m/5f02503e14d8.png" style="width:9.13em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S49.p2.1">Under Definition <a class="ltx_ref" href="#Thmdefinition3a" title="Definition 9.3 (CRE under the superpopulation framework) ‣ 49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">9.3</span></a>, the average causal effect can be written as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S49.E42"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau" class="m" src="m/10de0cdadd8d.png" style="width:0.77em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid Z=1\}-E\{Y(0)\mid Z=0\}" class="m" src="m/c403f5c31721.png" style="width:16.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="2"><span class="ltx_tag ltx_tag_equation ltx_align_right">(42)</span></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1)-E(Y\mid Z=0)," class="m" src="m/0b467701ca5b.png" style="width:13.32em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S49.p2.2">which equals the difference in expectations of the outcomes. The first line in (<a class="ltx_ref" href="#S49.E42" title="In 49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">42</span></a>) is the key step that leverages the value of randomization. Since <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> can be expressed as a function of the distributions of the observables, it is <span class="ltx_text ltx_font_italic">nonparametrically identifiable<sup><a href="#fn-chapter9-26" id="fn-chapter9-26-ref">26</a></sup></span>. The formula (<a class="ltx_ref" href="#S49.E42" title="In 49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">42</span></a>) immediately suggests a moment estimator <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/>, which is the difference in means of the outcomes defined before. Conditioning on <img alt="\bm{Z}" class="m" src="m/49573002cc32.png" style="width:1.08em;vertical-align:-0.12em"/>, this is then a standard two-sample problem comparing the means of two independent samples. We have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(\hat{\tau}\mid\bm{Z})=\tau" class="m" src="m/1fe9546caf55.png" style="width:5.93em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S49.p2.3">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}(\hat{\tau}\mid\bm{Z})=\frac{\textup{var}\{Y(1)\}}{n_{1}}+\frac{\textup{var}\{Y(0)\}}{n_{0}}." class="m" src="m/9a14c0be6aa2.png" style="width:16.79em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S49.p2.4">Under IID sampling, the sample variances are unbiased for the population variances, so <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s variance estimator is unbiased for <img alt="\textup{var}(\hat{\tau}\mid\bm{Z})" class="m" src="m/69dbf68c8a33.png" style="width:4.60em;vertical-align:-0.36em"/>. The conservativeness problem goes away under this superpopulation framework.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S49.p3.1">We can also discuss covariate adjustment. Based on the OLS decompositions (see Chapter <a class="ltx_ref" href="34.html#chapter31" title="Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31</span></a>)</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S49.E43"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Y(1)" class="m" src="m/cefa7fe07274.png" style="width:2.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\gamma_{1}+\beta_{1}^{\mkern-1.5mu\mathsf{T}}X+\varepsilon(1)," class="m" src="m/0071c26730ca.png" style="width:7.68em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(43)</span></td></tr></tbody>
+<tbody id="S49.E44"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Y(0)" class="m" src="m/a31e3f33ecdb.png" style="width:2.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\gamma_{0}+\beta_{0}^{\mkern-1.5mu\mathsf{T}}X+\varepsilon(0)," class="m" src="m/145cf6b91255.png" style="width:7.68em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(44)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S49.p3.2">we have</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau" class="m" src="m/10de0cdadd8d.png" style="width:0.77em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)-Y(0)\}" class="m" src="m/3e749eeb0ae5.png" style="width:7.42em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\gamma_{1}-\gamma_{0}+(\beta_{1}-\beta_{0})^{\mkern-1.5mu\mathsf{T}}E(X)," class="m" src="m/f0ba9884edfd.png" style="width:11.88em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S49.p3.3">since the residuals <img alt="\varepsilon(1)" class="m" src="m/76fb96a7bca1.png" style="width:1.98em;vertical-align:-0.36em"/> and <img alt="\varepsilon(0)" class="m" src="m/d298e587e538.png" style="width:1.98em;vertical-align:-0.36em"/> have mean zero due to the inclusion of the intercepts.
+We can use the OLS with the treated and control data to estimate the coefficients in (<a class="ltx_ref" href="#S49.E43" title="In 49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">43</span></a>) and (<a class="ltx_ref" href="#S49.E44" title="In 49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">44</span></a>), respectively. The sample versions of the coefficients are <img alt="\hat{\gamma}_{1},\hat{\beta}_{1},\hat{\gamma}_{0},\hat{\beta}_{0}" class="m" src="m/2de6ddba21a9.png" style="width:5.52em;vertical-align:-0.31em"/>, so a covariate-adjusted estimator for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\text{adj}}=\hat{\gamma}_{1}-\hat{\gamma}_{0}+(\hat{\beta}_{1}-\hat{\beta}_{0})^{\mkern-1.5mu\mathsf{T}}\bar{X}." class="m" src="m/ca95013f34a5.png" style="width:13.23em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S49.p3.4">If we center covariates with <img alt="\bar{X}=0" class="m" src="m/9c61142e9121.png" style="width:2.96em;vertical-align:-0.12em"/>, the above estimator reduces to <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{L}}=\hat{\gamma}_{1}-\hat{\gamma}_{0}," class="m" src="m/8fd385877504.png" style="width:5.97em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S49.p3.5">which equals the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> in the pooled regression with treatment-covariates interactions; see Proposition <a class="ltx_ref" href="09.html#Thmproposition2" title="Proposition 6.2 ‣ 30.2.1 Some heuristics for ( ) ’s results ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.2</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S49.p4.1">Unfortunately, the EHW variance estimator does not work for <img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> because of the additional uncertainty in the sample mean of covariates <img alt="\bar{X}" class="m" src="m/8c38e9479061.png" style="width:1.13em;vertical-align:-0.12em"/> under the super population framework. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib30" title="">Berk et al., (2013)</a></cite>, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib236" title="">Negi and Wooldridge, (2021)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib349" title="">Zhao and Ding, 2021a ()</a></cite> proposed a correction of the EHW variance estimator by adding an extra term</p>
+<table class="ltx_equation ltx_eqn_table" id="S49.E45">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\hat{\beta}_{1}-\hat{\beta}_{0})^{\mkern-1.5mu\mathsf{T}}S_{X}^{2}(\hat{\beta}_{1}-\hat{\beta}_{0})/n" class="m" src="m/8b4fbfd92060.png" style="width:11.25em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(45)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S49.p4.2">where <img alt="\hat{\beta}_{1}-\hat{\beta}_{0}" class="m" src="m/31fbea23431f.png" style="width:3.49em;vertical-align:-0.31em"/> equals the coefficient of the interaction <img alt="Z_{i}X_{i}" class="m" src="m/1b35e9524ac4.png" style="width:2.41em;vertical-align:-0.26em"/> in obtaining <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator and <img alt="S_{X}^{2}" class="m" src="m/86e5b73f4fe6.png" style="width:1.61em;vertical-align:-0.39em"/> is the finite-population covariance matrix of the covariates.
+A conceptually simpler yet computationally intensive approach is to use the bootstrap to estimate the variance; see Chapter <a class="ltx_ref" href="33.html#chapter30.A6" title="Appendix 30.F Bootstrap ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.F</span></a> and Problem <a class="ltx_ref" href="#S52.SS0.SSS0.P2" title="9.2 Variance estimation of ( ) ’s estimator under the super population framework ‣ 52 Homework Problems ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">9.2</span></a>.</p>
+</div>
+</section>
+<section class="ltx_section" id="S50">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">50 </span>Simulation under the CRE: the super population perspective</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S50.p1.1">The following <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">linestimator</span> function can compute <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator, the EHW standard error, and the corrected standard error based on (<a class="ltx_ref" href="#S49.E45" title="In 49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">45</span></a>) for the super population.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">library</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"car"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">linestimator</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">function</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">){</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>standardize<span class="ltx_text ltx_lst_space"> </span>X</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">scale</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">dim</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[1]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">dim</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[2]</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>fully<span class="ltx_text ltx_lst_space"> </span>interacted<span class="ltx_text ltx_lst_space"> </span>OLS</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">linreg</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">linreg</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[2]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">vehw</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hccm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">linreg</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2]</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>super<span class="ltx_text ltx_lst_space"> </span>population<span class="ltx_text ltx_lst_space"> </span>correction</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">inter</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">linreg</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+3):(2*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+2)]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">vsuper</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">vehw</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sum</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">inter</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">cov</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)%*%</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">inter</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">vehw</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">),</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">vsuper</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">}</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S50.p2.1">I then use simulation to compare the EHW standard error and the corrected standard error.
+I choose sample size <img alt="n=500" class="m" src="m/248b60a6db1f.png" style="width:3.66em;vertical-align:-0.12em"/> and use 2000 Monte Carlo repetitions. The potential outcomes are nonlinear in covariates and the error terms are not Normal. The true average causal effect equals <img alt="0." class="m" src="m/2376678d488d.png" style="width:1.01em;vertical-align:-0.12em"/></p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">replicate</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(2000,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">500</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">matrix</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rnorm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*2),</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1]^2</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">runif</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.5,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.5)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2]^2</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">runif</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rbinom</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.6)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1-</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">linestimator</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">})</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S50.p3.1">The following results confirm the theory. First, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator is nearly unbiased.
+Second, the average EHW standard error is smaller than the empirical standard derivation, resulting in undercoverage of the 95% confidence intervals.
+Third, the average corrected standard error for super population is nearly identical to the empirical standard derivation, resulting in more accurate coverage of the 95% confidence intervals.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>bias</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.0001247585</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>empirical<span class="ltx_text ltx_lst_space"> </span>standard<span class="ltx_text ltx_lst_space"> </span>deviation</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sd</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.1507773</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>estimated<span class="ltx_text ltx_lst_space"> </span>EHW<span class="ltx_text ltx_lst_space"> </span>standard<span class="ltx_text ltx_lst_space"> </span>error</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.1388657</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>coverage<span class="ltx_text ltx_lst_space"> </span>based<span class="ltx_text ltx_lst_space"> </span>on<span class="ltx_text ltx_lst_space"> </span>EHW<span class="ltx_text ltx_lst_space"> </span>standard<span class="ltx_text ltx_lst_space"> </span>error</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">((</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">]-1.96*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])*(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">]+1.96*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])&lt;=0)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.927</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>estimated<span class="ltx_text ltx_lst_space"> </span>super<span class="ltx_text ltx_lst_space"> </span>population<span class="ltx_text ltx_lst_space"> </span>standard<span class="ltx_text ltx_lst_space"> </span>error</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[3,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.1531519</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>coverage<span class="ltx_text ltx_lst_space"> </span>based<span class="ltx_text ltx_lst_space"> </span>on<span class="ltx_text ltx_lst_space"> </span>population<span class="ltx_text ltx_lst_space"> </span>standard<span class="ltx_text ltx_lst_space"> </span>error</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">((</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">]-1.96*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[3,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])*(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">]+1.96*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[3,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])&lt;=0)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.9525</span>
+</div>
+</div>
+</div>
+</section>
+<section class="ltx_section" id="S51">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">51 </span>Extension to the SRE</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S51.p1.1">We can extend the discussion in Section <a class="ltx_ref" href="#S49" title="49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">49</span></a> to the SRE since it is equivalent to independent CREs within strata.
+The notation below will be slightly different from that in Chapter <a class="ltx_ref" href="08.html#chapter5" title="Chapter 5 Stratification and Post-Stratification in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">5</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S51.p2.1">Assume that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\{Z_{i},Y_{i}(1),Y_{i}(0),X_{i}\}\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}\{Z,Y(1),Y(0),X\}." class="m" src="m/4b9947e998d9.png" style="width:19.25em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S51.p2.2">With a discrete covariate <img alt="X_{i}\in\{1,\ldots,K\}" class="m" src="m/9b59125332f3.png" style="width:7.25em;vertical-align:-0.36em"/>, we can formulate the SRE as below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition4">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 9.4</span></span><span class="ltx_text ltx_font_bold"> (SRE under the super population framework)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition4.p1.1"><span class="ltx_text ltx_font_italic">We have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z\ind \{Y(1),Y(0)\}\mid X." class="m" src="m/1cb2827e6aca.png" style="width:9.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S51.p3.1">Under Definition <a class="ltx_ref" href="#Thmdefinition4" title="Definition 9.4 (SRE under the super population framework) ‣ 51 Extension to the SRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">9.4</span></a>, the conditional average causal effect can be rewritten as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{[k]}" class="m" src="m/938c49b7d475.png" style="width:1.61em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)-Y(0)\mid X=k\}" class="m" src="m/55ac6e2d9924.png" style="width:11.03em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1,X=k)-E(Y\mid Z=0,X=k)," class="m" src="m/9bb8ac299992.png" style="width:19.80em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S51.p3.2">so the average causal effect can be rewritten as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau" class="m" src="m/10de0cdadd8d.png" style="width:0.77em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)-Y(0)\}" class="m" src="m/3e749eeb0ae5.png" style="width:7.42em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\sum_{k=1}^{K}\textup{pr}(X=k)E\{Y(1)-Y(0)\mid X=k\}" class="m" src="m/76626989ec97.png" style="width:17.18em;vertical-align:-1.42em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\sum_{k=1}^{K}\textup{pr}(X=k)\tau_{[k]}." class="m" src="m/1c96efceac4d.png" style="width:8.02em;vertical-align:-1.42em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S51.p3.3">The discussion in Section <a class="ltx_ref" href="#S49" title="49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">49</span></a> holds within all strata, so we can derive the superpopulation analog for the SRE. When there are more than two treatment and control units within each stratum, we can use <img alt="\hat{V}_{\textsc{S}}" class="m" src="m/6942b71cee90.png" style="width:1.30em;vertical-align:-0.26em"/> as the variance estimator for <img alt="\textup{var}(\hat{\tau}_{\textsc{S}})" class="m" src="m/79504378844d.png" style="width:3.30em;vertical-align:-0.36em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S51.p4.1">We will see the exact form of Definition <a class="ltx_ref" href="#Thmdefinition4" title="Definition 9.4 (SRE under the super population framework) ‣ 51 Extension to the SRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">9.4</span></a> in Part <a class="ltx_ref" href="#Pt3" title="Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">III</span></a> later.</p>
+</div>
+</section>
+<section class="ltx_section" id="S52">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">52 </span>Homework Problems</h4>
+<section class="ltx_paragraph" id="S52.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">9.1 </span>OLS decomposition of the observed outcome under the CRE</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S52.SS0.SSS0.P1.p1.1">Based on (<a class="ltx_ref" href="#S49.E43" title="In 49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">43</span></a>) and (<a class="ltx_ref" href="#S49.E44" title="In 49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">44</span></a>), show that the OLS decomposition of the observed outcome on the treatment, covariates, and their interaction is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y=\alpha_{0}+\alpha_{Z}Z+\alpha_{X}^{\mkern-1.5mu\mathsf{T}}X+\alpha_{ZX}^{\mkern-1.5mu\mathsf{T}}XZ+\varepsilon" class="m" src="m/cb03bb31bc7d.png" style="width:16.81em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S52.SS0.SSS0.P1.p1.2">where</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\alpha_{0}=\gamma_{0},\quad\alpha_{Z}=\gamma_{1}-\gamma_{0},\quad\alpha_{X}=\beta_{0},\quad\alpha_{ZX}=\beta_{1}-\beta_{0}" class="m" src="m/a845d01c1358.png" style="width:24.04em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S52.SS0.SSS0.P1.p1.3">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\varepsilon=Z\varepsilon(1)+(1-Z)\varepsilon(0)." class="m" src="m/e4d4ccf3685b.png" style="width:11.03em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S52.SS0.SSS0.P1.p1.4">That is,</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\alpha_{0},\alpha_{Z},\alpha_{X},\alpha_{ZX})=\arg\min_{a_{0},a_{Z},a_{X},a_{ZX}}E(Y-a_{0}-a_{Z}Z-a_{X}^{\mkern-1.5mu\mathsf{T}}X-a_{ZX}^{\mkern-1.5mu\mathsf{T}}XZ)^{2}." class="m" src="m/ccf250a60679.png" style="width:33.00em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</section>
+<section class="ltx_paragraph" id="S52.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">9.2 </span>Variance estimation of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator under the super population framework</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S52.SS0.SSS0.P2.p1.1">Under the super population framework, simulate <img alt="\{X_{i},Z_{i},Y_{i}(1),Y_{i}(0)\}_{i=1}^{n}" class="m" src="m/39a8d0389d24.png" style="width:10.48em;vertical-align:-0.36em"/> with <img alt="\beta_{1}\neq\beta_{0}" class="m" src="m/a15aa8eb855c.png" style="width:3.59em;vertical-align:-0.31em"/> in (<a class="ltx_ref" href="#S49.E43" title="In 49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">43</span></a>) and (<a class="ltx_ref" href="#S49.E44" title="In 49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">44</span></a>). Calculate <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator in each simulated dataset.
+Compare the true variance and the following estimated variances:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S52.I1.i1.p1.1">the EHW robust variance estimator;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S52.I1.i2.p1.1">the EHW robust variance estimator with the correction term defined in (<a class="ltx_ref" href="#S49.E45" title="In 49 CRE ‣ Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">45</span></a>);</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S52.I1.i3.p1.1">the bootstrap variance estimator, with covariates centered at the beginning but not re-centered for each bootstrap sample;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">4.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S52.I1.i4.p1.1">the bootstrap variance estimator, with covariates re-centered for each bootstrap sample.</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section class="ltx_paragraph" id="S52.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">9.3 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S52.SS0.SSS0.P3.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib88" title="">Ding et al., 2017a ()</a></cite> provide a unified discussion of the finite population and superpopulation inferences for the average causal effect.</p>
+</div>
+</section>
+</section>
+<section class="footnotes"><h4>脚注</h4><p id="fn-chapter9-25"><a href="#fn-chapter9-25-ref">25</a>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib249" title="">Pearl and Bareinboim, (2014)</a></cite> discussed the <span class="ltx_text ltx_font_italic">transportability</span> problem from the perspective of causal diagrams.</p><p id="fn-chapter9-26"><a href="#fn-chapter9-26-ref">26</a>. <span class="ltx_text ltx_font_upright">In causal inference, we say that a parameter is nonparametrically identifiable if it can be determined by the distribution of the observed variables without imposing further parametric assumptions. See Definition </span><a class="ltx_ref ltx_font_upright" href="13.html#Thmdefinition1f" title="Definition 10.1 (identification) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.1</span></a><span class="ltx_text ltx_font_upright"> later for a more formal discussion.</span></p></section></section><p class="nav bottom"><a href="index.html">目录</a><a href="11.html">← 上一章</a><a href="13.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

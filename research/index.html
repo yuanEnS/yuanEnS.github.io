@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>研究园 · 统计学期刊新文章 | gamesyuan</title>
-<meta name="description" content="研究园：每周整理 JASA、Annals of Statistics、JRSSB、Biometrika、Biometrics、Statistics in Medicine 等统计学期刊的新文章，按因果推断、生存分析等主题和期刊筛选。">
+<title>研究园 · 统计学经典书籍与期刊文章 | gamesyuan</title>
+<meta name="description" content="研究园：统计学经典书籍（可在线分章阅读），以及每周整理 JASA、Annals of Statistics、JRSSB、Biometrika、Biometrics、Statistics in Medicine 等统计学期刊的新文章，按因果推断、生存分析等主题和期刊筛选。">
 <link rel="canonical" href="https://gamesyuan.com/research/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="gamesyuan">
-<meta property="og:title" content="研究园 · 统计学期刊新文章">
+<meta property="og:title" content="研究园 · 统计学经典书籍与期刊文章">
 <meta property="og:description" content="每周整理统计学期刊的新文章，按主题和期刊筛选。">
 <meta property="og:url" content="https://gamesyuan.com/research/">
 <meta property="og:image" content="https://gamesyuan.com/og.png">
@@ -68,6 +68,25 @@
   mark { background: rgba(179, 38, 30, 0.14); color: inherit; border-radius: 2px; }
   .load-more { display: block; margin: 24px auto 0; }
   .masthead .lite-link { margin-top: 6px; font-size: 15px; }
+  .choose { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 0 0 36px; }
+  .page .choice {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px 20px 18px !important;
+    border: 1px solid var(--rule) !important; border-radius: 14px !important; background: var(--card) !important;
+    color: var(--text) !important; font: inherit !important; text-align: left; cursor: pointer; transition: border-color .2s, transform .2s;
+  }
+  .page .choice:hover { border-color: var(--primary) !important; transform: translateY(-2px); }
+  .page .choice[aria-pressed="true"] { border: 2px solid var(--primary) !important; padding: 19px 19px 17px !important; }
+  .choice .seal { width: 44px; height: 44px; font-size: 28px; }
+  .choice-name { font-size: 26px; line-height: 1.3; }
+  .choice-text { color: var(--soft); font-size: 16px; line-height: 1.7; }
+  @media (max-width: 560px) {
+    .choose { gap: 10px; }
+    .page .choice { padding: 14px 14px 12px !important; }
+    .page .choice[aria-pressed="true"] { padding: 13px 13px 11px !important; }
+    .choice-name { font-size: 22px; }
+    .choice-text { font-size: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .page .choice { transition: none; } .page .choice:hover { transform: none; } }
   .books { margin-bottom: 36px; }
   .book { margin-top: 14px; padding: 18px 20px; border: 1px solid var(--rule); border-radius: 12px; background: var(--card); }
   .book h3 { margin: 6px 0 2px; font: 22px/1.4 "Iowan Old Style", "Palatino Linotype", Georgia, var(--kai); font-weight: 400; }
@@ -92,15 +111,29 @@
 <header class="masthead">
   <span class="seal" aria-hidden="true">研</span>
   <h1>研究园</h1>
-  <p>统计学期刊每周的新文章。按主题、按期刊挑着看。</p>
+  <p>统计学的经典书籍，和期刊每周的新文章。</p>
   <p class="lite-link">Kindle、电子书阅读器或老浏览器打不开？用<a href="/research/lite/">简易版</a>。</p>
 </header>
 
-<section class="books" id="books-wrap" hidden aria-labelledby="books-title">
+<nav class="choose" aria-label="看什么">
+  <button type="button" class="choice" data-view="books" aria-pressed="false">
+    <span class="seal" aria-hidden="true">书</span>
+    <span class="choice-name">经典书籍</span>
+    <span class="choice-text">值得反复读的教材和专著，有的可以在线读，Kindle 也能看。</span>
+  </button>
+  <button type="button" class="choice" data-view="papers" aria-pressed="false">
+    <span class="seal" aria-hidden="true">刊</span>
+    <span class="choice-name">期刊文章</span>
+    <span class="choice-text">统计学期刊每周的新文章，按主题、按期刊挑着看。</span>
+  </button>
+</nav>
+
+<section class="books" id="books-view" hidden aria-labelledby="books-title">
   <h2 class="section-title" id="books-title">经典书籍</h2>
-  <div id="books"></div>
+  <div id="books"><p class="empty">正在打开…</p></div>
 </section>
-<h2 class="section-title" id="papers-title">期刊新文章</h2>
+<div id="papers-view" hidden>
+<h2 class="section-title" id="papers-title">期刊文章</h2>
 <section class="filters" aria-label="筛选">
   <input class="field search" id="q" type="search" placeholder="搜标题、作者、摘要" aria-label="搜索文章">
   <fieldset class="facet">
@@ -124,13 +157,14 @@
 <button type="button" class="load-more" id="more" hidden>再看 30 篇</button>
 
 <p class="about" id="about"></p>
+</div>
 <footer class="foot"><a href="/">首页</a> · <a href="/life/">生活园</a> · <a href="/games/">游戏园</a></footer>
 </div>
 <script>
   const $ = id => document.getElementById(id);
   const PAGE = 30;
   const TOPICS_SHOWN = 8; // 主题多，先显示文章最多的几个
-  const state = { topics: new Set(), journals: new Set(), q: '', hideDiscussion: false, shown: PAGE, allTopics: false };
+  const state = { view: '', topics: new Set(), journals: new Set(), q: '', hideDiscussion: false, shown: PAGE, allTopics: false };
   let data = null;
   let zhOf = {};
 
@@ -153,10 +187,18 @@
     for (const j of params.getAll('journal')) state.journals.add(j);
     state.q = params.get('q') || '';
     state.hideDiscussion = params.get('discussion') === 'hide';
+    // 带了筛选条件的旧链接，直接进期刊文章
+    const filtered = state.topics.size || state.journals.size || state.q || state.hideDiscussion;
+    state.view = ['books', 'papers'].includes(params.get('view')) ? params.get('view') : filtered ? 'papers' : '';
   }
 
   function writeUrl() {
     const params = new URLSearchParams();
+    if (state.view) params.set('view', state.view);
+    if (state.view !== 'papers') {
+      history.replaceState(null, '', state.view ? `?view=${state.view}` : location.pathname);
+      return;
+    }
     for (const t of state.topics) params.append('topic', t);
     for (const j of state.journals) params.append('journal', j);
     if (state.q) params.set('q', state.q);
@@ -253,6 +295,11 @@
       set.clear();
       set.add(value);
       state.shown = PAGE;
+      // 从书上点的标签：切到期刊文章，数据下载好以后按这个条件显示
+      if (state.view !== 'papers' || !data) {
+        setView('papers');
+        return;
+      }
       update();
       $('count').scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
@@ -303,6 +350,11 @@
   }
 
   // ---------- 经典书籍 ----------
+  // 本站的在线阅读在当前页打开，外站的链接开新页
+  function linkProps(url) {
+    return url.startsWith('/') ? { href: url } : { href: url, target: '_blank', rel: 'noopener' };
+  }
+
   function bookNode(book) {
     const first = book.links && book.links[0];
     const tags = make('p', { className: 'paper-meta' },
@@ -318,17 +370,40 @@
       book.free ? make('span', { className: 'label free' }, '可免费阅读') : null);
     const by = [book.authors.join(', '), book.publisher, book.year].filter(Boolean).join(' · ');
     return make('article', { className: 'book' }, tags,
-      make('h3', {}, first ? make('a', { href: first.url, target: '_blank', rel: 'noopener' }, book.title) : book.title),
+      make('h3', {}, first ? make('a', linkProps(first.url), book.title) : book.title),
       make('p', { className: 'book-by' }, by),
       book.intro ? make('p', { className: 'book-intro' }, book.intro) : null,
-      make('p', { className: 'book-links' }, ...(book.links || []).map(link => make('a', { href: link.url, target: '_blank', rel: 'noopener' }, link.label))));
+      make('p', { className: 'book-links' }, ...(book.links || []).map(link => make('a', linkProps(link.url), link.label))));
   }
 
-  fetch('/research/books.json').then(res => res.json()).then(({ books }) => {
-    if (!books || !books.length) return;
-    fill($('books'), books.map(bookNode));
-    $('books-wrap').hidden = false;
-  }).catch(() => {});
+  let booksLoaded = false;
+  function loadBooks() {
+    if (booksLoaded) return;
+    booksLoaded = true;
+    fetch('/research/books.json').then(res => res.json()).then(({ books }) => {
+      fill($('books'), books && books.length ? books.map(bookNode) : [make('p', { className: 'empty' }, '还没有书。')]);
+    }).catch(() => {
+      booksLoaded = false;
+      fill($('books'), [make('p', { className: 'empty' }, '书目暂时打不开，请稍后再试。')]);
+    });
+  }
+
+  // 先选「经典书籍」或「期刊文章」，选了才显示对应的内容；期刊文章的数据比较大，选了才下载
+  let papersLoaded = false;
+  function setView(view, scroll = true) {
+    state.view = view;
+    document.querySelectorAll('.choice').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === view)));
+    $('books-view').hidden = view !== 'books';
+    $('papers-view').hidden = view !== 'papers';
+    if (view === 'books') loadBooks();
+    if (view === 'papers' && !papersLoaded) {
+      papersLoaded = true;
+      loadPapers();
+    } else if (view === 'papers' && data) update();
+    writeUrl();
+    if (scroll && view) $(view === 'books' ? 'books-title' : 'papers-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.querySelectorAll('.choice').forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
 
   // ---------- 开始 ----------
   readUrl();
@@ -363,6 +438,7 @@
     update();
   });
 
+  function loadPapers() {
   fetch('/research/papers.json').then(res => {
     if (!res.ok) throw new Error(res.status);
     return res.json();
@@ -377,6 +453,8 @@
     $('count').textContent = '文章列表打不开。';
     $('count').append(' 请看', make('a', { href: '/research/lite/' }, '简易版'), '。');
   });
+  }
+  setView(state.view, false);
 </script>
 </body>
 </html>

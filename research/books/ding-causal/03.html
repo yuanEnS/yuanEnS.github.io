@@ -1,0 +1,174 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Notation · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="02.html">← 上一章</a><a href="04.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapterx3">
+<h3 class="ltx_title ltx_title_chapter">Notation</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapterx3.p1.1">I use the following conventional notation in this book.</p>
+</div>
+<section class="ltx_subsection" id="S0.SSx6">
+<h5 class="ltx_title ltx_title_subsection">Math</h5>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_guessed_headers ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t"><img alt="\binom{n}{m}" class="m" src="m/b2dc9bf1fe3c.png" style="width:1.85em;vertical-align:-0.46em"/></th>
+<td class="ltx_td ltx_align_left ltx_border_t">“<img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> choose <img alt="m" class="m" src="m/d0fa7c3b5984.png" style="width:1.11em;vertical-align:-0.12em"/>” which equals <img alt="\frac{n!}{m!(n-m)!}" class="m" src="m/8f6f22ac61a5.png" style="width:4.10em;vertical-align:-0.63em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\sum" class="m" src="m/e44ebcebe1d9.png" style="width:1.28em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left">summation, e.g., <img alt="\sum_{i=1}^{n}a_{i}=a_{1}+\cdots+a_{n}" class="m" src="m/943fac40ee3c.png" style="width:10.65em;vertical-align:-0.41em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="I(\cdot)" class="m" src="m/4512c84a318c.png" style="width:1.81em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left">indicator function, i.e., <img alt="I(A)=1" class="m" src="m/7b9d970b4c78.png" style="width:4.12em;vertical-align:-0.36em"/> if <img alt="A" class="m" src="m/b97267fa7855.png" style="width:0.99em;vertical-align:-0.12em"/> happens and 0 otherwise</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\#" class="m" src="m/46c24c4b23ad.png" style="width:1.06em;vertical-align:-0.31em"/></th>
+<td class="ltx_td ltx_align_left">counting the number of units in a set</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\approx" class="m" src="m/39e4272b83cc.png" style="width:1.01em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_left">approximately equal</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\propto" class="m" src="m/b67ad499e7d5.png" style="width:1.01em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_left">proportional to (by dropping some unimportant constant)</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><span class="ltx_text ltx_markedasmath">logit</span></th>
+<td class="ltx_td ltx_align_left"><img alt="\text{logit}(x)=\log\frac{x}{1-x}" class="m" src="m/715221f26074.png" style="width:8.05em;vertical-align:-0.53em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><span class="ltx_text ltx_markedasmath">expit</span></th>
+<td class="ltx_td ltx_align_left ltx_border_b"><img alt="\textup{expit}(x)=\frac{e^{x}}{1+e^{x}}=(1+e^{-x})^{-1}" class="m" src="m/698a63c154cb.png" style="width:13.68em;vertical-align:-0.53em"/></td></tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section class="ltx_subsection" id="S0.SSx7">
+<h5 class="ltx_title ltx_title_subsection">Basic probability and statistics</h5>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_guessed_headers ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t"><img alt="\textup{pr}(\cdot)" class="m" src="m/8781b2f64e66.png" style="width:2.24em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left ltx_border_t">probability</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="E(\cdot)" class="m" src="m/9f6d79fe4bac.png" style="width:2.10em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left">expectation of a random variable</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\textup{var}(\cdot)" class="m" src="m/275a5c9d119e.png" style="width:2.65em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left">variance of a random variable</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\textup{cov}(\cdot)" class="m" src="m/c3b1d68e7788.png" style="width:2.72em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left">covariance between random variables</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\stackrel{{\scriptstyle\cdot}}{{\sim}}" class="m" src="m/1a918a99e64f.png" style="width:1.01em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_left">“<img alt="A\stackrel{{\scriptstyle\cdot}}{{\sim}}B" class="m" src="m/9f37ba470dc9.png" style="width:3.13em;vertical-align:-0.12em"/>” means that <img alt="A" class="m" src="m/b97267fa7855.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="B" class="m" src="m/fa2452c388ed.png" style="width:1.04em;vertical-align:-0.12em"/> have the same asymptotic distribution</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\rho_{YX}" class="m" src="m/abb749099db1.png" style="width:2.14em;vertical-align:-0.31em"/></th>
+<td class="ltx_td ltx_align_left">Pearson correlation coefficient between <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> and <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><img alt="R^{2}_{YX}" class="m" src="m/38245a8957f5.png" style="width:2.38em;vertical-align:-0.39em"/></th>
+<td class="ltx_td ltx_align_left ltx_border_b">squared multiple correlation coefficient between <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> and <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/></td></tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section class="ltx_subsection" id="S0.SSx8">
+<h5 class="ltx_title ltx_title_subsection">Random variables</h5>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_th_row ltx_border_t">Bernoulli<img alt="(p)" class="m" src="m/b90280cedb3f.png" style="width:1.52em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_border_t">Bernoulli distribution with probability <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/></th></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_th_row">Binomial<img alt="(n,p)" class="m" src="m/457eb205198b.png" style="width:2.55em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_left ltx_th ltx_th_column">Binomial distribution with <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> trials and probability <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\textsc{N}(\mu,\sigma^{2})" class="m" src="m/aee34ba409c1.png" style="width:3.93em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left">Normal distribution with mean <img alt="\mu" class="m" src="m/de29996a4697.png" style="width:0.84em;vertical-align:-0.31em"/> and variance <img alt="\sigma^{2}" class="m" src="m/e58684f30853.png" style="width:1.28em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="t_{\nu}" class="m" src="m/453047ca62d8.png" style="width:1.08em;vertical-align:-0.26em"/></th>
+<td class="ltx_td ltx_align_left"><img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/> distribution with degrees of freedom <img alt="\nu" class="m" src="m/b9ec222dacd7.png" style="width:0.79em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\chi^{2}_{\nu}" class="m" src="m/721040f64c27.png" style="width:1.35em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left">chi-squared distribution with degrees of freedom <img alt="\nu" class="m" src="m/b9ec222dacd7.png" style="width:0.79em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><img alt="z_{1-\alpha/2}" class="m" src="m/73557caf7691.png" style="width:3.11em;vertical-align:-0.46em"/></th>
+<td class="ltx_td ltx_align_left ltx_border_b">the <img alt="1-\alpha/2" class="m" src="m/db1c5719a875.png" style="width:3.59em;vertical-align:-0.36em"/> upper quantile of <img alt="\textsc{N}(0,1)" class="m" src="m/2fef3e922101.png" style="width:3.28em;vertical-align:-0.36em"/>, e.g., <img alt="z_{0.975}=1.96" class="m" src="m/70887b23b3e9.png" style="width:5.69em;vertical-align:-0.26em"/></td></tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section class="ltx_subsection" id="S0.SSx9">
+<h5 class="ltx_title ltx_title_subsection">Causal inference</h5>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_guessed_headers ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t"><img alt="Y_{i}(1),Y_{i}(0)" class="m" src="m/d408873e53a2.png" style="width:5.06em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left ltx_border_t">potential outcomes of unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/> under treatment and control</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_left">finite-population average causal effect <img alt="\tau=n^{-1}\sum_{i=1}^{n}\{Y_{i}(1)-Y_{i}(0)\}" class="m" src="m/7f7df6236037.png" style="width:12.96em;vertical-align:-0.41em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_left">super-population average causal effect <img alt="\tau=E\{Y(1)-Y(0)\}" class="m" src="m/1f7ced1088b6.png" style="width:9.30em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\mu_{1}(X)" class="m" src="m/35bdd74b5ae9.png" style="width:2.96em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left">outcome model <img alt="\mu_{1}(X)=E(Y\mid Z=1,X)" class="m" src="m/138bc18f0ead.png" style="width:11.44em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\mu_{0}(X)" class="m" src="m/cc6586c2ae11.png" style="width:2.96em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left">outcome model <img alt="\mu_{0}(X)=E(Y\mid Z=0,X)" class="m" src="m/a1e1bb6530ee.png" style="width:11.44em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left">propensity score <img alt="e(X)=\textup{pr}(Z=1\mid X)" class="m" src="m/d7c623616eee.png" style="width:9.78em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="\tau_{\textup{c}}" class="m" src="m/347065ad9724.png" style="width:1.08em;vertical-align:-0.26em"/></th>
+<td class="ltx_td ltx_align_left">complier average causal effect <img alt="\tau_{\textup{c}}=E\{Y(1)-Y(0)\mid U=\textup{c}\}" class="m" src="m/6fd8862fd531.png" style="width:12.98em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_left">unmeasured confounder</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row"><img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_left">latent compliance status <img alt="U=(D(1),D(0))" class="m" src="m/650fdd1f12ed.png" style="width:7.85em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><img alt="Y(z,M_{z^{\prime}})" class="m" src="m/52f7d15110a3.png" style="width:4.46em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_left ltx_border_b">nested potential outcome (for mediation analysis)</td></tr>
+</tbody>
+</table></div>
+</div>
+</section>
+</section><p class="nav bottom"><a href="index.html">目录</a><a href="02.html">← 上一章</a><a href="04.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

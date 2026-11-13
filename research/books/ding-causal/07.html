@@ -1,0 +1,770 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="06.html">← 上一章</a><a href="08.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter4">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 4 </span>Neymanian Repeated Sampling Inference in Completely Randomized Experiments</h3>
+
+<div class="ltx_para">
+<p class="ltx_p" id="chapter4.p2.1">In his seminal paper, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite> not only proposed the notation of potential outcomes but also derived rigorous mathematical results for making inference for the average causal effect under a CRE. In contrast to Fisher’s idea of calculating the <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-value under the sharp null hypothesis, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite> proposed an unbiased point estimator and a conservative confidence interval based on the sampling distribution of the point estimator. This chapter will introduce <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s fundamental results, which are very important for understanding later chapters in Part <a class="ltx_ref" href="#Pt2" title="Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">II</span></a> of this book.</p>
+</div>
+<section class="ltx_section" id="S17">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">17 </span>Finite population quantities</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S17.p1.1">Consider a CRE with <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> units, where <img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/> of them receive the treatment and <img alt="n_{0}" class="m" src="m/45626a2aa980.png" style="width:1.28em;vertical-align:-0.26em"/> of them receive the control. For unit <img alt="i=1,\ldots,n" class="m" src="m/4f9df9a48055.png" style="width:5.23em;vertical-align:-0.31em"/>, we have potential outcomes <img alt="Y_{i}(1)" class="m" src="m/310e7f69c7c8.png" style="width:2.43em;vertical-align:-0.36em"/> and <img alt="Y_{i}(0)" class="m" src="m/cff26d98475e.png" style="width:2.43em;vertical-align:-0.36em"/>, and individual effect <img alt="\tau_{i}=Y_{i}(1)-Y_{i}(0)." class="m" src="m/ed64b951436a.png" style="width:8.21em;vertical-align:-0.36em"/> The potential outcomes have finite population means</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\bar{Y}(1)=n^{-1}\sum_{i=1}^{n}Y_{i}(1),\quad\bar{Y}(0)=n^{-1}\sum_{i=1}^{n}Y_{i}(0)," class="m" src="m/0e7e53f3bcd6.png" style="width:20.07em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S17.p1.2">variances<sup><a href="#fn-chapter4-14" id="fn-chapter4-14-ref">14</a></sup></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="S^{2}(1)=(n-1)^{-1}\sum_{i=1}^{n}\{Y_{i}(1)-\bar{Y}(1)\}^{2},\quad S^{2}(0)=(n-1)^{-1}\sum_{i=1}^{n}\{Y_{i}(0)-\bar{Y}(0)\}^{2}," class="m" src="m/afb8ad257d69.png" style="width:34.86em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S17.p1.3">and covariance</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="S(1,0)=(n-1)^{-1}\sum_{i=1}^{n}\{Y_{i}(1)-\bar{Y}(1)\}\{Y_{i}(0)-\bar{Y}(0)\}." class="m" src="m/1b97fd3e199f.png" style="width:23.51em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S17.p1.4">The individual effects have mean</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=n^{-1}\sum_{i=1}^{n}\tau_{i}=\bar{Y}(1)-\bar{Y}(0)." class="m" src="m/d775f50d12ce.png" style="width:13.32em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S17.p1.5">and variance</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="S^{2}(\tau)=(n-1)^{-1}\sum_{i=1}^{n}(\tau_{i}-\tau)^{2}." class="m" src="m/9f9052cce54e.png" style="width:13.85em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S17.p1.6">We have the following relationship between the variances and covariance.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_lemma" id="Thmlemma1a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Lemma 4.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmlemma1a.p1.1"><img alt="2S(1,0)=S^{2}(1)+S^{2}(0)-S^{2}(\tau)." class="m" src="m/138e93ef7c2a.png" style="width:14.91em;vertical-align:-0.36em"/><span class="ltx_text"></span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S17.p2.1">Lemma <a class="ltx_ref" href="#Thmlemma1a" title="Lemma 4.1 ‣ 17 Finite population quantities ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a> is a basic result and will be useful for later discussion.
+The proof of Lemma <a class="ltx_ref" href="#Thmlemma1a" title="Lemma 4.1 ‣ 17 Finite population quantities ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a> follows from elementary algebra. I leave it as Problem <a class="ltx_ref" href="#S22.SS0.SSS0.P1" title="4.1 Proof of Lemma ‣ 22 Homework Problems ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S17.p3.1">These fixed quantities are functions of the Science Table <img alt="\{Y_{i}(1),Y_{i}(0)\}_{i=1}^{n}" class="m" src="m/7ff734d46a8e.png" style="width:7.40em;vertical-align:-0.36em"/>. We are interested in estimating the average causal effect <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> based on the data <img alt="(Z_{i},Y_{i})_{i=1}^{n}" class="m" src="m/f464eb576d33.png" style="width:4.72em;vertical-align:-0.36em"/> from a CRE.</p>
+</div>
+</section>
+<section class="ltx_section" id="S18">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">18 </span><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s theorem</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.p1.1">Based on the observed outcomes, we can calculate the sample means</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\bar{Y}}(1)=n_{1}^{-1}\sum_{i=1}^{n}Z_{i}Y_{i},\quad\hat{\bar{Y}}(0)=n_{0}^{-1}\sum_{i=1}^{n}(1-Z_{i})Y_{i}," class="m" src="m/8a424019a69a.png" style="width:21.87em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S18.p1.2">the sample variances</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{S}^{2}(1)=(n_{1}-1)^{-1}\sum_{i=1}^{n}Z_{i}\{Y_{i}-\hat{\bar{Y}}(1)\}^{2},\quad\hat{S}^{2}(0)=(n_{0}-1)^{-1}\sum_{i=1}^{n}(1-Z_{i})\{Y_{i}-\hat{\bar{Y}}(0)\}^{2}." class="m" src="m/118e995841b8.png" style="width:34.74em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S18.p1.3">But there are no sample versions of <img alt="S(1,0)" class="m" src="m/85646961892a.png" style="width:3.13em;vertical-align:-0.36em"/> and <img alt="S^{2}(\tau)" class="m" src="m/89883406d4c7.png" style="width:2.67em;vertical-align:-0.36em"/> because the potential outcomes <img alt="Y_{i}(1)" class="m" src="m/310e7f69c7c8.png" style="width:2.43em;vertical-align:-0.36em"/> and <img alt="Y_{i}(0)" class="m" src="m/cff26d98475e.png" style="width:2.43em;vertical-align:-0.36em"/> are never jointly observed for each unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite> proved the following theorem.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 4.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1.p1.1"><span class="ltx_text ltx_font_italic">Under a CRE,</span></p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.I1.i1.p1.1"><span class="ltx_text ltx_font_italic">the difference-in-means estimator </span><img alt="\hat{\tau}=\hat{\bar{Y}}(1)-\hat{\bar{Y}}(0)" class="m" src="m/e4ee8c36a7ae.png" style="width:7.49em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> is unbiased for </span><img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_italic">:</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(\hat{\tau})=\tau;" class="m" src="m/273e642871ec.png" style="width:4.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.I1.i2.p1.1"><img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_italic"> has variance</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S18.E15"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{var}(\hat{\tau})" class="m" src="m/f14fdaddf95f.png" style="width:2.91em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{S^{2}(1)}{n_{1}}+\frac{S^{2}(0)}{n_{0}}-\frac{S^{2}(\tau)}{n}" class="m" src="m/2be36aa26896.png" style="width:10.65em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(15)</span></td></tr></tbody>
+<tbody id="S18.E16"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{n_{0}}{n_{1}n}S^{2}(1)+\frac{n_{1}}{n_{0}n}S^{2}(0)+\frac{2}{n}S(1,0);" class="m" src="m/cbe43b1121bb.png" style="width:15.25em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(16)</span></td></tr></tbody>
+</table></div>
+</div></li>
+<li class="ltx_item" id="S18.I1.i3" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.I1.i3.p1.1"><span class="ltx_text ltx_font_italic">the variance estimator</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{V}=\frac{\hat{S}^{2}(1)}{n_{1}}+\frac{\hat{S}^{2}(0)}{n_{0}}" class="m" src="m/bf8242099f88.png" style="width:8.87em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S18.I1.i3.p1.2"><span class="ltx_text ltx_font_italic">is conservative for estimating </span><img alt="\textup{var}(\hat{\tau})" class="m" src="m/35e0154cec39.png" style="width:2.91em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> in the sense that</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(\hat{V})-\textup{var}(\hat{\tau})=\frac{S^{2}(\tau)}{n}\geq 0" class="m" src="m/2872f63cc6b4.png" style="width:12.38em;vertical-align:-0.79em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S18.I1.i3.p1.3"><span class="ltx_text ltx_font_italic">with equality holding if and only if </span><img alt="\tau_{i}=\tau" class="m" src="m/70c7652a7509.png" style="width:2.89em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_italic"> for all units.</span></p>
+</div></li>
+</ol>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.p2.1">I will present the proof of Theorem <a class="ltx_ref" href="#Thmtheorem1" title="Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a> in Section <a class="ltx_ref" href="#S19" title="19 Proofs ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">19</span></a>. Before proving Theorem <a class="ltx_ref" href="#Thmtheorem1" title="Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a>, it is important to clarify the meanings of <img alt="E(\cdot)" class="m" src="m/9f6d79fe4bac.png" style="width:2.10em;vertical-align:-0.36em"/> and <img alt="\textup{var}(\cdot)" class="m" src="m/275a5c9d119e.png" style="width:2.65em;vertical-align:-0.36em"/> in Theorem <a class="ltx_ref" href="#Thmtheorem1" title="Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a>. The potential outcomes are all fixed numbers, and only the treatment indicators <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/>’s are random. Therefore, the expectations and variances are all over the randomness of the <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/>’s, which are random permutations of <img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/> 1’s and <img alt="n_{0}" class="m" src="m/45626a2aa980.png" style="width:1.28em;vertical-align:-0.26em"/> 0’s. Figure <a class="ltx_ref" href="#S18.F6" title="Figure 6 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6</span></a> illustrates the randomness of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/>, which is a discrete uniform distribution over <img alt="\{\hat{\tau}^{1},\ldots,\hat{\tau}^{M}\}" class="m" src="m/a22caf77ad74.png" style="width:5.90em;vertical-align:-0.36em"/> induced by <img alt="M=\binom{n}{n_{1}}" class="m" src="m/419ba953aba9.png" style="width:4.46em;vertical-align:-0.55em"/> possible treatment allocations.
+Compare Figure <a class="ltx_ref" href="#S18.F6" title="Figure 6 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6</span></a> with Figure <a class="ltx_ref" href="06.html#S11.F3" title="Figure 3 ‣ 11 FRT ‣ Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a> to see the key differences between the FRT and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s theorem:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.I2.i1.p1.1">The FRT works for any test statistic but <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s theorem is only about the difference in means. Although we could derive the properties of other estimators similar to <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s theorem, this mathematical exercise is often quite challenging for general estimators.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.I2.i2.p1.1">In Figure <a class="ltx_ref" href="06.html#S11.F3" title="Figure 3 ‣ 11 FRT ‣ Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a>, the observed outcome vector <img alt="\bm{Y}" class="m" src="m/fb13c4c0db8d.png" style="width:1.16em;vertical-align:-0.12em"/> is fixed but in Figure <a class="ltx_ref" href="#S18.F6" title="Figure 6 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6</span></a>, the observed outcome vector <img alt="\bm{Y}(\bm{z}^{m})" class="m" src="m/1cc17c06e478.png" style="width:3.30em;vertical-align:-0.36em"/> changes as <img alt="\bm{z}^{m}" class="m" src="m/a0e8b87fa8a1.png" style="width:1.59em;vertical-align:-0.12em"/> changes.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.I2.i3.p1.1">The <img alt="T(\bm{z}^{m},\bm{Y})" class="m" src="m/4df2acfaf4be.png" style="width:4.46em;vertical-align:-0.36em"/>’s In Figure <a class="ltx_ref" href="06.html#S11.F3" title="Figure 3 ‣ 11 FRT ‣ Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a> are all computable based on the observed data, but the <img alt="\hat{\tau}^{m}" class="m" src="m/54b7bd1fc10e.png" style="width:1.54em;vertical-align:-0.12em"/>’s in Figure <a class="ltx_ref" href="#S18.F6" title="Figure 6 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6</span></a> are hypothetical values because not all potential outcomes are known.</p>
+</div></li>
+</ol>
+</div>
+<figure class="ltx_figure" id="S18.F6"><img alt="插图" src="img/neyman1923_fig.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 6</span>: </span><span class="ltx_text" style="font-size:90%;">Illustration of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s theorem, where <img alt="\bm{Y}(\bm{z}^{m})" class="m" src="m/1cc17c06e478.png" style="width:3.30em;vertical-align:-0.36em"/> is the observed outcome vector under the treatment vector <img alt="\bm{z}^{m}" class="m" src="m/a0e8b87fa8a1.png" style="width:1.59em;vertical-align:-0.12em"/>.</span></figcaption>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.p3.1">The point estimator <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> is standard but it has a non-trivial variance under the potential outcomes framework with a CRE. The variance formula (<a class="ltx_ref" href="#S18.E15" title="In item 2 ‣ Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">15</span></a>) differs from the classic variance formula for the difference in means<sup><a href="#fn-chapter4-15" id="fn-chapter4-15-ref">15</a></sup> because it not only depends on the finite population variances of the potential outcomes but also depends on the finite population variance of the individual effects, or, equivalently, the finite population covariance of the potential outcomes. Unfortunately, <img alt="S^{2}(\tau)" class="m" src="m/89883406d4c7.png" style="width:2.67em;vertical-align:-0.36em"/> and <img alt="S(1,0)" class="m" src="m/85646961892a.png" style="width:3.13em;vertical-align:-0.36em"/> are not identifiable from the data because <img alt="Y_{i}(1)" class="m" src="m/310e7f69c7c8.png" style="width:2.43em;vertical-align:-0.36em"/> and <img alt="Y_{i}(0)" class="m" src="m/cff26d98475e.png" style="width:2.43em;vertical-align:-0.36em"/> are never jointly observed.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.p4.1">The formula (<a class="ltx_ref" href="#S18.E15" title="In item 2 ‣ Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">15</span></a>) is a little puzzling in that the more heterogeneous the individual effects are the smaller the variability of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> is. Section <a class="ltx_ref" href="#S21.SS1" title="21.1 Simulation ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a> will use numerical examples to verify (<a class="ltx_ref" href="#S18.E15" title="In item 2 ‣ Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">15</span></a>). What is the intuition here? I give an explanation based on the equivalent form (<a class="ltx_ref" href="#S18.E16" title="In item 2 ‣ Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">16</span></a>). Compare the case with positively correlated potential outcomes and the case with negatively correlated potential outcomes.
+Although the treatment group is a simple random sample from the finite population of <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> units, it is possible to observe relatively large treatment potential outcomes in a realized experiment. Assume this happens.</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.I3.i1.p1.1">If <img alt="S(1,0)&gt;0" class="m" src="m/823af8a25fed.png" style="width:4.96em;vertical-align:-0.36em"/>, then those treated units also have relatively large control potential outcomes. Consequently, the observed outcomes under control are relatively small, which results in large <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/>.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.I3.i2.p1.1">If <img alt="S(1,0)&lt;0" class="m" src="m/422b3d02f65c.png" style="width:4.96em;vertical-align:-0.36em"/>, then those treated units have relatively small control potential outcomes. Consequently, the observed outcomes under control are relatively large, which results in small <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/>.</p>
+</div></li>
+</ol>
+<p class="ltx_p" id="S18.p4.2">The reverse can also happen if we observe relatively small treatment potential outcomes in a realized experiment. Overall, although the unbiasedness of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> does not depend on the correlation between the potential outcomes, it is more likely to observe more extreme <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> under <img alt="S(1,0)&gt;0" class="m" src="m/823af8a25fed.png" style="width:4.96em;vertical-align:-0.36em"/> than under <img alt="S(1,0)&lt;0" class="m" src="m/422b3d02f65c.png" style="width:4.96em;vertical-align:-0.36em"/>. So the variance of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> is larger when the potential outcomes are positively correlated.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.p5.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib205" title="">Li and Ding, (2017, Theorem 5 and Proposition 3)</a></cite> further proved the following asymptotic Normality of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> based on the finite population CLT.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem2">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 4.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem2.p1.1"><span class="ltx_text ltx_font_italic">Let <img alt="n\rightarrow\infty" class="m" src="m/dfe52984916e.png" style="width:3.40em;vertical-align:-0.12em"/> and <img alt="n_{1}\rightarrow\infty" class="m" src="m/c32a19bc4d8c.png" style="width:3.83em;vertical-align:-0.26em"/>.
+If <img alt="n_{1}/n" class="m" src="m/42d93f30c7c9.png" style="width:2.38em;vertical-align:-0.36em"/> has a limiting value in <img alt="(0,1)" class="m" src="m/d15e884c13df.png" style="width:2.46em;vertical-align:-0.36em"/>, <img alt="\{S^{2}(1),S^{2}(0),S(1,0)\}" class="m" src="m/d852cb90d8db.png" style="width:9.80em;vertical-align:-0.36em"/> have limiting values, and</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\max_{1\leq i\leq n}\{Y_{i}(1)-\bar{Y}(1)\}^{2}/n\rightarrow 0,\quad\max_{1\leq i\leq n}\{Y_{i}(0)-\bar{Y}(0)\}^{2}/n\rightarrow 0," class="m" src="m/403e769cab9a.png" style="width:27.00em;vertical-align:-0.99em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem2.p1.2"><span class="ltx_text ltx_font_italic">then</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{\hat{\tau}-\tau}{\sqrt{\textup{var}(\hat{\tau})}}\rightarrow\textsc{N}(0,1)" class="m" src="m/a4ef4ff6a51b.png" style="width:8.74em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem2.p1.3"><span class="ltx_text ltx_font_italic">in distribution, and</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{S}^{2}(1)\rightarrow S^{2}(1),\quad\hat{S}^{2}(0)\rightarrow S^{2}(0)" class="m" src="m/4f8134c4a66e.png" style="width:14.38em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem2.p1.4"><span class="ltx_text ltx_font_italic">in probability.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.p6.1">The proof of Theorem <a class="ltx_ref" href="#Thmtheorem2" title="Theorem 4.2 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.2</span></a> is technical and beyond the scope of this book. It ensures that the sampling distribution of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> can be approximated by a Normal distribution with a large sample size and some regularity conditions. Moreover, it ensures that the sample variances of the outcomes are consistent for the population variances, which further ensures that the probability limit of <cite class="ltx_cite ltx_citemacro_cite"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s variance estimator is larger than the true variance of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/>. This justifies a conservative large-sample confidence interval for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}\pm z_{1-\alpha/2}\sqrt{\hat{V}}," class="m" src="m/e834d2940805.png" style="width:6.96em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S18.p6.2">where <img alt="z_{1-\alpha/2}" class="m" src="m/73557caf7691.png" style="width:3.11em;vertical-align:-0.46em"/> is the <img alt="1-\alpha/2" class="m" src="m/db1c5719a875.png" style="width:3.59em;vertical-align:-0.36em"/> upper quantile of the standard Normal random variable. It is the same as the confidence interval for the standard two-sample problem asymptotically (see Chapter <a class="ltx_ref" href="33.html#chapter30.A4.SS1" title="30.D.1 Behrens–Fisher problem ‣ Appendix 30.D Two famous problems in statistics ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.D.1</span></a>). This confidence interval covers <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> with probability at least as large as <img alt="1-\alpha" class="m" src="m/39f63ed96c4c.png" style="width:2.60em;vertical-align:-0.19em"/> when the sample size is large enough. By duality, the confidence interval implies a test for</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="H_{0\textsc{n}}:\tau=0," class="m" src="m/a3e4e82fdb41.png" style="width:5.44em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S18.p6.3">which is called the weak null hypothesis.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S18.p7.1">Due to the fundamental problem of missing one potential outcome, we can at most obtain a conservative variance estimator. In statistics, the definition of the confidence interval allows for over coverage and thus conservativeness in variance estimation (see Chapter <a class="ltx_ref" href="33.html#chapter30.A2" title="Appendix 30.B Statistical inference ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.B</span></a>). Conservativeness is not a big problem if underreporting the treatment effect is not a big problem in practice. Sometimes, it can be problematic if the outcomes measure the side effects of a treatment. In medical experiments, underreporting the side effects of a new drug can have severe consequences on patients’ health.</p>
+</div>
+</section>
+<section class="ltx_section" id="S19">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">19 </span>Proofs</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S19.p1.1">In this section, I will prove Theorem <a class="ltx_ref" href="#Thmtheorem1" title="Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S19.p2.1">First, the unbiasedness of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> follows from the representation</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}" class="m" src="m/0b68c4b436db.png" style="width:0.77em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n_{1}^{-1}\sum_{i=1}^{n}Z_{i}Y_{i}-n_{0}^{-1}\sum_{i=1}^{n}(1-Z_{i})Y_{i}" class="m" src="m/0e1aab5637a1.png" style="width:14.55em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n_{1}^{-1}\sum_{i=1}^{n}Z_{i}Y_{i}(1)-n_{0}^{-1}\sum_{i=1}^{n}(1-Z_{i})Y_{i}(0)" class="m" src="m/a40b6c033777.png" style="width:17.10em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S19.p2.2">and the linearity of the expectation:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E(\hat{\tau})" class="m" src="m/a1397c978723.png" style="width:2.36em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left\{n_{1}^{-1}\sum_{i=1}^{n}Z_{i}Y_{i}(1)-n_{0}^{-1}\sum_{i=1}^{n}(1-Z_{i})Y_{i}(0)\right\}" class="m" src="m/07a4b9e3cfdd.png" style="width:19.68em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n_{1}^{-1}\sum_{i=1}^{n}E(Z_{i})Y_{i}(1)-n_{0}^{-1}\sum_{i=1}^{n}E(1-Z_{i})Y_{i}(0)" class="m" src="m/b49c81a80904.png" style="width:19.63em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n_{1}^{-1}\sum_{i=1}^{n}\frac{n_{1}}{n}Y_{i}(1)-n_{0}^{-1}\sum_{i=1}^{n}\frac{n_{0}}{n}Y_{i}(0)" class="m" src="m/9fc47253ec4f.png" style="width:15.32em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n^{-1}\sum_{i=1}^{n}Y_{i}(1)-n^{-1}\sum_{i=1}^{n}Y_{i}(0)" class="m" src="m/ea71ff3570cb.png" style="width:12.74em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\tau." class="m" src="m/514ed84bba8a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S19.p3.1">Second, we can further write <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}" class="m" src="m/0b68c4b436db.png" style="width:0.77em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\sum_{i=1}^{n}Z_{i}\left\{\frac{Y_{i}(1)}{n_{1}}+\frac{Y_{i}(0)}{n_{0}}\right\}-n_{0}^{-1}\sum_{i=1}^{n}Y_{i}(0)." class="m" src="m/947a1964bc26.png" style="width:17.75em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S19.p3.2">The variance of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> follows from Lemma <a class="ltx_ref" href="35.html#Thmlemma2a" title="Lemma 32.2 ‣ Appendix 32.A Lemmas ‣ Chapter 32 Some Useful Lemmas for Simple Random Sampling From a Finite Population ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">32.2</span></a> of simple random sampling:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{var}(\hat{\tau})" class="m" src="m/f14fdaddf95f.png" style="width:2.91em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{n_{1}n_{0}}{n(n-1)}\sum_{i=1}^{n}\left\{\frac{Y_{i}(1)}{n_{1}}+\frac{Y_{i}(0)}{n_{0}}-\frac{\bar{Y}(1)}{n_{1}}-\frac{\bar{Y}(0)}{n_{0}}\right\}^{2}" class="m" src="m/7a94a4625bd7.png" style="width:21.08em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{n_{1}n_{0}}{n(n-1)}\left[\frac{1}{n_{1}^{2}}\sum_{i=1}^{n}\{Y_{i}(1)-\bar{Y}(1)\}^{2}+\frac{1}{n_{0}^{2}}\sum_{i=1}^{n}\{Y_{i}(0)-\bar{Y}(0)\}^{2}\right." class="m" src="m/21acc61237ba.png" style="width:25.94em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\left.\qquad\qquad+\frac{2}{n_{1}n_{0}}\sum_{i=1}^{n}\{Y_{i}(1)-\bar{Y}(1)\}\{Y_{i}(0)-\bar{Y}(0)\}\right]" class="m" src="m/4b9b4e5a049f.png" style="width:22.64em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{n_{0}}{n_{1}n}S^{2}(1)+\frac{n_{1}}{n_{0}n}S^{2}(0)+\frac{2}{n}S(1,0)." class="m" src="m/8507e5bbd621.png" style="width:15.25em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S19.p3.3">From Lemma <a class="ltx_ref" href="#Thmlemma1a" title="Lemma 4.1 ‣ 17 Finite population quantities ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a>, we can also write the variance as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{var}(\hat{\tau})" class="m" src="m/f14fdaddf95f.png" style="width:2.91em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{n_{0}}{n_{1}n}S^{2}(1)+\frac{n_{1}}{n_{0}n}S^{2}(0)+\frac{1}{n}\{S^{2}(1)+S^{2}(0)-S^{2}(\tau)\}" class="m" src="m/579180eae335.png" style="width:22.77em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{S^{2}(1)}{n_{1}}+\frac{S^{2}(0)}{n_{0}}-\frac{S^{2}(\tau)}{n}." class="m" src="m/2328cffd27a1.png" style="width:10.91em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S19.p4.1">Third, because the treatment group is a simple random sample of size <img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/> from the <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> units, Lemma <a class="ltx_ref" href="35.html#Thmlemma3" title="Lemma 32.3 ‣ Appendix 32.A Lemmas ‣ Chapter 32 Some Useful Lemmas for Simple Random Sampling From a Finite Population ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">32.3</span></a> ensures that the sample variance of <img alt="Y_{i}(1)" class="m" src="m/310e7f69c7c8.png" style="width:2.43em;vertical-align:-0.36em"/>’s is unbiased for its population variance:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{\hat{S}^{2}(1)\}=S^{2}(1)." class="m" src="m/66e1e531ed38.png" style="width:8.43em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S19.p4.2">Similarly, <img alt="E\{\hat{S}^{2}(0)\}=S^{2}(0)." class="m" src="m/3d8d3744d2c3.png" style="width:8.43em;vertical-align:-0.36em"/> Therefore, <img alt="\hat{V}" class="m" src="m/257fde06386f.png" style="width:1.04em;vertical-align:-0.12em"/> is unbiased for the first two terms in (<a class="ltx_ref" href="#S18.E15" title="In item 2 ‣ Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">15</span></a>).</p>
+</div>
+</section>
+<section class="ltx_section" id="S20">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">20 </span>Regression analysis of the CRE</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S20.p1.1">Practitioners often use regression-based inference for the average causal effect <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>. A standard approach is to run the ordinary least squares (OLS) of the outcomes on the treatment indicators with an intercept</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\hat{\alpha},\hat{\beta})=\arg\min_{(a,b)}\sum_{i=1}^{n}(Y_{i}-a-bZ_{i})^{2}," class="m" src="m/60b59db0ec3f.png" style="width:15.73em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S20.p1.2">and use the coefficient of the treatment <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> as the estimator for the average causal effect.
+We can show the coefficient <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> equals the difference in means:</p>
+<table class="ltx_equation ltx_eqn_table" id="S20.E17">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\beta}=\hat{\tau}." class="m" src="m/bc11d48c7176.png" style="width:3.01em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(17)</span></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S20.p2.1">However, the usual variance estimator from the OLS (see (<a class="ltx_ref" href="34.html#chapter31.A4.E161" title="In Appendix 31.D Linear model ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">161</span></a>) in Chapter <a class="ltx_ref" href="34.html#chapter31" title="Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31</span></a>), e.g., the output from the <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span> function of <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span>, equals</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{V}_{\textsc{ols}}" class="m" src="m/998d522d548f.png" style="width:2.00em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{n\left(n_{1}-1\right)}{(n-2)n_{1}n_{0}}\hat{S}^{2}(1)+\frac{n\left(n_{0}-1\right)}{(n-2)n_{1}n_{0}}\hat{S}^{2}(0)" class="m" src="m/1da2576a2334.png" style="width:17.13em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="2"><span class="ltx_tag ltx_tag_equation ltx_align_right">(18)</span></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\approx" class="m" src="m/9f119cf9bb7a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\hat{S}^{2}(1)}{n_{0}}+\frac{\hat{S}^{2}(0)}{n_{1}}," class="m" src="m/aeb75218e6d1.png" style="width:7.01em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S20.p2.2">where the approximation holds with large <img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/> and <img alt="n_{0}" class="m" src="m/45626a2aa980.png" style="width:1.28em;vertical-align:-0.26em"/>. It differs from <img alt="\hat{V}" class="m" src="m/257fde06386f.png" style="width:1.04em;vertical-align:-0.12em"/> even with large <img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/> and <img alt="n_{0}" class="m" src="m/45626a2aa980.png" style="width:1.28em;vertical-align:-0.26em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S20.p3.1">Fortunately, the Eicker–Huber–White (EHW) robust variance estimator (see (<a class="ltx_ref" href="34.html#chapter31.A2.E160" title="In Appendix 31.B Sample ordinary least squares ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">160</span></a>) in Chapter <a class="ltx_ref" href="34.html#chapter31" title="Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31</span></a>) is close to <img alt="\hat{V}" class="m" src="m/257fde06386f.png" style="width:1.04em;vertical-align:-0.12em"/>:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S20.Ex128"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{V}_{\textsc{ehw}}" class="m" src="m/3356d3c8813b.png" style="width:2.26em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\hat{S}^{2}(1)}{n_{1}}\frac{n_{1}-1}{n_{1}}+\frac{\hat{S}^{2}(0)}{n_{0}}\frac{n_{0}-1}{n_{0}}" class="m" src="m/8a316cadfb5f.png" style="width:12.74em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="2"><span class="ltx_tag ltx_tag_equation ltx_align_right">(19)</span></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\approx" class="m" src="m/9f119cf9bb7a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\hat{S}^{2}(1)}{n_{1}}+\frac{\hat{S}^{2}(0)}{n_{0}}" class="m" src="m/bc1b1d1172e2.png" style="width:6.72em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S20.p3.2">where the approximation holds with large <img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/> and <img alt="n_{0}" class="m" src="m/45626a2aa980.png" style="width:1.28em;vertical-align:-0.26em"/>. It is almost identical to <img alt="\hat{V}" class="m" src="m/257fde06386f.png" style="width:1.04em;vertical-align:-0.12em"/>. Moreover, the so-called HC2 variant of the EHW robust variance estimator is identical to <img alt="\hat{V}" class="m" src="m/257fde06386f.png" style="width:1.04em;vertical-align:-0.12em"/>. The <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">hccm</span> function in the <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">car</span> package returns the EHW robust variance estimator as well as its HC2 variant.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S20.p4.1">Problem <a class="ltx_ref" href="#S22.SS0.SSS0.P3" title="4.3 Neymanian inference and OLS ‣ 22 Homework Problems ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.3</span></a> provides more technical details for (<a class="ltx_ref" href="#S20.E17" title="In 20 Regression analysis of the CRE ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17</span></a>)–(<a class="ltx_ref" href="#S20.Ex128" title="In 20 Regression analysis of the CRE ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">19</span></a>).</p>
+</div>
+</section>
+<section class="ltx_section" id="S21">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">21 </span>Examples</h4>
+<section class="ltx_subsection" id="S21.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">21.1 </span>Simulation</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S21.SS1.p1.1">I first choose the sample size as <img alt="n=100" class="m" src="m/b10ab45224d8.png" style="width:3.66em;vertical-align:-0.12em"/> with <img alt="60" class="m" src="m/12220d1c6041.png" style="width:1.23em;vertical-align:-0.12em"/> treated and <img alt="40" class="m" src="m/2cba60fae459.png" style="width:1.23em;vertical-align:-0.12em"/> control units, and generate the potential outcomes with constant individual causal effects.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">100</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">60</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">40</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rexp</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sort</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">decreasing</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">TRUE</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1</span>
+</div>
+</div>
+<p class="ltx_p" id="S21.SS1.p1.3">With the Science Table fixed, I repeatedly generate CREs and apply Theorem <a class="ltx_ref" href="#Thmtheorem1" title="Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a> to obtain the point estimator, the conservative variance estimator, and the confidence interval based on the Normal approximation.
+The <img alt="(1,1)" class="m" src="m/0d3c089969d9.png" style="width:2.46em;vertical-align:-0.36em"/>th panel of Figure <a class="ltx_ref" href="#S21.F7" title="Figure 7 ‣ 21.1 Simulation ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a> shows the scatter plot of the potential outcomes,
+and the <img alt="(1,2)" class="m" src="m/14fd3eae5341.png" style="width:2.46em;vertical-align:-0.36em"/>th panel of Figure <a class="ltx_ref" href="#S21.F7" title="Figure 7 ‣ 21.1 Simulation ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a> shows the histogram of <img alt="\hat{\tau}-\tau" class="m" src="m/eefe6a5626bb.png" style="width:2.55em;vertical-align:-0.19em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S21.SS1.p2.1">I then change the potential outcomes by sorting the control potential outcomes in reverse order</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sort</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">decreasing</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">FALSE</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+</div>
+<p class="ltx_p" id="S21.SS1.p2.3">and repeat the above simulation.
+The <img alt="(2,1)" class="m" src="m/21a6385808b4.png" style="width:2.46em;vertical-align:-0.36em"/>th panel of Figure <a class="ltx_ref" href="#S21.F7" title="Figure 7 ‣ 21.1 Simulation ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a> shows the scatter plot of the potential outcomes,
+and the <img alt="(2,2)" class="m" src="m/f139b6ab8958.png" style="width:2.46em;vertical-align:-0.36em"/>th panel of Figure <a class="ltx_ref" href="#S21.F7" title="Figure 7 ‣ 21.1 Simulation ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a> shows the histogram of <img alt="\hat{\tau}-\tau" class="m" src="m/eefe6a5626bb.png" style="width:2.55em;vertical-align:-0.19em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S21.SS1.p3.1">I finally permute the control potential outcomes randomly</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sample</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+</div>
+<p class="ltx_p" id="S21.SS1.p3.3">and repeat the above simulation.
+The <img alt="(3,1)" class="m" src="m/78a15c49e7b1.png" style="width:2.46em;vertical-align:-0.36em"/>th panel of Figure <a class="ltx_ref" href="#S21.F7" title="Figure 7 ‣ 21.1 Simulation ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a> shows the scatter plot of the potential outcomes,
+and the <img alt="(2,2)" class="m" src="m/f139b6ab8958.png" style="width:2.46em;vertical-align:-0.36em"/>th panel of Figure <a class="ltx_ref" href="#S21.F7" title="Figure 7 ‣ 21.1 Simulation ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a> shows the histogram of <img alt="\hat{\tau}-\tau" class="m" src="m/eefe6a5626bb.png" style="width:2.55em;vertical-align:-0.19em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S21.SS1.p4.1">Importantly, in the above three sets of simulations, the correlations between potential outcomes are different but the marginal distributions are the same. The following table compares the true variances, the average estimated variances, and the coverage rates of the <img alt="95\%" class="m" src="m/9e2943e876e6.png" style="width:2.07em;vertical-align:-0.17em"/> confidence intervals.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">constant</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">negative</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">independent</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">var</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.036</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.007</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.020</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">estimated</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">var</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.036</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.036</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.036</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">coverege</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rate</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.947</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.000</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.989</span>
+</div>
+</div>
+<p class="ltx_p" id="S21.SS1.p4.3">The true variance depends on the correlation between the potential outcomes, with positively correlated potential outcomes corresponding to a larger sampling variance. This verifies (<a class="ltx_ref" href="#S18.E16" title="In item 2 ‣ Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">16</span></a>). The estimated variances are almost identical because the formula of <img alt="\hat{V}" class="m" src="m/257fde06386f.png" style="width:1.04em;vertical-align:-0.12em"/> depends only on the marginal distributions of the potential outcomes. Due to the discrepancy between the true and estimated variances, the coverage rates differ across the three sets of simulations. Only with constant causal effects, the estimated variance is identical to the true variance, verifying point <a class="ltx_ref" href="#S18.I1.i3" title="item 3 ‣ Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a> of Theorem <a class="ltx_ref" href="#Thmtheorem1" title="Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S21.SS1.p5.1">Figure <a class="ltx_ref" href="#S21.F7" title="Figure 7 ‣ 21.1 Simulation ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a> also shows the Normal density curves based on the CLT for <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/>. They are very close to the histogram over simulations, verifying Theorem <a class="ltx_ref" href="#Thmtheorem2" title="Theorem 4.2 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.2</span></a>.</p>
+</div>
+<figure class="ltx_figure" id="S21.F7"><img alt="插图" src="img/neymanevaluation3.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 7</span>: </span><span class="ltx_text" style="font-size:90%;">
+Left: joint distributions of the potential outcomes with the same marginal distributions.
+Right: sampling distribution of <img alt="\hat{\tau}-\tau" class="m" src="m/eefe6a5626bb.png" style="width:2.55em;vertical-align:-0.19em"/> over <img alt="10^{4}" class="m" src="m/6b5b1983d9b3.png" style="width:1.69em;vertical-align:-0.12em"/> simulations with different joint distributions of the potential outcomes.</span></figcaption>
+</figure>
+</section>
+<section class="ltx_subsection" id="S21.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">21.2 </span>Heavy-tailed outcome and failure of Normal approximations</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S21.SS2.p1.1">The CLT of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> in Theorem <a class="ltx_ref" href="#Thmtheorem2" title="Theorem 4.2 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.2</span></a> holds under some regularity conditions. Those conditions will be violated with heavy-tailed potential outcomes. We can modify the above simulation studies to illustrate this point. Assume the individual causal effects are constant but the control potential outcomes are contaminated by a Cauchy component with probability <img alt="0.1,0.3" class="m" src="m/5bbd862f16c7.png" style="width:3.23em;vertical-align:-0.31em"/>, or <img alt="0.5" class="m" src="m/4bb34572233b.png" style="width:1.52em;vertical-align:-0.12em"/>. The following code generates the potential outcomes with the probability of contamination being <img alt="0.1" class="m" src="m/20655b85bd89.png" style="width:1.52em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">eps</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rbinom</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.1)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">eps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rexp</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">eps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rcauchy</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S21.SS2.p3.1">Figures <a class="ltx_ref" href="#S21.F8" title="Figure 8 ‣ 21.2 Heavy-tailed outcome and failure of Normal approximations ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">8</span></a> and <a class="ltx_ref" href="#S21.F9" title="Figure 9 ‣ 21.2 Heavy-tailed outcome and failure of Normal approximations ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">9</span></a> show two realizations of the histograms of <img alt="\hat{\tau}-\tau" class="m" src="m/eefe6a5626bb.png" style="width:2.55em;vertical-align:-0.19em"/> with the corresponding Normal approximations. With heavy-tailed potential outcomes, the Normal approximations are quite poor. Moreover, unlike Figure <a class="ltx_ref" href="#S21.F7" title="Figure 7 ‣ 21.1 Simulation ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a>, the histograms are quite sensitive to the random seed of the simulation.</p>
+</div>
+<figure class="ltx_figure" id="S21.F8"><img alt="插图" src="img/neyman_comtamination_realized1.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 8</span>: </span><span class="ltx_text" style="font-size:90%;">Sampling distribution of <img alt="\hat{\tau}-\tau" class="m" src="m/eefe6a5626bb.png" style="width:2.55em;vertical-align:-0.19em"/> with contaminated potential outcomes (with different contamination probabilities): realization one </span></figcaption>
+</figure>
+<figure class="ltx_figure" id="S21.F9"><img alt="插图" src="img/neyman_comtamination_realized2.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 9</span>: </span><span class="ltx_text" style="font-size:90%;">Sampling distribution of <img alt="\hat{\tau}-\tau" class="m" src="m/eefe6a5626bb.png" style="width:2.55em;vertical-align:-0.19em"/> with contaminated potential outcomes (with different contamination probabilities): realization two </span></figcaption>
+</figure>
+</section>
+<section class="ltx_subsection" id="S21.SS3">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">21.3 </span>Application</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S21.SS3.p1.1">I analyzed the <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">lalonde</span> data in Chapter <a class="ltx_ref" href="06.html#S13" title="13 A case study of the LaLonde experimental data ‣ Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13</span></a> to illustrate the idea of the FRT. Now I use the data to illustrate the theory in this chapter.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">library</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Matching</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lalonde</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lalonde</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">treat</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lalonde</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">re78</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S21.SS3.p2.1">We can easily calculate the point estimator and standard error based on the formulas in Theorem <a class="ltx_ref" href="#Thmtheorem1" title="Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a>:</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sum</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">length</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tauhat</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1])</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==0])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">vhat</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">var</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1])/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">var</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==0])/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">sehat</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">vhat</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tauhat</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1794.343</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">sehat</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">670.9967</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S21.SS3.p3.1">Practitioners often use OLS to estimate the average causal effect which also gives a standard error.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">olsfit</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">summary</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">olsfit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1:</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Estimate</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Std</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Error</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1794.3431</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">632.8536</span>
+</div>
+</div>
+<p class="ltx_p" id="S21.SS3.p3.3">However, the above standard error seems too small compared to the one based on Theorem <a class="ltx_ref" href="#Thmtheorem1" title="Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a>. This can be solved by using the EHW robust standard error.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">library</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">car</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hccm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">olsfit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">672.6823</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hccm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">olsfit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">type</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc0"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">669.3155</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hccm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">olsfit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">type</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc2"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">670.9967</span>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S22">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">22 </span>Homework Problems</h4>
+<section class="ltx_paragraph" id="S22.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">4.1 </span>Proof of Lemma <a class="ltx_ref" href="#Thmlemma1a" title="Lemma 4.1 ‣ 17 Finite population quantities ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P1.p1.1">Prove Lemma <a class="ltx_ref" href="#Thmlemma1a" title="Lemma 4.1 ‣ 17 Finite population quantities ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S22.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">4.2 </span>Alternative proof of Theorem <a class="ltx_ref" href="#Thmtheorem1" title="Theorem 4.1 ‣ 18 ( ) ’s theorem ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.1</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P2.p1.1">Under a CRE, calculate</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}\{\hat{\bar{Y}}(1)\},\quad\textup{var}\{\hat{\bar{Y}}(0)\},\quad\textup{cov}\{\hat{\bar{Y}}(1),\hat{\bar{Y}}(0)\}" class="m" src="m/41baac55964a.png" style="width:19.06em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S22.SS0.SSS0.P2.p1.2">and use these formulas to calculate <img alt="\textup{var}(\hat{\tau})" class="m" src="m/35e0154cec39.png" style="width:2.91em;vertical-align:-0.36em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P2.p2.1">Remark: Use the results in Chapter <a class="ltx_ref" href="35.html#chapter32" title="Chapter 32 Some Useful Lemmas for Simple Random Sampling From a Finite Population ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">32</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S22.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">4.3 </span>Neymanian inference and OLS</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P3.p1.1">Prove (<a class="ltx_ref" href="#S20.E17" title="In 20 Regression analysis of the CRE ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17</span></a>)–(<a class="ltx_ref" href="#S20.Ex128" title="In 20 Regression analysis of the CRE ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">19</span></a>). Moreover, prove that the HC2 variant of the EHW robust variance estimator recovers <img alt="\hat{V}" class="m" src="m/257fde06386f.png" style="width:1.04em;vertical-align:-0.12em"/> exactly.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P3.p2.1">Remark: Chapter <a class="ltx_ref" href="34.html#chapter31" title="Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31</span></a> reviews some important technical results about OLS.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S22.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">4.4 </span>Treatment effect heterogeneity</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P4.p1.1">Show that <img alt="S^{2}(\tau)=0" class="m" src="m/41e615574c09.png" style="width:4.50em;vertical-align:-0.36em"/> implies that <img alt="S^{2}(1)=S^{2}(0)" class="m" src="m/7d16e74a7a60.png" style="width:6.36em;vertical-align:-0.36em"/>. Given a counterexample with <img alt="S^{2}(1)=S^{2}(0)" class="m" src="m/7d16e74a7a60.png" style="width:6.36em;vertical-align:-0.36em"/> but <img alt="S^{2}(\tau)\neq 0" class="m" src="m/239b4a9cbcf0.png" style="width:4.50em;vertical-align:-0.36em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P4.p2.1">Show that <img alt="S^{2}(1)&lt;S^{2}(0)" class="m" src="m/56199f16dc04.png" style="width:6.36em;vertical-align:-0.36em"/> implies that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="S(Y(0),\tau)=(n-1)^{-1}\sum_{i=1}^{n}\{Y_{i}(0)-\bar{Y}(0)\}(\tau_{i}-\tau)&lt;0." class="m" src="m/7d6db46cd249.png" style="width:23.80em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S22.SS0.SSS0.P4.p2.2">Give a counterexample with <img alt="S^{2}(1)&gt;S^{2}(0)" class="m" src="m/58d808f1195e.png" style="width:6.36em;vertical-align:-0.36em"/> but <img alt="S(Y(0),\tau)&lt;0." class="m" src="m/f5fceb977dd1.png" style="width:6.87em;vertical-align:-0.36em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P4.p3.1">Remark: The first result states that no treatment effect heterogeneity implies equal variances in the treated and control potential outcomes. But the converse is not true. The second result states that if the treated potential outcome has a smaller variance than the control potential outcome, then the individual treatment effect is negatively correlated with the control potential outcome. But the converse is not true. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib119" title="">Gerber and Green, (2012, page 293)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib85" title="">Ding et al., (2019, Appendix B.3)</a></cite> gave related discussions.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S22.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">4.5 </span>A better bound of the variance formula</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P5.p1.1"><cite class="ltx_cite ltx_citemacro_cite"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s conservative variance estimator essentially uses the following upper bound on the true variance:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}(\widehat{\tau})=\frac{S^{2}(1)}{n_{1}}+\frac{S^{2}(0)}{n_{0}}-\frac{S^{2}(\tau)}{n}\leq\frac{S^{2}(1)}{n_{1}}+\frac{S^{2}(0)}{n_{0}}," class="m" src="m/18a6a58ba0de.png" style="width:22.77em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S22.SS0.SSS0.P5.p1.2">which uses the trivial fact that <img alt="S^{2}(\tau)\geq 0" class="m" src="m/0853b3fa219f.png" style="width:4.50em;vertical-align:-0.36em"/>.
+Show the following upper bound</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S22.E20"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{var}(\widehat{\tau})\leq\frac{1}{n}\left\{\sqrt{\frac{n_{0}}{n_{1}}}S(1)+\sqrt{\frac{n_{1}}{n_{0}}}S(0)\right\}^{2}." class="m" src="m/a6336cd91067.png" style="width:17.34em;vertical-align:-1.08em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(20)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S22.SS0.SSS0.P5.p1.3">When does the equality in (<a class="ltx_ref" href="#S22.E20" title="In 4.5 A better bound of the variance formula ‣ 22 Homework Problems ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20</span></a>) hold?</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P5.p2.1">The upper bound (<a class="ltx_ref" href="#S22.E20" title="In 4.5 A better bound of the variance formula ‣ 22 Homework Problems ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20</span></a>) motivates another conservative variance estimator</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{V}^{\prime}=\frac{1}{n}\left\{\sqrt{\frac{n_{0}}{n_{1}}}\hat{S}(1)+\sqrt{\frac{n_{1}}{n_{0}}}\hat{S}(0)\right\}^{2}." class="m" src="m/e969e6a57b0f.png" style="width:15.75em;vertical-align:-1.08em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S22.SS0.SSS0.P5.p2.2">Section <a class="ltx_ref" href="#S21.SS1" title="21.1 Simulation ‣ 21 Examples ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a> used <img alt="\hat{V}" class="m" src="m/257fde06386f.png" style="width:1.04em;vertical-align:-0.12em"/> in the simulation. Repeat the simulation with an additional comparison with the variance estimator <img alt="\hat{V}^{\prime}" class="m" src="m/1f1b9be511a1.png" style="width:1.32em;vertical-align:-0.12em"/> and the associated confidence interval.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P5.p3.1">Remark:
+You may find Section <a class="ltx_ref" href="33.html#chapter30.A1.SS4" title="30.A.4 Cauchy–Schwarz inequality ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.A.4</span></a> useful for the proof.
+The upper bound (<a class="ltx_ref" href="#S22.E20" title="In 4.5 A better bound of the variance formula ‣ 22 Homework Problems ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20</span></a>) can be further improved.
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib20" title="">Aronow et al., (2014)</a></cite> derived the sharp upper bound for <img alt="\textup{var}(\widehat{\tau})" class="m" src="m/bc93eab29e75.png" style="width:2.91em;vertical-align:-0.36em"/> using the Frechet–Hoeffding inequality. Those improvements are rarely used in practice mainly for two reasons. First, they are more complicated than <img alt="\hat{V}" class="m" src="m/257fde06386f.png" style="width:1.04em;vertical-align:-0.12em"/> which can be conveniently implemented by OLS. Second, the confidence interval based on <img alt="\hat{V}" class="m" src="m/257fde06386f.png" style="width:1.04em;vertical-align:-0.12em"/> also works under other formulations, for example, under a true linear model of the outcome on the treatment, but those improvements do not. Although they are theoretically interesting, those improvements have little practical impact.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S22.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">4.6 </span>Vector version of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P6.p1.1">The classic result of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite> is about a scalar outcome. It is common to have multiple outcomes in practice. Therefore, we now extend the potential outcomes to vectors. We consider the average causal effect on a vector outcome <img alt="\bm{V}\in\mathbb{R}^{K}" class="m" src="m/9f9c48a34018.png" style="width:3.88em;vertical-align:-0.14em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\bm{V}}=\frac{1}{n}\sum_{i=1}^{n}\left\{\bm{V}_{i}(1)-\bm{V}_{i}(0)\right\}," class="m" src="m/ebb294af11b5.png" style="width:12.65em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S22.SS0.SSS0.P6.p1.2">where <img alt="\bm{V}_{i}(1)" class="m" src="m/9ddfe9695b93.png" style="width:2.53em;vertical-align:-0.36em"/> and <img alt="\bm{V}_{i}(0)" class="m" src="m/51526f8b3c81.png" style="width:2.53em;vertical-align:-0.36em"/> are the potential outcomes of <img alt="\bm{V}" class="m" src="m/e764a0a4a7d5.png" style="width:1.16em;vertical-align:-0.12em"/> for unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>.
+The Neyman-type estimator for <img alt="\tau_{\bm{V}}" class="m" src="m/1812f7463f01.png" style="width:1.45em;vertical-align:-0.26em"/> is the difference between the sample mean vectors of the observed outcomes under treatment and control:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\widehat{\tau}_{\bm{V}}=\bar{\bm{V}}_{1}-\bar{\bm{V}}_{0}=\frac{1}{n_{1}}\sum_{i=1}^{n}Z_{i}\bm{V}_{i}-\frac{1}{n_{0}}\sum_{i=1}^{n}(1-Z_{i})\bm{V}_{i}." class="m" src="m/6998c0baa3ec.png" style="width:21.61em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P6.p2.1">Consider a CRE. Show that <img alt="\widehat{\tau}_{\bm{V}}" class="m" src="m/a21e749d79f9.png" style="width:1.45em;vertical-align:-0.26em"/> is unbiased for <img alt="\tau_{\bm{V}}" class="m" src="m/1812f7463f01.png" style="width:1.45em;vertical-align:-0.26em"/>. Find the covariance matrix of <img alt="\widehat{\tau}_{\bm{V}}" class="m" src="m/a21e749d79f9.png" style="width:1.45em;vertical-align:-0.26em"/>. Find a (possibly conservative) estimator for the variance.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S22.SS0.SSS0.P7">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">4.7 </span>Inference in the BRE</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P7.p1.1">In this book, I use the following definition for the BRE.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 4.1</span></span><span class="ltx_text ltx_font_bold"> (BRE)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition1a.p1.1"><span class="ltx_text ltx_font_italic">The treatment indicators <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/>’s are IID Bernoulli<img alt="(\pi)" class="m" src="m/55a74d0a17a3.png" style="width:1.61em;vertical-align:-0.36em"/> with <img alt="n_{1}=\sum_{i=1}^{n}Z_{i}" class="m" src="m/c93198281fb5.png" style="width:6.19em;vertical-align:-0.41em"/> receiving the treatment and <img alt="n_{0}=\sum_{i=1}^{n}(1-Z_{i})" class="m" src="m/1edbc1e9c21c.png" style="width:8.53em;vertical-align:-0.41em"/> receiving the control, respectively.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P7.p2.1">First, we can use the FRT to analyze the BRE. How do we test <img alt="H_{0\textsc{f}}" class="m" src="m/aca362d66dc1.png" style="width:1.88em;vertical-align:-0.26em"/> in the BRE? Can we use the same FRT procedure as in the CRE if the actual experiment is the BRE? If yes, give a justification; if no, explain why.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P7.p3.1">Second, we can obtain point estimators for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> and find the associated variance estimators, as <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite> did for the CRE.</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.I1.i1.p1.1">Is <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> unbiased for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>? Is it consistent?</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.I1.i2.p1.1">Find an unbiased estimator for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.I1.i3.p1.1">Compare the variance of the above unbiased estimator and the asymptotic variance of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/>.</p>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P7.p4.1">Remark:
+Under the BRE, the estimator <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> does not have finite variance but the variance of its asymptotic distribution is finite.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S22.SS0.SSS0.P8">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">4.8 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S22.SS0.SSS0.P8.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib80" title="">Ding, (2016)</a></cite> compared the Fisherian approach and Neymanian approach to analyzing the CRE.</p>
+</div>
+</section>
+</section>
+<section class="footnotes"><h4>脚注</h4><p id="fn-chapter4-14"><a href="#fn-chapter4-14-ref">14</a>. Here the divisor <img alt="n-1" class="m" src="m/d8dfebdedf35.png" style="width:2.55em;vertical-align:-0.19em"/> makes the main theorems in this chapter more elegant. Changing the divisor to <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> complicates the formulas but does not change the results fundamentally. With large <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/>, the difference is minor.</p><p id="fn-chapter4-15"><a href="#fn-chapter4-15-ref">15</a>. In the classic two-sample problem, the outcomes under the treatment are IID draws from a distribution with mean <img alt="\mu_{1}" class="m" src="m/fd91ac5c33e2.png" style="width:1.28em;vertical-align:-0.31em"/> and variance <img alt="\sigma_{1}^{2}" class="m" src="m/7f7bbb8c7e26.png" style="width:1.28em;vertical-align:-0.36em"/>, and the outcomes under the control are IID draws from a distribution with mean <img alt="\mu_{0}" class="m" src="m/d592ead1f7fb.png" style="width:1.28em;vertical-align:-0.31em"/> and variance <img alt="\sigma_{0}^{2}" class="m" src="m/51e5cb067280.png" style="width:1.28em;vertical-align:-0.36em"/>. Under this assumption, we have
+
+<span class="ltx_equation ltx_eqn_table">
+<span><span class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<span class="ltx_eqn_cell ltx_eqn_center_padleft"></span>
+<span class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}(\hat{\tau})=\frac{\sigma_{1}^{2}}{n_{1}}+\frac{\sigma_{0}^{2}}{n_{0}}." class="m" src="m/96ac6019010e.png" style="width:8.36em;vertical-align:-0.94em"/></span>
+<span class="ltx_eqn_cell ltx_eqn_center_padright"></span></span></span>
+</span>Here, <img alt="\textup{var}(\cdot)" class="m" src="m/275a5c9d119e.png" style="width:2.65em;vertical-align:-0.36em"/> is over the randomness of the outcomes. This variance formula does not involve a third term that depends on the variance of the individual causal effects.</p></section></section><p class="nav bottom"><a href="index.html">目录</a><a href="06.html">← 上一章</a><a href="08.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

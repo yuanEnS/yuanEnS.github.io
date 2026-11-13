@@ -1,0 +1,469 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 2 Potential Outcomes · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="04.html">← 上一章</a><a href="06.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter2">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 2 </span>Potential Outcomes</h3>
+<section class="ltx_section" id="S6">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">6 </span>Experimentalists’ view of causal inference</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S6.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib283" title="">Rubin, (1975)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib149" title="">Holland, (1986)</a></cite> made up the aphorism:</p>
+<blockquote class="ltx_quote">
+<p class="ltx_p" id="S6.p1.2.1">“no causation without manipulation.”</p>
+</blockquote>
+<p class="ltx_p" id="S6.p1.3">Not everybody agrees with this point of view. However, it is quite helpful to clarify ambiguity in thinking about causal relationships. This book follows this view and defines causal effects using the potential outcomes framework <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman,, 1923</a>; <a class="ltx_ref" href="35.html#bib.bib282" title="">Rubin,, 1974</a>)</cite>. In this framework, an experiment, or at least a thought experiment, has a treatment, and we are interested in its effect on an outcome or multiple outcomes. Sometimes, the <span class="ltx_text ltx_font_italic">treatment</span> is also called an <span class="ltx_text ltx_font_italic">intervention</span> or a <span class="ltx_text ltx_font_italic">manipulation</span>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample1a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 2.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1a.p1.1"><span class="ltx_text ltx_font_italic">If we are interested in the effect of taking aspirin or not on the relief of headaches, the intervention is taking aspirin or not.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 2.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2.p1.1"><span class="ltx_text ltx_font_italic">If we are interested in the effect of participating in a job training program or not on employment and wage, the intervention is participating in the job training program or not.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 2.3</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample3.p1.1"><span class="ltx_text ltx_font_italic">If we are interested in the effect of studying in a small classroom or a large classroom on standardized test scores, the intervention is studying in a small classroom or not.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample4">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 2.4</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample4.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib120" title="">Gerber et al., (2008)</a></cite><span class="ltx_text ltx_font_italic"> were interested in the effect of different get-out-to-vote messages on the voting behavior. The intervention is the different get-out-to-vote messages.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample5">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 2.5</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample5.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib248" title="">Pearl, (2018)</a></cite><span class="ltx_text ltx_font_italic"> claimed that we could infer the effect of obesity on life span.
+A popular measure of obesity is the body mass index (BMI), defined as the body mass divided by the square of the body height in units of kg/m<sup class="ltx_sup">2</sup>. So the intervention can be different levels of BMI.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S6.p2.1">However, there are different levels of ambiguity in the interventions above. The meanings of interventions in Examples <a class="ltx_ref" href="#Thmexample1a" title="Example 2.1 ‣ 6 Experimentalists’ view of causal inference ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.1</span></a>–<a class="ltx_ref" href="#Thmexample4" title="Example 2.4 ‣ 6 Experimentalists’ view of causal inference ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.4</span></a> are relatively clear, but the meaning of intervention on BMI in Example <a class="ltx_ref" href="#Thmexample5" title="Example 2.5 ‣ 6 Experimentalists’ view of causal inference ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.5</span></a> is less clear. In particular, we can imagine different versions of BMI reduction: healthier diet, more physical exercise, bariatric surgery, etc. These different versions of the intervention can have quite different effects on the outcome. In this book, we will view the intervention in Example <a class="ltx_ref" href="#Thmexample5" title="Example 2.5 ‣ 6 Experimentalists’ view of causal inference ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.5</span></a> as ill-defined without further clarifications.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S6.p3.1">Another ill-defined intervention is race. Racial discrimination is an important issue in the labor market, but it is not easy to imagine an experiment to change the race of any experimental unit. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib31" title="">Bertrand and Mullainathan, (2004)</a></cite> give an interesting experiment that partially answers the question.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 2.6</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample6.p1.1"><span class="ltx_text ltx_font_italic">Recall Example <a class="ltx_ref" href="04.html#Thmexample1" title="Example 1.1 ‣ 2.2 Contingency tables ‣ 2 Some commonly-used measures of association ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1.1</span></a>.
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib31" title="">Bertrand and Mullainathan, (2004)</a></cite> randomly change the names on the resumes, and compare the callback rates of resumes with African-American- or White-sounding names. For each resume, the intervention is the binary indicator of a Black-sounding or White-sounding name, and the outcome is the binary indicator of callback. I analyzed the following two-by-two table in Section <a class="ltx_ref" href="04.html#S2.SS2" title="2.2 Contingency tables ‣ 2 Some commonly-used measures of association ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.2</span></a>:</span></p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><span class="ltx_text ltx_font_italic">callback</span></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><span class="ltx_text ltx_font_italic">no callback</span></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t"><span class="ltx_text ltx_font_italic">Black</span></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><span class="ltx_text ltx_font_italic">157</span></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><span class="ltx_text ltx_font_italic">2278</span></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b"><span class="ltx_text ltx_font_italic">White</span></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><span class="ltx_text ltx_font_italic">235</span></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><span class="ltx_text ltx_font_italic">2200</span></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample6.p3.1"><span class="ltx_text ltx_font_italic">From the above, we can compare the probabilities of being called back among Black-sounding and White-sounding names:</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{157}{2278+157}-\frac{235}{2200+235}=6.45\%-9.65\%=-3.20\%&lt;0" class="m" src="m/b0f2d51a77e3.png" style="width:25.70em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample6.p3.2"><span class="ltx_text ltx_font_italic">with <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-value from the Fisher exact test being much smaller than <img alt="0.001" class="m" src="m/401a43e22354.png" style="width:2.51em;vertical-align:-0.12em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S6.p4.1">In <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib31" title="">Bertrand and Mullainathan, (2004)</a></cite>’s experiment, the treatment is the <span class="ltx_text ltx_font_italic">perceived race</span> which can be manipulated by experimenters. They design an experiment to answer a well-defined causal question. However, critics may raise the concern that the causal effect of the perceived race may differ from the causal effect of the actual race.</p>
+</div>
+</section>
+<section class="ltx_section" id="S7">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">7 </span>Formal notation of potential outcomes</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S7.p1.1">Consider a study with <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> experimental units indexed by <img alt="i=1,\ldots,n" class="m" src="m/4f9df9a48055.png" style="width:5.23em;vertical-align:-0.31em"/>. As a starting point, we focus on a treatment with two levels: <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/> for the treatment and <img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/> for the control. For each unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>, the outcome of interest <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> has two versions:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y_{i}(1)\text{ and }Y_{i}(0)," class="m" src="m/e1d0a5ed7195.png" style="width:7.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S7.p1.2">which are potential outcomes under the hypothetical interventions 1 and 0.
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite> first used this notation. It seems intuitive but has some hidden assumptions. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib285" title="">Rubin, (1980)</a></cite> made the following clarifications on the hidden assumptions.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption1">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 2.1</span></span><span class="ltx_text ltx_font_bold"> (no interference)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption1.p1.1"><span class="ltx_text ltx_font_italic">Unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>’s potential outcomes do not depend on other units’ treatments. This is sometimes called the no-interference assumption.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption2">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 2.2</span></span><span class="ltx_text ltx_font_bold"> (consistency)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption2.p1.1"><span class="ltx_text ltx_font_italic">There are no other versions of the treatment. Equivalently, we require that the treatment levels be well-defined, or have no ambiguity at least for the outcome of interest. This is sometimes called the consistency assumption.<sup><a href="#fn-chapter2-4" id="fn-chapter2-4-ref">4</a></sup></span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S7.p2.1">Assumption <a class="ltx_ref" href="#Thmassumption1" title="Assumption 2.1 (no interference) ‣ 7 Formal notation of potential outcomes ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.1</span></a> can be violated in infectious diseases or network experiments. For instance, if some of my friends receive flu shots, my chance of getting the flu decreases even if I do not receive the flu shot; if my friends see an advertisement on Facebook, my chance of buying that product increases even if I do not see the advertisement directly. It is an active research area to study situations with interfering units in modern causal inference literature <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib154" title="">Hudgens and Halloran,, 2008</a>, e.g.,)</cite>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S7.p3.1">Assumption <a class="ltx_ref" href="#Thmassumption2" title="Assumption 2.2 (consistency) ‣ 7 Formal notation of potential outcomes ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.2</span></a> can be violated for treatments with complex components. For instance, when studying the effect of cigarette smoking on lung cancer, the type of cigarettes may matter; when studying the effect of college education on income, the type and major of college education may matter.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S7.p4.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib285" title="">Rubin, (1980)</a></cite> called the Assumptions <a class="ltx_ref" href="#Thmassumption1" title="Assumption 2.1 (no interference) ‣ 7 Formal notation of potential outcomes ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.1</span></a> and <a class="ltx_ref" href="#Thmassumption2" title="Assumption 2.2 (consistency) ‣ 7 Formal notation of potential outcomes ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.2</span></a> above together the Stable Unit Treatment Value Assumption (SUTVA).</p>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 2.3</span></span><span class="ltx_text ltx_font_bold"> (SUTVA)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption3.p1.1"><span class="ltx_text ltx_font_italic">Both Assumptions <a class="ltx_ref" href="#Thmassumption1" title="Assumption 2.1 (no interference) ‣ 7 Formal notation of potential outcomes ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.1</span></a> and <a class="ltx_ref" href="#Thmassumption2" title="Assumption 2.2 (consistency) ‣ 7 Formal notation of potential outcomes ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.2</span></a> hold.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S7.p5.1">Under SUTVA, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib287" title="">Rubin, (2005)</a></cite> called the <img alt="n\times 2" class="m" src="m/bb3412e166b6.png" style="width:2.55em;vertical-align:-0.19em"/> matrix of potential outcomes the Science Table:</p>
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y_{i}(1)" class="m" src="m/310e7f69c7c8.png" style="width:2.43em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y_{i}(0)" class="m" src="m/cff26d98475e.png" style="width:2.43em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y_{1}(1)" class="m" src="m/768ba1bd988a.png" style="width:2.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y_{1}(0)" class="m" src="m/a91dc94463f9.png" style="width:2.53em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center"><img alt="2" class="m" src="m/8213a4c2934a.png" style="width:0.72em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="Y_{2}(1)" class="m" src="m/ad95d966e71b.png" style="width:2.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="Y_{2}(0)" class="m" src="m/fc212c88573c.png" style="width:2.53em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center">⋮</td>
+<td class="ltx_td ltx_align_center">⋮</td>
+<td class="ltx_td ltx_align_center">⋮</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="Y_{n}(1)" class="m" src="m/9a3a9eff7024.png" style="width:2.63em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="Y_{n}(0)" class="m" src="m/f344a375eb4b.png" style="width:2.63em;vertical-align:-0.36em"/></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S7.p6.1">Due to the fundamental contributions of Neyman and Rubin to statistical causal inference, the potential outcomes framework is sometimes referred to as the Neyman Model, the Neyman–Rubin Model, or the Rubin Causal Model. I prefer using “the potential outcomes framework” in this book and my other scientific writings.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S7.p7.1">Causal effects are functions of the Science Table. Inferring individual causal effects</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{i}=Y_{i}(1)-Y_{i}(0),\quad(i=1,\ldots,n)" class="m" src="m/53ab2ece99ca.png" style="width:15.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S7.p7.2">is fundamentally challenging because we can only observe either <img alt="Y_{i}(1)" class="m" src="m/310e7f69c7c8.png" style="width:2.43em;vertical-align:-0.36em"/> or <img alt="Y_{i}(0)" class="m" src="m/cff26d98475e.png" style="width:2.43em;vertical-align:-0.36em"/> for each unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>, that is, we can observe only half of the Science Table. As a starting point, most parts of the book focus on the average causal effect (ACE):</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau" class="m" src="m/10de0cdadd8d.png" style="width:0.77em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n^{-1}\sum_{i=1}^{n}\{Y_{i}(1)-Y_{i}(0)\}" class="m" src="m/e6c564b6c8b6.png" style="width:10.12em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n^{-1}\sum_{i=1}^{n}Y_{i}(1)-n^{-1}\sum_{i=1}^{n}Y_{i}(0)." class="m" src="m/a26164e93594.png" style="width:13.01em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S7.p7.3">But we can extend our discussion to many other parameters (also called <span class="ltx_text ltx_font_italic">estimands</span>). Problem <a class="ltx_ref" href="#S9.SS0.SSS0.P2" title="2.2 Nonlinear causal estimands ‣ 9 Homework Problems ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.2</span></a> gives some examples.</p>
+</div>
+<section class="ltx_subsection" id="S7.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">7.1 </span>Causal effects, subgroups, and the non-existence of Yule–Simpson Paradox</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S7.SS1.p1.1">If we have two subgroups defined by a binary variable <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/>, we can define the subgroup causal effects as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{x}=\frac{\sum_{i=1}^{n}I(X_{i}=x)\{Y_{i}(1)-Y_{i}(0)\}}{\sum_{i=1}^{n}I(X_{i}=x)},\quad(x=0,1)" class="m" src="m/09d95367a2a7.png" style="width:21.85em;vertical-align:-1.11em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S7.SS1.p1.2">where <img alt="I(\cdot)" class="m" src="m/4512c84a318c.png" style="width:1.81em;vertical-align:-0.36em"/> is the indicator function.
+A simple identity is that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=\pi_{1}\tau_{1}+\pi_{0}\tau_{0}" class="m" src="m/b0d7b1c0924d.png" style="width:7.15em;vertical-align:-0.26em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S7.SS1.p1.3">where <img alt="\pi_{x}=\sum_{i=1}^{n}I(X_{i}=x)/n" class="m" src="m/3f86ec1d3af8.png" style="width:10.67em;vertical-align:-0.41em"/> is the proportion of units with <img alt="X_{i}=x" class="m" src="m/9ff8843035f2.png" style="width:3.30em;vertical-align:-0.26em"/> <img alt="(x=0,1)" class="m" src="m/03f76ecc4f66.png" style="width:4.36em;vertical-align:-0.36em"/>. Therefore, if <img alt="\tau_{1}&gt;0" class="m" src="m/aa42cb573518.png" style="width:2.96em;vertical-align:-0.26em"/> and <img alt="\tau_{0}&gt;0" class="m" src="m/8a90c6d1d39a.png" style="width:2.96em;vertical-align:-0.26em"/>, we must have <img alt="\tau&gt;0" class="m" src="m/ea4b81f3a3b9.png" style="width:2.63em;vertical-align:-0.14em"/>. The Yule–Simpson Paradox thus cannot happen to causal effects.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S7.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">7.2 </span>Subtlety of the definition of the experimental unit</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S7.SS2.p1.1">I now discuss a subtlety related to the definition of the experimental unit. Simply speaking, the experimental unit can be different from the physical unit. For example, if I did not take aspirin before and my headache did not go away, but I take aspirin now and my headache goes away, then you might think that we can observe my potential outcomes under both control and treatment. Let <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/> index myself, and let <img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/> denote the indicator of no headache. Then, the above heuristic suggests that <img alt="Y_{i}(0)=0" class="m" src="m/21c76ac25d10.png" style="width:4.26em;vertical-align:-0.36em"/> and <img alt="Y_{i}(1)=1" class="m" src="m/88137b1729bc.png" style="width:4.26em;vertical-align:-0.36em"/>, so it seems that aspirin kills my headache. But this logic is very wrong because of the misunderstanding of the definition of the experimental unit. At different time points, I, the same physical person, become two distinct experimental units, indexed by “<img alt="i,\textup{before}" class="m" src="m/dd654eaee87c.png" style="width:3.69em;vertical-align:-0.31em"/>” and “<img alt="i,\textup{after}" class="m" src="m/a088305cac37.png" style="width:3.06em;vertical-align:-0.31em"/>”. Therefore, we have four potential outcomes</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y_{i,\textup{before}}(0)=0,\quad Y_{i,\textup{before}}(1)=?,\quad Y_{i,\textup{after}}(0)=?,\quad Y_{i,\textup{after}}(1)=1," class="m" src="m/c008ea4f133e.png" style="width:28.81em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S7.SS2.p1.2">with two of them observed and two of them missing. The individual causal effects</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y_{i,\textup{before}}(1)-Y_{i,\textup{before}}(0)=?-0\text{ and }Y_{i,\textup{after}}(1)-Y_{i,\textup{after}}(0)=1-?" class="m" src="m/c004009c0c0b.png" style="width:28.52em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S7.SS2.p1.3">are unknown. It is possible that my headache goes away even if I do not take aspirin:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y_{i,\textup{after}}(0)=1,\quad Y_{i,\textup{after}}(1)=1" class="m" src="m/a54d7ce241ac.png" style="width:13.47em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S7.SS2.p1.4">which implies zero effect; it is also possible that my headache does not go away if I do not take aspirin:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y_{i,\textup{after}}(0)=0,\quad Y_{i,\textup{after}}(1)=1" class="m" src="m/747b6aebe24c.png" style="width:13.47em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S7.SS2.p1.5">which implies a positive effect of aspirin.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S7.SS2.p2.1">The wrong heuristic argument might get the right answer if the control potential outcomes are stable at the before and after periods:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y_{i,\textup{before}}(0)=Y_{i,\textup{after}}(0)=0." class="m" src="m/eddc08f6a5a0.png" style="width:12.29em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S7.SS2.p2.2">But this assumption is rather strong and fundamentally untestable. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib286" title="">Rubin, (2001)</a></cite> offered a related discussion in the context of self-experimentation for causal effects.</p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S8">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">8 </span>Treatment assignment mechanism</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S8.p1.1">Let <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> be the binary treatment indicator for unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>, vectorized as <img alt="\bm{Z}=(Z_{1},\ldots,Z_{n})" class="m" src="m/663c0ff51434.png" style="width:7.76em;vertical-align:-0.36em"/>. The observed outcome of unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/> is a function of the potential outcomes and the treatment indicator:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S8.E3"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Y_{i}" class="m" src="m/542e61d4623e.png" style="width:1.16em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\begin{cases}Y_{i}(1),&amp;\text{if }Z_{i}=1\\
+Y_{i}(0),&amp;\text{if }Z_{i}=0\end{cases}" class="m" src="m/a48725a247fb.png" style="width:8.38em;vertical-align:-1.37em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(3)</span></td></tr></tbody>
+<tbody id="S8.E4"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle Z_{i}Y_{i}(1)+(1-Z_{i})Y_{i}(0)" class="m" src="m/f9f90868745e.png" style="width:10.36em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(4)</span></td></tr></tbody>
+<tbody id="S8.E5"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle Y_{i}(0)+Z_{i}\{Y_{i}(1)-Y_{i}(0)\}" class="m" src="m/29e2437fba91.png" style="width:11.27em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(5)</span></td></tr></tbody>
+<tbody id="S8.E6"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle Y_{i}(0)+Z_{i}\tau_{i}." class="m" src="m/b282897be770.png" style="width:5.71em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(6)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S8.p1.2">Equation (<a class="ltx_ref" href="#S8.E3" title="In 8 Treatment assignment mechanism ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a>) is the definition of the observed outcome. Equation (<a class="ltx_ref" href="#S8.E4" title="In 8 Treatment assignment mechanism ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4</span></a>) is equivalent to (<a class="ltx_ref" href="#S8.E3" title="In 8 Treatment assignment mechanism ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a>). It is a trivial fact, but <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib246" title="">Pearl, 2010b ()</a></cite> viewed it as the fundamental bridge between the potential outcomes and the observed outcome. Equations (<a class="ltx_ref" href="#S8.E5" title="In 8 Treatment assignment mechanism ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">5</span></a>) and (<a class="ltx_ref" href="#S8.E6" title="In 8 Treatment assignment mechanism ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6</span></a>) highlight the fact that the individual causal effect <img alt="\tau_{i}=Y_{i}(1)-Y_{i}(0)" class="m" src="m/354f697e3f18.png" style="width:7.95em;vertical-align:-0.36em"/> can be heterogeneous across units.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S8.p2.1">The experiment reveals only one of unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>’s potential outcomes with the other one missing:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Y_{i}^{\textup{mis}}" class="m" src="m/4651159e786e.png" style="width:2.29em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\begin{cases}Y_{i}(0),&amp;\text{if }Z_{i}=1\\
+Y_{i}(1),&amp;\text{if }Z_{i}=0\end{cases}" class="m" src="m/94e35d0f6982.png" style="width:8.38em;vertical-align:-1.37em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle Z_{i}Y_{i}(0)+(1-Z_{i})Y_{i}(1)." class="m" src="m/bf55311597b4.png" style="width:10.65em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S8.p2.2">The missing potential outcome corresponds to the opposite treatment level of unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>. For this reason, the potential outcomes framework is also called the <span class="ltx_text ltx_font_italic">counterfactual</span> framework. <sup><a href="#fn-chapter2-5" id="fn-chapter2-5-ref">5</a></sup>
+This name can be confusing because before the experiment, both the potential outcomes can be observed. Only after the experiment, one potential outcome is observed whereas the other potential outcome is counterfactual.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S8.p3.1">The treatment assignment mechanism, i.e., the probability distribution of <img alt="\bm{Z}" class="m" src="m/49573002cc32.png" style="width:1.08em;vertical-align:-0.12em"/>, plays an important role in inferring causal effects. The following simple numerical examples illustrate this point. We first generate potential outcomes from Normal distributions with the average causal effect close to <img alt="-0.5" class="m" src="m/fa8b7f601a4a.png" style="width:2.29em;vertical-align:-0.19em"/>.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">500</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rnorm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tau</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.5</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tau</span>
+</div>
+</div>
+<p class="ltx_p" id="S8.p3.3">A perfect doctor assigns the treatment to the patient if s/he knows that the individual causal effect is non-negative. This results in a positive difference in means of the observed outcomes:</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tau</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1])</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==0])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2.166509</span>
+</div>
+</div>
+<p class="ltx_p" id="S8.p3.5">A clueless doctor does not know any information about the individual causal effects and assigns the treatment to patients by flipping a fair coin. This results in a difference in means of the observed outcomes close to the true average causal effect:</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rbinom</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.5)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1])</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==0])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.552064</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S8.p4.1">The above examples are hypothetical since no doctors perfectly know the individual causal effects. However, the examples do demonstrate the crucial role of the treatment assignment mechanism. This book will organize the topics based on the treatment assignment mechanism.</p>
+</div>
+</section>
+<section class="ltx_section" id="S9">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">9 </span>Homework Problems</h4>
+<section class="ltx_paragraph" id="S9.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">2.1 </span>A perfect doctor</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S9.SS0.SSS0.P1.p1.1">Following the first perfect doctor example in Section <a class="ltx_ref" href="#S8" title="8 Treatment assignment mechanism ‣ Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">8</span></a>, assume the potential outcomes are random variables generated from</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y(0)\sim\textsc{N}(0,1),\quad\tau=-0.5+Y(0),\quad Y(1)=Y(0)+\tau." class="m" src="m/14cda5901771.png" style="width:24.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S9.SS0.SSS0.P1.p1.2">The binary treatment is determined by the treatment effect as <img alt="Z=1(\tau\geq 0)" class="m" src="m/aa0be3a44c5e.png" style="width:5.97em;vertical-align:-0.36em"/>, and the observed outcome is determined by the potential outcomes and the treatment by <img alt="Y=ZY(1)+(1-Z)Y(0)" class="m" src="m/c0e9a3b58db2.png" style="width:11.76em;vertical-align:-0.36em"/>. Calculate the difference in means</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z=1)-E(Y\mid Z=0)." class="m" src="m/655fdf90dbe8.png" style="width:13.32em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S9.SS0.SSS0.P1.p2.1">Remark: The mean of a truncated Normal random variable equals</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(X\mid a&lt;X&lt;b)=\mu-\sigma\frac{\phi\left(\frac{b-\mu}{\sigma}\right)-\phi\left(\frac{a-\mu}{\sigma}\right)}{\Phi\left(\frac{b-\mu}{\sigma}\right)-\Phi\left(\frac{a-\mu}{\sigma}\right)}," class="m" src="m/1eabebb44b3e.png" style="width:20.96em;vertical-align:-1.81em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S9.SS0.SSS0.P1.p2.2">where <img alt="X\sim\textsc{N}(\mu,\sigma^{2})" class="m" src="m/7de183f81838.png" style="width:6.17em;vertical-align:-0.36em"/>, and <img alt="\phi(\cdot)" class="m" src="m/fb9116f4c807.png" style="width:1.88em;vertical-align:-0.36em"/> and <img alt="\Phi(\cdot)" class="m" src="m/b793fbb72488.png" style="width:2.00em;vertical-align:-0.36em"/> are the probability density and cumulative distribution functions of a standard Normal random variable <img alt="\textsc{N}(0,1)" class="m" src="m/2fef3e922101.png" style="width:3.28em;vertical-align:-0.36em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S9.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">2.2 </span>Nonlinear causal estimands</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S9.SS0.SSS0.P2.p1.1">With potential outcomes <img alt="\{(Y_{i}(1),Y_{i}(0)\}_{i=1}^{n}" class="m" src="m/5ba60f2e6c0d.png" style="width:7.81em;vertical-align:-0.36em"/> for <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> units under the treatment and control, the difference in means equals the mean of the individual treatment effects:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\bar{Y}(1)-\bar{Y}(0)=n^{-1}\sum_{i=1}^{n}\{Y_{i}(1)-Y_{i}(0)\}." class="m" src="m/1881b319f538.png" style="width:17.13em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S9.SS0.SSS0.P2.p1.2">Therefore, the average treatment effect is a <span class="ltx_text ltx_font_italic">linear</span> causal estimand in the sense that the difference in average potential outcomes equals the average of the differences in individual potential outcomes.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S9.SS0.SSS0.P2.p2.1">Other estimands may not be linear. For instance, we can define the median treatment effect as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\delta_{1}=\text{median}\{(Y_{i}(1)\}_{i=1}^{n}-\text{median}\{(Y_{i}(0)\}_{i=1}^{n}," class="m" src="m/f7889255b403.png" style="width:20.14em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S9.SS0.SSS0.P2.p2.2">which is, in general, different from the median of the individual treatment effect</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\delta_{2}=\text{median}\{(Y_{i}(1)-Y_{i}(0)\}_{i=1}^{n}." class="m" src="m/74aa5213454d.png" style="width:14.24em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S9.I1.i1.p1.1">Give numerical examples that have <img alt="\delta_{1}=\delta_{2}" class="m" src="m/26788a587879.png" style="width:3.35em;vertical-align:-0.26em"/>, <img alt="\delta_{1}&gt;\delta_{2}" class="m" src="m/adb88ab11607.png" style="width:3.35em;vertical-align:-0.26em"/>, and <img alt="\delta_{1}&lt;\delta_{2}" class="m" src="m/55925c8601f4.png" style="width:3.35em;vertical-align:-0.26em"/>, respectively.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S9.I1.i2.p1.1">Which estimand makes more sense, <img alt="\delta_{1}" class="m" src="m/ee5e5fca6c2c.png" style="width:1.13em;vertical-align:-0.26em"/> or <img alt="\delta_{2}" class="m" src="m/9229113b8cda.png" style="width:1.13em;vertical-align:-0.26em"/>? Why? Use examples to justify your conclusion. If you feel that both <img alt="\delta_{1}" class="m" src="m/ee5e5fca6c2c.png" style="width:1.13em;vertical-align:-0.26em"/> and <img alt="\delta_{2}" class="m" src="m/9229113b8cda.png" style="width:1.13em;vertical-align:-0.26em"/> can make sense in different applications, you can also give examples to justify both estimands.</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section class="ltx_paragraph" id="S9.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">2.3 </span>Average and individual effects</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S9.SS0.SSS0.P3.p1.1">Give a numerical example in which <img alt="\tau=n^{-1}\sum_{i=1}^{n}\{Y_{i}(1)-Y_{i}(0)\}&gt;0" class="m" src="m/085cdb78800d.png" style="width:14.79em;vertical-align:-0.41em"/> but the proportion of units with <img alt="Y_{i}(1)&gt;Y_{i}(0)" class="m" src="m/f30d96cb93ce.png" style="width:5.95em;vertical-align:-0.36em"/> is smaller than <img alt="0.5" class="m" src="m/4bb34572233b.png" style="width:1.52em;vertical-align:-0.12em"/>. That is, the average causal effect is positive, but the treatment benefits less than half of the units.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S9.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">2.4 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S9.SS0.SSS0.P4.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib149" title="">Holland, (1986)</a></cite> is a classic review article on statistical causal inference. It popularized the name “Rubin Causal Model” for the potential outcomes framework. At the University of California Berkeley, we call it the “Neyman Model” for obvious reasons.</p>
+</div>
+</section>
+</section>
+<section class="footnotes"><h4>脚注</h4><p id="fn-chapter2-4"><a href="#fn-chapter2-4-ref">4</a>. <span class="ltx_text ltx_font_upright">This notion of consistency is totally different from the one in Definition </span><a class="ltx_ref ltx_font_upright" href="33.html#Thmdefinition4c" title="Definition 30.4 (consistency) ‣ 30.B.1 Point estimation ‣ Appendix 30.B Statistical inference ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.4</span></a><span class="ltx_text ltx_font_upright"> in Chapter </span><a class="ltx_ref ltx_font_upright" href="33.html#chapter30" title="Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30</span></a><span class="ltx_text ltx_font_upright">.</span></p><p id="fn-chapter2-5"><a href="#fn-chapter2-5-ref">5</a>. The terminology “counterfactual” is more popular in philosophy, probably due to <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib199" title="">Lewis, (1973)</a></cite>.</p></section></section><p class="nav bottom"><a href="index.html">目录</a><a href="04.html">← 上一章</a><a href="06.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

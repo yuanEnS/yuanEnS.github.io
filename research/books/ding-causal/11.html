@@ -1,0 +1,542 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 8 Unification of the Fisherian and Neymanian Inferences in Randomized Experiments · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="10.html">← 上一章</a><a href="12.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter8">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 8 </span>Unification of the Fisherian and Neymanian Inferences in Randomized Experiments</h3>
+
+<div class="ltx_para">
+<p class="ltx_p" id="chapter8.p2.1">Chapters <a class="ltx_ref" href="06.html#chapter3" title="Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a>–<a class="ltx_ref" href="10.html#chapter7" title="Chapter 7 Matched-Pairs Experiment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a> cover both the Fisherian and Neymanian inferences for different types of experiments. The Fisherian perspective focuses on the finite-sample exact <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values for testing the strong null hypothesis of no causal effects for any units whatsoever, whereas the Neymanian perspective focuses on unbiased estimation with a conservative large-sample confidence interval for the average causal effect. Both of them are justified by the physical randomization which is ensured by the design of the experiments. Because of this, they are both called <span class="ltx_text ltx_font_italic">randomization-based inference</span> or <span class="ltx_text ltx_font_italic">design-based inference</span>. Because they concern a finite population of units in the experiments, they are also called <span class="ltx_text ltx_font_italic">finite-population inference</span>. They are related but also have distinct features.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter8.p3.1">In 1935, Neyman presented his seminal paper on randomization-based inference to the Royal Statistical Society. His paper <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib239" title="">Neyman,, 1935</a>)</cite> was attacked by Fisher in the discussion session. <cite class="ltx_cite ltx_citemacro_cite"><a class="ltx_ref" href="35.html#bib.bib293" title="">Sabbaghi and Rubin, (2014)</a></cite> reviewed this famous Neyman–Fisher controversy and presented some new results for this old problem. Instead of going to the philosophical issues, this chapter tries to provide a unified discussion.</p>
+</div>
+<section class="ltx_section" id="S43">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">43 </span>Testing strong and weak null hypotheses in the CRE</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S43.p1.1">Let us revisit the treatment-control CRE. The Fisherian perspective focuses on testing the strong null hypothesis</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="H_{0\textsc{f}}:Y_{i}(1)=Y_{i}(0)\text{ for all units }i=1,\ldots,n." class="m" src="m/e0d626d55d99.png" style="width:19.46em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S43.p1.2">The FRT delivers a finite-sample exact <img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/> defined in (<a class="ltx_ref" href="06.html#S11.E8" title="In 11 FRT ‣ Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">8</span></a>).</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S43.p2.1">By duality of the confidence interval and hypothesis testing, the Neymanian perspective gives a test for the weak null hypothesis</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="H_{0\textsc{n}}:\tau=0\Longleftrightarrow H_{0\textsc{n}}:\bar{Y}(1)=\bar{Y}(0)" class="m" src="m/66d7ff0ce8f1.png" style="width:15.59em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S43.p2.2">based on</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="t=\frac{\hat{\tau}}{\sqrt{\hat{V}}}." class="m" src="m/afe0bceb49dd.png" style="width:4.24em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S43.p2.3">By the CLT of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> and the conservativeness of the variance estimator, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="t=\sqrt{\frac{\textup{var}(\hat{\tau})}{\hat{V}}}\times\frac{\hat{\tau}}{\sqrt{\textup{var}(\hat{\tau})}}\rightarrow C\times\textsc{N}(0,1)" class="m" src="m/256d677693dc.png" style="width:17.61em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S43.p2.4">in distribution, where <img alt="C" class="m" src="m/dc3a6c32f5a8.png" style="width:1.01em;vertical-align:-0.12em"/> is smaller than or equal to <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/> but depends on the unknown potential outcomes. Using <img alt="\textsc{N}(0,1)" class="m" src="m/2fef3e922101.png" style="width:3.28em;vertical-align:-0.36em"/> quantiles for the studentized statistic <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>, we have a conservative large-sample test for <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S43.p3.1">Furthermore, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib83" title="">Ding and Dasgupta, (2017)</a></cite> show that the FRT with the studentized statistic <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/> has the dual guarantees:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S43.I1.i1.p1.1"><img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/> is finite-sample exact under <img alt="H_{0\textsc{f}}" class="m" src="m/aca362d66dc1.png" style="width:1.88em;vertical-align:-0.26em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S43.I1.i2.p1.1"><img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/> is asymptotically conservative under <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/>.</p>
+</div></li>
+</ol>
+<p class="ltx_p" id="S43.p3.2">Importantly, this is a feature of the studentized statistic <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib83" title="">Ding and Dasgupta, (2017)</a></cite> showed that the FRT with other test statistics may not have the dual guarantees. In particular, the FRT with <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> may be asymptotically anti-conservative under <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/>. I give some heuristics below to illustrate the importance of studentization in the FRT.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S43.p4.1">Under <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/>, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}\stackrel{{\scriptstyle\cdot}}{{\sim}}\textsc{N}\left(0,\frac{S^{2}(1)}{n_{1}}+\frac{S^{2}(0)}{n_{0}}-\frac{S^{2}(\tau)}{n}\right)." class="m" src="m/20fc641f883e.png" style="width:16.36em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S43.p4.2">The FRT pretends that the Science Table is <img alt="(Y_{i},Y_{i})_{i=1}^{n}" class="m" src="m/d03f3ec8b1f4.png" style="width:4.63em;vertical-align:-0.36em"/> induced by <img alt="H_{0\textsc{f}}" class="m" src="m/aca362d66dc1.png" style="width:1.88em;vertical-align:-0.26em"/>, so the randomization distribution of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\hat{\tau})^{\pi}\stackrel{{\scriptstyle\cdot}}{{\sim}}\textsc{N}\left(0,\frac{s^{2}}{n_{1}}+\frac{s^{2}}{n_{0}}\right)," class="m" src="m/eeb08cb64b54.png" style="width:11.08em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S43.p4.3">where <img alt="(\cdot)^{\pi}" class="m" src="m/ff261fe4a7f1.png" style="width:1.83em;vertical-align:-0.36em"/> denotes the randomization distribution<sup><a href="#fn-chapter8-24" id="fn-chapter8-24-ref">24</a></sup>
+and
+<img alt="s^{2}" class="m" src="m/b582e2c1b17c.png" style="width:1.16em;vertical-align:-0.12em"/>
+is the sample variance of the observed outcomes. Based on (<a class="ltx_ref" href="06.html#S12.E13" title="In 12 Canonical choices of the test statistic ‣ Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13</span></a>) in Chapter <a class="ltx_ref" href="06.html#chapter3" title="Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a>, we can approximate the asymptotic variance of <img alt="(\hat{\tau})^{\pi}" class="m" src="m/d4e585fb9569.png" style="width:2.10em;vertical-align:-0.36em"/> under <img alt="H_{0\textsc{f}}" class="m" src="m/aca362d66dc1.png" style="width:1.88em;vertical-align:-0.26em"/> as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\frac{s^{2}}{n_{1}}+\frac{s^{2}}{n_{0}}" class="m" src="m/287c7f78016a.png" style="width:4.02em;vertical-align:-0.94em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{n}{n_{1}n_{0}}\left\{\frac{n_{1}-1}{n-1}\hat{S}^{2}(1)+\frac{n_{0}-1}{n-1}\hat{S}^{2}(0)+\frac{n_{1}n_{0}}{n(n-1)}\hat{\tau}^{2}\right\}" class="m" src="m/73c00ee64419.png" style="width:22.43em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\approx" class="m" src="m/9f119cf9bb7a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\hat{S}^{2}(1)}{n_{0}}+\frac{\hat{S}^{2}(0)}{n_{1}}" class="m" src="m/ad9391ede915.png" style="width:6.72em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\approx" class="m" src="m/9f119cf9bb7a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{S^{2}(1)}{n_{0}}+\frac{S^{2}(0)}{n_{1}}," class="m" src="m/4f5e1dac3856.png" style="width:7.01em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S43.p4.4">which does not match the asymptotic variance of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/>. Ideally, we should compute the <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-value under <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/> based on the true distribution of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/>, which, however, depends on the unknown potential outcomes. In contrast, we use the FRT to compute the <img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/> based on the permutation distribution <img alt="(\hat{\tau})^{\pi}" class="m" src="m/d4e585fb9569.png" style="width:2.10em;vertical-align:-0.36em"/>, which does not match the true distribution of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> under <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/> even with large samples. Therefore, the FRT with <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> may not control the type one error rate under <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/> even with large samples.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S43.p5.1">Fortunately, the undesired property of the FRT with <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> goes away if we replace the test statistic <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> with the studentized version <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>. Under <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/>, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="t\stackrel{{\scriptstyle\cdot}}{{\sim}}\textsc{N}(0,C^{2})" class="m" src="m/f5696568d222.png" style="width:5.71em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S43.p5.2">where <img alt="C^{2}\leq 1" class="m" src="m/49c101cc2cb3.png" style="width:3.30em;vertical-align:-0.24em"/> with equality holding if <img alt="Y_{i}(1)-Y_{i}(0)=\tau" class="m" src="m/ff59200858ef.png" style="width:7.71em;vertical-align:-0.36em"/> for all units <img alt="i=1,\ldots,n" class="m" src="m/4f9df9a48055.png" style="width:5.23em;vertical-align:-0.31em"/>. The FRT pretends that <img alt="Y_{i}(1)=Y_{i}(0)=Y_{i}" class="m" src="m/e9a595e86f95.png" style="width:8.19em;vertical-align:-0.36em"/> for all <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>’s and generates the permutation distribution</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="t^{\pi}\stackrel{{\scriptstyle\cdot}}{{\sim}}\textsc{N}(0,1)" class="m" src="m/ad9b87aa1188.png" style="width:5.52em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S43.p5.3">where the variance equals <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/> because the Science Table used by the FRT has zero individual causal effects. Under <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/>, because the true distribution of <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/> is more dispersed than the corresponding permutation distribution, the <img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/> based on <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/> is asymptotically conservative.</p>
+</div>
+</section>
+<section class="ltx_section" id="S44">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">44 </span>Covariate-adjusted FRTs in the CRE</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S44.p1.1">Extending the discussion in Section <a class="ltx_ref" href="#S43" title="43 Testing strong and weak null hypotheses in the CRE ‣ Chapter 8 Unification of the Fisherian and Neymanian Inferences in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">43</span></a> to the case with covariates, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib349" title="">Zhao and Ding, 2021a ()</a></cite> recommend using the FRT with the studentized <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="t_{\textsc{L}}=\frac{\hat{\tau}_{\textsc{L}}}{\sqrt{\hat{V}_{\textsc{L}}}}," class="m" src="m/2cdaf3e5065a.png" style="width:5.08em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S44.p1.2">which is the robust <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>-statistic for the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the OLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i},Z_{i}X_{i})" class="m" src="m/d721a39908e3.png" style="width:7.20em;vertical-align:-0.36em"/>. They show that the FRT with <img alt="t_{\textsc{L}}" class="m" src="m/014885d3be28.png" style="width:1.13em;vertical-align:-0.26em"/> has multiple guarantees:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S44.I1.i1.p1.1"><img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/> is finite-sample exact under <img alt="H_{0\textsc{f}}" class="m" src="m/aca362d66dc1.png" style="width:1.88em;vertical-align:-0.26em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S44.I1.i2.p1.1"><img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/> is asymptotically conservative under <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S44.I1.i3.p1.1"><img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/> is asymptotically more powerful than the FRT with <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/> when <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/> does not hold and the covariates are predictive to the outcomes;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">4.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S44.I1.i4.p1.1">the above properties hold even when the linear outcome model is misspecified.</p>
+</div></li>
+</ol>
+<p class="ltx_p" id="S44.p1.3">Similarly, this is a feature of the studentized statistic <img alt="t_{\textsc{L}}" class="m" src="m/014885d3be28.png" style="width:1.13em;vertical-align:-0.26em"/>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib349" title="">Zhao and Ding, 2021a ()</a></cite> show that other covariate-adjusted FRTs reviewed in Section <a class="ltx_ref" href="09.html#S30.SS1" title="30.1 Covariate-adjusted FRT ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.1</span></a> may be either anti-conservative under <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/> or less powerful than the FRT with <img alt="t_{\textsc{L}}" class="m" src="m/014885d3be28.png" style="width:1.13em;vertical-align:-0.26em"/> when <img alt="H_{0\textsc{n}}" class="m" src="m/030a8a133e38.png" style="width:1.95em;vertical-align:-0.26em"/> does not hold.</p>
+</div>
+</section>
+<section class="ltx_section" id="S45">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">45 </span>A simulation study</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S45.p1.1">Now I use simulation to evaluate the finite-sample properties of the <img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/>’s under the weak null hypothesis. I will use the following twelve test statistics.</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S45.I1.i1.p1.1">The first three test statistics are from the OLS implementation of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>, including the coefficient of the treatment, the <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>-statistic based on the classic standard error, and the <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>-statistic based on the EHW standard error.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S45.I1.i2.p1.1">The next three test statistics are based on the pseudo-outcome strategy in Definition <a class="ltx_ref" href="09.html#Thmdefinition2" title="Definition 6.2 (pseudo-outcome strategy for covariate-adjusted FRT) ‣ 30.1 Covariate-adjusted FRT ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.2</span></a>, advocated by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib271" title="">Rosenbaum, 2002a ()</a></cite>. We first residualize the outcomes by regressing <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,X_{i})" class="m" src="m/c63893420ce1.png" style="width:3.11em;vertical-align:-0.36em"/>, and then obtain the three test statistics similar to the first three.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S45.I1.i3.p1.1">The next three test statistics are based on the OLS implementation of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib104" title="">Fisher, (1925)</a></cite>, as discussed in Chapter <a class="ltx_ref" href="09.html#S30.SS2" title="30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.2</span></a>.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">4.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S45.I1.i4.p1.1">The final three test statistics are based on the OLS implementation of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>, as discussed in Chapter <a class="ltx_ref" href="09.html#S30.SS2" title="30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.2</span></a>.</p>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S45.p2.1">Consider a finite population of <img alt="n=100" class="m" src="m/b10ab45224d8.png" style="width:3.66em;vertical-align:-0.12em"/> units subjected to a CRE of size <img alt="(n_{1},n_{0})=(20,80)" class="m" src="m/5f51166a7f64.png" style="width:8.12em;vertical-align:-0.36em"/>.
+For each <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>, we draw a univariate covariate <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/> from Unif<img alt="(-1,1)" class="m" src="m/5ad6434af10d.png" style="width:3.23em;vertical-align:-0.36em"/> and generate potential outcomes as <img alt="Y_{i}(1)\sim\textsc{N}(X_{i}^{3},1)" class="m" src="m/69305fadc537.png" style="width:7.64em;vertical-align:-0.36em"/> and <img alt="Y_{i}(0)\sim\textsc{N}(-X_{i}^{3},0.5^{2})" class="m" src="m/f61d0ad08f83.png" style="width:9.66em;vertical-align:-0.36em"/>.
+Center the <img alt="Y_{i}(1)" class="m" src="m/310e7f69c7c8.png" style="width:2.43em;vertical-align:-0.36em"/>’s and <img alt="Y_{i}(0)" class="m" src="m/cff26d98475e.png" style="width:2.43em;vertical-align:-0.36em"/>’s to ensure <img alt="\tau=0" class="m" src="m/a6df2f2a91f6.png" style="width:2.63em;vertical-align:-0.12em"/>.
+Fix <img alt="\{Y_{i}(1),Y_{i}(0),X_{i}\}_{i=1}^{n}" class="m" src="m/74c9e16ddea2.png" style="width:9.01em;vertical-align:-0.36em"/> in simulation. We draw a random permutation of <img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/> 1’s and <img alt="n_{0}" class="m" src="m/45626a2aa980.png" style="width:1.28em;vertical-align:-0.26em"/> 0’s to obtain the observed outcomes and conduct FRTs.
+The procedure is repeated 500 times, with the <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values approximated by 500 independent permutations of the treatment vector in each replication.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S45.p3.1">Figure <a class="ltx_ref" href="#S45.F16" title="Figure 16 ‣ 45 A simulation study ‣ Chapter 8 Unification of the Fisherian and Neymanian Inferences in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">16</span></a> shows the <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values under the weak null hypothesis.
+The four robust <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>-statistics, as shown in the last row, are the only ones that preserve the correct type one error rates.
+In fact, they are conservative, which is coherent with the theory.
+All the other eight statistics yield type one error rates greater than the nominal levels and are thus not proper for testing the weak null hypothesis.</p>
+</div>
+<div class="ltx_figure ltx_transformed_outer" id="S45.F16" style="width:196.6pt;height:550pt;vertical-align:-0.0pt;"><div class="ltx_transformed_inner" style="width:550.0pt;transform:translate(-176.7pt,-176.7pt) rotate(-90deg) ;"><figure><img alt="插图" src="img/typeoneerrorXFRT.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 16</span>: </span><span class="ltx_text" style="font-size:90%;">Histograms of <img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/> under the weak null hypothesis</span></figcaption>
+</figure></div></div>
+</section>
+<section class="ltx_section" id="S46">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">46 </span>General recommendations</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S46.p1.1">The recommendations for the SRE parallel those for the CRE if both the strong and weak null hypotheses are of interest.
+Recall the estimators in Chapters <a class="ltx_ref" href="08.html#chapter5" title="Chapter 5 Stratification and Post-Stratification in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">5</span></a> and <a class="ltx_ref" href="09.html#S30.SS4" title="30.4 Extension to the SRE ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.4</span></a>.
+Without additional covariates, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib349" title="">Zhao and Ding, 2021a ()</a></cite> recommend using the FRT with</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="t_{\textsc{S}}=\frac{\hat{\tau}_{\textsc{S}}}{\sqrt{\hat{V}_{\textsc{S}}}};" class="m" src="m/c02e938dd7fc.png" style="width:4.99em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S46.p1.2">with additional covariates, they recommend using the FRT with</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="t_{\textsc{L,S}}=\frac{\hat{\tau}_{\textsc{L,S}}}{\sqrt{\hat{V}_{\textsc{L,S}}}}." class="m" src="m/21efa42df8e2.png" style="width:6.38em;vertical-align:-1.83em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S46.p2.1">The analysis of ReM is trickier. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib349" title="">Zhao and Ding, 2021a ()</a></cite> show that the FRT with <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/> does not have the dual guarantees in Section <a class="ltx_ref" href="#S43" title="43 Testing strong and weak null hypotheses in the CRE ‣ Chapter 8 Unification of the Fisherian and Neymanian Inferences in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">43</span></a>, but the FRT with <img alt="t_{\textsc{L}}" class="m" src="m/014885d3be28.png" style="width:1.13em;vertical-align:-0.26em"/> still has the guarantees in Section <a class="ltx_ref" href="#S44" title="44 Covariate-adjusted FRTs in the CRE ‣ Chapter 8 Unification of the Fisherian and Neymanian Inferences in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">44</span></a>. This highlights the importance of both covariate adjustment and studentization in ReM.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S46.p3.1">Similar results hold for the MPE. Without covariates, we recommend using the FRT with the <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>-statistic for the intercept in the OLS fit of <img alt="\hat{\tau}_{i}" class="m" src="m/36044f30dbcb.png" style="width:1.01em;vertical-align:-0.26em"/> on <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/>; with covariates, we recommend using the FRT with the <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>-statistic for the intercept in the OLS fit of <img alt="\hat{\tau}_{i}" class="m" src="m/36044f30dbcb.png" style="width:1.01em;vertical-align:-0.26em"/> on <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/> and <img alt="\hat{\tau}_{X,i}" class="m" src="m/1b89ef32a3df.png" style="width:1.90em;vertical-align:-0.41em"/>. Figure <a class="ltx_ref" href="10.html#S39.F15" title="Figure 15 ‣ 39.2 Children’s television workshop experiment data ‣ 39 Examples ‣ Chapter 7 Matched-Pairs Experiment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">15</span></a> in Chapter <a class="ltx_ref" href="10.html#chapter7" title="Chapter 7 Matched-Pairs Experiment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a> are based on these recommended FRTs.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S46.p4.1">Overall, the FRTs with studentized statistics are safer choices. When the large-sample Normal approximations to the studentized statistics are accurate, the <img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/>’s are almost identical to the <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values based on Normal approximations. When the large-sample approximations are inaccurate, the FRTs at least guarantee valid <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values under the strong null hypotheses. This is the recommendation of this book.</p>
+</div>
+</section>
+<section class="ltx_section" id="S47">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">47 </span>A case study</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S47.p1.1">Recall the SRE in <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib58" title="">Chong et al., (2016)</a></cite> analyzed in Chapter <a class="ltx_ref" href="08.html#S26.SS2" title="26.2 ( ) ’s Example ‣ 26 Post-stratification in a CRE ‣ Chapter 5 Stratification and Post-Stratification in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a>.
+I compare the “soccer” arm versus the “control” arm and the “physician” arm versus the “control” arm. We also compare the FRTs with and without using the covariate indicating the baseline anemia status. We use their dataset to illustrate the FRTs in the CRE and SRE. The ten subgroup analyses within the same class levels use the FRTs with <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/> and <img alt="t_{\textsc{L}}" class="m" src="m/014885d3be28.png" style="width:1.13em;vertical-align:-0.26em"/> for the CRE and the two overall analyses averaging over all class levels use the FRTs with <img alt="t_{\textsc{S}}" class="m" src="m/1793caade38a.png" style="width:1.06em;vertical-align:-0.26em"/> and <img alt="t_{\textsc{L,S}}" class="m" src="m/f1c16d20a4c4.png" style="width:1.78em;vertical-align:-0.41em"/> for the SRE.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S47.p2.1">Table <a class="ltx_ref" href="#S47.T4" title="Table 4 ‣ 47 A case study ‣ Chapter 8 Unification of the Fisherian and Neymanian Inferences in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4</span></a> shows the point estimators, standard errors, the <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-value based on the Normal approximation of the robust <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>-statistics, and the <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-value based on the FRTs. In most strata, covariate adjustment decreases the standard error since the baseline anemia status is predictive of the outcome. Table <a class="ltx_ref" href="#S47.T4" title="Table 4 ‣ 47 A case study ‣ Chapter 8 Unification of the Fisherian and Neymanian Inferences in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4</span></a> also exhibits two exceptions: within class 2, covariate adjustment increases the standard error when comparing “soccer” and “control”; in class 4, covariate adjustment increases the standard error when comparing “physician” and “control”. This is due to the small group sizes within these strata, causing the asymptotic approximation inaccurate. Nevertheless, in these two scenarios, the differences in the standard error are in the third digit. The <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values from the Normal approximation and the FRT are close with the latter being slightly larger in most cases. Based on the theory, the <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values based on the FRT should be trusted since it has an additional guarantee of being finite-sample exact under the sharp null hypothesis. This becomes important in this example since the group sizes are quite small within strata.</p>
+</div>
+<figure class="ltx_table" id="S47.T4">
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">Table 4</span>: </span><span class="ltx_text" style="font-size:90%;">Re-analyzing <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib58" title="">Chong et al., (2016)</a></cite>’s data. “<span class="ltx_text ltx_font_smallcaps">N</span>” corresponds to the unadjusted estimators and tests due to <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>, and “<span class="ltx_text ltx_font_smallcaps">L</span>” corresponds to the covariate-adjusted estimators and tests due to <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>.</span></figcaption><div class="ltx_flex_figure">
+<div class="ltx_flex_cell ltx_flex_size_2">
+<figure class="ltx_table ltx_figure_panel ltx_align_center">
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">(a)</span> </span><span class="ltx_text" style="font-size:90%;">soccer versus control</span></figcaption>
+<div class="overflow"><table class="ltx_tabular ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_border_t"></td>
+<td class="ltx_td ltx_align_right ltx_border_t">est</td>
+<td class="ltx_td ltx_align_right ltx_border_t">s.e.</td>
+<td class="ltx_td ltx_align_right ltx_border_t"><img alt="p_{\text{Normal}}" class="m" src="m/e414b85eecb6.png" style="width:3.37em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_right ltx_border_t"><img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">class 1</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">0.051</td>
+<td class="ltx_td ltx_align_right">0.502</td>
+<td class="ltx_td ltx_align_right">0.919</td>
+<td class="ltx_td ltx_align_right">0.924</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right">0.050</td>
+<td class="ltx_td ltx_align_right">0.489</td>
+<td class="ltx_td ltx_align_right">0.919</td>
+<td class="ltx_td ltx_align_right">0.929</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">class 2</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">-0.158</td>
+<td class="ltx_td ltx_align_right">0.451</td>
+<td class="ltx_td ltx_align_right">0.726</td>
+<td class="ltx_td ltx_align_right">0.722</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right">-0.176</td>
+<td class="ltx_td ltx_align_right">0.452</td>
+<td class="ltx_td ltx_align_right">0.698</td>
+<td class="ltx_td ltx_align_right">0.700</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">class 3</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">0.005</td>
+<td class="ltx_td ltx_align_right">0.403</td>
+<td class="ltx_td ltx_align_right">0.990</td>
+<td class="ltx_td ltx_align_right">0.989</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right">-0.096</td>
+<td class="ltx_td ltx_align_right">0.385</td>
+<td class="ltx_td ltx_align_right">0.803</td>
+<td class="ltx_td ltx_align_right">0.806</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">class 4</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">-0.492</td>
+<td class="ltx_td ltx_align_right">0.447</td>
+<td class="ltx_td ltx_align_right">0.271</td>
+<td class="ltx_td ltx_align_right">0.288</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right">-0.511</td>
+<td class="ltx_td ltx_align_right">0.447</td>
+<td class="ltx_td ltx_align_right">0.253</td>
+<td class="ltx_td ltx_align_right">0.283</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">class 5</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">0.390</td>
+<td class="ltx_td ltx_align_right">0.369</td>
+<td class="ltx_td ltx_align_right">0.291</td>
+<td class="ltx_td ltx_align_right">0.314</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right">0.443</td>
+<td class="ltx_td ltx_align_right">0.318</td>
+<td class="ltx_td ltx_align_right">0.164</td>
+<td class="ltx_td ltx_align_right">0.186</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">all</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">-0.051</td>
+<td class="ltx_td ltx_align_right">0.204</td>
+<td class="ltx_td ltx_align_right">0.802</td>
+<td class="ltx_td ltx_align_right">0.800</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right ltx_border_b"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right ltx_border_b">-0.074</td>
+<td class="ltx_td ltx_align_right ltx_border_b">0.200</td>
+<td class="ltx_td ltx_align_right ltx_border_b">0.712</td>
+<td class="ltx_td ltx_align_right ltx_border_b">0.712</td></tr>
+</tbody>
+</table></div>
+</figure></div><div class="ltx_flex_cell ltx_flex_size_2">
+<figure class="ltx_table ltx_figure_panel ltx_align_center">
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">(b)</span> </span><span class="ltx_text" style="font-size:90%;">physician versus control</span></figcaption>
+<div class="overflow"><table class="ltx_tabular ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_border_t"></td>
+<td class="ltx_td ltx_align_right ltx_border_t">est</td>
+<td class="ltx_td ltx_align_right ltx_border_t">s.e.</td>
+<td class="ltx_td ltx_align_right ltx_border_t"><img alt="p_{\text{Normal}}" class="m" src="m/e414b85eecb6.png" style="width:3.37em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_right ltx_border_t"><img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">class 1</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">0.567</td>
+<td class="ltx_td ltx_align_right">0.426</td>
+<td class="ltx_td ltx_align_right">0.183</td>
+<td class="ltx_td ltx_align_right">0.192</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right">0.588</td>
+<td class="ltx_td ltx_align_right">0.418</td>
+<td class="ltx_td ltx_align_right">0.160</td>
+<td class="ltx_td ltx_align_right">0.174</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">class 2</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">0.193</td>
+<td class="ltx_td ltx_align_right">0.438</td>
+<td class="ltx_td ltx_align_right">0.659</td>
+<td class="ltx_td ltx_align_right">0.666</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right">0.265</td>
+<td class="ltx_td ltx_align_right">0.409</td>
+<td class="ltx_td ltx_align_right">0.517</td>
+<td class="ltx_td ltx_align_right">0.523</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">class 3</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">1.305</td>
+<td class="ltx_td ltx_align_right">0.494</td>
+<td class="ltx_td ltx_align_right">0.008</td>
+<td class="ltx_td ltx_align_right">0.012</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right">1.501</td>
+<td class="ltx_td ltx_align_right">0.462</td>
+<td class="ltx_td ltx_align_right">0.001</td>
+<td class="ltx_td ltx_align_right">0.003</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">class 4</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">-0.273</td>
+<td class="ltx_td ltx_align_right">0.413</td>
+<td class="ltx_td ltx_align_right">0.508</td>
+<td class="ltx_td ltx_align_right">0.515</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right">-0.313</td>
+<td class="ltx_td ltx_align_right">0.417</td>
+<td class="ltx_td ltx_align_right">0.454</td>
+<td class="ltx_td ltx_align_right">0.462</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">class 5</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">-0.050</td>
+<td class="ltx_td ltx_align_right">0.379</td>
+<td class="ltx_td ltx_align_right">0.895</td>
+<td class="ltx_td ltx_align_right">0.912</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right">-0.067</td>
+<td class="ltx_td ltx_align_right">0.279</td>
+<td class="ltx_td ltx_align_right">0.811</td>
+<td class="ltx_td ltx_align_right">0.816</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">all</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right"><span class="ltx_text ltx_font_smallcaps">N</span></td>
+<td class="ltx_td ltx_align_right">0.406</td>
+<td class="ltx_td ltx_align_right">0.202</td>
+<td class="ltx_td ltx_align_right">0.045</td>
+<td class="ltx_td ltx_align_right">0.047</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right ltx_border_b"><span class="ltx_text ltx_font_smallcaps">L</span></td>
+<td class="ltx_td ltx_align_right ltx_border_b">0.463</td>
+<td class="ltx_td ltx_align_right ltx_border_b">0.190</td>
+<td class="ltx_td ltx_align_right ltx_border_b">0.015</td>
+<td class="ltx_td ltx_align_right ltx_border_b">0.017</td></tr>
+</tbody>
+</table></div>
+</figure></div></div>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="S47.p3.1">Figure <a class="ltx_ref" href="#S47.F17" title="Figure 17 ‣ 47 A case study ‣ Chapter 8 Unification of the Fisherian and Neymanian Inferences in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17</span></a> compares the histograms of the randomization distributions of the robust <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>-statistics with the asymptotic approximations. In the subgroup analysis, we can observe discrepancies between the randomization distributions and <img alt="\textsc{N}(0,1)" class="m" src="m/2fef3e922101.png" style="width:3.28em;vertical-align:-0.36em"/>; averaged over all class levels, the discrepancy becomes unnoticeable. Overall, in this application, the <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values based on the Normal approximation do not differ substantially from those based on the FRTs. Two approaches yield coherent conclusions: the video with a physician telling the benefits of iron supplements improved academic performance and the effect was most significant among students in class 3; in contrast, the video with a famous soccer player telling the benefits of the iron supplements did not have any significant effect.</p>
+</div>
+<div class="ltx_figure ltx_transformed_outer" id="S47.F17" style="width:217.4pt;height:550pt;vertical-align:-0.0pt;"><div class="ltx_transformed_inner" style="width:550.0pt;transform:translate(-166.3pt,-166.3pt) rotate(-90deg) ;"><figure><img alt="插图" src="img/frt_dist_chong.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 17</span>: </span><span class="ltx_text" style="font-size:90%;">Re-analyzing <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib58" title="">Chong et al., (2016)</a></cite>’s data: randomization distributions with <img alt="5\times 10^{4}" class="m" src="m/a9627bcd5c92.png" style="width:3.40em;vertical-align:-0.19em"/> Monte Carlo draws and the <img alt="\textsc{N}(0,1)" class="m" src="m/2fef3e922101.png" style="width:3.28em;vertical-align:-0.36em"/> approximations</span></figcaption>
+</figure></div></div>
+</section>
+<section class="ltx_section" id="S48">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">48 </span>Homework Problems</h4>
+<section class="ltx_paragraph" id="S48.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">8.1 </span>Re-analyzing <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib10" title="">Angrist and Lavy, (2009)</a></cite>’s data</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S48.SS0.SSS0.P1.p1.1">This is the Fisherian counterpart of Problem <a class="ltx_ref" href="10.html#S42.SS0.SSS0.P8" title="7.8 Re-analyzing ( ) ’s data ‣ 42 Homework Problems ‣ Chapter 7 Matched-Pairs Experiment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7.8</span></a>.
+Report the <img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/>’s from the FRTs with studentized statistics.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S48.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">8.2 </span>Replication of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib349" title="">Zhao and Ding, 2021a ()</a></cite>’s Figure 1</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S48.SS0.SSS0.P2.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib349" title="">Zhao and Ding, 2021a ()</a></cite> use simulation to evaluate the finite-sample properties of the <img alt="p_{\textsc{frt}}" class="m" src="m/57be72e63fd5.png" style="width:1.95em;vertical-align:-0.31em"/>’s from the FRTs with various test statistics. Based on their Figure 1, they recommend using the FRT with <img alt="t_{\textsc{L,S}}" class="m" src="m/f1c16d20a4c4.png" style="width:1.78em;vertical-align:-0.41em"/> to analyze the SRE. Replicate their Figure 1.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S48.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">8.3 </span>Recommended readings</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S48.SS0.SSS0.P3.p1.1">Using the studentized statistics in permutation tests is not a new idea; see <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib174" title="">Janssen, (1997)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib59" title="">Chung and Romano, (2013)</a></cite>. Under the design-based framework, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib83" title="">Ding and Dasgupta, (2017)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib341" title="">Wu and Ding, (2021)</a></cite> made the recommendation for multiarmed experiments, and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib349" title="">Zhao and Ding, 2021a ()</a></cite> extended the recommendation to covariate adjustment.</p>
+</div>
+</section>
+</section>
+<section class="footnotes"><h4>脚注</h4><p id="fn-chapter8-24"><a href="#fn-chapter8-24-ref">24</a>. <img alt="\pi" class="m" src="m/0e03884f4576.png" style="width:0.84em;vertical-align:-0.12em"/> is a standard notation for a random permutation.</p></section></section><p class="nav bottom"><a href="index.html">目录</a><a href="10.html">← 上一章</a><a href="12.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

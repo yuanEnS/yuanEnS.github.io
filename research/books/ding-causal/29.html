@@ -1,0 +1,1099 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 26 Principal Stratification · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="28.html">← 上一章</a><a href="30.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter26">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 26 </span>Principal Stratification</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter26.p1.1">Parts <a class="ltx_ref" href="#Pt2" title="Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">II</span></a>–<a class="ltx_ref" href="#Pt5" title="Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">V</span></a> of this book focus on the causal effects of a treatment on an outcome, possibly adjusting for some observed pretreatment covariates. Many applications also have some post-treatment variable <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> which happens after the treatment and is related to the outcome. An important question is how to use the post-treatment variable <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> appropriately. I will start with several motivating examples and then introduce <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib111" title="">Frangakis and Rubin, (2002)</a></cite>’s formulation of this problem based on potential outcomes.</p>
+</div>
+<section class="ltx_section" id="S132">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">132 </span>Motivating Examples</h4>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample1n">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 26.1</span></span><span class="ltx_text ltx_font_bold"> (noncompliance)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1n.p1.1"><span class="ltx_text ltx_font_italic">In randomized experiments with noncompliance, we can use <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> to represent the treatment received, which is affected by the treatment assignment <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and affects the outcome <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>.
+In this example, <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> has the same meaning as <img alt="D" class="m" src="m/b718adec73e0.png" style="width:1.08em;vertical-align:-0.12em"/> in Chapter <a class="ltx_ref" href="24.html#chapter21" title="Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21</span></a>.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample2l">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 26.2</span></span><span class="ltx_text ltx_font_bold"> (truncation by death)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2l.p1.1"><span class="ltx_text ltx_font_italic">In randomized experiments to patients with severe diseases, some patients may die before the measurement of the outcome <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>, e.g., the quality of life. The post-treatment variable <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> in this example is the binary indicator of the survival status.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample3i">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 26.3</span></span><span class="ltx_text ltx_font_bold"> (unemployment)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample3i.p1.1"><span class="ltx_text ltx_font_italic">In job training programs, units are randomly assigned to treatment and control groups, and report their employment status <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> and wage <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>. Then the post-treatment variable is the binary indicator of the employment status <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample4g">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 26.4</span></span><span class="ltx_text ltx_font_bold"> (surrogate endpoint)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample4g.p1.1"><span class="ltx_text ltx_font_italic">In clinical trials, the outcomes of interest (e.g., 30 years of survival) require a long and costly follow-up. Practitioners instead collect data on some other variables early in the follow-up that are easy to measure. These variables are called the “surrogate endpoints.” A concrete example is from clinical trials on HIV patients, where the candidate surrogate endpoint <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> is the CD4 cell count (recall that CD4 cells are white blood cells that fight infection).</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S132.p1.1">Examples <a class="ltx_ref" href="#Thmexample1n" title="Example 26.1 (noncompliance) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a>–<a class="ltx_ref" href="#Thmexample4g" title="Example 26.4 (surrogate endpoint) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.4</span></a> above have the similarity that a variable <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> occurs after the treatment and is related to the outcome. It is possible that <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> is on the causal pathway from <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> to <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>. Figure <a class="ltx_ref" href="#S132.F42" title="Figure 42 ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">42</span></a>(a) illustrates this mechanism. Example <a class="ltx_ref" href="#Thmexample1n" title="Example 26.1 (noncompliance) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a> corresponds to Figure <a class="ltx_ref" href="#S132.F42" title="Figure 42 ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">42</span></a>(a). It is also possible that <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> is not on the causal pathway from <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> to <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>. Figure <a class="ltx_ref" href="#S132.F42" title="Figure 42 ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">42</span></a>(b) illustrates this mechanism. Examples <a class="ltx_ref" href="#Thmexample2l" title="Example 26.2 (truncation by death) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a> and <a class="ltx_ref" href="#Thmexample3i" title="Example 26.3 (unemployment) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.3</span></a> correspond to Figure <a class="ltx_ref" href="#S132.F42" title="Figure 42 ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">42</span></a>(b). Example <a class="ltx_ref" href="#Thmexample4g" title="Example 26.4 (surrogate endpoint) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.4</span></a> can correspond to Figure <a class="ltx_ref" href="#S132.F42" title="Figure 42 ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">42</span></a>(a) or (b), depending on the choice of the surrogate endpoint.</p>
+</div>
+<figure class="ltx_figure" id="S132.F42">
+<div class="ltx_flex_figure">
+<div class="ltx_flex_cell ltx_flex_size_1">
+<figure class="ltx_figure ltx_figure_panel ltx_align_center">
+<table class="ltx_equation ltx_centering ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_centering ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><span class="ltx_inline-block"><svg class="ltx_picture ltx_markedasmath" height="61.11" overflow="visible" style="vertical-align:-50.966255691547325px" version="1.1" viewbox="9.37 50.97 221.78 61.11" width="221.78"><g transform="matrix(1 0 0 -1 9.368795139159143 61.113360974903145) translate(0,3.46) translate(9.37,0)"><g transform="translate(140.53,0) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.79em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="10.96"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{U\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces}" class="m" src="m/aa510bdc2f53.png" style="width:1.04em;vertical-align:-0.12em"/></span></span></foreignobject></g><path d="M 140.6036710547794 -7.610350076103501 L 140.5972736380284 -7.6218569808206205" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(107.32,0) translate(0,-34.11)"><path d="M 0 0 A 13.84 13.84 45 0 0 7.14 2.14" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 3.69 6.47" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 140.6036710547794 -7.610350076103501 L 107.32321120964569 -34.10971707388526" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 107.32420354821762 -34.09468420019977 L 107.32321120964569 -34.10971707388526" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 159.37685884016753 -7.610350076103501 L 159.41868485529525 -7.644617427215217" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(193,0) translate(0,-35.36)"><path d="M 0 0 A 13.84 13.84 45 0 0 -3.57 6.54" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 -7.1 2.27" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 159.37685884016753 -7.610350076103501 L 192.99918988012618 -35.356769955008126" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 192.9760282755855 -35.30787088835703 L 192.99918988012618 -35.356769955008126" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(-9.37,0) translate(0,-43.36) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.75em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="10.44"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{Z\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces}" class="m" src="m/abc93640e228.png" style="width:0.99em;vertical-align:-0.12em"/></span></span></foreignobject></g><path d="M 9.36881625274578 -43.63264139549389 L 9.36881625274578 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(84.09,0) translate(0,-43.36)"><path d="M 0 0 A 13.84 13.84 45 0 0 -6.92 2.77" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 -6.92 -2.77" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 9.36881625274578 -43.63264139549389 L 84.08859588635715 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 84.08859588635715 -43.63264139549389 L 84.08859588635715 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(193.01,0) translate(0,-47.9)"><path d="M 0 0 A 13.84 13.84 45 0 0 -7.45 -0.27" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 -5.21 -5.33" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 0 -43.355905615443824 C 67.56810111360825 -76.5646848339452 135.1362022272165 -76.5646848339452 202.70430334082477 -43.355905615443824" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(84.09,0) translate(0,-43.36) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:1.08em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="14.93"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{M\ignorespaces\ignorespaces\ignorespaces\ignorespaces}" class="m" src="m/2d4ba7784520.png" style="width:1.30em;vertical-align:-0.12em"/></span></span></foreignobject></g><path d="M 107.32321120964569 -43.63264139549389 L 107.32321120964569 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(193,0) translate(0,-43.36)"><path d="M 0 0 A 13.84 13.84 45 0 0 -6.92 2.77" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 -6.92 -2.77" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 107.32321120964569 -43.63264139549389 L 192.99918988012618 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 192.99918988012618 -43.63264139549389 L 192.99918988012618 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(193,0) translate(0,-43.36) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.8em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="11.11"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{Y}" class="m" src="m/9017f04aa8cb.png" style="width:1.04em;vertical-align:-0.12em"/></span></span></foreignobject></g></g></svg></span></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">(a)</span> </span><img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/><span class="ltx_text" style="font-size:90%;"> is on the causal pathway from <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> to <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>, with <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> randomized and <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/> representing unmeasured confounding</span></figcaption>
+</figure></div><div class="ltx_flex_break"></div><div class="ltx_flex_cell ltx_flex_size_1">
+<figure class="ltx_figure ltx_figure_panel ltx_align_center">
+<table class="ltx_equation ltx_centering ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_centering ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><span class="ltx_inline-block"><svg class="ltx_picture ltx_markedasmath" height="61.11" overflow="visible" style="vertical-align:-50.966255691547325px" version="1.1" viewbox="9.37 50.97 221.78 61.11" width="221.78"><g transform="matrix(1 0 0 -1 9.368795139159143 61.113360974903145) translate(0,3.46) translate(9.37,0)"><g transform="translate(140.53,0) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.79em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="10.96"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{U\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces}" class="m" src="m/aa510bdc2f53.png" style="width:1.04em;vertical-align:-0.12em"/></span></span></foreignobject></g><path d="M 140.6036710547794 -7.610350076103501 L 140.5972736380284 -7.6218569808206205" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(107.32,0) translate(0,-34.11)"><path d="M 0 0 A 13.84 13.84 45 0 0 7.14 2.14" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 3.69 6.47" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 140.6036710547794 -7.610350076103501 L 107.32321120964569 -34.10971707388526" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 107.32420354821762 -34.09468420019977 L 107.32321120964569 -34.10971707388526" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 159.37685884016753 -7.610350076103501 L 159.41868485529525 -7.644617427215217" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(193,0) translate(0,-35.36)"><path d="M 0 0 A 13.84 13.84 45 0 0 -3.57 6.54" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 -7.1 2.27" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 159.37685884016753 -7.610350076103501 L 192.99918988012618 -35.356769955008126" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 192.9760282755855 -35.30787088835703 L 192.99918988012618 -35.356769955008126" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(-9.37,0) translate(0,-43.36) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.75em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="10.44"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{Z\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces}" class="m" src="m/abc93640e228.png" style="width:0.99em;vertical-align:-0.12em"/></span></span></foreignobject></g><path d="M 9.36881625274578 -43.63264139549389 L 9.36881625274578 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(84.09,0) translate(0,-43.36)"><path d="M 0 0 A 13.84 13.84 45 0 0 -6.92 2.77" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 -6.92 -2.77" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 9.36881625274578 -43.63264139549389 L 84.08859588635715 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 84.08859588635715 -43.63264139549389 L 84.08859588635715 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(193.01,0) translate(0,-47.9)"><path d="M 0 0 A 13.84 13.84 45 0 0 -7.45 -0.27" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 -5.21 -5.33" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 0 -43.355905615443824 C 67.56810111360825 -76.5646848339452 135.1362022272165 -76.5646848339452 202.70430334082477 -43.355905615443824" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(84.09,0) translate(0,-43.36) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:1.08em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="14.93"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{M}" class="m" src="m/0167bf116572.png" style="width:1.30em;vertical-align:-0.12em"/></span></span></foreignobject></g><g transform="translate(193,0) translate(0,-43.36) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.8em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="11.11"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{Y}" class="m" src="m/9017f04aa8cb.png" style="width:1.04em;vertical-align:-0.12em"/></span></span></foreignobject></g></g></svg></span></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">(b)</span> </span><img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/><span class="ltx_text" style="font-size:90%;"> is not on the causal pathway from <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> to <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>, with <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> randomized and <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/> representing unmeasured confounding</span></figcaption>
+</figure></div></div>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 42</span>: </span><span class="ltx_text" style="font-size:90%;">Causal diagrams with a post-treatment variable <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/></span></figcaption>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="S132.p2.1">In practice, the underlying causal diagrams can be much more complex than those in Figure <a class="ltx_ref" href="#S132.F42" title="Figure 42 ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">42</span></a>. This chapter follows <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib111" title="">Frangakis and Rubin, (2002)</a></cite>’s formulation which does not assume the underlying causal diagrams.</p>
+</div>
+</section>
+<section class="ltx_section" id="S133">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">133 </span>The Problem of Conditioning on the Post-Treatment Variable</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S133.p1.1">A naive method to deal with the post-treatment variable <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> is to condition on its observed value as if it were a pretreatment covariate. However, <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> is fundamentally different from <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, because <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> is affected by the treatment in general whereas <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> is not. It is also a “rule of thumb” that data analyzers should not condition on any post-treatment variables in evaluating the average causal effect of the treatment on the outcome <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib62" title="">Cochran,, 1957</a>; <a class="ltx_ref" href="35.html#bib.bib267" title="">Rosenbaum,, 1984</a>)</cite>. Based on potential outcomes, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib111" title="">Frangakis and Rubin, (2002)</a></cite> gave the following insightful explanation.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S133.p2.1">For simplicity, we focus on the CRE in this chapter.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption1g">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 26.1</span></span><span class="ltx_text ltx_font_bold"> (CRE with an intermediate variable)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption1g.p1.1"><span class="ltx_text ltx_font_italic">We have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z\ind \{M(1),M(0),Y(1),Y(0),X\}." class="m" src="m/21bdbd00a20c.png" style="width:14.72em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S133.p3.1">Conditioning on <img alt="M=m" class="m" src="m/fda4a9980d26.png" style="width:3.52em;vertical-align:-0.12em"/>, we compare</p>
+<table class="ltx_equation ltx_eqn_table" id="S133.E132">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(Y\mid Z=1,M=m)" class="m" src="m/735f856e3b20.png" style="width:9.93em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(132)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S133.p3.2">and</p>
+<table class="ltx_equation ltx_eqn_table" id="S133.E133">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(Y\mid Z=0,M=m)." class="m" src="m/494f805e3857.png" style="width:10.19em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(133)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S133.p3.3">This comparison seems intuitive because it measures the difference in the outcome distributions in the treated and control groups given the same value of the post-treatment variable. When <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> is a pre-treatment covariate, this comparison yields a reasonable subgroup effect. However, when <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> is a post-treatment variable, the interpretation of this comparison is problematic. Under Assumption <a class="ltx_ref" href="#Thmassumption1g" title="Assumption 26.1 (CRE with an intermediate variable) ‣ 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a>, we can re-write the probabilities in (<a class="ltx_ref" href="#S133.E132" title="In 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">132</span></a>) and (<a class="ltx_ref" href="#S133.E133" title="In 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">133</span></a>) as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(Y\mid Z=1,M=m)" class="m" src="m/53b26a0fa0ef.png" style="width:9.93em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}\{Y(1)\mid Z=1,M(1)=m\}" class="m" src="m/2ddafeb7345c.png" style="width:12.70em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}\{Y(1)\mid M(1)=m\}" class="m" src="m/8b781eccf84c.png" style="width:9.66em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S133.p3.4">and</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(Y\mid Z=0,M=m)" class="m" src="m/2d60e33be3eb.png" style="width:9.93em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}\{Y(0)\mid Z=0,M(0)=m\}" class="m" src="m/0aa31641f734.png" style="width:12.70em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}\{Y(0)\mid M(0)=m\}." class="m" src="m/12c9e7d52edd.png" style="width:9.95em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S133.p3.5">Therefore, under CRE, comparing (<a class="ltx_ref" href="#S133.E132" title="In 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">132</span></a>) and (<a class="ltx_ref" href="#S133.E133" title="In 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">133</span></a>) is equivalent to comparing the distributions of <img alt="Y(1)" class="m" src="m/ad64600ca3da.png" style="width:2.31em;vertical-align:-0.36em"/> and <img alt="Y(0)" class="m" src="m/1b485f154c2a.png" style="width:2.31em;vertical-align:-0.36em"/> for different subsets of units because the units with <img alt="M(1)=m" class="m" src="m/705c99ddce03.png" style="width:4.79em;vertical-align:-0.36em"/> are different from the units with <img alt="M(0)=m" class="m" src="m/92737b19c6cc.png" style="width:4.79em;vertical-align:-0.36em"/> if the <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> affects <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/>. Consequently, the comparison conditioning on <img alt="M=m" class="m" src="m/fda4a9980d26.png" style="width:3.52em;vertical-align:-0.12em"/> does not have a causal interpretation in general unless <img alt="M(1)=M(0)" class="m" src="m/09ff9d6b973c.png" style="width:6.29em;vertical-align:-0.36em"/>.<sup><a href="#fn-chapter26-51" id="fn-chapter26-51-ref">51</a></sup></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S133.p4.1">Revisit Example <a class="ltx_ref" href="#Thmexample1n" title="Example 26.1 (noncompliance) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a>. Comparing <img alt="\textup{pr}(Y\mid Z=1,M=1)" class="m" src="m/c5b455197a59.png" style="width:9.54em;vertical-align:-0.36em"/> and <img alt="\textup{pr}(Y\mid Z=0,M=1)" class="m" src="m/0fca4e884ec5.png" style="width:9.54em;vertical-align:-0.36em"/> is equivalent to comparing the treated potential outcomes for compliers and always-takers with the control potential outcomes for always-takers, under the monotonicity assumption that <img alt="M(1)\geq M(0)" class="m" src="m/754315eec5f0.png" style="width:6.29em;vertical-align:-0.36em"/>. Part 3 of Problem <a class="ltx_ref" href="25.html#S113.SS0.SSS0.P8" title="22.8 Problems of other analyses ‣ 113 Homework problems ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.8</span></a> has pointed out the drawbacks of this analysis.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S133.p5.1">Revisit Example <a class="ltx_ref" href="#Thmexample2l" title="Example 26.2 (truncation by death) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a>. If the treatment improves the survival status, the treatment can save more weak patients than the control. In this case, units with <img alt="M(1)=1" class="m" src="m/1b26e86296f5.png" style="width:4.43em;vertical-align:-0.36em"/> are weaker than units with <img alt="M(0)=1" class="m" src="m/0c687e957c4c.png" style="width:4.43em;vertical-align:-0.36em"/>, so the naive comparison gives biased results that are in favor of the control.</p>
+</div>
+</section>
+<section class="ltx_section" id="S134">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">134 </span>Conditioning on the Potential Values of the Post-Treatment Variable</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S134.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib111" title="">Frangakis and Rubin, (2002)</a></cite> proposed to condition on the joint potential value of the post-treatment variable <img alt="U=\{M(1),M(0)\}" class="m" src="m/8afd1ef55063.png" style="width:8.50em;vertical-align:-0.36em"/> and compare</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}\{Y(1)\mid M(1)=m_{1},M(0)=m_{0}\}" class="m" src="m/7de61dcf85bb.png" style="width:15.56em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S134.p1.2">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}\{Y(0)\mid M(1)=m_{1},M(0)=m_{0}\}" class="m" src="m/fa4cc88d2c81.png" style="width:15.56em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S134.p1.3">for some <img alt="(m_{1},m_{0})" class="m" src="m/ed5bf1938947.png" style="width:4.12em;vertical-align:-0.36em"/>. This is a comparison of the potential outcomes under treatment and control for the same subset of units with <img alt="M(1)=m_{1}" class="m" src="m/9c2dd4b3d709.png" style="width:5.25em;vertical-align:-0.36em"/> and <img alt="M(0)=m_{0}" class="m" src="m/a38a0c7ee89f.png" style="width:5.25em;vertical-align:-0.36em"/>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib111" title="">Frangakis and Rubin, (2002)</a></cite> called this strategy <span class="ltx_text ltx_font_italic">principal stratification</span>, viewing <img alt="\{M(1),M(0)\}" class="m" src="m/ec63805827bc.png" style="width:6.38em;vertical-align:-0.36em"/> as a pre-treatment covariate. Based on this idea, we can define</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau(m_{1},m_{0})=E\{Y(1)-Y(0)\mid M(1)=m_{1},M(0)=m_{0}\}" class="m" src="m/5baf39d0a545.png" style="width:24.48em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S134.p1.4">as the principal stratification average causal effect for the subgroup with <img alt="M(1)=m_{1},M(0)=m_{0}" class="m" src="m/f8f281cefabd.png" style="width:10.72em;vertical-align:-0.36em"/>. For a binary <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/>, we have four subgroups</p>
+<table class="ltx_equation ltx_eqn_table" id="S134.E134">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\left\{\begin{array}[]{rcl}\tau(1,1)&amp;=&amp;E\{Y(1)-Y(0)\mid M(1)=1,M(0)=1\},\\
+\tau(1,0)&amp;=&amp;E\{Y(1)-Y(0)\mid M(1)=1,M(0)=0\},\\
+\tau(0,1)&amp;=&amp;E\{Y(1)-Y(0)\mid M(1)=0,M(0)=1\},\\
+\tau(0,0)&amp;=&amp;E\{Y(1)-Y(0)\mid M(1)=0,M(0)=0\}.\end{array}\right." class="m" src="m/fd9ea15bfee4.png" style="width:24.91em;vertical-align:-2.26em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(134)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S134.p1.5">Since <img alt="\{M(1),M(0)\}" class="m" src="m/ec63805827bc.png" style="width:6.38em;vertical-align:-0.36em"/> is unaffected by the treatment, it is a covariate so <img alt="\tau(m_{1},m_{0})" class="m" src="m/d3bddb3a1a4d.png" style="width:4.65em;vertical-align:-0.36em"/> is a subgroup causal effect. For subgroups with <img alt="M(1)=M(0)" class="m" src="m/09ff9d6b973c.png" style="width:6.29em;vertical-align:-0.36em"/>, the treatment does not change the intermediate variable, so <img alt="\tau(1,1)" class="m" src="m/a6106dfd508d.png" style="width:3.01em;vertical-align:-0.36em"/> and <img alt="\tau(0,0)" class="m" src="m/e872f67fe691.png" style="width:3.01em;vertical-align:-0.36em"/> measure the <span class="ltx_text ltx_font_italic">dissociative effects</span>.
+For other subgroups with <img alt="m_{1}\neq m_{0}" class="m" src="m/07c54ce75225.png" style="width:4.22em;vertical-align:-0.31em"/>, the principal stratification average causal effects <img alt="\tau(m_{1},m_{0})" class="m" src="m/d3bddb3a1a4d.png" style="width:4.65em;vertical-align:-0.36em"/> measure the <span class="ltx_text ltx_font_italic">associative effects</span>. The terminology is from <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib111" title="">Frangakis and Rubin, (2002)</a></cite>, which does not assume that <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> is on the causal pathway from <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> to <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>. When we have Figure <a class="ltx_ref" href="#S132.F42" title="Figure 42 ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">42</span></a>(a), we can interpret the dissociative effects as direct effects of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> on <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> that act independent of <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/>, although we cannot simply interpret the associative effects as direct or indirect effects of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> on <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 26.1</span></span><span class="ltx_text ltx_font_bold"> (noncompliance)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1o.p1.1"><span class="ltx_text ltx_font_italic">With noncompliance, (<a class="ltx_ref" href="#S134.E134" title="In 134 Conditioning on the Potential Values of the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">134</span></a>) consists of the average causal effects for always takers, compliers, defiers, and never takers <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib166" title="">Imbens and Angrist,, 1994</a>; <a class="ltx_ref" href="35.html#bib.bib16" title="">Angrist et al.,, 1996</a>)</cite>.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 26.2</span></span><span class="ltx_text ltx_font_bold"> (truncation by death)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2m.p1.1"><span class="ltx_text ltx_font_italic">Because the outcome is well-defined only if the patient survives, three subgroup causal effects in (<a class="ltx_ref" href="#S134.E134" title="In 134 Conditioning on the Potential Values of the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">134</span></a>) are not meaningful, and the only well-defined subgroup effect is</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S134.E135"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau(1,1)=E\{Y(1)-Y(0)\mid M(1)=1,M(0)=1\}." class="m" src="m/90263dcfe5f6.png" style="width:21.46em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(135)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="Thmexample2m.p1.2"><span class="ltx_text ltx_font_italic">It is called the survivor average causal effect <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib288" title="">Rubin, 2006a, </a>)</cite>. It is the average causal effect of the treatment on the outcome for those units who survive regardless of the treatment status.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 26.3</span></span><span class="ltx_text ltx_font_bold"> (unemployment)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample3j.p1.1"><span class="ltx_text ltx_font_italic">The unemployment problem is isomorphic to the truncation-by-death problem because the wage is well-defined only if the unit is employed in the first place. Therefore, the only well-defined subgroup effect is (<a class="ltx_ref" href="#S134.E135" title="In Example 26.2 (truncation by death) ‣ 134 Conditioning on the Potential Values of the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">135</span></a>), the employed average causal effect. Previously, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib138" title="">Heckman, (1979)</a></cite> proposed a model, now called the Heckman Selection Model, to deal with unemployment in modeling the wage, viewing the wages of those unemployed as missing values<sup><a href="#fn-chapter26-52" id="fn-chapter26-52-ref">52</a></sup>. However, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib346" title="">Zhang and Rubin, (2003)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib347" title="">Zhang et al., (2009)</a></cite> argued that <img alt="\tau(1,1)" class="m" src="m/a6106dfd508d.png" style="width:3.01em;vertical-align:-0.36em"/> is a more meaningful quantity under the potential outcomes framework.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 26.4</span></span><span class="ltx_text ltx_font_bold"> (surrogate endpoint)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample4h.p1.1"><span class="ltx_text ltx_font_italic">Intuitively, we want to assess the effect of the treatment on the outcome via the effect of the treatment on the surrogate endpoint. Therefore, a good surrogate endpoint should satisfy two conditions: first, if the treatment does not affect the surrogate, then it does not affect the outcome either; second, if the treatment affects the surrogate, then it affects the outcome too. The first condition is called the “causal necessity” by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib111" title="">Frangakis and Rubin, (2002)</a></cite>, and the second condition is called the “causal sufficiency” by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib121" title="">Gilbert and Hudgens, (2008)</a></cite>. Based on (<a class="ltx_ref" href="#S134.E134" title="In 134 Conditioning on the Potential Values of the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">134</span></a>) for a binary surrogate endpoint, causal necessity requires that <img alt="\tau(1,1)" class="m" src="m/a6106dfd508d.png" style="width:3.01em;vertical-align:-0.36em"/> and <img alt="\tau(0,0)" class="m" src="m/e872f67fe691.png" style="width:3.01em;vertical-align:-0.36em"/> are zero, and causal sufficiency requires that <img alt="\tau(1,0)" class="m" src="m/6c32584681d4.png" style="width:3.01em;vertical-align:-0.36em"/> and <img alt="\tau(0,1)" class="m" src="m/26e2b77e630b.png" style="width:3.01em;vertical-align:-0.36em"/> are not zero.</span></p>
+</div>
+</div>
+</section>
+<section class="ltx_section" id="S135">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">135 </span>Statistical Inference and Its Difficulty</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.p1.1">In Example <a class="ltx_ref" href="#Thmexample1n" title="Example 26.1 (noncompliance) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a>, if we have randomization, monotonicity, and exclusion restriction, then we can identify the complier average causal effect <img alt="\tau(1,0)" class="m" src="m/6c32584681d4.png" style="width:3.01em;vertical-align:-0.36em"/>. This is the key result derived in Chapter <a class="ltx_ref" href="24.html#chapter21" title="Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.p2.1">However, in other examples, we cannot impose the exclusion restriction assumption. For instance, <img alt="\tau(1,1)" class="m" src="m/a6106dfd508d.png" style="width:3.01em;vertical-align:-0.36em"/> is the main parameter of interest in Examples <a class="ltx_ref" href="#Thmexample2l" title="Example 26.2 (truncation by death) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a> and <a class="ltx_ref" href="#Thmexample3i" title="Example 26.3 (unemployment) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.3</span></a>, and <img alt="\tau(1,1)" class="m" src="m/a6106dfd508d.png" style="width:3.01em;vertical-align:-0.36em"/> and <img alt="\tau(0,0)" class="m" src="m/e872f67fe691.png" style="width:3.01em;vertical-align:-0.36em"/> are both of interest in Example <a class="ltx_ref" href="#Thmexample4g" title="Example 26.4 (surrogate endpoint) ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.4</span></a>. Without the exclusion restriction assumption, it is very challenging to identify the principal stratification average causal effect. Sometimes, we cannot even impose the monotonicity assumption, and thus cannot identify the proportions of the latent strata in the first place.</p>
+</div>
+<section class="ltx_subsection" id="S135.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">135.1 </span>Special case: truncation by death with binary outcome</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.SS1.p1.1">I use the simple setting with a binary treatment, binary survival status, and binary outcome to illustrate the idea and especially the difficulty of statistical inference based on principal stratification.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.SS1.p2.1">In addition to Assumption <a class="ltx_ref" href="#Thmassumption1g" title="Assumption 26.1 (CRE with an intermediate variable) ‣ 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a>, we impose the monotonicity.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption2d">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 26.2</span></span><span class="ltx_text ltx_font_bold"> (monotonicity)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption2d.p1.1"><img alt="M(1)\geq M(0)" class="m" src="m/754315eec5f0.png" style="width:6.29em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic">.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.SS1.p3.1">Theorem <a class="ltx_ref" href="25.html#Thmtheorem1l" title="Theorem 22.1 ‣ 110 Disentangle Mixture Distributions ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.1</span></a> demonstrates that under Assumptions <a class="ltx_ref" href="#Thmassumption1g" title="Assumption 26.1 (CRE with an intermediate variable) ‣ 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a> and <a class="ltx_ref" href="#Thmassumption2d" title="Assumption 26.2 (monotonicity) ‣ 135.1 Special case: truncation by death with binary outcome ‣ 135 Statistical Inference and Its Difficulty ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a>, we can identify the proportions of the three latent strata by</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{(1,1)}" class="m" src="m/73e13a78fd6b.png" style="width:2.51em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(M=1\mid Z=0)," class="m" src="m/021ab3d2c157.png" style="width:8.58em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{(0,0)}" class="m" src="m/8e4497c3ff9a.png" style="width:2.51em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(M=0\mid Z=1)," class="m" src="m/b124266acce4.png" style="width:8.58em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{(1,0)}" class="m" src="m/d29f3631fd51.png" style="width:2.51em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(M=1\mid Z=1)-\textup{pr}(M=1\mid Z=0)." class="m" src="m/444f19f25dc8.png" style="width:17.85em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.SS1.p4.1">Our goal is to identify the survivor average causal effect <img alt="\tau(1,1)" class="m" src="m/a6106dfd508d.png" style="width:3.01em;vertical-align:-0.36em"/>. First, we can easily identify <img alt="E\{Y(0)\mid M(1)=1,M(0)=1\}" class="m" src="m/598f75c3cb7d.png" style="width:13.76em;vertical-align:-0.36em"/> because the observed group <img alt="(Z=0,M=1)" class="m" src="m/6932983bccd4.png" style="width:6.96em;vertical-align:-0.36em"/> consists of only survivors:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(0)\mid M(1)=1,M(0)=1\}=E(Y\mid Z=0,M=1)." class="m" src="m/2b74bb153c8f.png" style="width:24.52em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S135.SS1.p4.2">The key is then to identify <img alt="E\{Y(1)\mid M(1)=1,M(0)=1\}" class="m" src="m/2ce9b8a3ef8d.png" style="width:13.76em;vertical-align:-0.36em"/>. The observed group <img alt="(Z=1,M=1)" class="m" src="m/6d6470f95b0a.png" style="width:6.96em;vertical-align:-0.36em"/> is a mixture of two strata <img alt="(1,1)" class="m" src="m/0d3c089969d9.png" style="width:2.46em;vertical-align:-0.36em"/> and <img alt="(1,0)" class="m" src="m/e7ed655004eb.png" style="width:2.46em;vertical-align:-0.36em"/>, therefore we have</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1,M=1)" class="m" src="m/2b97d3fdfafd.png" style="width:9.40em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\pi_{(1,1)}}{\pi_{(1,1)}+\pi_{(1,0)}}E\{Y(1)\mid M(1)=1,M(0)=1\}" class="m" src="m/4f651ebe68b2.png" style="width:19.78em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle+\frac{\pi_{(1,0)}}{\pi_{(1,1)}+\pi_{(1,0)}}E\{Y(1)\mid M(1)=1,M(0)=0\}." class="m" src="m/34fdbc901c38.png" style="width:20.84em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S135.SS1.p4.3">We have two unknown parameters but only one equation in (<span class="ltx_ref ltx_missing_label ltx_ref_self"></span>). So we cannot uniquely determine <img alt="E\{Y(1)\mid M(1)=1,M(0)=1\}" class="m" src="m/2ce9b8a3ef8d.png" style="width:13.76em;vertical-align:-0.36em"/> from the above equation (<span class="ltx_ref ltx_missing_label ltx_ref_self"></span>). Nevertheless, (<span class="ltx_ref ltx_missing_label ltx_ref_self"></span>) contains some information about the quantity of interest.
+That is, <img alt="E\{Y(1)\mid M(1)=1,M(0)=1\}" class="m" src="m/2ce9b8a3ef8d.png" style="width:13.76em;vertical-align:-0.36em"/> is partially identified by Definition <a class="ltx_ref" href="21.html#Thmdefinition1k" title="Definition 18.1 (partial identification) ‣ 93 Manski-type worse-case bounds on the average causal effect without assumptions ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.1</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.SS1.p5.1">For a binary outcome <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>, we know that <img alt="E\{Y(1)\mid M(1)=1,M(0)=0\}" class="m" src="m/5d7a8630574b.png" style="width:13.76em;vertical-align:-0.36em"/> is bounded between 0 and 1, and consequently, <img alt="E\{Y(1)\mid M(1)=1,M(0)=1\}" class="m" src="m/2ce9b8a3ef8d.png" style="width:13.76em;vertical-align:-0.36em"/> is bounded between the solutions to the following two equations:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1,M=1)" class="m" src="m/2b97d3fdfafd.png" style="width:9.40em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\pi_{(1,1)}}{\pi_{(1,1)}+\pi_{(1,0)}}E\{Y(1)\mid M(1)=1,M(0)=1\}" class="m" src="m/4f651ebe68b2.png" style="width:19.78em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\qquad+\frac{\pi_{(1,0)}}{\pi_{(1,1)}+\pi_{(1,0)}}" class="m" src="m/8e0b791c6243.png" style="width:9.03em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S135.SS1.p5.2">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z=1,M=1)=\frac{\pi_{(1,1)}}{\pi_{(1,1)}+\pi_{(1,0)}}E\{Y(1)\mid M(1)=1,M(0)=1\}." class="m" src="m/4657bd63c99d.png" style="width:30.55em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S135.SS1.p5.3">Therefore, <img alt="E\{Y(1)\mid M(1)=1,M(0)=1\}" class="m" src="m/2ce9b8a3ef8d.png" style="width:13.76em;vertical-align:-0.36em"/> has lower bound</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{\{\pi_{(1,1)}+\pi_{(1,0)}\}E(Y\mid Z=1,M=1)-\pi_{(1,0)}}{\pi_{(1,1)}}," class="m" src="m/b8338e0f5649.png" style="width:20.19em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S135.SS1.p5.4">and upper bound</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{\{\pi_{(1,1)}+\pi_{(1,0)}\}E(Y\mid Z=1,M=1)}{\pi_{(1,1)}}." class="m" src="m/3ec6db29b83f.png" style="width:16.69em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S135.SS1.p5.5">We can then derive the bounds on <img alt="\tau(1,1)" class="m" src="m/a6106dfd508d.png" style="width:3.01em;vertical-align:-0.36em"/>, summarized in Theorem <a class="ltx_ref" href="#Thmtheorem1o" title="Theorem 26.1 ‣ 135.1 Special case: truncation by death with binary outcome ‣ 135 Statistical Inference and Its Difficulty ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a> below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1o">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 26.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1o.p1.1"><span class="ltx_text ltx_font_italic">Under Assumptions <a class="ltx_ref" href="#Thmassumption1g" title="Assumption 26.1 (CRE with an intermediate variable) ‣ 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a> and <a class="ltx_ref" href="#Thmassumption2d" title="Assumption 26.2 (monotonicity) ‣ 135.1 Special case: truncation by death with binary outcome ‣ 135 Statistical Inference and Its Difficulty ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a> with a binary <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>, we have</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\{\pi_{(1,1)}+\pi_{(1,0)}\}E(Y\mid Z=1,M=1)-\pi_{(1,0)}}{\pi_{(1,1)}}-E(Y\mid Z=0,M=1)" class="m" src="m/597530922db6.png" style="width:30.28em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\leq" class="m" src="m/e710b7dc81d4.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\tau(1,1)" class="m" src="m/f897aa512447.png" style="width:3.01em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\leq" class="m" src="m/e710b7dc81d4.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\{\pi_{(1,1)}+\pi_{(1,0)}\}E(Y\mid Z=1,M=1)}{\pi_{(1,1)}}-E(Y\mid Z=0,M=1)." class="m" src="m/73b19da745dc.png" style="width:27.05em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.SS1.p6.1">We can use <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib168" title="">Imbens and Manski, (2004)</a></cite>’s confidence interval for <img alt="\tau(1,1)" class="m" src="m/a6106dfd508d.png" style="width:3.01em;vertical-align:-0.36em"/> which involves two steps: first, we obtain the estimated lower and upper bounds <img alt="[\hat{l},\hat{u}]" class="m" src="m/f5bf7c56cbf6.png" style="width:2.12em;vertical-align:-0.36em"/> with estimated standard errors <img alt="(\text{se}_{l},\text{se}_{u})" class="m" src="m/449cadff15e5.png" style="width:3.95em;vertical-align:-0.36em"/>; second, we construct the confidence interval as <img alt="[\hat{l}-z_{1-\alpha}\text{se}_{l},\hat{u}+z_{1-\alpha}\text{se}_{u}]" class="m" src="m/445ab014580d.png" style="width:11.20em;vertical-align:-0.36em"/>, where <img alt="z_{1-\alpha}" class="m" src="m/c553e7f2e0e9.png" style="width:2.29em;vertical-align:-0.34em"/> is the <img alt="1-\alpha" class="m" src="m/39f63ed96c4c.png" style="width:2.60em;vertical-align:-0.19em"/> quantile of the standard Normal distribution. The validity of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib168" title="">Imbens and Manski, (2004)</a></cite>’s confidence interval relies on some regularity conditions. In most truncation by death problems, those conditions hold because the lower and upper bounds are quite different, and they are bounded away from the extreme values <img alt="-1" class="m" src="m/86249e228d94.png" style="width:1.52em;vertical-align:-0.19em"/> and <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/>. I omit the technical details here.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.SS1.p7.1">To summarize, this is a challenging problem since we cannot identify the parameter based on the observed data even with an infinite sample size. We can derive large-sample bounds for <img alt="\tau(1,1)" class="m" src="m/a6106dfd508d.png" style="width:3.01em;vertical-align:-0.36em"/> but the statistical inference based on the bounds is not standard. If we do not have monotonicity, the large-sample bounds have even more complex forms; see <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib346" title="">Zhang and Rubin, (2003)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib177" title="">Jiang et al., (2016, Appendix A)</a></cite>.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S135.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">135.2 </span>An application</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.SS2.p1.1">I use the data in <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib343" title="">Yang and Small, (2016)</a></cite> from the Acute Respiratory Distress Syndrome Network study which involves 861 patients with lung injury and acute respiratory distress syndrome. Patients were randomized to receive mechanical ventilation with either lower tidal volumes or traditional tidal volumes. The outcome is the binary indicator for whether patients could breathe without assistance by day 28. Table <a class="ltx_ref" href="#S135.T11" title="Table 11 ‣ 135.2 An application ‣ 135 Statistical Inference and Its Difficulty ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">11</span></a> summarizes the observed data.</p>
+</div>
+<figure class="ltx_table" id="S135.T11">
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">Table 11</span>: </span><span class="ltx_text" style="font-size:90%;">Data truncated by death with * indicating the outcomes for dead patients</span></figcaption><div class="ltx_flex_figure">
+<div class="ltx_flex_cell ltx_flex_size_2">
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_figure_panel ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_t" colspan="4">Treatment <img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_border_t"></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t">total</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center"><img alt="M=1" class="m" src="m/c2e628bf879e.png" style="width:3.16em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center">54</td>
+<td class="ltx_td ltx_align_center">268</td>
+<td class="ltx_td ltx_align_center">322</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="M=0" class="m" src="m/dea4120ae665.png" style="width:3.16em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b">*</td>
+<td class="ltx_td ltx_align_center ltx_border_b">*</td>
+<td class="ltx_td ltx_align_center ltx_border_b">109</td></tr>
+</tbody>
+</table></div></div><div class="ltx_flex_cell ltx_flex_size_2">
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_figure_panel ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t" colspan="4">Control <img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_border_t"></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t">total</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center"><img alt="M=1" class="m" src="m/c2e628bf879e.png" style="width:3.16em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center">59</td>
+<td class="ltx_td ltx_align_center">218</td>
+<td class="ltx_td ltx_align_center">277</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="M=0" class="m" src="m/dea4120ae665.png" style="width:3.16em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b">*</td>
+<td class="ltx_td ltx_align_center ltx_border_b">*</td>
+<td class="ltx_td ltx_align_center ltx_border_b">152</td></tr>
+</tbody>
+</table></div></div></div>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.SS2.p2.1">We first obtain the point estimators of the latent strata:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\pi}_{(1,1)}" class="m" src="m/393cad67e27d.png" style="width:2.51em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{277}{277+152}=0.646," class="m" src="m/b701eb800183.png" style="width:8.58em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\pi}_{(0,0)}" class="m" src="m/02471c6b2827.png" style="width:2.51em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{109}{109+322}=0.253," class="m" src="m/38ae532abc4b.png" style="width:8.58em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\pi}_{(1,0)}" class="m" src="m/309aed416754.png" style="width:2.51em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 1-0.646-0.253=0.101." class="m" src="m/9c750319325c.png" style="width:11.61em;vertical-align:-0.19em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S135.SS2.p2.2">The sample means of the outcome for surviving patients are</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{E}(Y\mid Z=1,M=1)" class="m" src="m/f505ce6e7189.png" style="width:9.40em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{54}{302}=0.168," class="m" src="m/319bc911c4b9.png" style="width:5.85em;vertical-align:-0.79em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{E}(Y\mid Z=0,M=1)" class="m" src="m/d4067f7af8c6.png" style="width:9.40em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{59}{277}=0.213." class="m" src="m/fb566a93bbdc.png" style="width:5.85em;vertical-align:-0.79em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S135.SS2.p2.3">The estimates for the bounds on <img alt="E\{Y(1)\mid M(1)=1,M(0)=1\}" class="m" src="m/2ce9b8a3ef8d.png" style="width:13.76em;vertical-align:-0.36em"/> are</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\left[\frac{(0.646+0.101)\times 0.168-0.101}{0.101},\frac{(0.646+0.101)\times 0.168}{0.101}\right]=[0.037,0.194]," class="m" src="m/6661b283be17.png" style="width:32.98em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S135.SS2.p2.4">so the bounds on <img alt="\tau(1,1)" class="m" src="m/a6106dfd508d.png" style="width:3.01em;vertical-align:-0.36em"/> are</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="[0.037-0.213,0.194-0.213]=[-0.176,-0.019]." class="m" src="m/4ac5c82d5c78.png" style="width:21.51em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S135.SS2.p2.5">Incorporating the sampling uncertainty based on the bootstrap, the confidence interval based on <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib168" title="">Imbens and Manski, (2004)</a></cite>’s method is <img alt="[-0.267,0.039]" class="m" src="m/200ba0eca591.png" style="width:6.58em;vertical-align:-0.36em"/>, which covers 0.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S135.SS3">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">135.3 </span>Extensions</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S135.SS3.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib346" title="">Zhang and Rubin, (2003)</a></cite> started the literature of large-sample bounds. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib157" title="">Imai, 2008a ()</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib193" title="">Lee, (2009)</a></cite> were two follow-up papers. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib56" title="">Cheng and Small, (2006)</a></cite> derived the bounds with multiple treatment arms. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib343" title="">Yang and Small, (2016)</a></cite> used a secondary outcome and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib342" title="">Yang and Ding, 2018a ()</a></cite> used detailed survival information to sharpen the bounds on the survivor average causal effect.</p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S136">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">136 </span>Principal score method</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.p1.1">Without additional assumptions, we can only derive bounds on the causal effects within principal strata, but cannot identify them in general. We must impose additional assumptions to achieve nonparametric identification of the <img alt="\tau(m_{1},m_{0})" class="m" src="m/d3bddb3a1a4d.png" style="width:4.65em;vertical-align:-0.36em"/>’s. There is no consensus on the choice of the assumptions. Those additional assumptions are not testable, and their plausibility depends on the application.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.p2.1">A line of research based on the <span class="ltx_text ltx_font_italic">principal score</span> under the <span class="ltx_text ltx_font_italic">principal ignorability</span> assumption parallels causal inference with unconfounded observational studies. For simplicity, I focus on the case with strong monotonicity.</p>
+</div>
+<section class="ltx_subsection" id="S136.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">136.1 </span>Principal score method under strong monotonicity</h5>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption3b">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 26.3</span></span><span class="ltx_text ltx_font_bold"> (strong monotonicity)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption3b.p1.1"><img alt="M(0)=0" class="m" src="m/0e7e08312e0c.png" style="width:4.43em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic">.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.SS1.p1.1">Similar to the ignorability assumption, we now assume the <span class="ltx_text ltx_font_italic">principal ignorability</span> assumption.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption4a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 26.4</span></span><span class="ltx_text ltx_font_bold"> (principal ignorability)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption4a.p1.1"><span class="ltx_text ltx_font_italic">We have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(0)\mid M(1)=1,X\}=E\{Y(0)\mid M(1)=0,X\}." class="m" src="m/fe18224e4ae3.png" style="width:22.36em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.SS1.p2.1">Assumption <a class="ltx_ref" href="#Thmassumption4a" title="Assumption 26.4 (principal ignorability) ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.4</span></a> implies that
+<img alt="E\{Y(0)\mid M(1),X\}=E\{Y(0)\mid X\}" class="m" src="m/0dbd818ea588.png" style="width:15.61em;vertical-align:-0.36em"/>
+or, equivalently,</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)M(1)\mid X\}=E\{Y(0)\mid X\}E\{M(1)\mid X\}," class="m" src="m/4875645477fc.png" style="width:21.32em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(137)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S136.SS1.p2.2">that is, <img alt="Y(0)" class="m" src="m/1b485f154c2a.png" style="width:2.31em;vertical-align:-0.36em"/> and <img alt="M(1)" class="m" src="m/060adcd7658d.png" style="width:2.58em;vertical-align:-0.36em"/> are mean independent (or uncorrelated) given <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.SS1.p3.1">Assumptions <a class="ltx_ref" href="#Thmassumption1g" title="Assumption 26.1 (CRE with an intermediate variable) ‣ 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a>, <a class="ltx_ref" href="#Thmassumption3b" title="Assumption 26.3 (strong monotonicity) ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.3</span></a> and <a class="ltx_ref" href="#Thmassumption4a" title="Assumption 26.4 (principal ignorability) ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.4</span></a> ensure nonparametric identification of the causal effects within principal strata, as summarized by Theorem <a class="ltx_ref" href="#Thmtheorem2j" title="Theorem 26.2 ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a> below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem2j">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 26.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem2j.p1.1"><span class="ltx_text ltx_font_italic">Under Assumptions <a class="ltx_ref" href="#Thmassumption1g" title="Assumption 26.1 (CRE with an intermediate variable) ‣ 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a>, <a class="ltx_ref" href="#Thmassumption3b" title="Assumption 26.3 (strong monotonicity) ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.3</span></a> and <a class="ltx_ref" href="#Thmassumption4a" title="Assumption 26.4 (principal ignorability) ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.4</span></a>,</span></p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item"></span>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.I1.p1.1"><span class="ltx_text ltx_font_italic">[(a)]</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.I1.i1.p1.1"><span class="ltx_text ltx_font_italic">the conditional and marginal probabilities of </span><img alt="M(1)" class="m" src="m/060adcd7658d.png" style="width:2.58em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic">,
+</span><img alt="\pi(X)=\textup{pr}\{M(1)=1\mid X\}" class="m" src="m/6898b294658f.png" style="width:11.73em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> and </span><img alt="\pi=\textup{pr}\{M(1)=1\}" class="m" src="m/7f3a682e805d.png" style="width:8.31em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic">, can be identified by</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\pi(X)=\textup{pr}(M=1\mid Z=1,X)" class="m" src="m/d481599e2f47.png" style="width:13.27em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S136.I1.i1.p1.2"><span class="ltx_text ltx_font_italic">and</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\pi=\textup{pr}(M=1\mid Z=1)" class="m" src="m/7f575e4b9531.png" style="width:10.24em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S136.I1.i1.p1.3"><span class="ltx_text ltx_font_italic">respectively;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.I1.i2.p1.1"><span class="ltx_text ltx_font_italic">the principal stratification average causal effects can be identified by</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau(1,0)=E(Y\mid Z=1,M=1)-E\{\pi(X)Y\mid Z=0\}/\pi" class="m" src="m/ab975bbeb831.png" style="width:24.14em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S136.I1.i2.p1.2"><span class="ltx_text ltx_font_italic">and</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau(0,0)=E(Y\mid Z=1,M=0)-E\{(1-\pi(X))Y\mid Z=0\}/(1-\pi)." class="m" src="m/786d305c246b.png" style="width:29.41em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div></li>
+</ol>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.SS1.p4.1">The conditional probability <img alt="\pi(X)=\textup{pr}\{M(1)=1\mid X\}" class="m" src="m/6898b294658f.png" style="width:11.73em;vertical-align:-0.36em"/> is called the <span class="ltx_text ltx_font_italic">principal score</span>. Theorem <a class="ltx_ref" href="#Thmtheorem2j" title="Theorem 26.2 ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a> states that <img alt="\tau(1,0)" class="m" src="m/6c32584681d4.png" style="width:3.01em;vertical-align:-0.36em"/> and <img alt="\tau(0,0)" class="m" src="m/e872f67fe691.png" style="width:3.01em;vertical-align:-0.36em"/> can be identified by the difference in means with appropriate weights depending on the principal score.</p>
+</div>
+<div class="ltx_para ltx_noindent">
+<p class="ltx_p" id="S136.SS1.p5.1"><span class="ltx_text ltx_font_bold">Proof of Theorem <a class="ltx_ref" href="#Thmtheorem2j" title="Theorem 26.2 ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a>:</span>
+I will only prove the result for <img alt="\tau(1,0)" class="m" src="m/6c32584681d4.png" style="width:3.01em;vertical-align:-0.36em"/>.
+We have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z=1,M=1)=E\{Y(1)\mid Z=1,M(1)=1\}=E\{Y(1)\mid M(1)=1\}." class="m" src="m/bf63ddb1e365.png" style="width:33.17em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S136.SS1.p5.2">Moreover,</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{\pi(X)Y\mid Z=0\}/\pi" class="m" src="m/1ec927d158dc.png" style="width:9.66em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{\pi(X)Y(0)\mid Z=0\}/\pi" class="m" src="m/32c6dadaac6a.png" style="width:10.94em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{\pi(X)Y(0)\}/\pi\qquad(\text{Assumption }\ref{assume::complete-randomization-withM})" class="m" src="m/ef9dd4c8bf5a.png" style="width:16.91em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[E\{\pi(X)Y(0)\mid X\}\right]/\pi\qquad(\text{tower property})" class="m" src="m/4d47183beeed.png" style="width:20.19em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[\pi(X)E\{Y(0)\mid X\}\right]/\pi" class="m" src="m/d83e1d51fd8d.png" style="width:10.94em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[E\{M(1)\mid X\}E\{Y(0)\mid X\}\right]/\pi" class="m" src="m/4a638f918887.png" style="width:14.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[E\{M(1)Y(0)\mid X\}\right]/\pi\qquad(\text{by }\eqref{eq::mean-independent})" class="m" src="m/956d816e1f85.png" style="width:17.03em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{M(1)Y(0)\}/\pi" class="m" src="m/dcca29ce6df1.png" style="width:7.56em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid M(1)=1\}." class="m" src="m/6ca3999ed193.png" style="width:9.42em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S136.SS1.p5.3">I relegate the proof of the result for <img alt="\tau(0,0)" class="m" src="m/e872f67fe691.png" style="width:3.01em;vertical-align:-0.36em"/> as Problem <a class="ltx_ref" href="#S138.SS0.SSS0.P1" title="26.1 Complete the proof of Theorem ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a>.
+ <img alt="\square" class="m" src="m/57d1afee0594.png" style="width:1.01em;vertical-align:-0.12em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.SS1.p6.1">Theorem <a class="ltx_ref" href="#Thmtheorem2j" title="Theorem 26.2 ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a> motivates the following simple estimators for <img alt="\tau(1,0)" class="m" src="m/6c32584681d4.png" style="width:3.01em;vertical-align:-0.36em"/> and <img alt="\tau(0,0)" class="m" src="m/e872f67fe691.png" style="width:3.01em;vertical-align:-0.36em"/>, respectively:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.I2.i1.p1.1">fit a logistic regression of <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> using only data from the treated group to obtain <img alt="\hat{\pi}(X_{i})" class="m" src="m/3ce71e723313.png" style="width:2.77em;vertical-align:-0.36em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.I2.i2.p1.1">estimate <img alt="\pi" class="m" src="m/0e03884f4576.png" style="width:0.84em;vertical-align:-0.12em"/> by <img alt="\hat{\pi}=\sum_{i=1}^{n}Z_{i}M_{i}/\sum_{i=1}^{n}Z_{i}" class="m" src="m/f52cf6ee45a3.png" style="width:11.30em;vertical-align:-0.41em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.I2.i3.p1.1">obtain moment estimators:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}(1,0)=\frac{\sum_{i=1}^{n}Z_{i}M_{i}Y_{i}}{\sum_{i=1}^{n}Z_{i}M_{i}}-\frac{\sum_{i=1}^{n}(1-Z_{i})\hat{\pi}(X_{i})Y_{i}}{\hat{\pi}\sum_{i=1}^{n}(1-Z_{i})}" class="m" src="m/c30d939eeb31.png" style="width:21.22em;vertical-align:-1.11em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S136.I2.i3.p1.2">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}(0,0)=\frac{\sum_{i=1}^{n}Z_{i}(1-M_{i})Y_{i}}{\sum_{i=1}^{n}Z_{i}(1-M_{i})}-\frac{\sum_{i=1}^{n}(1-Z_{i})(1-\hat{\pi}(X_{i})\}Y_{i}}{(1-\hat{\pi})\sum_{i=1}^{n}(1-Z_{i})};" class="m" src="m/0fcfc4cd5f21.png" style="width:26.60em;vertical-align:-1.11em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">4.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.I2.i4.p1.1">use the bootstrap to approximate the variances of <img alt="\hat{\tau}(1,0)" class="m" src="m/33dd2e747b2c.png" style="width:3.01em;vertical-align:-0.36em"/> and <img alt="\hat{\tau}(0,0)" class="m" src="m/e36b42dccefe.png" style="width:3.01em;vertical-align:-0.36em"/>.</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section class="ltx_subsection" id="S136.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">136.2 </span>An example</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.SS2.p1.1">The following function can compute the point estimates of <img alt="\hat{\tau}(1,0)" class="m" src="m/33dd2e747b2c.png" style="width:3.01em;vertical-align:-0.36em"/> and <img alt="\hat{\tau}(0,0)" class="m" src="m/e36b42dccefe.png" style="width:3.01em;vertical-align:-0.36em"/>.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">psw</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">function</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>probabilities<span class="ltx_text ltx_lst_space"> </span>of<span class="ltx_text ltx_lst_space"> </span>10<span class="ltx_text ltx_lst_space"> </span>and<span class="ltx_text ltx_lst_space"> </span>00</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.10</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.10</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>conditional<span class="ltx_text ltx_lst_space"> </span>probabilities<span class="ltx_text ltx_lst_space"> </span>of<span class="ltx_text ltx_lst_space"> </span>10<span class="ltx_text ltx_lst_space"> </span>and<span class="ltx_text ltx_lst_space"> </span>00</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">ps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.10</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">glm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">binomial</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">weights</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">fitted</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">values</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">ps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">ps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.10</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>PCEs<span class="ltx_text ltx_lst_space"> </span>10<span class="ltx_text ltx_lst_space"> </span>and<span class="ltx_text ltx_lst_space"> </span>00</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tau</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.10</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1&amp;</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1])</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==0]*</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">ps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.10[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==0])/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.10</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tau</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1&amp;</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==0])</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==0]*</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">ps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.00[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==0])/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.00</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tau</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.10,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tau</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.00)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">}</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.SS2.p3.1">The following function can compute the point estimators as well as the bootstrap standard errors.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">psw</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">function</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">500){</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>point<span class="ltx_text ltx_lst_space"> </span>estimates</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">point</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">psw</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>bootstrap<span class="ltx_text ltx_lst_space"> </span>standard<span class="ltx_text ltx_lst_space"> </span>errors</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">length</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">replicate</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">id</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sample</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1:</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">replace</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">TRUE</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">psw</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">id</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">],</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">id</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">],</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">id</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">],</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">id</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">})</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">apply</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sd</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>results</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rbind</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">point</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rownames</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"est"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"se"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">colnames</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"tau10"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"tau00"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">return</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">}</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.SS2.p4.1">Revisit the data used in Chapter <a class="ltx_ref" href="24.html#S107" title="107 Application ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">107</span></a>. Previously, we assumed exclusion restriction for the IV analysis. Now, we drop the exclusion restriction but assume principal ignorability. The results are below.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">jobsdata</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">read</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">csv</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"jobsdata.csv"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">getX</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">treat</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">sex</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">age</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">marital</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nonwhite</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">educ</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">income</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">jobsdata</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">model</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">matrix</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">getX</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">jobsdata</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">treat</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">jobsdata</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">comply</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">jobsdata</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">job</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">seek</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">table</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">299</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">228</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">372</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">psw</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">M</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">X</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tau10</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tau00</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.1694979</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.09904909</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.1042405</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.15612983</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.SS2.p6.1">The point estimator <img alt="\hat{\tau}(1,0)" class="m" src="m/33dd2e747b2c.png" style="width:3.01em;vertical-align:-0.36em"/> does not differ much from the one based on the IV analysis. The point estimator <img alt="\hat{\tau}(0,0)" class="m" src="m/e36b42dccefe.png" style="width:3.01em;vertical-align:-0.36em"/> is close to zero with a large standard error. In this example, exclusion restriction seems a reasonable assumption.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S136.SS3">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">136.3 </span>Extensions</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S136.SS3.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib109" title="">Follmann, (2000)</a></cite>, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib142" title="">Hill et al., (2002)</a></cite>, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib180" title="">Jo and Stuart, (2009)</a></cite>, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib181" title="">Jo et al., (2011)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib309" title="">Stuart and Jo, (2015)</a></cite> started the literature of using the principal score to identify causal effects within principal strata. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib89" title="">Ding and Lu, (2017)</a></cite> provided a theoretical foundation for this strategy. They proved Theorem <a class="ltx_ref" href="#Thmtheorem2j" title="Theorem 26.2 ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a> as well as a more general version under monotonicity; see Problem <a class="ltx_ref" href="#S138.SS0.SSS0.P2" title="26.2 Principal score method under monotonicity ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a>.</p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S137">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">137 </span>Other methods</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S137.p1.1">To estimate principal stratification average causal effects without the exclusion restriction assumption, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib347" title="">Zhang et al., (2009)</a></cite> proposed to use the Normal mixture models. However, the inference based on the Normal mixture models can be quite fragile. A strategy is to use additional information to improve the inference under some restrictions <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib86" title="">Ding et al.,, 2011</a>; <a class="ltx_ref" href="35.html#bib.bib225" title="">Mealli and Pacini,, 2013</a>; <a class="ltx_ref" href="35.html#bib.bib221" title="">Mattei et al.,, 2013</a>; <a class="ltx_ref" href="35.html#bib.bib177" title="">Jiang et al.,, 2016</a>)</cite>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S137.p2.1">Conceptually, the principal stratification framework works for general <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/>. A multi-valued <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> generates many latent principal strata, and a continuous <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> generates infinitely many latent principal strata. In those cases, identifying the probability of the principal strata is non-trivial in the first place let alone identifying the principal stratification average causal effects. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib176" title="">Jiang and Ding, (2021)</a></cite> reviewed some useful strategies.</p>
+</div>
+</section>
+<section class="ltx_section" id="S138">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">138 </span>Homework problems</h4>
+<section class="ltx_paragraph" id="S138.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">26.1 </span>Complete the proof of Theorem <a class="ltx_ref" href="#Thmtheorem2j" title="Theorem 26.2 ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.SS0.SSS0.P1.p1.1">Prove the result for <img alt="\tau(0,0)" class="m" src="m/e872f67fe691.png" style="width:3.01em;vertical-align:-0.36em"/> in Theorem <a class="ltx_ref" href="#Thmtheorem2j" title="Theorem 26.2 ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S138.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">26.2 </span>Principal score method under monotonicity</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.SS0.SSS0.P2.p1.1">This problem extends Theorem <a class="ltx_ref" href="#Thmtheorem2j" title="Theorem 26.2 ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a>, with Assumption <a class="ltx_ref" href="#Thmassumption3b" title="Assumption 26.3 (strong monotonicity) ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.3</span></a> replaced by Assumption <a class="ltx_ref" href="#Thmassumption2d" title="Assumption 26.2 (monotonicity) ‣ 135.1 Special case: truncation by death with binary outcome ‣ 135 Statistical Inference and Its Difficulty ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a> and Assumption <a class="ltx_ref" href="#Thmassumption4a" title="Assumption 26.4 (principal ignorability) ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.4</span></a> replaced by Assumption <a class="ltx_ref" href="#Thmassumption5a" title="Assumption 26.5 (principal ignorability) ‣ 26.2 Principal score method under monotonicity ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.5</span></a> below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption5a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 26.5</span></span><span class="ltx_text ltx_font_bold"> (principal ignorability)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption5a.p1.1"><span class="ltx_text ltx_font_italic">We have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(1)\mid M(1)=1,M(0)=0,X\}=E\{Y(1)\mid M(1)=1,M(0)=1,X\}" class="m" src="m/e6280880aaa4.png" style="width:31.34em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmassumption5a.p1.2"><span class="ltx_text ltx_font_italic">and</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(0)\mid M(1)=1,M(0)=0,X\}=E\{Y(0)\mid M(1)=0,M(0)=0,X\}." class="m" src="m/743c26cd819e.png" style="width:31.61em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem3h">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 26.3</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem3h.p1.1"><span class="ltx_text ltx_font_italic">Under Assumptions <a class="ltx_ref" href="#Thmassumption1g" title="Assumption 26.1 (CRE with an intermediate variable) ‣ 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a>, <a class="ltx_ref" href="#Thmassumption2d" title="Assumption 26.2 (monotonicity) ‣ 135.1 Special case: truncation by death with binary outcome ‣ 135 Statistical Inference and Its Difficulty ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a> and <a class="ltx_ref" href="#Thmassumption5a" title="Assumption 26.5 (principal ignorability) ‣ 26.2 Principal score method under monotonicity ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.5</span></a>,</span></p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item"></span>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.I1.p1.1"><span class="ltx_text ltx_font_italic">[(a)]</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.I1.i1.p1.1"><span class="ltx_text ltx_font_italic">the conditional and marginal principal scores can be identified by</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{(0,0)}(X)" class="m" src="m/66db12d81b55.png" style="width:4.19em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(M=0\mid Z=1,X)," class="m" src="m/191543341240.png" style="width:9.93em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{(1,1)}(X)" class="m" src="m/623fdf75d01d.png" style="width:4.19em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(M=1\mid Z=0,X)," class="m" src="m/4b999537a9d9.png" style="width:9.93em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{(1,0)}(X)" class="m" src="m/4f6c8e3d8c94.png" style="width:4.19em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(M=1\mid Z=1,X)-\textup{pr}(M=1\mid Z=0,X)." class="m" src="m/7b78e7ee99f4.png" style="width:20.55em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S138.I1.i1.p1.2"><span class="ltx_text ltx_font_italic">and</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{(0,0)}" class="m" src="m/8e4497c3ff9a.png" style="width:2.51em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(M=0\mid Z=1)," class="m" src="m/b124266acce4.png" style="width:8.58em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{(1,1)}" class="m" src="m/73e13a78fd6b.png" style="width:2.51em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(M=1\mid Z=0)," class="m" src="m/021ab3d2c157.png" style="width:8.58em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{(1,0)}" class="m" src="m/d29f3631fd51.png" style="width:2.51em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(M=1\mid Z=1)-\textup{pr}(M=1\mid Z=0)" class="m" src="m/7f82ba0d7564.png" style="width:17.56em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S138.I1.i1.p1.3"><span class="ltx_text ltx_font_italic">respectively;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.I1.i2.p1.1"><span class="ltx_text ltx_font_italic">the principal stratification average causal effects can be identified by</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau(1,0)" class="m" src="m/6a6e894e0af4.png" style="width:3.01em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left\{w_{1,(1,0)}(X)Y\mid Z=1,M=1\right\}" class="m" src="m/0129e5d5a9fa.png" style="width:14.69em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle-E\left\{w_{0,(1,0)}(X)Y\mid Z=0,M=0\right\}," class="m" src="m/cffe6c6bbf30.png" style="width:15.90em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau(0,0)" class="m" src="m/a1654a256a72.png" style="width:3.01em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1,M=0)-E\left\{w_{0,(0,0)}(X)Y\mid Z=0,M=0\right\}," class="m" src="m/722dc65de605.png" style="width:25.51em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau(1,1)" class="m" src="m/f897aa512447.png" style="width:3.01em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left\{w_{1,(1,1)}(X)Y\mid Z=1,M=1\right\}-E(Y\mid Z=0,M=1)" class="m" src="m/32d58ebed83d.png" style="width:25.05em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S138.I1.i2.p1.2"><span class="ltx_text ltx_font_italic">with</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle w_{1,(1,0)}(X)" class="m" src="m/47bb351691c4.png" style="width:4.99em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\pi_{(1,0)}(X)}{\pi_{(1,0)}(X)+\pi_{(1,1)}(X)}\Big/\frac{\pi_{(1,0)}}{\pi_{(1,0)}+\pi_{(1,1)}}," class="m" src="m/6b67e9182337.png" style="width:16.74em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle w_{0,(1,0)}(X)" class="m" src="m/b152f6061cf2.png" style="width:4.99em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\pi_{(1,0)}(X)}{\pi_{(1,0)}(X)+\pi_{(0,0)}(X)}\Big/\frac{\pi_{(1,0)}}{\pi_{(1,0)}+\pi_{(0,0)}}," class="m" src="m/5bb42d372230.png" style="width:16.74em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle w_{0,(0,0)}(X)" class="m" src="m/1e33fa6e7042.png" style="width:4.99em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\pi_{(0,0)}(X)}{\pi_{(1,0)}(X)+\pi_{(0,0)}(X)}\Big/\frac{\pi_{(0,0)}}{\pi_{(1,0)}+\pi_{(0,0)}}," class="m" src="m/5225ecd70792.png" style="width:16.74em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle w_{1,(1,1)}(X)" class="m" src="m/379c30259468.png" style="width:4.99em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\pi_{(1,1)}(X)}{\pi_{(1,0)}(X)+\pi_{(1,1)}(X)}\Big/\frac{\pi_{(1,1)}}{\pi_{(1,0)}+\pi_{(1,1)}}." class="m" src="m/13ca8f25a7ff.png" style="width:16.74em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+</div></li>
+</ol>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.SS0.SSS0.P2.p2.1">Remark:
+Based on Theorem <a class="ltx_ref" href="#Thmtheorem3h" title="Theorem 26.3 ‣ 26.2 Principal score method under monotonicity ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.3</span></a>, we can construct weighting estimators. Theorem <a class="ltx_ref" href="#Thmtheorem3h" title="Theorem 26.3 ‣ 26.2 Principal score method under monotonicity ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.3</span></a> is Proposition 2 in <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib89" title="">Ding and Lu, (2017)</a></cite>, which also provided more details for the estimation.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S138.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">26.3 </span>Principal score method in observational studies</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.SS0.SSS0.P3.p1.1">This problem extends Theorem <a class="ltx_ref" href="#Thmtheorem2j" title="Theorem 26.2 ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a>, with Assumption <a class="ltx_ref" href="#Thmassumption1g" title="Assumption 26.1 (CRE with an intermediate variable) ‣ 133 The Problem of Conditioning on the Post-Treatment Variable ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.1</span></a> replaced by the ignorability assumption below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption6">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 26.6</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption6.p1.1"><img alt="Z\ind \{M(1),M(0),Y(1),Y(0)\}\mid X." class="m" src="m/c8c527eec65f.png" style="width:15.06em;vertical-align:-0.36em"/><span class="ltx_text"></span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.SS0.SSS0.P3.p2.1">Recall the definition of the propensity score <img alt="e(X)=\textup{pr}(Z=1\mid X)" class="m" src="m/d7c623616eee.png" style="width:9.78em;vertical-align:-0.36em"/>.
+We have the following identification result.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem4c">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 26.4</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem4c.p1.1"><span class="ltx_text ltx_font_italic">Under Assumptions <a class="ltx_ref" href="#Thmassumption6" title="Assumption 26.6 ‣ 26.3 Principal score method in observational studies ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.6</span></a>, <a class="ltx_ref" href="#Thmassumption3b" title="Assumption 26.3 (strong monotonicity) ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.3</span></a> and <a class="ltx_ref" href="#Thmassumption4a" title="Assumption 26.4 (principal ignorability) ‣ 136.1 Principal score method under strong monotonicity ‣ 136 Principal score method ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.4</span></a>,</span></p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item"></span>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.I2.p1.1"><span class="ltx_text ltx_font_italic">[(a)]</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.I2.i1.p1.1"><span class="ltx_text ltx_font_italic">the conditional and marginal probabilities of </span><img alt="M(1)" class="m" src="m/060adcd7658d.png" style="width:2.58em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic">,
+</span><img alt="\pi(X)=\textup{pr}\{M(1)=1\mid X\}" class="m" src="m/6898b294658f.png" style="width:11.73em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> and </span><img alt="\pi=\textup{pr}\{M(1)=1\}" class="m" src="m/7f3a682e805d.png" style="width:8.31em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic">, can be identified by</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\pi(X)=\textup{pr}(M=1\mid Z=1,X)" class="m" src="m/d481599e2f47.png" style="width:13.27em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S138.I2.i1.p1.2"><span class="ltx_text ltx_font_italic">and</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\pi=E\{\textup{pr}(M=1\mid Z=1,X)\}" class="m" src="m/a59beecd7028.png" style="width:13.37em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S138.I2.i1.p1.3"><span class="ltx_text ltx_font_italic">respectively;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.I2.i2.p1.1"><span class="ltx_text ltx_font_italic">the principal stratification average causal effects can be identified by</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau(1,0)=E\left\{\frac{M}{\pi}\frac{Z}{e(X)}Y\right\}-E\left\{\frac{\pi(X)}{\pi}\frac{1-Z}{1-e(X)}Y\right\}" class="m" src="m/570787e81e4a.png" style="width:22.45em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S138.I2.i2.p1.2"><span class="ltx_text ltx_font_italic">and</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau(0,0)=E\left\{\frac{1-M}{1-\pi}\frac{Z}{e(X)}Y\right\}-E\left\{\frac{1-\pi(X)}{1-\pi}\frac{1-Z}{1-e(X)}Y\right\}." class="m" src="m/0368d4a10f02.png" style="width:26.33em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div></li>
+</ol>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.SS0.SSS0.P3.p3.1">Prove Theorem <a class="ltx_ref" href="#Thmtheorem4c" title="Theorem 26.4 ‣ 26.3 Principal score method in observational studies ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.4</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S138.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">26.4 </span>General principal score method</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.SS0.SSS0.P4.p1.1">Extend Theorems <a class="ltx_ref" href="#Thmtheorem3h" title="Theorem 26.3 ‣ 26.2 Principal score method under monotonicity ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.3</span></a> and <a class="ltx_ref" href="#Thmtheorem4c" title="Theorem 26.4 ‣ 26.3 Principal score method in observational studies ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.4</span></a> under Assumptions <a class="ltx_ref" href="#Thmassumption6" title="Assumption 26.6 ‣ 26.3 Principal score method in observational studies ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.6</span></a>, <a class="ltx_ref" href="#Thmassumption2d" title="Assumption 26.2 (monotonicity) ‣ 135.1 Special case: truncation by death with binary outcome ‣ 135 Statistical Inference and Its Difficulty ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.2</span></a> and <a class="ltx_ref" href="#Thmassumption5a" title="Assumption 26.5 (principal ignorability) ‣ 26.2 Principal score method under monotonicity ‣ 138 Homework problems ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26.5</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.SS0.SSS0.P4.p2.1">Remark: See <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib178" title="">Jiang et al., (2022)</a></cite>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S138.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">26.5 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S138.SS0.SSS0.P5.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib111" title="">Frangakis and Rubin, (2002)</a></cite> proposed the principal stratification framework.
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib346" title="">Zhang and Rubin, (2003)</a></cite> derived large-sample bounds on the survivor average causal effect.
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib176" title="">Jiang and Ding, (2021)</a></cite> reviewed various strategies to identify the causal effects within principal strata.
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib178" title="">Jiang et al., (2022)</a></cite> gave a unified discussion of this strategy for observational studies and proposed multiply robust estimators for causal effects within principal strata.</p>
+</div>
+</section>
+</section>
+<section class="footnotes"><h4>脚注</h4><p id="fn-chapter26-51"><a href="#fn-chapter26-51-ref">51</a>. Based on the causal diagrams, we can reach the same conclusion.
+In Figure <a class="ltx_ref" href="#S132.F42" title="Figure 42 ‣ 132 Motivating Examples ‣ Chapter 26 Principal Stratification ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">42</span></a>, even though <img alt="Z\ind U" class="m" src="m/247f94b224c7.png" style="width:2.67em;vertical-align:-0.12em"/> by randomization of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/>, conditioning on <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> introduces the “collider bias” that causes <img alt="Z\nind U" class="m" src="m/2db830ce503e.png" style="width:2.67em;vertical-align:-0.12em"/>.</p><p id="fn-chapter26-52"><a href="#fn-chapter26-52-ref">52</a>. <span class="ltx_text ltx_font_upright">Heckman won the Nobel prize of economics in 2000 “for his development of theory and methods for analyzing selective samples.”
+His model contains two stages. First, the employment status is determined by a latent linear model
+</span>
+<span class="ltx_equation ltx_eqn_table">
+<span><span class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<span class="ltx_eqn_cell ltx_eqn_center_padleft"></span>
+<span class="ltx_eqn_cell ltx_align_center"><img alt="M_{i}=1(X_{i}^{\mkern-1.5mu\mathsf{T}}\beta+u_{i}\geq 0)." class="m" src="m/761f0b71503e.png" style="width:10.41em;vertical-align:-0.36em"/></span>
+<span class="ltx_eqn_cell ltx_eqn_center_padright"></span></span></span>
+</span><span class="ltx_text ltx_font_upright">Second, the latent log wage is determined by a linear model
+</span>
+<span class="ltx_equation ltx_eqn_table">
+<span><span class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<span class="ltx_eqn_cell ltx_eqn_center_padleft"></span>
+<span class="ltx_eqn_cell ltx_align_center"><img alt="Y_{i}^{*}=W_{i}^{\mkern-1.5mu\mathsf{T}}\gamma+v_{i}" class="m" src="m/148c9a2b0de1.png" style="width:7.01em;vertical-align:-0.36em"/></span>
+<span class="ltx_eqn_cell ltx_eqn_center_padright"></span></span></span>
+</span><span class="ltx_text ltx_font_upright">and </span><img alt="Y_{i}^{*}" class="m" src="m/ec307602118d.png" style="width:1.49em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_upright"> is observed as </span><img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_upright"> only if </span><img alt="M_{i}=1" class="m" src="m/ca32f3884c90.png" style="width:3.37em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_upright">. In his two-stage model, the covariates </span><img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_upright"> and </span><img alt="W_{i}" class="m" src="m/7739385db8b9.png" style="width:1.52em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_upright"> may differ, and the errors </span><img alt="(u_{i},v_{i})" class="m" src="m/b3859acfffeb.png" style="width:3.18em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_upright"> are correlated bivariate Normal.
+</span></p></section></section><p class="nav bottom"><a href="index.html">目录</a><a href="28.html">← 上一章</a><a href="30.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

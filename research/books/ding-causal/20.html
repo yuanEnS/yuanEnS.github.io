@@ -1,0 +1,863 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="19.html">← 上一章</a><a href="21.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter17">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 17 </span>E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding</h3>
+
+<div class="ltx_para">
+<p class="ltx_p" id="chapter17.p2.1">All the methods discussed in Part <a class="ltx_ref" href="#Pt3" title="Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">III</span></a> rely crucially on the ignorability assumption. They require controlling for all confounding between the treatment and outcome. However, we cannot use the data to validate the ignorability assumption. Observational studies are often criticized due to the possibility of unmeasured confounding. The famous Yule–Simpson Paradox reviewed in Chapter <a class="ltx_ref" href="04.html#chapter1" title="Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1</span></a> demonstrates that an unmeasured binary confounder can completely overturn an observed association between the treatment and outcome. However, to overturn a larger observed association, this unmeasured confounder must have a stronger association with the treatment and the outcome. In other words, not all observational studies are created equal. Some provide stronger evidence for causation than others.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter17.p3.1">The following three chapters will discuss various sensitivity analysis techniques that can quantify the evidence of causation based on observational studies in the presence of unmeasured confounding. This chapter starts with the E-value, introduced by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib324" title="">VanderWeele and Ding, (2017)</a></cite> based on the theory in <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib92" title="">Ding and VanderWeele, (2016)</a></cite>. It is more useful for observational studies using logistic regressions to estimate the conditional risk ratio of a treatment on a binary outcome. Chapter <a class="ltx_ref" href="21.html#chapter18" title="Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18</span></a> discusses sensitivity analysis for the average causal effect based on outcome regression, IPW, and doubly robust estimation. Chapter <a class="ltx_ref" href="22.html#chapter19" title="Chapter 19 Rosenbaum-Style 𝑝-Values for Matched Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">19</span></a> discusses Rosenbaum’s framework for sensitivity analysis for matched observational studies.</p>
+</div>
+<section class="ltx_section" id="S86">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">86 </span>Cornfield-type sensitivity analysis</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S86.p1.1">Although we do not assume ignorability given <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z\nind \{Y(1),Y(0)\}\mid X," class="m" src="m/3118bcd842a5.png" style="width:9.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p1.2">we still assume latent ignorability given <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> and an unmeasured confounder <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z\ind \{Y(1),Y(0)\}\mid(X,U)." class="m" src="m/d1f2b546780a.png" style="width:11.47em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p1.3">The technique in this chapter works the best for a binary outcome <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> although it can be extended to other non-negative outcomes <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib92" title="">Ding and VanderWeele,, 2016</a>)</cite>. Focus on binary <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> now. The true conditional causal effect on the risk ratio scale is defined as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY\mid x}^{\textup{true}}=\frac{\textup{pr}\{Y(1)=1\mid X=x\}}{\textup{pr}\{Y(0)=1\mid X=x\}}," class="m" src="m/d6e5b01b052d.png" style="width:14.77em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p1.4">and the observed conditional risk ratio equals</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}=\frac{\textup{pr}(Y=1\mid Z=1,X=x)}{\textup{pr}(Y=1\mid Z=0,X=x)}." class="m" src="m/45865300f2ee.png" style="width:16.31em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p1.5">In general, with an unmeasured confounder <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>, they are different:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY\mid x}^{\textup{true}}\neq\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/6a9642d7447d.png" style="width:7.93em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p1.6">because</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY\mid x}^{\textup{true}}=\frac{\int\textup{pr}(Y=1\mid Z=1,X=x,U=u)f(u\mid X=x)\textup{d}u}{\int\textup{pr}(Y=1\mid Z=0,X=x,U=u)f(u\mid X=x)\textup{d}u}" class="m" src="m/a676158daa6b.png" style="width:26.72em;vertical-align:-1.11em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p1.7">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}=\frac{\int\textup{pr}(Y=1\mid Z=1,X=x,U=u)f(u\mid Z=1,X=x)\textup{d}u}{\int\textup{pr}(Y=1\mid Z=0,X=x,U=u)f(u\mid Z=0,X=x)\textup{d}u}" class="m" src="m/88579be88d74.png" style="width:29.75em;vertical-align:-1.11em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p1.8">are averaged over different distributions of <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S86.p2.1">Historically, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib95" title="">Doll and Hill, (1950)</a></cite> found that the risk ratio of cigarette smoking on lung cancer was <img alt="9" class="m" src="m/01085e53a88b.png" style="width:0.72em;vertical-align:-0.12em"/> even after adjusting for many observed covariates <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/><sup><a href="#fn-chapter17-40" id="fn-chapter17-40-ref">40</a></sup>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib106" title="">Fisher, (1957)</a></cite> criticized their result to be noncausal because it is possible that a hidden gene simultaneously causes cigarette smoking and lung cancer although the true causal effect of cigarette smoking on lung cancer is absent. This is the <span class="ltx_text ltx_font_italic">common cause</span> hypothesis, also discussed by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib259" title="">Reichenbach, (1957)</a></cite>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib67" title="">Cornfield et al., (1959)</a></cite> took a more constructive perspective and asked: how strong this unmeasured confounder must be to explain away the observed association between cigarette smoking and lung cancer? Below we will use <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib92" title="">Ding and VanderWeele, (2016)</a></cite>’s general formulation of the problem.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S86.p3.1">Consider the following causal diagram:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><span class="ltx_inline-block"><svg class="ltx_picture ltx_markedasmath" height="61.11" overflow="visible" style="vertical-align:-50.966255691547325px" version="1.1" viewbox="9.37 50.97 123.82 61.11" width="123.82"><g transform="matrix(1 0 0 -1 9.368795139159143 61.113360974903145) translate(0,3.46) translate(9.37,0)"><g transform="translate(42.58,0) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.79em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="10.96"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{U\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces}" class="m" src="m/aa510bdc2f53.png" style="width:1.04em;vertical-align:-0.12em"/></span></span></foreignobject></g><path d="M 43.043150056591166 -7.610350076103501 L 43.04127094738048 -7.626734219333748" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(9.37,0) translate(0,-35.58)"><path d="M 0 0 A 13.84 13.84 45 0 0 7.09 2.29" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 3.56 6.55" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 43.043150056591166 -7.610350076103501 L 9.36881625274578 -35.57907490870823" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 9.36881625274578 -35.558848092710065 L 9.36881625274578 -35.57907490870823" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 61.42244276968097 -7.610350076103501 L 61.4642687848087 -7.644617427215217" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(95.05,0) translate(0,-35.36)"><path d="M 0 0 A 13.84 13.84 45 0 0 -3.57 6.54" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 -7.1 2.27" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 61.42244276968097 -7.610350076103501 L 95.04477380963964 -35.356769955008126" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 95.02161220509893 -35.30787088835703 L 95.04477380963964 -35.356769955008126" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(-9.37,0) translate(0,-43.36) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.75em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="10.44"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{Z}" class="m" src="m/975f4118a5ac.png" style="width:0.99em;vertical-align:-0.12em"/></span></span></foreignobject></g><g transform="translate(95.05,0) translate(0,-43.36) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.8em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="11.11"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{Y}" class="m" src="m/9017f04aa8cb.png" style="width:1.04em;vertical-align:-0.12em"/></span></span></foreignobject></g></g></svg></span></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p3.2">which conditions on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. So <img alt="Z\ind Y\mid(X,U)" class="m" src="m/e347355aaa4b.png" style="width:6.38em;vertical-align:-0.36em"/>. Conditioning on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> and <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>, we observe no association between <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>; but conditioning on only <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, we observe an association between <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>. Although we can allow <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/> to be general as <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib92" title="">Ding and VanderWeele, (2016)</a></cite>, we assume that <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/> is binary to simplify the presentation.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S86.p4.1">Define two sensitivity parameters:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZU\mid x}=\frac{\textup{pr}(U=1\mid Z=1,X=x)}{\textup{pr}(U=1\mid Z=0,X=x)}" class="m" src="m/4b02215913dc.png" style="width:16.00em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p4.2">measures the treatment-confounder association,
+and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{UY\mid x}=\frac{\textup{pr}(Y=1\mid U=1,X=x)}{\textup{pr}(Y=1\mid U=0,X=x)}," class="m" src="m/66a4d3031517.png" style="width:16.36em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p4.3">measures the confounder-outcome association, conditional on covariates <img alt="X=x" class="m" src="m/eeaa8b698e03.png" style="width:3.04em;vertical-align:-0.12em"/>. We can show the main result below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1h">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 17.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1h.p1.1"><span class="ltx_text ltx_font_italic">Under <img alt="Z\ind Y\mid(X,U)" class="m" src="m/e347355aaa4b.png" style="width:6.38em;vertical-align:-0.36em"/>, assume</span></p>
+<table class="ltx_equation ltx_eqn_table" id="S86.E85">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}&gt;1,\quad\textsc{rr}_{ZU\mid x}&gt;1,\quad\textsc{rr}_{UY\mid x}&gt;1." class="m" src="m/d642af7bd482.png" style="width:18.45em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(85)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem1h.p1.2"><span class="ltx_text ltx_font_italic">We have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}\leq\frac{\textsc{rr}_{ZU\mid x}\textsc{rr}_{UY\mid x}}{\textsc{rr}_{ZU\mid x}+\textsc{rr}_{UY\mid x}-1}." class="m" src="m/b023fabf08fe.png" style="width:14.57em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S86.p5.1">In Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>, we assume (<a class="ltx_ref" href="#S86.E85" title="In Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">85</span></a>) without loss of generality. If <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}&lt;1" class="m" src="m/1d6d757af7c7.png" style="width:5.25em;vertical-align:-0.60em"/>, we can relabel the treatment and control levels to ensure <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}&gt;1" class="m" src="m/a1661ad0de33.png" style="width:5.25em;vertical-align:-0.60em"/>. If <img alt="\textsc{rr}_{ZU\mid x}&lt;1" class="m" src="m/1976a2df1699.png" style="width:5.23em;vertical-align:-0.46em"/>, we can redefine the unmeasured confounder <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/> as <img alt="1-U" class="m" src="m/67ad48696073.png" style="width:2.75em;vertical-align:-0.19em"/> to ensure <img alt="\textsc{rr}_{ZU\mid x}&gt;1" class="m" src="m/f4b68587b747.png" style="width:5.23em;vertical-align:-0.46em"/>. If <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}&gt;1" class="m" src="m/a1661ad0de33.png" style="width:5.25em;vertical-align:-0.60em"/> and <img alt="\textsc{rr}_{ZU\mid x}&gt;1" class="m" src="m/f4b68587b747.png" style="width:5.23em;vertical-align:-0.46em"/>, then <img alt="\textsc{rr}_{UY\mid x}&gt;1" class="m" src="m/c95c581e057d.png" style="width:5.28em;vertical-align:-0.46em"/> holds automatically. I relegate this subtle technical detail to Problem <a class="ltx_ref" href="#S91.SS0.SSS0.P2" title="17.2 Technical assumption for Theorem ‣ 91 Homework Problems ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.2</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S86.p6.1">Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> shows the upper bound of the observed risk ratio of the treatment on the outcome if the conditional independence <img alt="Z\ind Y\mid(X,U)" class="m" src="m/e347355aaa4b.png" style="width:6.38em;vertical-align:-0.36em"/> holds. Under this conditional independence assumption, the association between the treatment and the outcome is purely due to the association between the treatment and the confounder <img alt="\textsc{rr}_{ZU\mid x}" class="m" src="m/9e1035def714.png" style="width:3.40em;vertical-align:-0.46em"/>, and the association between the confounder and the outcome, <img alt="\textsc{rr}_{UY\mid x}" class="m" src="m/c23d140c7484.png" style="width:3.44em;vertical-align:-0.46em"/>. The upper bound equals <img alt="\textsc{rr}_{ZU\mid x}\times\textsc{rr}_{UY\mid x}/(\textsc{rr}_{ZU\mid x}+\textsc{rr}_{UY\mid x}-1)" class="m" src="m/016e369f432f.png" style="width:18.40em;vertical-align:-0.46em"/>.
+A similar inequality appeared in <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib196" title="">Lee, (2011)</a></cite>.
+It is also related to Cochran’s formula or the omitted-variable bias formula for linear models, which was reviewed in Problem <a class="ltx_ref" href="19.html#S85.SS0.SSS0.P2" title="16.2 Cochran’s formula or the omitted variable bias formula ‣ 85 Homework Problems ‣ Chapter 16 Difficulties of Unconfoundedness in Observational Studies for Causal Effects ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">16.2</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S86.p7.1">Reversely, to generate a certain value of the observed risk ratio <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/>, the two confounding measures <img alt="\textsc{rr}_{ZU\mid x}" class="m" src="m/9e1035def714.png" style="width:3.40em;vertical-align:-0.46em"/> and <img alt="\textsc{rr}_{UY\mid x}" class="m" src="m/c23d140c7484.png" style="width:3.44em;vertical-align:-0.46em"/> cannot be arbitrary. Their function <img alt="\textsc{rr}_{ZU\mid x}\times\textsc{rr}_{UY\mid x}/(\textsc{rr}_{ZU\mid x}+\textsc{rr}_{UY\mid x}-1)" class="m" src="m/016e369f432f.png" style="width:18.40em;vertical-align:-0.46em"/> must be at least at large as <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S86.p8.1">I will give the proof of Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> below.</p>
+</div>
+<div class="ltx_para ltx_noindent">
+<p class="ltx_p" id="S86.p9.1"><span class="ltx_text ltx_font_bold">Proof of Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>:</span>
+Define</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="f_{1,x}=\textup{pr}(U=1\mid Z=1,X=x),\quad f_{0,x}=\textup{pr}(U=1\mid Z=0,X=x)." class="m" src="m/64017b077155.png" style="width:29.94em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p9.2">We can decompose <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/> as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/0ea9b65492a6.png" style="width:3.42em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\textup{pr}(Y=1\mid Z=1,X=x)}{\textup{pr}(Y=1\mid Z=0,X=x)}" class="m" src="m/806cb0b1087c.png" style="width:11.52em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\left[\begin{multlined}\textup{pr}(U=1\mid Z=1,X=x)\textup{pr}(Y=1\mid Z=1,U=1,X=x)\\
+\\
++\textup{pr}(U=0\mid Z=1,X=x)\textup{pr}(Y=1\mid Z=1,U=0,X=x)\end{multlined}\right]}{\left[\begin{multlined}\textup{pr}(U=1\mid Z=0,X=x)\textup{pr}(Y=1\mid Z=0,U=1,X=x)\\
+\\
++\textup{pr}(U=0\mid Z=0,X=x)\textup{pr}(Y=1\mid Z=0,U=0,X=x)\end{multlined}\right]}" class="m" src="m/5fec23c11439.png" style="width:29.17em;vertical-align:-4.19em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\left[\begin{multlined}\textup{pr}(U=1\mid Z=1,X=x)\textup{pr}(Y=1\mid U=1,X=x)\\
+\\
++\textup{pr}(U=0\mid Z=1,X=x)\textup{pr}(Y=1\mid U=0,X=x)\end{multlined}\right]}{\left[\begin{multlined}\textup{pr}(U=1\mid Z=0,X=x)\textup{pr}(Y=1\mid U=1,X=x)\\
+\\
++\textup{pr}(U=0\mid Z=0,X=x)\textup{pr}(Y=1\mid U=0,X=x)\end{multlined}\right]}" class="m" src="m/850e3e69ab06.png" style="width:26.14em;vertical-align:-4.19em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{f_{1,x}\textsc{rr}_{UY\mid x}+1-f_{1,x}}{f_{0,x}\textsc{rr}_{UY\mid x}+1-f_{0,x}}" class="m" src="m/9750d11f1189.png" style="width:9.88em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{(\textsc{rr}_{UY\mid x}-1)f_{1,x}+1}{\frac{\textsc{rr}_{UY\mid x}-1}{\textsc{rr}_{ZU\mid x}}f_{1,x}+1}." class="m" src="m/319ba8f9d4ff.png" style="width:9.80em;vertical-align:-1.61em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S86.p9.3">We can verify that <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/> is increasing in <img alt="f_{1,x}" class="m" src="m/4b14fec65ae0.png" style="width:1.85em;vertical-align:-0.41em"/> using the result in Problem <a class="ltx_ref" href="#S91.SS0.SSS0.P1" title="17.1 A technical lemma for the proof of Theorem ‣ 91 Homework Problems ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>. So letting <img alt="f_{1,x}=1" class="m" src="m/af4a247f61c0.png" style="width:3.69em;vertical-align:-0.41em"/>, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}\leq\frac{(\textsc{rr}_{UY\mid x}-1)+1}{\frac{\textsc{rr}_{UY\mid x}-1}{\textsc{rr}_{ZU\mid x}}+1}=\frac{\textsc{rr}_{ZU\mid x}\textsc{rr}_{UY\mid x}}{\textsc{rr}_{ZU\mid x}+\textsc{rr}_{UY\mid x}-1}." class="m" src="m/ae1475f01763.png" style="width:23.58em;vertical-align:-1.61em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p9.4"><img alt="\square" class="m" src="m/57d1afee0594.png" style="width:1.01em;vertical-align:-0.12em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S86.p10.1">In the proof of Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>, we have obtain an identity</p>
+<table class="ltx_equation ltx_eqn_table" id="S86.E88">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}=\frac{(\textsc{rr}_{UY\mid x}-1)f_{1,x}+1}{\frac{\textsc{rr}_{UY\mid x}-1}{\textsc{rr}_{ZU\mid x}}f_{1,x}+1}." class="m" src="m/51b1f5f08308.png" style="width:14.33em;vertical-align:-1.61em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(88)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p10.2">But this identity involves three parameters</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\{f_{1,x},\textsc{rr}_{ZU\mid x},\textsc{rr}_{UY\mid x}\};" class="m" src="m/f75db428b5e8.png" style="width:10.38em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p10.3">see Problem <a class="ltx_ref" href="#S91.SS0.SSS0.P4" title="17.4 ( ) ’s formula ‣ 91 Homework Problems ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.4</span></a> for a related formula. In contrast, the upper bound in Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> involves only two parameters</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\{\textsc{rr}_{ZU\mid x},\textsc{rr}_{UY\mid x}\}" class="m" src="m/b110371d6bd6.png" style="width:8.05em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S86.p10.4">which measure the strength of the confounder.
+Mathematically, the identity <a class="ltx_ref" href="#S86.E88" title="In 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">88</span></a> is stronger than the inequality in Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>. However, <a class="ltx_ref" href="#S86.E88" title="In 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">88</span></a> involves more sensitivity parameters compared with Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>. Therefore, we face a trade-off of accuracy and convenience in sensitivity analysis.</p>
+</div>
+</section>
+<section class="ltx_section" id="S87">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">87 </span>E-value</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S87.p1.1">Lemma <a class="ltx_ref" href="#Thmlemma1c" title="Lemma 17.1 ‣ 87 E-value ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> below is useful for deriving interesting corollaries of Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>. I relegate its proof to Problem <a class="ltx_ref" href="#S91.SS0.SSS0.P3" title="17.3 Lemma ‣ 91 Homework Problems ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.3</span></a>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_lemma" id="Thmlemma1c">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Lemma 17.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmlemma1c.p1.1"><span class="ltx_text ltx_font_italic">Define <img alt="\beta(w_{1},w_{2})=w_{1}w_{2}/(w_{1}+w_{2}-1)" class="m" src="m/7e2186b4637a.png" style="width:14.62em;vertical-align:-0.36em"/> for <img alt="w_{1}&gt;1" class="m" src="m/fbc4f96a91f4.png" style="width:3.23em;vertical-align:-0.26em"/> and <img alt="w_{2}&gt;1" class="m" src="m/dd0795149ca8.png" style="width:3.23em;vertical-align:-0.26em"/>.</span></p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item"></span>
+<div class="ltx_para">
+<p class="ltx_p" id="S87.I1.p1.1"><span class="ltx_text ltx_font_italic">[(1)]</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S87.I1.i1.p1.1"><img alt="\beta(w_{1},w_{2})" class="m" src="m/06a2f38638e9.png" style="width:4.41em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> is symmetric in </span><img alt="w_{1}" class="m" src="m/e06e69ff765e.png" style="width:1.40em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_italic"> and </span><img alt="w_{2}" class="m" src="m/0984a1e9aa4d.png" style="width:1.40em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_italic">;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S87.I1.i2.p1.1"><img alt="\beta(w_{1},w_{2})" class="m" src="m/06a2f38638e9.png" style="width:4.41em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> is increasing in both </span><img alt="w_{1}" class="m" src="m/e06e69ff765e.png" style="width:1.40em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_italic"> and </span><img alt="w_{2}" class="m" src="m/0984a1e9aa4d.png" style="width:1.40em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_italic">;</span></p>
+</div></li>
+<li class="ltx_item" id="S87.I1.i3" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S87.I1.i3.p1.1"><img alt="\beta(w_{1},w_{2})\leq w_{1}" class="m" src="m/02c36f2085fe.png" style="width:6.89em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> and </span><img alt="\beta(w_{1},w_{2})\leq w_{2}" class="m" src="m/bb540d6a7e27.png" style="width:6.89em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic">;</span></p>
+</div></li>
+<li class="ltx_item" id="S87.I1.i4" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">4.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S87.I1.i4.p1.1"><img alt="\beta(w_{1},w_{2})\leq w^{2}/(2w-1)" class="m" src="m/e17235dd702a.png" style="width:11.18em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic">, where </span><img alt="w=\max(w_{1},w_{2})" class="m" src="m/9660dbc99f0e.png" style="width:7.73em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic">.</span></p>
+</div></li>
+</ol>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S87.p2.1">Using Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> and Lemma <a class="ltx_ref" href="#Thmlemma1c" title="Lemma 17.1 ‣ 87 E-value ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>(<a class="ltx_ref" href="#S87.I1.i3" title="item 3 ‣ Lemma 17.1 ‣ 87 E-value ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a>), we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZU\mid x}\geq\textsc{rr}_{ZY\mid x}^{\textup{obs}},\quad\textsc{rr}_{UY\mid x}\geq\textsc{rr}_{ZY\mid x}^{\textup{obs}}," class="m" src="m/79619e9dd20b.png" style="width:17.34em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S87.p2.2">or, equivalently,</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\min(\textsc{rr}_{ZU\mid x},\textsc{rr}_{UY\mid x})\geq\textsc{rr}_{ZY\mid x}^{\textup{obs}}." class="m" src="m/197168fdc25a.png" style="width:14.29em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S87.p2.3">Therefore, to explain away the observed relative risk, both confounding measures <img alt="\textsc{rr}_{ZU\mid x}" class="m" src="m/9e1035def714.png" style="width:3.40em;vertical-align:-0.46em"/> and <img alt="\textsc{rr}_{UY\mid x}" class="m" src="m/c23d140c7484.png" style="width:3.44em;vertical-align:-0.46em"/> must be at least as large as <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/>.
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib67" title="">Cornfield et al., (1959)</a></cite> first derived the inequality <img alt="\textsc{rr}_{ZU\mid x}\geq\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/88262476c735.png" style="width:7.90em;vertical-align:-0.60em"/>, also called the <span class="ltx_text ltx_font_italic">Cornfield inequality</span> <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib118" title="">Gastwirth et al.,, 1998</a>)</cite>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib298" title="">Schlesselman, (1978)</a></cite> derived the inequality <img alt="\textsc{rr}_{UY\mid x}\geq\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/f1e6771b5ceb.png" style="width:7.95em;vertical-align:-0.60em"/>.
+These are related to to the <span class="ltx_text ltx_font_italic">data processing inequality</span> in information theory<sup><a href="#fn-chapter17-41" id="fn-chapter17-41-ref">41</a></sup>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S87.p3.1">If we define <img alt="w=\max(\textsc{rr}_{ZU\mid x},\textsc{rr}_{UY\mid x})" class="m" src="m/d4d39d4d510e.png" style="width:11.76em;vertical-align:-0.46em"/>, then we can use Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> and Lemma <a class="ltx_ref" href="#Thmlemma1c" title="Lemma 17.1 ‣ 87 E-value ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>(<a class="ltx_ref" href="#S87.I1.i4" title="item 4 ‣ Lemma 17.1 ‣ 87 E-value ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4</span></a>) to obtain</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle w^{2}/(2w-1)\geq\beta(\textsc{rr}_{ZU\mid x},\textsc{rr}_{UY\mid x})\geq\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/214886d595d3.png" style="width:19.73em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\Longrightarrow" class="m" src="m/eb49bbc4dcf7.png" style="width:1.85em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle w^{2}-2\textsc{rr}_{ZY\mid x}^{\textup{obs}}w+\textsc{rr}_{ZY\mid x}^{\textup{obs}}\geq 0," class="m" src="m/9b82c49d3463.png" style="width:13.59em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S87.p3.2">which is a quadratic inequality. One root <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}-\sqrt{\textsc{rr}_{ZY\mid x}^{\textup{obs}}(\textsc{rr}_{ZY\mid x}^{\textup{obs}}-1)}" class="m" src="m/dfba57b87a04.png" style="width:14.50em;vertical-align:-0.82em"/> is always smaller than or equal to <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/>, so we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="w=\max(\textsc{rr}_{ZU\mid x},\textsc{rr}_{UY\mid x})\geq\textsc{rr}_{ZY\mid x}^{\textup{obs}}+\sqrt{\textsc{rr}_{ZY\mid x}^{\textup{obs}}(\textsc{rr}_{ZY\mid x}^{\textup{obs}}-1)}." class="m" src="m/b0136245da1f.png" style="width:27.63em;vertical-align:-0.77em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S87.p3.3">Therefore, to explain away the observed relative risk, the maximum of the confounding measures <img alt="\textsc{rr}_{ZU\mid x}" class="m" src="m/9e1035def714.png" style="width:3.40em;vertical-align:-0.46em"/> and <img alt="\textsc{rr}_{UY\mid x}" class="m" src="m/c23d140c7484.png" style="width:3.44em;vertical-align:-0.46em"/> must be at least as large as <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}+\sqrt{\textsc{rr}_{ZY\mid x}^{\textup{obs}}(\textsc{rr}_{ZY\mid x}^{\textup{obs}}-1)}" class="m" src="m/5bc46f21aec1.png" style="width:14.50em;vertical-align:-0.82em"/>.
+Based on this result, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib324" title="">VanderWeele and Ding, (2017)</a></cite> introduced the following notion of E-value for measuring the <span class="ltx_text ltx_font_italic">evidence</span> of causation with observational studies.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 17.1</span></span><span class="ltx_text ltx_font_bold"> (E-Value)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition1j.p1.1"><span class="ltx_text ltx_font_italic">With the observed conditional risk ratio <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/>, define the E-Value as</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}+\sqrt{\textsc{rr}_{ZY\mid x}^{\textup{obs}}(\textsc{rr}_{ZY\mid x}^{\textup{obs}}-1)}." class="m" src="m/fc34dced4f25.png" style="width:14.77em;vertical-align:-0.77em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S87.p4.1">The E-value is defined for the parameter <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/>. In practice, <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/> is estimated with sampling error. We can calculate the E-value based on the estimated <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/>, as well as the corresponding E-values for the lower and upper confidence limits of <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S87.p5.1">Fisher’s <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-value measures the evidence for causal effects in randomized experiments. We have discussed the <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-value based on the FRT in Part <a class="ltx_ref" href="#Pt2" title="Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">II</span></a> of this book. However, in observational studies with large sample sizes, <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values can be a poor measure of evidence for causal effects. Even if the true causal effects are <img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/>, a tiny amount of unmeasured confounding can bias the estimate, which can result in extremely small <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values given the small sampling uncertainty. The sampling uncertainty is usually secondary in observational studies with large sample sizes, but the uncertainty due to unmeasured confounding is often the first-order problem that does not diminish with increased sample sizes. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib324" title="">VanderWeele and Ding, (2017)</a></cite> argued that the E-value is a better measure of the evidence for causal effects in observational studies.</p>
+</div>
+</section>
+<section class="ltx_section" id="S88">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">88 </span>A classic example</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S88.p1.1">I revisit a classic example below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample1h">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 17.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1h.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib132" title="">Hammond and Horn, (1958)</a></cite><span class="ltx_text ltx_font_italic"> used the U.S. population to study the cigarette smoking and lung cancer relationship. Ignoring covariates, their data can be represented by a two-by-two table below:</span></p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><span class="ltx_text ltx_font_italic">Lung cancer</span></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><span class="ltx_text ltx_font_italic">No lung cancer</span></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t"><span class="ltx_text ltx_font_italic">Smoker</span></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><span class="ltx_text ltx_font_italic">397</span></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><span class="ltx_text ltx_font_italic">78557</span></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b"><span class="ltx_text ltx_font_italic">Non-smoker</span></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><span class="ltx_text ltx_font_italic">51</span></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><span class="ltx_text ltx_font_italic">108778</span></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1h.p3.1"><span class="ltx_text ltx_font_italic">Based on the data, they obtained an estimate of the risk ratio <img alt="10.73" class="m" src="m/0e98ac97ae1b.png" style="width:2.51em;vertical-align:-0.12em"/> with a 95% confidence interval <img alt="[8.02,14.36]" class="m" src="m/8d8b08d2cd53.png" style="width:5.30em;vertical-align:-0.36em"/> (see Section <a class="ltx_ref" href="33.html#chapter30.A3.SS2" title="30.C.2 Estimation with two-by-two tables ‣ Appendix 30.C Inference with two-by-two tables ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.C.2</span></a> for the formulas). To explain away the point estimate, the E-value is</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="10.73+\sqrt{10.73\times(10.73-1)}=20.95;" class="m" src="m/35e651388297.png" style="width:16.89em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample1h.p3.2"><span class="ltx_text ltx_font_italic">to explain away the lower confidence limit, the E-value is</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="8.02+\sqrt{8.02\times(8.02-1)}=15.52." class="m" src="m/46ed2a172d5e.png" style="width:15.39em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1h.p4.1"><span class="ltx_text ltx_font_italic">Figure <a class="ltx_ref" href="#S88.F21" title="Figure 21 ‣ 88 A classic example ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21</span></a> shows the joint values of the two confounding measures to explain away the point estimate and lower confidence limit of the risk ratio. In particular, to explain away the point estimate, they must lie in the area above the solid curve; to explain away the lower confidence limit, they must lie in the area above the dashed curve.<sup><a href="#fn-chapter17-42" id="fn-chapter17-42-ref">42</a></sup></span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S88.p2.1">The simple <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> code below computes the numbers in Example <a class="ltx_ref" href="#Thmexample1h" title="Example 17.1 ‣ 88 A classic example ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>:</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>e-value<span class="ltx_text ltx_lst_space"> </span>based<span class="ltx_text ltx_lst_space"> </span>on<span class="ltx_text ltx_lst_space"> </span>RR</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">evalue</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">function</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rr</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rr</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rr</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rr</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">}</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">397/(397+78557)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">51/(51+108778)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rr</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">logrr</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">log</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1/397+1/51-1/(397+78557)-1/(51+108778))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">upper</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">exp</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">logrr</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+1.96*</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lower</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">exp</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">logrr</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1.96*</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>point<span class="ltx_text ltx_lst_space"> </span>estimate</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rr</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">10.72978</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>lower<span class="ltx_text ltx_lst_space"> </span>CI</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lower</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">8.017414</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>e-value<span class="ltx_text ltx_lst_space"> </span>based<span class="ltx_text ltx_lst_space"> </span>on<span class="ltx_text ltx_lst_space"> </span>rr</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">evalue</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rr</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">20.94733</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>e-value<span class="ltx_text ltx_lst_space"> </span>based<span class="ltx_text ltx_lst_space"> </span>on<span class="ltx_text ltx_lst_space"> </span>lower<span class="ltx_text ltx_lst_space"> </span>CI</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">evalue</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lower</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">15.51818</span>
+</div>
+</div>
+</div>
+<figure class="ltx_figure" id="S88.F21"><img alt="插图" src="img/jointvalueplot.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 21</span>: </span><span class="ltx_text" style="font-size:90%;">Magnitude of confounding to explain away the observed risk ratio based on the data from <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib132" title="">Hammond and Horn, (1958)</a></cite></span></figcaption>
+</figure>
+</section>
+<section class="ltx_section" id="S89">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">89 </span>Extensions</h4>
+<section class="ltx_subsection" id="S89.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">89.1 </span>E-value and Bradford Hill’s criteria for causation</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.SS1.p1.1">The E-value provides evidence for causation. But evidence is not a proof. With a larger E-value, we need a stronger unmeasured confounder to explain away the observed risk ratio; the evidence for causation is stronger. With a smaller E-value, we need a weaker unmeasured confounder to explain away the observed risk ratio; the evidence for causation is weaker. Coupled with the discussion in Section <a class="ltx_ref" href="#S90.SS1" title="90.1 E-value is just a monotone transformation of the risk ratio ‣ 90 Critiques and responses ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">90.1</span></a>, a larger observed risk ratio has stronger evidence for causation. This is closely related to Sir Bradford Hill’s first criterion for causation: <span class="ltx_text ltx_font_italic">strength</span> of the association <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib43" title="">Bradford Hill,, 1965</a>)</cite>. Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> provides a mathematical quantification of his heuristic argument.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.SS1.p2.1">In a famous paper, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib43" title="">Bradford Hill, (1965)</a></cite> proposed a set of nine criteria to provide evidence for causation between a presumed cause and outcome.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 17.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition2c.p1.1"><span class="ltx_text ltx_font_italic">Bradford Hill gave nine criteria for causation:</span></p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.I1.i1.p1.1"><span class="ltx_text ltx_font_italic">strength;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.I1.i2.p1.1"><span class="ltx_text ltx_font_italic">consistency;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.I1.i3.p1.1"><span class="ltx_text ltx_font_italic">specificity;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">4.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.I1.i4.p1.1"><span class="ltx_text ltx_font_italic">temporality;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">5.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.I1.i5.p1.1"><span class="ltx_text ltx_font_italic">biological gradient;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">6.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.I1.i6.p1.1"><span class="ltx_text ltx_font_italic">plausibility;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">7.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.I1.i7.p1.1"><span class="ltx_text ltx_font_italic">coherence;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">8.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.I1.i8.p1.1"><span class="ltx_text ltx_font_italic">experiment;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">9.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.I1.i9.p1.1"><span class="ltx_text ltx_font_italic">analogy.</span></p>
+</div></li>
+</ol>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.SS1.p3.1">The E-value is a way to justify his first criterion.
+That is, stronger association often provides stronger evidence for causation because to explain away stronger association, we need stronger confounding measures.
+We have discussed randomized experiments in Part <a class="ltx_ref" href="#Pt2" title="Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">II</span></a>, which corroborates his eighth criterion. Due to the space limit, I omit the detailed discussion of his other criteria and encourage the readers to read <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib43" title="">Bradford Hill, (1965)</a></cite>. Recently, this paper has been re-printed as <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib44" title="">Bradford Hill, (2020)</a></cite> with insightful comments from many leading researchers in causal inference.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S89.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">89.2 </span>E-value after logistic regression</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.SS2.p1.1">With a binary outcome, it is common for epidemiologists to use a logistic regression of the outcome <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on the treatment indicator <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> and covariates <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(Y_{i}=1\mid Z_{i},X_{i})=\frac{e^{\beta_{0}+\beta_{1}Z_{i}+\beta_{2}^{\mkern-1.5mu\mathsf{T}}X_{i}}}{1+e^{\beta_{0}+\beta_{1}Z_{i}+\beta_{2}^{\mkern-1.5mu\mathsf{T}}X_{i}}}." class="m" src="m/7162098dc658.png" style="width:17.85em;vertical-align:-0.99em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S89.SS2.p1.2">In the logistic model above, the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> is the log of the conditional odds ratio between the treatment and the outcome given the covariates:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\beta_{1}=\log\frac{\textup{pr}(Y_{i}=1\mid Z_{i}=1,X_{i}=x)/\textup{pr}(Y_{i}=0\mid Z_{i}=1,X_{i}=x)}{\textup{pr}(Y_{i}=1\mid Z_{i}=0,X_{i}=x)/\textup{pr}(Y_{i}=0\mid Z_{i}=0,X_{i}=x)}." class="m" src="m/1bcccaa73789.png" style="width:28.38em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S89.SS2.p1.3">Importantly, the logistic model assumes a common odds ratio across all values of the covariates. Moreover, when the outcome is rare in that <img alt="\textup{pr}(Y_{i}=1\mid Z_{i}=1,X_{i}=x)" class="m" src="m/a21373cecd33.png" style="width:11.90em;vertical-align:-0.36em"/> and <img alt="\textup{pr}(Y_{i}=1\mid Z_{i}=0,X_{i}=x)" class="m" src="m/c7fb98929ace.png" style="width:11.90em;vertical-align:-0.36em"/> are close to <img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/>, the conditional odds ratio approximates the conditional risk ratio (see Proposition <a class="ltx_ref" href="04.html#Thmproposition1" title="Proposition 1.1 ‣ 2.2 Contingency tables ‣ 2 Some commonly-used measures of association ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1.1</span></a>(3)):</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\beta_{1}\approx\log\frac{\textup{pr}(Y_{i}=1\mid Z_{i}=1,X_{i}=x)}{\textup{pr}(Y_{i}=1\mid Z_{i}=0,X_{i}=x)}=\log\textsc{rr}_{ZY\mid x}^{\textup{obs}}." class="m" src="m/5ff2a6c22329.png" style="width:22.19em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S89.SS2.p1.4">Therefore, based on the estimated logistic regression coefficient and the corresponding confidence limits, we can calculate the E-value immediately. This is the leading application of the E-value.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample2g">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 17.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2g.p1.1"><span class="ltx_text ltx_font_italic">The <span class="ltx_text ltx_lst_language_R ltx_lstlisting"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">NCHS2003</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.<span class="ltx_text ltx_lst_identifier">txt</span></span></span> contains the National Center for Health Statistics birth certificate data, with the following binary indicator variables useful for us:</span></p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left ltx_border_t"><span class="ltx_text ltx_font_typewriter ltx_font_italic">PTbirth</span></td>
+<td class="ltx_td ltx_align_left ltx_border_t"><span class="ltx_text ltx_font_italic">pre-term birth</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">preeclampsia</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">pre-eclampsia</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">ageabove35</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">an older mother with age <img alt="\geq 35" class="m" src="m/458d8802f934.png" style="width:2.29em;vertical-align:-0.24em"/> (the treatment)</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">somecollege</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">college education</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">mar</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">marital status</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">smoking</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">smoking status</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">drinking</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">drinking status</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">hispanic</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">mother’s ethnicity</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">black</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">mother’s ethnicity</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">nativeamerican</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">mother’s ethnicity</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left ltx_border_b"><span class="ltx_text ltx_font_typewriter ltx_font_italic">asian</span></td>
+<td class="ltx_td ltx_align_left ltx_border_b"><span class="ltx_text ltx_font_italic">mother’s ethnicity</span></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2g.p3.1"><span class="ltx_text ltx_font_italic">This version of the data is from <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib317" title="">Valeri and Vanderweele, (2014)</a></cite>. This example focuses on the outcome <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">PTbirth</span> and Problem <a class="ltx_ref" href="#S91.SS0.SSS0.P5" title="17.5 E-value after logistic regression: data analysis ‣ 91 Homework Problems ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.5</span></a> focuses on the outcome <span class="ltx_text ltx_lst_language_R ltx_lstlisting"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pre</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-<span class="ltx_text ltx_lst_identifier">eclampsia</span></span></span>, a multisystem hypertensive disorder of pregnancy. The following <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> code computes the E-values after fitting a logistic regression. Based on the E-values, we conclude that to explain away the point estimate, the maximum confounding measure must be larger than 1.94, and to explain away the lower confidence limit, the maximum confounding measure must be larger than 1.91. Although these confounding measures are not as strong as those in Section <a class="ltx_ref" href="#S88" title="88 A classic example ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">88</span></a>, they appear to be fairly large in epidemiologic studies.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.SS2.p2.1">The simple <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> code below computes the numbers in Example <a class="ltx_ref" href="#Thmexample2g" title="Example 17.2 ‣ 89.2 E-value after logistic regression ‣ 89 Extensions ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.2</span></a>:</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">NCHS2003</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">read</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">table</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"NCHS2003.txt"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">header</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">TRUE</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">sep</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"\t"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>outcome:<span class="ltx_text ltx_lst_space"> </span>PTbirth</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">logit</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">glm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">PTbirth</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ageabove35</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mar</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">smoking</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">drinking</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">somecollege</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hispanic</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">black</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nativeamerican</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">asian</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">NCHS2003</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">binomial</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">log</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">or</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">summary</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">logit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1:2]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">exp</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">log</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">or</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lower</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ci</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">exp</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">log</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">or</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.96*</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">log</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">or</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Estimate</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.305982</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">evalue</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Estimate</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.938127</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lower</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ci</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Estimate</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.294619</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">evalue</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lower</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ci</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Estimate</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.912211</span>
+</div>
+</div>
+</div>
+</section>
+<section class="ltx_subsection" id="S89.SS3">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">89.3 </span>Non-zero true causal effect</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.SS3.p1.1">Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> assumes no true causal effect of the treatment on the outcome. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib92" title="">Ding and VanderWeele, (2016)</a></cite> proved a general theorem allowing for a non-zero true causal effect.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem2e">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 17.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem2e.p1.1"><span class="ltx_text ltx_font_italic">Modify the definition of <img alt="\textsc{rr}_{UY\mid x}" class="m" src="m/c23d140c7484.png" style="width:3.44em;vertical-align:-0.46em"/> as</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{UY\mid x}=\max_{z=0,1}\frac{\textup{pr}(Y=1\mid Z=z,U=1,X=x)}{\textup{pr}(Y=1\mid Z=z,U=0,X=x)}." class="m" src="m/b0e1d80693f6.png" style="width:21.63em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem2e.p1.2"><span class="ltx_text ltx_font_italic">Assume (<a class="ltx_ref" href="#S86.E85" title="In Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">85</span></a>).
+We have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY\mid x}^{\textup{true}}\geq\textsc{rr}_{ZY\mid x}^{\textup{obs}}\Big/\frac{\textsc{rr}_{ZU\mid x}\textsc{rr}_{UY\mid x}}{\textsc{rr}_{ZU\mid x}+\textsc{rr}_{UY\mid x}-1}." class="m" src="m/cabfb4762494.png" style="width:18.57em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.SS3.p2.1">Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> is a special case of Theorem <a class="ltx_ref" href="#Thmtheorem2e" title="Theorem 17.2 ‣ 89.3 Non-zero true causal effect ‣ 89 Extensions ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.2</span></a> with <img alt="\textsc{rr}_{ZY\mid x}^{\textup{true}}=1." class="m" src="m/c609be54f93e.png" style="width:5.52em;vertical-align:-0.60em"/>
+See the original paper of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib92" title="">Ding and VanderWeele, (2016)</a></cite> for the proof of Theorem <a class="ltx_ref" href="#Thmtheorem2e" title="Theorem 17.2 ‣ 89.3 Non-zero true causal effect ‣ 89 Extensions ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.2</span></a>. Without assuming any additional assumptions, Theorem <a class="ltx_ref" href="#Thmtheorem2e" title="Theorem 17.2 ‣ 89.3 Non-zero true causal effect ‣ 89 Extensions ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.2</span></a> states a lower bound of the true risk ratio <img alt="\textsc{rr}_{ZY\mid x}^{\textup{true}}" class="m" src="m/981b3ae76761.png" style="width:3.42em;vertical-align:-0.60em"/> given the observed risk ratio <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/> and the two sensitivity parameters <img alt="\textsc{rr}_{ZU\mid x}" class="m" src="m/9e1035def714.png" style="width:3.40em;vertical-align:-0.46em"/> and <img alt="\textsc{rr}_{UY\mid x}" class="m" src="m/c23d140c7484.png" style="width:3.44em;vertical-align:-0.46em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S89.SS3.p3.1">When the treatment is apparently preventive to the outcome, the observed risk ratio is smaller than 1. In this case, Theorems <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> and <a class="ltx_ref" href="#Thmtheorem2e" title="Theorem 17.2 ‣ 89.3 Non-zero true causal effect ‣ 89 Extensions ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.2</span></a> are not directly useful, and we must re-label the treatment levels and calculate the E-value based on <img alt="1/\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/1a50224f598c.png" style="width:4.41em;vertical-align:-0.60em"/>.</p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S90">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">90 </span>Critiques and responses</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S90.p1.1">Since the original paper was published, the E-value has become a standard number reported in many epidemiologic studies. Nevertheless, it also attracted critiques <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib172" title="">Ioannidis et al.,, 2019</a>)</cite>. I will review some limitations of E-values below.</p>
+</div>
+<section class="ltx_subsection" id="S90.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">90.1 </span>E-value is just a monotone transformation of the risk ratio</h5>
+<figure class="ltx_figure" id="S90.F22"><img alt="插图" src="img/value_rr.png"/>
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 22</span>: </span><span class="ltx_text" style="font-size:90%;">E-value as a monotone transformation of the risk ratio: three figures have different ranges of the risk ratio.</span></figcaption>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="S90.SS1.p1.1">From Figure <a class="ltx_ref" href="#S90.F22" title="Figure 22 ‣ 90.1 E-value is just a monotone transformation of the risk ratio ‣ 90 Critiques and responses ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22</span></a>, we can see that if the risk ratio is large, then the E-value <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}+\sqrt{\textsc{rr}_{ZY\mid x}^{\textup{obs}}(\textsc{rr}_{ZY\mid x}^{\textup{obs}}-1)}" class="m" src="m/5bc46f21aec1.png" style="width:14.50em;vertical-align:-0.82em"/> is nearly <img alt="2\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/3cf24ddbdb96.png" style="width:3.90em;vertical-align:-0.60em"/> which is linear in the risk ratio. For a small risk ratio, the E-value is more nonlinear in <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}" class="m" src="m/dd0d15d83eb2.png" style="width:3.42em;vertical-align:-0.60em"/>. Critics often say that the E-value is merely a monotone transformation of the point estimator or the confidence limits of the risk ratio. So it does not provide any additional information.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S90.SS1.p2.1">This is partially true. Indeed, the E-value is entirely based on the point estimator or the confidence limits of the risk ratio. However, it has a meaningful interpretation based on Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>: to explain away the observed risk ratio, the maximum of the confounding measures must be at least as large as the E-value.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S90.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">90.2 </span>Calibration of the E-value</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S90.SS2.p1.1">The E-value equals the maximum value of the association between the confounder and the treatment and that between the confounder and the outcome to completely explain away an observed association. An obvious problem is that this confounder is fundamentally latent. So it is not trivial to decide whether a certain E-value is large or small.
+Another related problem is that the E-value depends on how many observed covariates <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> we have controlled for since it quantifies the strength of the residual confounding given <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. Therefore, E-values across studies are not directly comparable. The E-value provides evidence for causation but this evidence should be assessed carefully based on background knowledge of the problem of interest.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S90.SS2.p2.1">The following leave-one-covariate-out approach is an intuitive approach to calibrating the E-value. With <img alt="X=(X_{1},\ldots,X_{p})" class="m" src="m/7e4238cf5d22.png" style="width:8.05em;vertical-align:-0.41em"/>, we can pretend that the component <img alt="X_{j}" class="m" src="m/76291aba4b43.png" style="width:1.49em;vertical-align:-0.41em"/> were not observed and compute the <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/>-<img alt="X_{j}" class="m" src="m/76291aba4b43.png" style="width:1.49em;vertical-align:-0.41em"/> and <img alt="X_{j}" class="m" src="m/76291aba4b43.png" style="width:1.49em;vertical-align:-0.41em"/>-<img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> risk ratios given other observed covariates <img alt="(j=1,\ldots,p)" class="m" src="m/7e25af8f5830.png" style="width:6.05em;vertical-align:-0.36em"/>. These risk ratios provide the range for the confounding measures due to <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/> if we believe that the unmeasured <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/> is not as strong as some of the observed covariates. However, I am not aware of any formal justification for this approach.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S90.SS3">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">90.3 </span>It works the best for a binary outcome and the risk ratio</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S90.SS3.p1.1">Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> works well for a binary outcome and the risk ratio. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib92" title="">Ding and VanderWeele, (2016)</a></cite> also proposed sensitivity analysis methods for other causal parameters, including the risk difference for binary outcomes, the mean ratio for non-negative outcomes, and the hazard ratio for survival outcomes. However, they are not as elegant as the E-value for binary outcomes based on the risk ratio. The next chapter will propose a simple sensitivity analysis method for the average causal effect that can include the outcome regression, IPW, and doubly robust estimators in Part <a class="ltx_ref" href="#Pt3" title="Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">III</span></a> as special cases.</p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S91">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">91 </span>Homework Problems</h4>
+<section class="ltx_paragraph" id="S91.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">17.1 </span>A technical lemma for the proof of Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P1.p1.1">Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="f(x)=\frac{ax+1}{bx+1}" class="m" src="m/ce84105a84e3.png" style="width:6.58em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S91.SS0.SSS0.P1.p1.2">is increasing in <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/> if <img alt="a&gt;b" class="m" src="m/aafdecfd217f.png" style="width:2.53em;vertical-align:-0.14em"/> and decreasing in <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/> is <img alt="a&lt;b" class="m" src="m/d41a5ee73f55.png" style="width:2.53em;vertical-align:-0.14em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S91.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">17.2 </span>Technical assumption for Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P2.p1.1">Revisit the proof of Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>. Assume <img alt="Z\ind Y\mid(X,U)" class="m" src="m/e347355aaa4b.png" style="width:6.38em;vertical-align:-0.36em"/>. Show that if <img alt="\textsc{rr}_{ZU\mid x}&gt;1" class="m" src="m/f4b68587b747.png" style="width:5.23em;vertical-align:-0.46em"/> but <img alt="\textsc{rr}_{UY\mid x}&lt;1" class="m" src="m/9368b98a85a4.png" style="width:5.28em;vertical-align:-0.46em"/>, then <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}&lt;1" class="m" src="m/1d6d757af7c7.png" style="width:5.25em;vertical-align:-0.60em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P2.p2.1">Remark:
+This result is intuitive. Condition on <img alt="X." class="m" src="m/0c51350b4d1d.png" style="width:1.37em;vertical-align:-0.12em"/> It says that if the <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/>-<img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/> relationship is positive and the <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>-<img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> relationship is negative, then the <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/>-<img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> relationship is negative given the conditional independence of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> given <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>.
+Based on this result, if we assume <img alt="\textsc{rr}_{ZY\mid x}^{\textup{obs}}&gt;1" class="m" src="m/a1661ad0de33.png" style="width:5.25em;vertical-align:-0.60em"/> and <img alt="\textsc{rr}_{ZU\mid x}&gt;1" class="m" src="m/f4b68587b747.png" style="width:5.23em;vertical-align:-0.46em"/>, then <img alt="\textsc{rr}_{UY\mid x}&gt;1" class="m" src="m/c95c581e057d.png" style="width:5.28em;vertical-align:-0.46em"/> must be true.
+Therefore, the third condition in (<a class="ltx_ref" href="#S86.E85" title="In Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">85</span></a>) is in fact redundant.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S91.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">17.3 </span>Lemma <a class="ltx_ref" href="#Thmlemma1c" title="Lemma 17.1 ‣ 87 E-value ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P3.p1.1">Prove Lemma <a class="ltx_ref" href="#Thmlemma1c" title="Lemma 17.1 ‣ 87 E-value ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S91.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">17.4 </span><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib298" title="">Schlesselman, (1978)</a></cite>’s formula</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P4.p1.1">For simplicity, we condition on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> implicitly in this problem.
+Consider a binary treatment <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/>, outcome <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>, and unmeasured confounder <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>.
+Assume a common risk ratio of the treatment on the outcome within both <img alt="U=0" class="m" src="m/b29ead96af0f.png" style="width:2.87em;vertical-align:-0.12em"/> and <img alt="U=1" class="m" src="m/ab1e861d781c.png" style="width:2.87em;vertical-align:-0.12em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY|U=0}=\textsc{rr}_{ZY|U=1}," class="m" src="m/682027320002.png" style="width:10.58em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S91.SS0.SSS0.P4.p1.2">and also a common risk ratio of the confounder on the outcome within both <img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/> and <img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{UY|Z=0}=\textsc{rr}_{UY|Z=1},\text{ denoted by }\gamma." class="m" src="m/c06c935c6af5.png" style="width:17.08em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P4.p2.1">Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{\textsc{rr}_{ZY}^{\textup{obs}}}{\textsc{rr}_{ZY}^{\textup{true}}}=\frac{1+(\gamma-1)\textup{pr}(U=1\mid Z=1)}{1+(\gamma-1)\textup{pr}(U=1\mid Z=0)}." class="m" src="m/5dcfb25c7412.png" style="width:17.56em;vertical-align:-1.08em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P4.p3.1">Remark: First verify that if <img alt="\textsc{rr}_{ZY|U=0}=\textsc{rr}_{ZY|U=1}" class="m" src="m/dec088bbcf91.png" style="width:10.29em;vertical-align:-0.46em"/> then</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{ZY}^{\textup{true}}=\textsc{rr}_{ZY|U=0}=\textsc{rr}_{ZY|U=1}." class="m" src="m/af58353e3116.png" style="width:14.57em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S91.SS0.SSS0.P4.p3.2">This identity shows the <span class="ltx_text ltx_font_italic">collapsibility</span> of the risk ratio.
+In epidemiology, the risk ratio is a <span class="ltx_text ltx_font_italic">collapsible</span> measure of association.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P4.p4.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib298" title="">Schlesselman, (1978)</a></cite>’s formula does not assume conditional independence <img alt="Z\ind Y\mid U" class="m" src="m/defe6213434e.png" style="width:4.31em;vertical-align:-0.36em"/>, but assumes homogeneity of the <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/>-<img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> and <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>-<img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> risk ratios. It is a classic formula for sensitivity analysis. It is an identity that is simple to implement with pre-specified</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\{\gamma,\textup{pr}(U=1\mid Z=1),\textup{pr}(U=1\mid Z=0)\}." class="m" src="m/7942de7ee778.png" style="width:18.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S91.SS0.SSS0.P4.p4.2">However, it involves more sensitivity parameters than Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>. Even though Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a> only gives an inequality, it is not a loose inequality compared to <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib298" title="">Schlesselman, (1978)</a></cite>’s formula under stronger assumptions. With Theorem <a class="ltx_ref" href="#Thmtheorem1h" title="Theorem 17.1 ‣ 86 Cornfield-type sensitivity analysis ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.1</span></a>, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib298" title="">Schlesselman, (1978)</a></cite>’s formula is only of historical interest.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S91.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">17.5 </span>E-value after logistic regression: data analysis</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P5.p1.1">This problem uses the same dataset as Example <a class="ltx_ref" href="#Thmexample2g" title="Example 17.2 ‣ 89.2 E-value after logistic regression ‣ 89 Extensions ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17.2</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P5.p2.1">Report the E-value for the outcome <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">preeclampsia</span>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S91.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">17.6 </span>Cornfield-type inequalities for the risk difference</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P6.p1.1">Consider binary <img alt="Z,Y,U" class="m" src="m/b69648990b84.png" style="width:3.25em;vertical-align:-0.31em"/>, and condition on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> implicitly. Assume latent ignorability given <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>. Show that under <img alt="Z\ind Y\mid U" class="m" src="m/defe6213434e.png" style="width:4.31em;vertical-align:-0.36em"/>, we have</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S91.E89"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textsc{rd}_{ZY}^{\textup{obs}}=\textsc{rd}_{ZU}\times\textsc{rd}_{UY}" class="m" src="m/bfb52c6dc7d8.png" style="width:10.33em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(89)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S91.SS0.SSS0.P6.p1.2">where <img alt="\textsc{rd}_{ZY}^{\textup{obs}}" class="m" src="m/05058c687285.png" style="width:2.75em;vertical-align:-0.39em"/> is the observed risk difference of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> on <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>, and <img alt="\textsc{rd}_{ZU}" class="m" src="m/5e24e37c0162.png" style="width:2.72em;vertical-align:-0.26em"/> and <img alt="\textsc{rd}_{UY}" class="m" src="m/d78dfedad560.png" style="width:2.77em;vertical-align:-0.26em"/> are the treatment-confounder and confounder-outcome risk differences, respectively (recall the definition of the risk difference in Chapter <a class="ltx_ref" href="04.html#S2.SS2" title="2.2 Contingency tables ‣ 2 Some commonly-used measures of association ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.2</span></a>).</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P6.p2.1">Remark: Without loss of generality, assume that <img alt="\textsc{rd}_{ZY}^{\textup{obs}},\textsc{rd}_{ZU},\textsc{rd}_{UY}" class="m" src="m/f69c6862c966.png" style="width:8.67em;vertical-align:-0.39em"/> are all positive. Then (<a class="ltx_ref" href="#S91.E89" title="In 17.6 Cornfield-type inequalities for the risk difference ‣ 91 Homework Problems ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">89</span></a>) implies that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\min(\textsc{rd}_{ZU},\textsc{rd}_{UY})\geq\textsc{rd}_{ZY}^{\textup{obs}}" class="m" src="m/524326b083e4.png" style="width:12.00em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S91.SS0.SSS0.P6.p2.2">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\max(\textsc{rd}_{ZU},\textsc{rd}_{UY})\geq\sqrt{\textsc{rd}_{ZY}^{\textup{obs}}}." class="m" src="m/4a5d9cdbadc6.png" style="width:13.47em;vertical-align:-0.65em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S91.SS0.SSS0.P6.p2.3">These are the Cornfield inequalities for the risk difference with a binary confounder.
+They show that for an unmeasured confounder to explain away an observed risk difference <img alt="\textsc{rd}_{ZY}^{\textup{obs}}" class="m" src="m/05058c687285.png" style="width:2.75em;vertical-align:-0.39em"/>, the treatment-confounder and confounder-outcome risk differences must both be larger than <img alt="\textsc{rd}_{ZY}^{\textup{obs}}" class="m" src="m/05058c687285.png" style="width:2.75em;vertical-align:-0.39em"/>, and the maximum of them must be larger than the square root of <img alt="\textsc{rd}_{ZY}^{\textup{obs}}" class="m" src="m/05058c687285.png" style="width:2.75em;vertical-align:-0.39em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P6.p3.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib67" title="">Cornfield et al., (1959)</a></cite> obtained, but did not appreciate the significance of (<a class="ltx_ref" href="#S91.E89" title="In 17.6 Cornfield-type inequalities for the risk difference ‣ 91 Homework Problems ‣ Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">89</span></a>). <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib118" title="">Gastwirth et al., (1998)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib254" title="">Poole, (2010)</a></cite> discussed the first Cornfield condition for the risk difference, and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib91" title="">Ding and VanderWeele, (2014)</a></cite> discussed the second.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P6.p4.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib91" title="">Ding and VanderWeele, (2014)</a></cite> also derived more general results without assuming a binary <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>. Unfortunately, the results for a general <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/> are weaker than those above for a binary <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>, that is, the inequalities become looser with more levels of <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>. This motivated <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib92" title="">Ding and VanderWeele, (2016)</a></cite> to focus on the Cornfield inequalities for the risk ratio, which do not deteriorate with more levels of <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S91.SS0.SSS0.P7">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">17.7 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S91.SS0.SSS0.P7.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib92" title="">Ding and VanderWeele, (2016)</a></cite> extended and unified the Cornfield-type sensitivity analysis, which is the theoretical basis for the notion of E-value.</p>
+</div>
+</section>
+</section>
+<section class="footnotes"><h4>脚注</h4><p id="fn-chapter17-40"><a href="#fn-chapter17-40-ref">40</a>. Their original analysis was based on a case-control study and estimated the odds ratio of cigarette smoking on lung cancer. But the risk ratio is close to the odds ratio since lung cancer is a rare outcome; see Proposition <a class="ltx_ref" href="04.html#Thmproposition1" title="Proposition 1.1 ‣ 2.2 Contingency tables ‣ 2 Some commonly-used measures of association ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1.1</span></a>.</p><p id="fn-chapter17-41"><a href="#fn-chapter17-41-ref">41</a>. In information theory, the <span class="ltx_text ltx_font_italic">mutual information</span>
+<span class="ltx_equation ltx_eqn_table">
+<span><span class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<span class="ltx_eqn_cell ltx_eqn_center_padleft"></span>
+<span class="ltx_eqn_cell ltx_align_center"><img alt="I(A,B)=\iint p(a,b)\log_{2}\frac{p(a,b)}{p(a)p(b)}\text{d}a\text{d}b" class="m" src="m/20c91345fcbd.png" style="width:17.27em;vertical-align:-1.06em"/></span>
+<span class="ltx_eqn_cell ltx_eqn_center_padright"></span></span></span>
+</span>measures the dependence between two random variables <img alt="A" class="m" src="m/b97267fa7855.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="B" class="m" src="m/fa2452c388ed.png" style="width:1.04em;vertical-align:-0.12em"/>, where <img alt="p(\cdot)" class="m" src="m/5d7ce9b2871d.png" style="width:1.78em;vertical-align:-0.36em"/> denotes the joint or marginal density of <img alt="(A,B)" class="m" src="m/ffe02d39989c.png" style="width:3.01em;vertical-align:-0.36em"/>. The <span class="ltx_text ltx_font_italic">data processing inequality</span> is a famous result: if <img alt="Z\ind Y\mid U" class="m" src="m/defe6213434e.png" style="width:4.31em;vertical-align:-0.36em"/>, then <img alt="I(Z,Y)\leq I(Z,U)" class="m" src="m/444b58dbdb4c.png" style="width:8.05em;vertical-align:-0.36em"/> and <img alt="I(Z,Y)\leq I(U,Y)" class="m" src="m/c079979a6e52.png" style="width:8.02em;vertical-align:-0.36em"/>.
+Lihua Lei and Bin Yu both pointed out to me the connection between Cornfield’s inequality and the data processing inequality.</p><p id="fn-chapter17-42"><a href="#fn-chapter17-42-ref">42</a>. <span class="ltx_text ltx_font_upright">Based on some simple algebra, the solid curve and dashed curve are both hyperbolas.</span></p></section></section><p class="nav bottom"><a href="index.html">目录</a><a href="19.html">← 上一章</a><a href="21.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

@@ -1,0 +1,249 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Preface · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="02.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapterx1">
+<h3 class="ltx_title ltx_title_chapter">Preface</h3>
+<section class="ltx_subsection" id="S0.SSx1">
+<h5 class="ltx_title ltx_title_subsection">Causal inference research and education in the past decade</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx1.p1.1">The past decade has witnessed an explosion of interest in research and education in causal inference, due to its wide applications in biomedical research, social sciences, tech companies, etc. It was quite different even ten years ago when I was a Ph.D. student in statistics. At that time, causal inference was not a mainstream research topic in statistics and very few undergraduate and graduate programs offered courses in causal inference. In the academic world of statistics, many people were still very skeptical about the foundation of causal inference. Many leading statisticians were reluctant to accept causal inference because of the fundamental conceptual difficulties, which differ from the traditional training of mathematical statistics.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx1.p2.1">The applications of causal inference in empirical research have changed the field of statistics in both research and education. In the end, statistics is not only about abstract theory but also about solving real-world problems. Many talented researchers have joined the effort to advance our knowledge of causal inference. Many students are eager to learn state-of-the-art theory and methods in causal inference so that they are better equipped to solve problems from various fields.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx1.p3.1">Due to the needs of the students, my colleagues encouraged me to develop a course in causal inference. Initially, I taught a graduate-level course cross-listed under Political Science and Statistics, which was taught by my former colleague Jas Sekhon for many years at UC Berkeley. Later, I developed this course for both undergraduate and graduate students. At UC Berkeley, the course numbers for “Causal Inference” are Stat 156 and Stat 256, with undergraduate students in Stat 156 and graduate students in Stat 256. Students in both sessions used the same lecture notes and attended the same lectures given by me and my teaching assistants, although they needed to finish different homework problems, reading assignments, and final projects.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx1.p4.1">Given the mixed levels of technical preparations of my students, the most challenging part of my teaching was to balance the interests of both undergraduate and graduate students. On the one hand, I wanted to present the materials in an intuitive way and only required the undergraduate students to have the basic knowledge of probability, statistics, linear regression, and logistic regression. On the other hand, I also wanted to introduce recent research topics and results to the graduate students. This book is a product of my efforts in the past seven years.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S0.SSx2">
+<h5 class="ltx_title ltx_title_subsection">Recommendations for instructors</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx2.p1.1">This book contains 29 chapters in the main text and 3 chapters in the appendix. UC Berkeley is on the semester system and each semester has 14 weeks of lectures. I could not finish all 32 chapters in one semester. Here are some recommendations based on my own teaching experience.</p>
+</div>
+<section class="ltx_paragraph" id="S0.SSx2.SSS0.Px1">
+<h6 class="ltx_title ltx_title_paragraph">Appendix</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx2.SSS0.Px1.p1.1">I started with the chapters in the main text but asked my teaching assistants to review the basics in Chapters <a class="ltx_ref" href="33.html#chapter30" title="Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30</span></a> and <a class="ltx_ref" href="34.html#chapter31" title="Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31</span></a>. To encourage the students to review Chapters <a class="ltx_ref" href="33.html#chapter30" title="Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30</span></a>–<a class="ltx_ref" href="35.html#chapter32" title="Chapter 32 Some Useful Lemmas for Simple Random Sampling From a Finite Population ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">32</span></a> before reading the main text, I also assigned several homework problems from Chapters <a class="ltx_ref" href="33.html#chapter30" title="Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30</span></a>–<a class="ltx_ref" href="35.html#chapter32" title="Chapter 32 Some Useful Lemmas for Simple Random Sampling From a Finite Population ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">32</span></a> at the beginning of the semester.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S0.SSx2.SSS0.Px2">
+<h6 class="ltx_title ltx_title_paragraph">Part <a class="ltx_ref" href="#Pt1" title="Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">I</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx2.SSS0.Px2.p1.1">The key topic in Chapter <a class="ltx_ref" href="04.html#chapter1" title="Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1</span></a> is the Yule–Simpson Paradox. Chapter <a class="ltx_ref" href="05.html#chapter2" title="Chapter 2 Potential Outcomes ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2</span></a> introduces the notion of potential outcomes, which is the foundation for the whole book.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S0.SSx2.SSS0.Px3">
+<h6 class="ltx_title ltx_title_paragraph">Part <a class="ltx_ref" href="#Pt2" title="Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">II</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx2.SSS0.Px3.p1.1">Different researchers and instructors may have quite different views on the materials in Part <a class="ltx_ref" href="#Pt2" title="Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">II</span></a> on randomized experiments. I have talked to many friends about the pros and cons of the current presentation in Part <a class="ltx_ref" href="#Pt2" title="Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">II</span></a>. Causal inference in randomized experiments is relatively straightforward because randomization eliminates unmeasured confounding. So some friends feel that Chapters <a class="ltx_ref" href="06.html#chapter3" title="Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a>–<a class="ltx_ref" href="12.html#chapter9" title="Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">9</span></a> are too long at least for beginners of causal inference. This also disappointed some of my students when I spent a month on randomized experiments.
+On the other hand, I was trained from the book of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib170" title="">Imbens and Rubin, (2015)</a></cite> and believed that to understand observational studies, it is better to understand randomized experiments first. Moreover, I am a big fan of the canonical research of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib105" title="">Fisher, (1935)</a></cite>. Therefore, Part <a class="ltx_ref" href="#Pt2" title="Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">II</span></a> deeply reflects my own intellectual history and personal taste in statistics. Other instructors may not want to spend a month on randomized experiments and can cover Chapters <a class="ltx_ref" href="08.html#chapter5" title="Chapter 5 Stratification and Post-Stratification in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">5</span></a>, <a class="ltx_ref" href="10.html#chapter7" title="Chapter 7 Matched-Pairs Experiment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a>, <a class="ltx_ref" href="11.html#chapter8" title="Chapter 8 Unification of the Fisherian and Neymanian Inferences in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">8</span></a> and <a class="ltx_ref" href="12.html#chapter9" title="Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">9</span></a> quickly.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S0.SSx2.SSS0.Px4">
+<h6 class="ltx_title ltx_title_paragraph">Part <a class="ltx_ref" href="#Pt3" title="Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">III</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx2.SSS0.Px4.p1.1">Part <a class="ltx_ref" href="#Pt3" title="Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">III</span></a> covers the key ideas in observational studies without unmeasured confounding. Four pillars of observational studies are outcome regression, inverse propensity score weighting, doubly robust, and matching estimators, which are covered in Chapters <a class="ltx_ref" href="13.html#chapter10" title="Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10</span></a>, <a class="ltx_ref" href="14.html#chapter11" title="Chapter 11 The Central Role of the Propensity Score in Observational Studies for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">11</span></a>, <a class="ltx_ref" href="15.html#chapter12" title="Chapter 12 The Doubly Robust or the Augmented Inverse Propensity Score Weighting Estimator for the Average Causal Effect ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">12</span></a> and <a class="ltx_ref" href="18.html#chapter15" title="Chapter 15 Matching in Observational Studies ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">15</span></a>, respectively.
+Chapters <a class="ltx_ref" href="16.html#chapter13" title="Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13</span></a> and <a class="ltx_ref" href="17.html#chapter14" title="Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14</span></a> are optional in teaching. But the results in Chapters <a class="ltx_ref" href="16.html#chapter13" title="Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13</span></a> and <a class="ltx_ref" href="17.html#chapter14" title="Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14</span></a> are not uninteresting, so I sometimes covered one or two results there, asked the teaching assistants to cover more in the lab sessions, and encouraged students to read them by assigning some homework problems from those chapters.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S0.SSx2.SSS0.Px5">
+<h6 class="ltx_title ltx_title_paragraph">Part <a class="ltx_ref" href="#Pt4" title="Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">IV</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx2.SSS0.Px5.p1.1">Part <a class="ltx_ref" href="#Pt4" title="Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">IV</span></a> is a novel treatment of the fundamental difficulties of observational studies including unmeasured confounding and overlap. However, this part is far from perfect due to the complexities and subtleties of the issues. Chapters <a class="ltx_ref" href="20.html#chapter17" title="Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17</span></a>, <a class="ltx_ref" href="21.html#chapter18" title="Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18</span></a> and <a class="ltx_ref" href="23.html#chapter20" title="Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20</span></a> are central, whereas Chapters <a class="ltx_ref" href="19.html#chapter16" title="Chapter 16 Difficulties of Unconfoundedness in Observational Studies for Causal Effects ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">16</span></a> and <a class="ltx_ref" href="22.html#chapter19" title="Chapter 19 Rosenbaum-Style 𝑝-Values for Matched Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">19</span></a> are optional.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S0.SSx2.SSS0.Px6">
+<h6 class="ltx_title ltx_title_paragraph">Part <a class="ltx_ref" href="#Pt5" title="Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">V</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx2.SSS0.Px6.p1.1">Part <a class="ltx_ref" href="#Pt5" title="Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">V</span></a> discusses the idea of the instrumental variable. Chapters <a class="ltx_ref" href="24.html#chapter21" title="Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21</span></a>, <a class="ltx_ref" href="26.html#chapter23" title="Chapter 23 An Econometric Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">23</span></a> and <a class="ltx_ref" href="27.html#chapter24" title="Chapter 24 Application of the Instrumental Variable Method: Fuzzy Regression Discontinuity ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">24</span></a> are key, whereas Chapters <a class="ltx_ref" href="25.html#chapter22" title="Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22</span></a> and <a class="ltx_ref" href="28.html#chapter25" title="Chapter 25 Application of the Instrumental Variable Method: Mendelian Randomization ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">25</span></a> are optional.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S0.SSx2.SSS0.Px7">
+<h6 class="ltx_title ltx_title_paragraph">Part <a class="ltx_ref" href="#Pt6" title="Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">VI</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx2.SSS0.Px7.p1.1">Part <a class="ltx_ref" href="#Pt6" title="Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">VI</span></a> are some special topics. They are all optional in some sense. Probably it is worth teaching Chapter <a class="ltx_ref" href="30.html#chapter27" title="Chapter 27 Mediation Analysis: Natural Direct and Indirect Effects ‣ Part VI Causal Mechanisms with Post-Treatment Variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">27</span></a> given the popularity of the Baron–Kenny method in mediation analysis.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S0.SSx2.SSS0.Px8">
+<h6 class="ltx_title ltx_title_paragraph">Omitted topics</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx2.SSS0.Px8.p1.1">This book does not cover some popular econometric methods including the difference in differences, panel data, and synthetic controls. Instructors can use <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib18" title="">Angrist and Pischke, (2008)</a></cite> as a reference for those topics.
+This book assumes minimal preparation for the background knowledge in probability and statistics. Since most introductory statistics courses use the frequentists’ view that assumes the unknown parameters are fixed, I adopt this view in this book and omit the Bayesian view for causal inference. In fact, many fundamental ideas of causal inference are from the Bayesian view, starting from <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib284" title="">Rubin, (1978)</a></cite>. If readers and students are interested in Bayesian causal inference, please read the review paper by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib200" title="">Li et al., (2023)</a></cite>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S0.SSx2.SSS0.Px9">
+<h6 class="ltx_title ltx_title_paragraph">Help from teaching assistants</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx2.SSS0.Px9.p1.1">My teaching assistants offered invaluable help for my courses at UC Berkeley. Since I could not cover everything in my notes, I consistently relied on them to cover some technical details or <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> program sessions in their labs.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S0.SSx2.SSS0.Px10">
+<h6 class="ltx_title ltx_title_paragraph">Solution to some homework problems</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx2.SSS0.Px10.p1.1">I have also prepared the solutions to most theory problems. If you are an instructor for a causal inference course, please contact me for the solutions with detailed information about your course.</p>
+</div>
+</section>
+</section>
+<section class="ltx_subsection" id="S0.SSx3">
+<h5 class="ltx_title ltx_title_subsection">Additional recommendations for readers and students</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx3.p1.1">Readers and students can first read my recommendations for instructors above. In addition, I have two other recommendations.</p>
+</div>
+<section class="ltx_paragraph" id="S0.SSx3.SSS0.Px1">
+<h6 class="ltx_title ltx_title_paragraph">Homework problems</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx3.SSS0.Px1.p1.1">Each chapter of this book contains homework problems. To deepen the understanding, it is important to try some homework problems. Moreover, some homework problems contain useful theoretical results. Even if you do not have time to figure out the details for those problems, it is helpful to at least read the statements of the problems.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S0.SSx3.SSS0.Px2">
+<h6 class="ltx_title ltx_title_paragraph">Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx3.SSS0.Px2.p1.1">Each chapter of this book contains recommended reading. If you want to do research in causal inference, those recommended papers can be useful background knowledge of the literature. When I taught the graduate-level causal inference course at UC Berkeley, I assigned the following papers to the students as weekly reading from week one to the end of the semester:</p>
+<ul class="ltx_itemize">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i1.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib32" title="">Bickel et al., (1975)</a></cite>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i2.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib149" title="">Holland, (1986)</a></cite>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i3.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib231" title="">Miratrix et al., (2013)</a></cite>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i4.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i5.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib207" title="">Li et al., 2018b ()</a></cite>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i6.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib278" title="">Rosenbaum and Rubin, 1983b ()</a></cite>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i7.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib217" title="">Lunceford and Davidian, (2004)</a></cite>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i8.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib92" title="">Ding and VanderWeele, (2016)</a></cite>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i9.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib242" title="">Pearl, (1995)</a></cite>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i10.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib16" title="">Angrist et al., (1996)</a></cite>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i11.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib164" title="">Imbens, (2014)</a></cite>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I1.i12.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib111" title="">Frangakis and Rubin, (2002)</a></cite>.</p>
+</div></li>
+</ul>
+<p class="ltx_p" id="S0.SSx3.SSS0.Px2.p1.2">Many students gave me positive feedback about their experience of reading the papers above.
+I recommend reading the above papers even if you do not read this book.</p>
+</div>
+</section>
+</section>
+<section class="ltx_subsection" id="S0.SSx4">
+<h5 class="ltx_title ltx_title_subsection">Features of the book</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx4.p1.1">There are already many excellent causal inference books published in the last decade. Some of them have profound influences on me.
+When I was in college, I read some draft chapters of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib170" title="">Imbens and Rubin, (2015)</a></cite> from the internet. They completely challenged my way of thinking about statistics and helped to build my research interest in causal inference.
+I read <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib18" title="">Angrist and Pischke, (2008)</a></cite> many times and have gained new insights each time I re-read it.
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib272" title="">Rosenbaum, 2002b ()</a></cite>, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib233" title="">Morgan and Winship, (2015)</a></cite>, and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib141" title="">Hernán and Robins, (2020)</a></cite> are another three excellent books from leading researchers in causal inference.
+When I was preparing for the book, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib71" title="">Cunningham, (2021)</a></cite>, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib155" title="">Huntington-Klein, (2022)</a></cite>, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib46" title="">Brumback, (2022)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib152" title="">Huber, (2023)</a></cite> appeared as four recent excellent books on causal inference.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx4.p2.1">Thanks to my teaching experience at UC Berkeley, this book has the following features that instructors, students, and readers may find attractive.</p>
+<ul class="ltx_itemize">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I2.i1.p1.1">This book assumes minimal preparation for causal inference and reviews the basic probability and statistics knowledge in the appendix.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I2.i2.p1.1">This book covers causal inference from the statistics, biostatistics, and econometrics perspectives, and draws applications from various fields.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I2.i3.p1.1">This book uses <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> code and data analysis to illustrate the ideas of causal inference. All the <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> code and datasets are publicly available at Harvard Dataverse: <a class="ltx_ref ltx_url ltx_font_typewriter" href="https://doi.org/10.7910/DVN/ZX3VEV" title="">https://doi.org/10.7910/DVN/ZX3VEV</a></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.I2.i4.p1.1">This book contains homework problems and can be used as a textbook for both undergraduate and graduate students. Instructors can also ask me for solutions to some homework problems.</p>
+</div></li>
+</ul>
+</div>
+</section>
+<section class="ltx_subsection" id="S0.SSx5">
+<h5 class="ltx_title ltx_title_subsection">Acknowledgments</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx5.p1.1">Professor Zhi Geng at Peking University introduced me to the area of causal inference when I was studying in college. Professors Luke Miratrix, Tirthankar Dasgupta, and Don Rubin served on my Ph.D. thesis committee at the Harvard Statistics Department. Professor Tyler VanderWeele supervised me as a postdoctoral researcher in Epidemiology at the Harvard T. H. Chan School of Public Health.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx5.p2.1">My colleagues at the Berkeley Statistics Department have created a critical and productive research environment. Bin Yu and Jas Sekhon have been very supportive since I was a junior faculty. My department chairs, Deb Nolan, Sandrine Dudoit, and Haiyan Huang, encouraged me to develop the “Causal Inference” course. It has been a rewarding experience for me.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx5.p3.1">I have been lucky to work with many collaborators, in particular, Avi Feller, Laura Forastiere, Zhichao Jiang, Fang Han, Fan Li, Xinran Li, Alessandra Mattei, Fabrizia Mealli, Shu Yang, and Anqi Zhao. I will report in this book what I have learned from them.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx5.p4.1">Many students at UC Berkeley made critical and constructive comments on early versions of my lecture notes. As teaching assistants for my “Causal Inference” course, Emily Flanagan and Sizhu Lu read early versions of my book carefully and helped me to improve the book a lot.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx5.p5.1">Professor Joe Blitzstein read an early version of the book carefully and made very detailed comments. Addressing his comments leads to significant improvement in the book. Professors Hongyuan Cao and Zhichao Jiang taught “Causal Inference” courses based on an early version of the book. They made very valuable suggestions.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx5.p6.1">I am also very grateful for the suggestions from Young Woong Min, Fangzhou Su, Chaoran Yu, and Lo-Hua Yuan.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S0.SSx5.p7.1">If you identify any errors, please feel free to email me.</p>
+</div>
+</section>
+</section><p class="nav bottom"><a href="index.html">目录</a><a href="02.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

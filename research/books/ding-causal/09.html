@@ -1,0 +1,1030 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 6 Rerandomization and Regression Adjustment · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="08.html">← 上一章</a><a href="10.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter6">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 6 </span>Rerandomization and Regression Adjustment</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter6.p1.1">Stratification and post-stratification in Chapter <a class="ltx_ref" href="08.html#chapter5" title="Chapter 5 Stratification and Post-Stratification in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">5</span></a> are duals for discrete covariates in the design and analysis of randomized experiments. How should we deal with multidimensional, possibly continuous, covariates? We can discretize continuous covariates, but this is not an ideal strategy with many covariates. Rerandomization and regression adjustment are duals for general covariates, which are the topics for this chapter.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter6.p2.1">The following table summarizes the topics of Chapters <a class="ltx_ref" href="08.html#chapter5" title="Chapter 5 Stratification and Post-Stratification in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">5</span></a> and <a class="ltx_ref" href="#chapter6" title="Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6</span></a>:</p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_column ltx_border_r ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_r ltx_border_t">design</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">analysis</th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_r ltx_border_t">discrete covariate</td>
+<td class="ltx_td ltx_align_center ltx_border_r ltx_border_t">stratification</td>
+<td class="ltx_td ltx_align_center ltx_border_t">post-stratification</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_b ltx_border_r ltx_border_t">general covariate</td>
+<td class="ltx_td ltx_align_center ltx_border_b ltx_border_r ltx_border_t">rerandomization</td>
+<td class="ltx_td ltx_align_center ltx_border_b ltx_border_t">regression adjustment</td></tr>
+</tbody>
+</table></div>
+</div>
+<section class="ltx_section" id="S29">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">29 </span>Rerandomization</h4>
+<section class="ltx_subsection" id="S29.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">29.1 </span>Experimental design</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS1.p1.1">Again we consider a finite population of <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> experimental units, where <img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/> of them receive the treatment and <img alt="n_{0}" class="m" src="m/45626a2aa980.png" style="width:1.28em;vertical-align:-0.26em"/> of them receive the control. Let
+<img alt="\bm{Z}=(Z_{1},\ldots,Z_{n})" class="m" src="m/663c0ff51434.png" style="width:7.76em;vertical-align:-0.36em"/> be the treatment vector for these units. Unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/> has covariate <img alt="X_{i}\in\mathbb{R}^{K}" class="m" src="m/18042922e888.png" style="width:4.12em;vertical-align:-0.26em"/> which can have continuous or binary components. Concatenate them as an <img alt="n\times K" class="m" src="m/3bc12712aa1d.png" style="width:2.99em;vertical-align:-0.19em"/> covariate matrix <img alt="\bm{X}=(X_{1},\ldots,X_{n})^{\mkern-1.5mu\mathsf{T}}" class="m" src="m/cba6729d31ed.png" style="width:8.72em;vertical-align:-0.36em"/> and center them at mean zero <img alt="\bar{X}=n^{-1}\sum_{i=1}^{n}X_{i}=0" class="m" src="m/fe528ddfda4e.png" style="width:9.88em;vertical-align:-0.41em"/> to simplify the presentation.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS1.p2.1">The CRE balances the covariates in the treatment and control groups on average, for instance, the difference in means of the covariates</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{X}=n_{1}^{-1}\sum_{i=1}^{n}Z_{i}X_{i}-n_{0}^{-1}\sum_{i=1}^{n}(1-Z_{i})X_{i}" class="m" src="m/4021186c1181.png" style="width:17.59em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S29.SS1.p2.2">has mean zero under the CRE. However, it can result in undesired covariate balance across the treatment and control groups in the realized treatment allocation, that is, the realized value of <img alt="\hat{\tau}_{X}" class="m" src="m/fbd6fd0a5c2f.png" style="width:1.42em;vertical-align:-0.26em"/> is often not zero. Using the vector form of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite> in Problem <a class="ltx_ref" href="07.html#S22.SS0.SSS0.P6" title="4.6 Vector version of ( ) ‣ 22 Homework Problems ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.6</span></a> before, we can show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{cov}(\hat{\tau}_{X})=\frac{1}{n_{1}}S_{X}^{2}+\frac{1}{n_{0}}S_{X}^{2}=\frac{n}{n_{1}n_{0}}S_{X}^{2}," class="m" src="m/d0ff1fd82982.png" style="width:16.86em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S29.SS1.p2.3">where <img alt="S_{X}^{2}=(n-1)^{-1}\sum_{i=1}^{n}X_{i}X_{i}^{\mkern-1.5mu\mathsf{T}}" class="m" src="m/784fd9bf1f14.png" style="width:12.41em;vertical-align:-0.41em"/> is the finite-population covariance matrix of the covariates. The following Mahalanobis distance measures the difference between the treatment and control groups:</p>
+<table class="ltx_equation ltx_eqn_table" id="S29.E26">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="M=\hat{\tau}_{X}^{\mkern-1.5mu\mathsf{T}}\textup{cov}(\hat{\tau}_{X})^{-1}\hat{\tau}_{X}=\hat{\tau}_{X}^{\mkern-1.5mu\mathsf{T}}\left(\frac{n}{n_{1}n_{0}}S_{X}^{2}\right)^{-1}\hat{\tau}_{X}." class="m" src="m/eb8686feae3c.png" style="width:20.14em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(26)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S29.SS1.p2.4">Technically, the above formula for <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> in (<a class="ltx_ref" href="#S29.E26" title="In 29.1 Experimental design ‣ 29 Rerandomization ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26</span></a>) is meaningful only if <img alt="S_{X}^{2}" class="m" src="m/86e5b73f4fe6.png" style="width:1.61em;vertical-align:-0.39em"/> is invertible, which means that the columns of the covariate matrix <img alt="\bm{X}" class="m" src="m/d56165b2f99e.png" style="width:1.25em;vertical-align:-0.12em"/> are linearly independent. If a column can be represented by a linear combination of other columns, it is redundant and should be dropped before the experiment.
+A nice feature of <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> is that it is invariant under non-degenerate linear transformations of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. Lemma <a class="ltx_ref" href="#Thmlemma1b" title="Lemma 6.1 ‣ 29.1 Experimental design ‣ 29 Rerandomization ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.1</span></a> below summarizes the result with the proof relegated to Problem <a class="ltx_ref" href="#S34.SS0.SSS0.P2" title="6.2 Invariance of the Mahalanobis Distance ‣ 34 Homework Problems ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.2</span></a>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_lemma" id="Thmlemma1b">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Lemma 6.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmlemma1b.p1.1"><img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_italic"> in (<a class="ltx_ref" href="#S29.E26" title="In 29.1 Experimental design ‣ 29 Rerandomization ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26</span></a>) remains the same if we transform <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/> to <img alt="b_{0}+BX_{i}" class="m" src="m/64388c899ba0.png" style="width:4.31em;vertical-align:-0.26em"/> for all units <img alt="i=1,\ldots,n" class="m" src="m/4f9df9a48055.png" style="width:5.23em;vertical-align:-0.31em"/> where <img alt="b_{0}\in\mathbb{R}^{K}" class="m" src="m/a0468fb9cd20.png" style="width:3.83em;vertical-align:-0.26em"/> and <img alt="B\in\mathbb{R}^{K\times K}" class="m" src="m/24796810c6d2.png" style="width:5.11em;vertical-align:-0.14em"/> is invertible.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS1.p3.1">The finite population CLT <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib205" title="">Li and Ding,, 2017</a>)</cite> ensures that with large <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/>, the Mahalanobis distance <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> is approximately <img alt="\chi^{2}_{K}" class="m" src="m/1e82517b60e1.png" style="width:1.64em;vertical-align:-0.39em"/> under the CRE. Therefore, it is likely that <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/> has a large realized value under the CRE with asymptotic mean <img alt="K" class="m" src="m/7ab2200d24b1.png" style="width:1.16em;vertical-align:-0.12em"/> and variance <img alt="2K" class="m" src="m/a09fa0964632.png" style="width:1.66em;vertical-align:-0.12em"/>. Rerandomization avoids covariate imbalance by discarding the treatment allocations with large values of <img alt="M" class="m" src="m/7c78ebb4c223.png" style="width:1.30em;vertical-align:-0.12em"/>. Below I give a formal definition of the rerandomization using the Mahalanobis distance (ReM), which was proposed by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib68" title="">Cox, (1982)</a></cite> and further studied by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib232" title="">Morgan and Rubin, (2012)</a></cite>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 6.1</span></span><span class="ltx_text ltx_font_bold"> (ReM)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition1c.p1.1"><span class="ltx_text ltx_font_italic">Draw <img alt="\bm{Z}" class="m" src="m/49573002cc32.png" style="width:1.08em;vertical-align:-0.12em"/> from CRE and accept it if and only if</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="M\leq a," class="m" src="m/b84caccb9913.png" style="width:3.44em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmdefinition1c.p1.2"><span class="ltx_text ltx_font_italic">for some predetermined constant <img alt="a&gt;0" class="m" src="m/f1df7541202c.png" style="width:2.60em;vertical-align:-0.14em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS1.p4.1">The problem of choosing <img alt="a" class="m" src="m/4962a1914f6a.png" style="width:0.77em;vertical-align:-0.12em"/> is similar to the problem of choosing the number of strata in the SRE, which is non-trivial in practice. At one extreme, <img alt="a=\infty" class="m" src="m/c953e7b48a84.png" style="width:3.08em;vertical-align:-0.12em"/>, we just conduct the CRE. At the other extreme, <img alt="a=0" class="m" src="m/f04ed7656a23.png" style="width:2.60em;vertical-align:-0.12em"/>, there are very few feasible treatment allocations, and consequently, the experiment has little randomness, rendering randomization-based inference useless. As a compromise, we choose a small but not extremely small <img alt="a" class="m" src="m/4962a1914f6a.png" style="width:0.77em;vertical-align:-0.12em"/>, for example, <img alt="a=0.001" class="m" src="m/36e13ef8d04a.png" style="width:4.36em;vertical-align:-0.12em"/> or some upper quantile of a <img alt="\chi^{2}_{K}" class="m" src="m/1e82517b60e1.png" style="width:1.64em;vertical-align:-0.39em"/> distribution.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS1.p5.1">ReM has many desirable properties. As mentioned above, it is invariant to linear transformations of the covariates. Moreover, it has nice geometric properties and elegant mathematical theory. This chapter will focus on ReM.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S29.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">29.2 </span>Statistical inference</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS2.p1.1">An important question is how to analyze the data under ReM. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib45" title="">Bruhn and McKenzie, (2009)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib232" title="">Morgan and Rubin, (2012)</a></cite> argued that we can always use the FRT as long as we simulate <img alt="\bm{Z}" class="m" src="m/49573002cc32.png" style="width:1.08em;vertical-align:-0.12em"/> under the constraint <img alt="M\leq a" class="m" src="m/03bf439b5e4d.png" style="width:3.18em;vertical-align:-0.24em"/>. This always yields finite-sample exact <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values under the sharp null hypothesis. See Problem <a class="ltx_ref" href="#S34.SS0.SSS0.P1" title="6.1 FRT under ReM ‣ 34 Homework Problems ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.1</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS2.p2.1">It is a challenging problem to derive the finite sample properties of ReM without assuming the sharp null hypothesis. Instead, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib207" title="">Li et al., 2018b ()</a></cite> derived the asymptotic distribution of the difference in means of the outcome <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> under ReM and the regularity conditions below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_condition" id="Thmcondition1">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Condition 6.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmcondition1.p1.1"><span class="ltx_text ltx_font_italic">As <img alt="n\rightarrow\infty" class="m" src="m/dfe52984916e.png" style="width:3.40em;vertical-align:-0.12em"/>,</span></p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.I1.i1.p1.1"><img alt="n_{1}/n" class="m" src="m/42d93f30c7c9.png" style="width:2.38em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> and </span><img alt="n_{0}/n" class="m" src="m/4d570337a5b0.png" style="width:2.38em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> have positive limits;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.I1.i2.p1.1"><span class="ltx_text ltx_font_italic">the finite population covariance of </span><img alt="\{X_{i},Y_{i}(1),Y_{i}(0),\tau_{i}\}" class="m" src="m/77182a02fd64.png" style="width:8.89em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> has a finite limit;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.I1.i3.p1.1"><img alt="\max_{1\leq i\leq n}\{Y_{i}(1)-\bar{Y}(1)\}^{2}/n\rightarrow 0" class="m" src="m/ac0c5a2eec63.png" style="width:14.67em;vertical-align:-0.39em"/><span class="ltx_text ltx_font_italic">,
+</span><img alt="\max_{1\leq i\leq n}\{Y_{i}(0)-\bar{Y}(0)\}^{2}/n\rightarrow 0" class="m" src="m/ede988723705.png" style="width:14.67em;vertical-align:-0.39em"/><span class="ltx_text ltx_font_italic">,
+and </span><img alt="\max_{1\leq i\leq n}X_{i}^{\mkern-1.5mu\mathsf{T}}X_{i}/n\rightarrow 0" class="m" src="m/aa6562286d8a.png" style="width:10.46em;vertical-align:-0.39em"/><span class="ltx_text ltx_font_italic">,</span></p>
+</div></li>
+</ol>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS2.p3.1">Below is the main theorem for ReM, which relies on additional notation.
+Let</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="L_{K,a}\sim D_{1}\mid\bm{D}^{\mkern-1.5mu\mathsf{T}}\bm{D}\leq a" class="m" src="m/21ed8b67886a.png" style="width:10.05em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S29.SS2.p3.2">where <img alt="\bm{D}=(D_{1},\ldots,D_{K})" class="m" src="m/e836ec8cc4bf.png" style="width:8.41em;vertical-align:-0.36em"/> follows a <img alt="K" class="m" src="m/7ab2200d24b1.png" style="width:1.16em;vertical-align:-0.12em"/>-dimensional standard Normal distribution; let <img alt="\varepsilon" class="m" src="m/ac9fc14ca159.png" style="width:0.70em;vertical-align:-0.12em"/> follow a univariate standard Normal distribution; <img alt="L_{K,a}\ind \varepsilon." class="m" src="m/eac8c2a30be5.png" style="width:3.95em;vertical-align:-0.41em"/></p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 6.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1a.p1.1"><span class="ltx_text ltx_font_italic">Under ReM with <img alt="M\leq a" class="m" src="m/03bf439b5e4d.png" style="width:3.18em;vertical-align:-0.24em"/> and Condition <a class="ltx_ref" href="#Thmcondition1" title="Condition 6.1 ‣ 29.2 Statistical inference ‣ 29 Rerandomization ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.1</span></a>, we have<sup><a href="#fn-chapter6-18" id="fn-chapter6-18-ref">18</a></sup></span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}-\tau\stackrel{{\scriptstyle\cdot}}{{\sim}}\sqrt{\textup{var}(\hat{\tau})}\left\{\sqrt{R^{2}}L_{K,a}+\sqrt{1-R^{2}}\varepsilon\right\}," class="m" src="m/143edb381445.png" style="width:19.27em;vertical-align:-0.77em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem1a.p1.2"><span class="ltx_text ltx_font_italic">where</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}(\hat{\tau})=\frac{S^{2}(1)}{n_{1}}+\frac{S^{2}(0)}{n_{0}}-\frac{S^{2}(\tau)}{n}" class="m" src="m/04ed420c7517.png" style="width:14.67em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem1a.p1.3"><span class="ltx_text ltx_font_italic">is <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s variance formula proved in Chapter <a class="ltx_ref" href="07.html#chapter4" title="Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4</span></a>, and</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="R^{2}=\textup{corr}^{2}(\hat{\tau},\hat{\tau}_{X})" class="m" src="m/d9c2fe77eb0f.png" style="width:7.93em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem1a.p1.4"><span class="ltx_text ltx_font_italic">is the squared multiple correlation coefficient (see Section <a class="ltx_ref" href="33.html#chapter30.A1.SS1" title="30.A.1 Pearson correlation coefficient and squared multiple correlation coefficient ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.A.1</span></a> for the definition) between <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> and <img alt="\hat{\tau}_{X}" class="m" src="m/fbd6fd0a5c2f.png" style="width:1.42em;vertical-align:-0.26em"/> under the CRE.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS2.p4.1">Although the proof of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib207" title="">Li et al., 2018b ()</a></cite> is technical, the asymptotic distribution in Theorem <a class="ltx_ref" href="#Thmtheorem1a" title="Theorem 6.1 ‣ 29.2 Statistical inference ‣ 29 Rerandomization ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.1</span></a> has a clear geometric interpretation, as shown in Figure <a class="ltx_ref" href="#S29.F12" title="Figure 12 ‣ 29.2 Statistical inference ‣ 29 Rerandomization ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">12</span></a>. It shows that <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> decomposes into a component that is a linear combination of <img alt="\hat{\tau}_{X}" class="m" src="m/fbd6fd0a5c2f.png" style="width:1.42em;vertical-align:-0.26em"/> and a component that is orthogonal to <img alt="\hat{\tau}_{X}" class="m" src="m/fbd6fd0a5c2f.png" style="width:1.42em;vertical-align:-0.26em"/>. Geometrically, <img alt="\cos^{2}\theta=R^{2}" class="m" src="m/62bd4808768c.png" style="width:5.23em;vertical-align:-0.12em"/>, where <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> is the angle between <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> and <img alt="\hat{\tau}_{X}" class="m" src="m/fbd6fd0a5c2f.png" style="width:1.42em;vertical-align:-0.26em"/>.
+ReM affects the first component but does not change the second component. The truncated Normal distribution <img alt="L_{K,a}" class="m" src="m/2978a7485407.png" style="width:2.31em;vertical-align:-0.41em"/> is due to the restriction of ReM on the first component.</p>
+</div>
+<figure class="ltx_figure" id="S29.F12"><img alt="Refer to caption" src="img/rem_geometry.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 12</span>: </span><span class="ltx_text" style="font-size:90%;">Geometry of the asymptotic distribution of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> under ReM</span></figcaption>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS2.p5.1">When <img alt="a=\infty" class="m" src="m/c953e7b48a84.png" style="width:3.08em;vertical-align:-0.12em"/>, the asymptotic distribution simplifies to the one under the CRE:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}-\tau\stackrel{{\scriptstyle\cdot}}{{\sim}}\sqrt{\textup{var}(\hat{\tau})}\varepsilon." class="m" src="m/e5bb3c45d63e.png" style="width:8.34em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S29.SS2.p5.2">When the threshold <img alt="a" class="m" src="m/4962a1914f6a.png" style="width:0.77em;vertical-align:-0.12em"/> is close to zero, the asymptotic distribution simplifies to</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}-\tau\stackrel{{\scriptstyle\cdot}}{{\sim}}\sqrt{\textup{var}(\hat{\tau})(1-R^{2})}\varepsilon;" class="m" src="m/4548245e29fa.png" style="width:12.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S29.SS2.p5.3">see <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib337" title="">Wang and Li, (2022)</a></cite> for a rigorous proof.
+So with a small threshold <img alt="a" class="m" src="m/4962a1914f6a.png" style="width:0.77em;vertical-align:-0.12em"/>, the efficiency gain due to ReM depends on <img alt="R^{2}" class="m" src="m/b5f2662fd970.png" style="width:1.45em;vertical-align:-0.12em"/>, which has the following equivalent form.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_proposition" id="Thmproposition1a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Proposition 6.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmproposition1a.p1.1"><span class="ltx_text ltx_font_italic">Under the CRE, we have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="R^{2}=\textup{corr}^{2}(\hat{\tau},\hat{\tau}_{X})=\frac{n_{1}^{-1}S^{2}(1\mid X)+n_{0}^{-1}S^{2}(0\mid X)-n^{-1}S^{2}(\tau\mid X)}{n_{1}^{-1}S^{2}(1)+n_{0}^{-1}S^{2}(0)-n^{-1}S^{2}(\tau)}," class="m" src="m/92ddc7a33adb.png" style="width:29.70em;vertical-align:-1.16em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmproposition1a.p1.2"><span class="ltx_text ltx_font_italic">where <img alt="\{S^{2}(1),S^{2}(0),S^{2}(\tau)\}" class="m" src="m/89659f8a1ef2.png" style="width:9.37em;vertical-align:-0.36em"/> are the finite population variances of <img alt="\{Y_{i}(1),Y_{i}(0),\tau_{i}\}_{i=1}^{n}" class="m" src="m/5cfebbc4353d.png" style="width:8.62em;vertical-align:-0.36em"/>, and <img alt="\{S^{2}(1\mid x),S^{2}(0\mid x),S^{2}(\tau\mid x)\}" class="m" src="m/54442d31f19f.png" style="width:13.59em;vertical-align:-0.36em"/> are the corresponding finite population variances of their linear projections on <img alt="(1,X_{i})" class="m" src="m/c63893420ce1.png" style="width:3.11em;vertical-align:-0.36em"/>; see Section <a class="ltx_ref" href="34.html#chapter31.A2" title="Appendix 31.B Sample ordinary least squares ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31.B</span></a> for the definition of linear projections.
+Under the constant causal effect assumption with <img alt="\tau_{i}=\tau" class="m" src="m/70c7652a7509.png" style="width:2.89em;vertical-align:-0.26em"/>, the <img alt="R^{2}" class="m" src="m/b5f2662fd970.png" style="width:1.45em;vertical-align:-0.12em"/> reduces to <img alt="S^{2}(0\mid X)/S^{2}(0)" class="m" src="m/77fd9aed42df.png" style="width:7.28em;vertical-align:-0.36em"/>, the finite population squared multiple correlation between <img alt="Y_{i}(0)" class="m" src="m/cff26d98475e.png" style="width:2.43em;vertical-align:-0.36em"/> and <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS2.p6.1">I leave the proof of Proposition <a class="ltx_ref" href="#Thmproposition1a" title="Proposition 6.1 ‣ 29.2 Statistical inference ‣ 29 Rerandomization ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.1</span></a> to Problem <a class="ltx_ref" href="#S34.SS0.SSS0.P4" title="6.4 Equivalent form of 𝑅^2 in the CRE ‣ 34 Homework Problems ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.4</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS2.p7.1">When <img alt="0&lt;a&lt;\infty" class="m" src="m/354b897bde6c.png" style="width:4.94em;vertical-align:-0.14em"/>, the asymptotic distribution of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> has a more complicated form and is more concentrated at <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> and thus the difference in means <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> is more precise under ReM than under the CRE.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S29.SS2.p8.1">If we ignore the design of ReM and still use the confidence interval based on <cite class="ltx_cite ltx_citemacro_cite"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s variance formula and the Normal approximation, it is overly conservative and overcovers <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> even if the individual causal effects are constant. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib207" title="">Li et al., 2018b ()</a></cite> proposed to construct confidence intervals based on Theorem <a class="ltx_ref" href="#Thmtheorem1a" title="Theorem 6.1 ‣ 29.2 Statistical inference ‣ 29 Rerandomization ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.1</span></a>. We omit the discussion here but will come back to the inference issue in Section <a class="ltx_ref" href="#S31" title="31 Unification, combination, and comparison ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31</span></a>.</p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S30">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">30 </span>Regression adjustment</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.p1.1">What if we do not conduct rerandomization in the design stage but want to adjust for covariate imbalance in the analysis stage of the CRE? We will discuss several regression adjustment strategies.</p>
+</div>
+<section class="ltx_subsection" id="S30.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.1 </span>Covariate-adjusted FRT</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS1.p1.1">The covariates <img alt="\bm{X}" class="m" src="m/d56165b2f99e.png" style="width:1.25em;vertical-align:-0.12em"/> are all fixed, and furthermore, under <img alt="H_{0\textsc{f}}" class="m" src="m/aca362d66dc1.png" style="width:1.88em;vertical-align:-0.26em"/>, the observed outcomes are all fixed. Therefore, we can simulate the distribution of any test statistic <img alt="T=T(\bm{Z},\bm{Y},\bm{X})" class="m" src="m/d63d62822e05.png" style="width:7.47em;vertical-align:-0.36em"/> and calculate the <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-value. The basic idea of the FRT remains the same in the presence of additional covariates.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS1.p2.1">There are two general strategies to construct the test statistic. Problem <a class="ltx_ref" href="06.html#S16.SS0.SSS0.P6" title="3.6 Covariate-adjusted FRT ‣ 16 Homework Problems ‣ Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3.6</span></a> before hints at both of them. I summarize them below, using the terminology from <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib349" title="">Zhao and Ding, 2021a ()</a></cite>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition2">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 6.2</span></span><span class="ltx_text ltx_font_bold"> (pseudo-outcome strategy for covariate-adjusted FRT)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition2.p1.1"><span class="ltx_text ltx_font_italic">We can construct the test statistic based on residuals from fitted statistical models. We can regress <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/> to obtain residual <img alt="\hat{\varepsilon}_{i}" class="m" src="m/d26cb62a32e9.png" style="width:1.04em;vertical-align:-0.26em"/>, and then treat <img alt="\hat{\varepsilon}_{i}" class="m" src="m/d26cb62a32e9.png" style="width:1.04em;vertical-align:-0.26em"/> as the pseudo outcome to construct test statistics.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition3">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 6.3</span></span><span class="ltx_text ltx_font_bold"> (model-output strategy for covariate-adjusted FRT)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition3.p1.1"><span class="ltx_text ltx_font_italic">We can use a regression coefficient as a test statistic. We can regress <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(Z_{i},X_{i})" class="m" src="m/5978c34e438d.png" style="width:3.64em;vertical-align:-0.36em"/> to obtain the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> as the test statistic.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS1.p3.1">In the pseudo-outcome strategy in Definition <a class="ltx_ref" href="#Thmdefinition2" title="Definition 6.2 (pseudo-outcome strategy for covariate-adjusted FRT) ‣ 30.1 Covariate-adjusted FRT ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.2</span></a>, the regression of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/> should not include the treatment <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> because we want to ensure that the pseudo outcome satisfies <img alt="H_{0\textsc{f}}" class="m" src="m/aca362d66dc1.png" style="width:1.88em;vertical-align:-0.26em"/> if the original outcome satisfies <img alt="H_{0\textsc{f}}" class="m" src="m/aca362d66dc1.png" style="width:1.88em;vertical-align:-0.26em"/>.
+In the model-output strategy in Definition <a class="ltx_ref" href="#Thmdefinition3" title="Definition 6.3 (model-output strategy for covariate-adjusted FRT) ‣ 30.1 Covariate-adjusted FRT ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.3</span></a>, the regression of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(Z_{i},X_{i})" class="m" src="m/5978c34e438d.png" style="width:3.64em;vertical-align:-0.36em"/> includes the treatment <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> because we want to use the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> to measure the deviation from <img alt="H_{0\textsc{f}}" class="m" src="m/aca362d66dc1.png" style="width:1.88em;vertical-align:-0.26em"/>.
+Computationally, in strategy one, we only need to run regression once, whereas in strategy two, we need to run regression many times.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS1.p4.1">In the above, “regression” is a generic term, which can be linear regression, logistic regression, or even machine learning algorithms. The FRT with any test statistics from these two strategies will be finite-sample exact under <img alt="H_{0\textsc{f}}" class="m" src="m/aca362d66dc1.png" style="width:1.88em;vertical-align:-0.26em"/> although they differ under alternative hypotheses.
+The rest of this section will review some test statistics based on OLS.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S30.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.2 </span>Analysis of covariance and extensions</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS2.p1.1">Now we turn to direct estimation of the average causal effect <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> that adjusts for the observed covariates.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS2.p2.1">Historically, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib104" title="">Fisher, (1925)</a></cite> proposed to use the analysis of covariance (ANCOVA) to improve estimation efficiency. This remains a standard strategy in many fields. He suggested running the OLS of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i})" class="m" src="m/e2be079e781b.png" style="width:4.58em;vertical-align:-0.36em"/> and obtaining the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> as an estimator for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>. Let <img alt="\hat{\tau}_{\textsc{F}}" class="m" src="m/8618962a224a.png" style="width:1.23em;vertical-align:-0.26em"/> denote Fisher’s ANCOVA estimator.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS2.p3.1">A former Berkeley Statistics Professor, David A. Freedman, reanalyzed Fisher’s ANCOVA under <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s potential outcomes framework. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib112" title="">Freedman, 2008a ()</a>; <a class="ltx_ref" href="35.html#bib.bib113" title="">Freedman, 2008b ()</a></cite> found the following negative results:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item"></span>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.I1.p1.1">[(1)]</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.I1.i1.p1.1"><img alt="\hat{\tau}_{\textsc{F}}" class="m" src="m/8618962a224a.png" style="width:1.23em;vertical-align:-0.26em"/> is biased, but the simple difference in means <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> is unbiased.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.I1.i2.p1.1">The asymptotic variance of <img alt="\hat{\tau}_{\textsc{F}}" class="m" src="m/8618962a224a.png" style="width:1.23em;vertical-align:-0.26em"/> may be even larger than that of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> when <img alt="n_{1}\neq n_{0}" class="m" src="m/aab06b9ef532.png" style="width:3.66em;vertical-align:-0.31em"/>.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.I1.i3.p1.1">The standard error from the OLS is inconsistent for the true standard error of <img alt="\hat{\tau}_{\textsc{F}}" class="m" src="m/8618962a224a.png" style="width:1.23em;vertical-align:-0.26em"/> under the CRE.</p>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS2.p4.1">A former Berkeley Ph.D. student, Winston Lin, wrote a thesis in response to Freedman’s critiques. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite> found the following positive results:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item"></span>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.I2.p1.1">[(1)]</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.I2.i1.p1.1">The bias of <img alt="\hat{\tau}_{\textsc{F}}" class="m" src="m/8618962a224a.png" style="width:1.23em;vertical-align:-0.26em"/> is small in large samples, and it goes to zero as the sample size approaches infinity.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.I2.i2.p1.1">We can improve the asymptotic efficiency of both <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> and <img alt="\hat{\tau}_{\textsc{F}}" class="m" src="m/8618962a224a.png" style="width:1.23em;vertical-align:-0.26em"/> by using the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the OLS of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i},Z_{i}\times X_{i})" class="m" src="m/b95315c4716e.png" style="width:8.43em;vertical-align:-0.36em"/>. Let <img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> denote <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator. Moreover, the EHW standard error is a conservative estimator for the true standard error of <img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> under the CRE.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.I2.i3.p1.1">The EHW standard error<sup><a href="#fn-chapter6-19" id="fn-chapter6-19-ref">19</a></sup>
+for <img alt="\hat{\tau}_{\textsc{F}}" class="m" src="m/8618962a224a.png" style="width:1.23em;vertical-align:-0.26em"/> in the OLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i})" class="m" src="m/e2be079e781b.png" style="width:4.58em;vertical-align:-0.36em"/> is a conservative estimator for the true standard error of <img alt="\hat{\tau}_{\textsc{F}}" class="m" src="m/8618962a224a.png" style="width:1.23em;vertical-align:-0.26em"/> under the CRE.</p>
+</div></li>
+</ol>
+</div>
+<section class="ltx_subsubsection" id="S30.SS2.SSS1">
+<h6 class="ltx_title ltx_title_subsubsection"><span class="ltx_tag ltx_tag_subsubsection">30.2.1 </span>Some heuristics for <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s results</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS2.SSS1.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s result demonstrates that the variance of the difference-in-means estimator <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> depends on the variances of the potential outcomes. Intuitively, we can reduce the variance of the estimator by reducing the variances of the potential outcomes. A family of linearly adjusted estimators is</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S30.E27"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}(\beta_{1},\beta_{0})" class="m" src="m/47693e4655c3.png" style="width:4.02em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n_{1}^{-1}\sum_{i=1}^{n}Z_{i}(Y_{i}-\beta_{1}^{\mkern-1.5mu\mathsf{T}}X_{i})-n_{0}^{-1}\sum_{i=1}^{n}(1-Z_{i})(Y_{i}-\beta_{0}^{\mkern-1.5mu\mathsf{T}}X_{i})" class="m" src="m/e2fb541b9a2e.png" style="width:23.08em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(27)</span></td></tr></tbody>
+<tbody id="S30.E28"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\left\{\hat{\bar{Y}}(1)-\beta_{1}^{\mkern-1.5mu\mathsf{T}}\hat{\bar{X}}(1)\right\}-\left\{\hat{\bar{Y}}(0)-\beta_{0}^{\mkern-1.5mu\mathsf{T}}\hat{\bar{X}}(0)\right\}," class="m" src="m/45bc2bff7312.png" style="width:17.75em;vertical-align:-0.77em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(28)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS1.p1.2">where <img alt="\{\hat{\bar{Y}}(1),\hat{\bar{Y}}(0)\}" class="m" src="m/facf593f5de6.png" style="width:5.83em;vertical-align:-0.36em"/> are the sample means of the outcomes, and <img alt="\{\hat{\bar{X}}(1),\hat{\bar{X}}(0)\}" class="m" src="m/511d69a29a14.png" style="width:6.05em;vertical-align:-0.36em"/> are the sample means of the covariates. This covariate-adjusted estimator <img alt="\hat{\tau}(\beta_{1},\beta_{0})" class="m" src="m/634bb7b6c1eb.png" style="width:4.02em;vertical-align:-0.36em"/> tries to reduce the variance of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> by residualizing the potential outcomes. It reduces to <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> with <img alt="\beta_{1}=\beta_{0}=0" class="m" src="m/23c8807bed77.png" style="width:5.42em;vertical-align:-0.31em"/>.
+It has mean <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> for any fixed values of <img alt="\beta_{1}" class="m" src="m/dc60979297b1.png" style="width:1.25em;vertical-align:-0.31em"/> and <img alt="\beta_{0}" class="m" src="m/918cb4aaf5f6.png" style="width:1.25em;vertical-align:-0.31em"/> because <img alt="\bar{X}=0." class="m" src="m/4422151d83b2.png" style="width:3.25em;vertical-align:-0.12em"/> We are interested in finding the <img alt="(\beta_{1},\beta_{0})" class="m" src="m/46d8a115b9ef.png" style="width:3.49em;vertical-align:-0.36em"/> that minimize the variance of <img alt="\hat{\tau}(\beta_{1},\beta_{0})" class="m" src="m/634bb7b6c1eb.png" style="width:4.02em;vertical-align:-0.36em"/>. This estimator is essentially the difference in means of the adjusted potential outcomes <img alt="\{Y_{i}(1)-\beta_{1}^{\mkern-1.5mu\mathsf{T}}X_{i},Y_{i}(0)-\beta_{0}^{\mkern-1.5mu\mathsf{T}}X_{i}\}_{i=1}^{n}" class="m" src="m/c520b8cfeaa0.png" style="width:14.38em;vertical-align:-0.36em"/>. Applying <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s result, this estimator has variance</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}\{\hat{\tau}(\beta_{1},\beta_{0})\}=\frac{{S}^{2}(1;\beta_{1})}{n_{1}}+\frac{{S}^{2}(0;\beta_{0})}{n_{0}}-\frac{S^{2}(\tau;\beta_{1},\beta_{0})}{n}," class="m" src="m/8667ed176b97.png" style="width:24.26em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S30.SS2.SSS1.p1.3">where <img alt="{S}^{2}(z;\beta_{z})" class="m" src="m/c3ec3d51ae2d.png" style="width:4.12em;vertical-align:-0.36em"/> <img alt="(z=1,0)" class="m" src="m/72eff277d4c4.png" style="width:4.29em;vertical-align:-0.36em"/> and <img alt="S^{2}(\tau;\beta_{1},\beta_{0})" class="m" src="m/6e62c2b3b1cd.png" style="width:5.59em;vertical-align:-0.36em"/> are the finite population variances of the adjusted potential outcomes and individual causal effects, respectively; moreover, a conservative variance estimate is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{V}(\beta_{1},\beta_{0})=\frac{\hat{S}^{2}(1;\beta_{1})}{n_{1}}+\frac{\hat{S}^{2}(0;\beta_{0})}{n_{0}}," class="m" src="m/3161cc1032f2.png" style="width:15.32em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S30.SS2.SSS1.p1.4">where</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{S}^{2}(1;\beta_{1})" class="m" src="m/decf28ee2c7b.png" style="width:4.10em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle(n_{1}-1)^{-1}\sum_{i=1}^{n}Z_{i}(Y_{i}-\gamma_{1}-\beta_{1}^{\mkern-1.5mu\mathsf{T}}X_{i})^{2}," class="m" src="m/da9248f48d4b.png" style="width:15.75em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{S}^{2}(0;\beta_{0})" class="m" src="m/6660776a3b82.png" style="width:4.10em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle(n_{0}-1)^{-1}\sum_{i=1}^{n}(1-Z_{i})(Y_{i}-\gamma_{0}-\beta_{0}^{\mkern-1.5mu\mathsf{T}}X_{i})^{2}" class="m" src="m/186808876b82.png" style="width:17.80em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS1.p1.5">are the sample variances of the adjusted potential outcomes with <img alt="\gamma_{1}" class="m" src="m/960ae64a158a.png" style="width:1.20em;vertical-align:-0.31em"/> and <img alt="\gamma_{0}" class="m" src="m/aac63e53c932.png" style="width:1.20em;vertical-align:-0.31em"/> being the sample means of <img alt="Y_{i}-\beta_{1}^{\mkern-1.5mu\mathsf{T}}X_{i}" class="m" src="m/15f28d2c2d36.png" style="width:4.65em;vertical-align:-0.36em"/> under treatment and <img alt="Y_{i}-\beta_{0}^{\mkern-1.5mu\mathsf{T}}X_{i}" class="m" src="m/a3a10e07e56a.png" style="width:4.65em;vertical-align:-0.36em"/> under control.
+To minimize <img alt="\hat{V}(\beta_{1},\beta_{0})" class="m" src="m/79d53977d923.png" style="width:4.29em;vertical-align:-0.36em"/>, we need to solve two OLS problems<sup><a href="#fn-chapter6-20" id="fn-chapter6-20-ref">20</a></sup>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\min_{\gamma_{1},\beta_{1}}\sum_{i=1}^{n}Z_{i}(Y_{i}-\gamma_{1}-\beta_{1}^{\mkern-1.5mu\mathsf{T}}X_{i})^{2},\quad\min_{\gamma_{0},\beta_{0}}\sum_{i=1}^{n}(1-Z_{i})(Y_{i}-\gamma_{0}-\beta_{0}^{\mkern-1.5mu\mathsf{T}}X_{i})^{2}." class="m" src="m/e92460bdde62.png" style="width:29.29em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S30.SS2.SSS1.p1.6">We run OLS of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/> for the treatment and control groups separately and obtain <img alt="(\hat{\gamma}_{1},\hat{\beta}_{1})" class="m" src="m/26224c3f4d7e.png" style="width:3.44em;vertical-align:-0.36em"/> and <img alt="(\hat{\gamma}_{0},\hat{\beta}_{0})" class="m" src="m/73b0490cd76f.png" style="width:3.44em;vertical-align:-0.36em"/>. The final estimator is</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}(\hat{\beta}_{1},\hat{\beta}_{0})" class="m" src="m/1d1516f5eb0e.png" style="width:4.02em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n_{1}^{-1}\sum_{i=1}^{n}Z_{i}(Y_{i}-\hat{\beta}_{1}^{\mkern-1.5mu\mathsf{T}}X_{i})-n_{0}^{-1}\sum_{i=1}^{n}(1-Z_{i})(Y_{i}-\hat{\beta}_{0}^{\mkern-1.5mu\mathsf{T}}X_{i})" class="m" src="m/8f73e5121776.png" style="width:23.08em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\left\{\hat{\bar{Y}}(1)-\hat{\beta}_{1}^{\mkern-1.5mu\mathsf{T}}\hat{\bar{X}}(1)\right\}-\left\{\hat{\bar{Y}}(0)-\hat{\beta}_{0}^{\mkern-1.5mu\mathsf{T}}\hat{\bar{X}}(0)\right\}." class="m" src="m/3c9d9beb5493.png" style="width:17.75em;vertical-align:-0.77em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS1.p1.7">From the properties of the OLS fits (see (<a class="ltx_ref" href="34.html#chapter31.A7.E162" title="In AE.1 Sample WLS with the intercept ‣ Appendix 31.G Homework problems ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">162</span></a>)), we know</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\bar{Y}}(1)=\hat{\gamma}_{1}+\hat{\beta}_{1}^{\mkern-1.5mu\mathsf{T}}\hat{\bar{X}}(1),\quad\hat{\bar{Y}}(0)=\hat{\gamma}_{0}+\hat{\beta}_{0}^{\mkern-1.5mu\mathsf{T}}\hat{\bar{X}}(0)." class="m" src="m/5aadf7b0bfad.png" style="width:19.75em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S30.SS2.SSS1.p1.8">Therefore, we can rewrite the estimator as</p>
+<table class="ltx_equation ltx_eqn_table" id="S30.E29">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}(\hat{\beta}_{1},\hat{\beta}_{0})=\hat{\gamma}_{1}-\hat{\gamma}_{0}" class="m" src="m/23fd29b6a548.png" style="width:8.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(29)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S30.SS2.SSS1.p1.9">The equivalent form in (<a class="ltx_ref" href="#S30.E29" title="In 30.2.1 Some heuristics for ( ) ’s results ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">29</span></a>) suggests that we can obtain <img alt="\hat{\tau}(\hat{\beta}_{1},\hat{\beta}_{0})" class="m" src="m/f553dae9f706.png" style="width:4.02em;vertical-align:-0.36em"/> from a single OLS fit below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_proposition" id="Thmproposition2">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Proposition 6.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmproposition2.p1.1"><span class="ltx_text ltx_font_italic">The estimator <img alt="\hat{\tau}(\hat{\beta}_{1},\hat{\beta}_{0})" class="m" src="m/f553dae9f706.png" style="width:4.02em;vertical-align:-0.36em"/> in (<a class="ltx_ref" href="#S30.E29" title="In 30.2.1 Some heuristics for ( ) ’s results ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">29</span></a>) equals the coefficient of <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> in the OLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i},Z_{i}\times X_{i})" class="m" src="m/b95315c4716e.png" style="width:8.43em;vertical-align:-0.36em"/>, which is <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator <img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> introduced before.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS2.SSS1.p2.1">I leave the proof of Proposition <a class="ltx_ref" href="#Thmproposition2" title="Proposition 6.2 ‣ 30.2.1 Some heuristics for ( ) ’s results ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.2</span></a> to Problem <a class="ltx_ref" href="#S34.SS0.SSS0.P7" title="6.7 Lin’s estimator for covariate adjustment ‣ 34 Homework Problems ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.7</span></a>, which is a pure linear algebra fact.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS2.SSS1.p3.1">Based on the discussion above, a conservative variance estimator for <img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> is</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{V}(\hat{\beta}_{1},\hat{\beta}_{0})" class="m" src="m/2ea91f1fc13f.png" style="width:4.29em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{1}{n_{1}(n_{1}-1)}\sum_{i=1}^{n}Z_{i}(Y_{i}-\hat{\gamma}_{1}-\hat{\beta}_{1}^{\mkern-1.5mu\mathsf{T}}X_{i})^{2}" class="m" src="m/6766ef6e7447.png" style="width:15.68em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\qquad+\frac{1}{n_{0}(n_{0}-1)}\sum_{i=1}^{n}(1-Z_{i})(Y_{i}-\hat{\gamma}_{0}-\hat{\beta}_{0}^{\mkern-1.5mu\mathsf{T}}X_{i})^{2}." class="m" src="m/688cf33541f3.png" style="width:21.08em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS1.p3.2">Based on quite technical calculations, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite> further showed that the EHW standard error from the OLS in Proposition <a class="ltx_ref" href="#Thmproposition2" title="Proposition 6.2 ‣ 30.2.1 Some heuristics for ( ) ’s results ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.2</span></a> is almost identical to <img alt="\hat{V}(\hat{\beta}_{1},\hat{\beta}_{0})" class="m" src="m/66769e7ccbdd.png" style="width:4.29em;vertical-align:-0.36em"/> which is a conservative estimator of the true standard error of <img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> under the CRE. Intuitively, this is because we do not assume that the linear model is correctly specified, and the EHW standard error is robust to model misspecification.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS2.SSS1.p4.1">There is a subtle issue with the discussion above. The variance formula <img alt="\textup{var}\{\hat{\tau}(\beta_{1},\beta_{0})\}" class="m" src="m/3f22d7513df0.png" style="width:6.41em;vertical-align:-0.36em"/> works for fixed <img alt="(\beta_{1},\beta_{0})" class="m" src="m/46d8a115b9ef.png" style="width:3.49em;vertical-align:-0.36em"/>, but the estimator <img alt="\hat{\tau}(\hat{\beta}_{1},\hat{\beta}_{0})" class="m" src="m/f553dae9f706.png" style="width:4.02em;vertical-align:-0.36em"/> uses two estimated coefficients <img alt="(\hat{\beta}_{1},\hat{\beta}_{0})" class="m" src="m/90205645eff4.png" style="width:3.49em;vertical-align:-0.36em"/>. The additional uncertainty in the estimated coefficients may cause finite-sample bias in the final estimator. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite> showed that this issue goes away asymptotically because <img alt="\hat{\tau}(\hat{\beta}_{1},\hat{\beta}_{0})" class="m" src="m/f553dae9f706.png" style="width:4.02em;vertical-align:-0.36em"/> behaves similarly to <img alt="\hat{\tau}(\tilde{\beta}_{1},\tilde{\beta}_{0})" class="m" src="m/92c3f3211919.png" style="width:4.02em;vertical-align:-0.36em"/>, where <img alt="\tilde{\beta}_{1}" class="m" src="m/38437cc41a57.png" style="width:1.25em;vertical-align:-0.31em"/> and <img alt="\tilde{\beta}_{0}" class="m" src="m/806299d97d70.png" style="width:1.25em;vertical-align:-0.31em"/> are the limit of <img alt="\hat{\beta}_{1}" class="m" src="m/680e7c7c1261.png" style="width:1.25em;vertical-align:-0.31em"/> and <img alt="\hat{\beta}_{0}" class="m" src="m/1b87afb9cb46.png" style="width:1.25em;vertical-align:-0.31em"/>, respectively. Heuristically, the difference between <img alt="\hat{\tau}(\hat{\beta}_{1},\hat{\beta}_{0})" class="m" src="m/f553dae9f706.png" style="width:4.02em;vertical-align:-0.36em"/> and <img alt="\hat{\tau}(\tilde{\beta}_{1},\tilde{\beta}_{0})" class="m" src="m/92c3f3211919.png" style="width:4.02em;vertical-align:-0.36em"/> depends on</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\hat{\beta}_{z}-\tilde{\beta}_{z})^{\mkern-1.5mu\mathsf{T}}\hat{\bar{X}}(z),\quad(z=0,1)" class="m" src="m/b62256a5d4bf.png" style="width:12.48em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S30.SS2.SSS1.p4.2">which is a product of two terms of small order. As a warning, the asymptotic theory requires a large sample size and some regularity conditions on the potential outcomes and covariates. In finite samples, regression adjustment can be even harmful due to the additional uncertainty in the estimated coefficients <img alt="\hat{\beta}_{1}" class="m" src="m/680e7c7c1261.png" style="width:1.25em;vertical-align:-0.31em"/> and <img alt="\hat{\beta}_{0}" class="m" src="m/1b87afb9cb46.png" style="width:1.25em;vertical-align:-0.31em"/>.</p>
+</div>
+</section>
+<section class="ltx_subsubsection" id="S30.SS2.SSS2">
+<h6 class="ltx_title ltx_title_subsubsection"><span class="ltx_tag ltx_tag_subsubsection">30.2.2 </span>Understanding <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator via predicting the potential outcomes</h6>
+<figure class="ltx_table" id="S30.T1">
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">Table 1</span>: </span><span class="ltx_text" style="font-size:90%;">Predicting the potential outcomes</span></figcaption>
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y(1)" class="m" src="m/ad64600ca3da.png" style="width:2.31em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y(0)" class="m" src="m/1b485f154c2a.png" style="width:2.31em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="\hat{Y}(1)" class="m" src="m/372e0f6c167c.png" style="width:2.31em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="\hat{Y}(0)" class="m" src="m/decd23a87ae1.png" style="width:2.31em;vertical-align:-0.36em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="X_{1}" class="m" src="m/318fee4a6612.png" style="width:1.52em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t">1</td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y_{1}(1)" class="m" src="m/768ba1bd988a.png" style="width:2.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t">?</td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="\hat{\mu}_{1}(X_{1})" class="m" src="m/3dfc96d2c018.png" style="width:3.35em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="\hat{\mu}_{0}(X_{1})" class="m" src="m/fad9f83e6a55.png" style="width:3.35em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center">⋮</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center"><img alt="X_{n_{1}}" class="m" src="m/3e4c5a63bc8d.png" style="width:2.00em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center">1</td>
+<td class="ltx_td ltx_align_center"><img alt="Y_{n_{1}}(1)" class="m" src="m/40d7503e0e30.png" style="width:3.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center">?</td>
+<td class="ltx_td ltx_align_center"><img alt="\hat{\mu}_{1}(X_{n_{1}})" class="m" src="m/d87028731c97.png" style="width:3.83em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\hat{\mu}_{0}(X_{n_{1}})" class="m" src="m/3e57dd5fc93f.png" style="width:3.83em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center"><img alt="X_{n_{1}+1}" class="m" src="m/de66c3bfa084.png" style="width:3.01em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center">0</td>
+<td class="ltx_td ltx_align_center">?</td>
+<td class="ltx_td ltx_align_center"><img alt="Y_{n_{1}+1}(0)" class="m" src="m/49cd2735ec78.png" style="width:4.05em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\hat{\mu}_{1}(X_{n_{1}+1})" class="m" src="m/561a5588fc8f.png" style="width:4.84em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\hat{\mu}_{0}(X_{n_{1}+1})" class="m" src="m/56a7137d78d0.png" style="width:4.84em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center">⋮</td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td>
+<td class="ltx_td"></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="X_{n}" class="m" src="m/2f2e136dc3a5.png" style="width:1.61em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b">0</td>
+<td class="ltx_td ltx_align_center ltx_border_b">?</td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="Y_{n}(0)" class="m" src="m/f344a375eb4b.png" style="width:2.63em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="\hat{\mu}_{1}(X_{n})" class="m" src="m/2d14de40ca27.png" style="width:3.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="\hat{\mu}_{0}(X_{n})" class="m" src="m/5b091f76e182.png" style="width:3.44em;vertical-align:-0.36em"/></td></tr>
+</tbody>
+</table></div>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS2.SSS2.p1.1">We can view <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator as a <span class="ltx_text ltx_font_italic">predictive estimator</span> based on OLS fits of the potential outcomes on the covariates. We build a prediction model for <img alt="Y(1)" class="m" src="m/ad64600ca3da.png" style="width:2.31em;vertical-align:-0.36em"/> based on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> using the data from the treatment group:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S30.E30"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\mu}_{1}(X)=\hat{\gamma}_{1}+\hat{\beta}_{1}^{\mkern-1.5mu\mathsf{T}}X." class="m" src="m/53b00edf121e.png" style="width:8.72em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(30)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS2.p1.2">Similarly, we build a prediction model for <img alt="Y(0)" class="m" src="m/1b485f154c2a.png" style="width:2.31em;vertical-align:-0.36em"/> based on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> using the data from the control group:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S30.E31"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\mu}_{0}(X)=\hat{\gamma}_{0}+\hat{\beta}_{0}^{\mkern-1.5mu\mathsf{T}}X." class="m" src="m/a51363b45726.png" style="width:8.72em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(31)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS2.p1.3">Table <a class="ltx_ref" href="#S30.T1" title="Table 1 ‣ 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1</span></a> illustrates the prediction of the potential outcomes.
+If we predict the missing potential outcomes, then we have the following predictive estimator:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S30.E32"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}_{\text{pred}}=n^{-1}\left\{\sum_{Z_{i}=1}Y_{i}+\sum_{Z_{i}=0}\hat{\mu}_{1}(X_{i})-\sum_{Z_{i}=1}\hat{\mu}_{0}(X_{i})-\sum_{Z_{i}=0}Y_{i}\right\}." class="m" src="m/bb79ed60abf5.png" style="width:27.13em;vertical-align:-1.52em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(32)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS2.p1.4">We can verify that with (<a class="ltx_ref" href="#S30.E30" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30</span></a>) and (<a class="ltx_ref" href="#S30.E31" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31</span></a>), the predictive estimator equals <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S30.E33"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}_{\text{pred}}=\hat{\tau}_{\textsc{L}}." class="m" src="m/6324960949c7.png" style="width:4.84em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(33)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS2.p1.5">If we predict all potential outcomes even if they are observed, we have the following <span class="ltx_text ltx_font_italic">projective estimator</span>:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S30.E34"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}_{\text{proj}}=n^{-1}\sum_{i=1}^{n}\{\hat{\mu}_{1}(X_{i})-\hat{\mu}_{0}(X_{i})\}." class="m" src="m/9f68d4eb2331.png" style="width:15.27em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(34)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS2.p1.6">We can verify that with (<a class="ltx_ref" href="#S30.E30" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30</span></a>) and (<a class="ltx_ref" href="#S30.E31" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31</span></a>), the projective estimator equals <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S30.E35"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}_{\text{proj}}=\hat{\tau}_{\textsc{L}}." class="m" src="m/38c14f0e2a35.png" style="width:4.75em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(35)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS2.p1.7">I leave the proofs of (<a class="ltx_ref" href="#S30.E33" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">33</span></a>) and (<a class="ltx_ref" href="#S30.E35" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">35</span></a>) to Problem <a class="ltx_ref" href="#S34.SS0.SSS0.P8" title="6.8 Predictive and projective estimators ‣ 34 Homework Problems ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.8</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS2.SSS2.p2.1">The terminology “predictive” and “projective” is from the survey sampling literature <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib103" title="">Firth and Bennett,, 1998</a>; <a class="ltx_ref" href="35.html#bib.bib87" title="">Ding and Li,, 2018</a>)</cite>.
+The more general formulas (<a class="ltx_ref" href="#S30.E32" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">32</span></a>) and (<a class="ltx_ref" href="#S30.E34" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">34</span></a>) are well-defined with other predictors of the potential outcomes. To make connections with <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator, I focus on the linear predictors here. The predictors <img alt="\hat{\mu}_{1}(X)" class="m" src="m/6470e60b6d67.png" style="width:2.96em;vertical-align:-0.36em"/> and <img alt="\hat{\mu}_{0}(X)" class="m" src="m/c0effa15612f.png" style="width:2.96em;vertical-align:-0.36em"/> can be quite general, including much more complicated machine learning algorithms. However, constructing a point estimator is just the first step in analyzing the CRE. A more important second step is to quantify the uncertainty associated with the estimator, which depends on the properties of the predictors of the potential outcomes. Nevertheless, without doing additional theoretical analysis, we can always use (<a class="ltx_ref" href="#S30.E32" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">32</span></a>) and (<a class="ltx_ref" href="#S30.E34" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">34</span></a>) as the test statistics in the FRT.</p>
+</div>
+</section>
+<section class="ltx_subsubsection" id="S30.SS2.SSS3">
+<h6 class="ltx_title ltx_title_subsubsection"><span class="ltx_tag ltx_tag_subsubsection">30.2.3 </span>Understanding <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator via adjusting for covariate imbalance</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS2.SSS3.p1.1">The linearly adjusted estimator has an equivalent form</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S30.E36"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}(\beta_{1},\beta_{0})=\hat{\tau}-\gamma^{\mkern-1.5mu\mathsf{T}}\hat{\tau}_{X}" class="m" src="m/75ea907a795c.png" style="width:9.40em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(36)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS3.p1.2">where <img alt="\gamma=\frac{n_{0}}{n}\beta_{1}+\frac{n_{1}}{n}\beta_{0}" class="m" src="m/41337c30ae80.png" style="width:7.64em;vertical-align:-0.46em"/>, so we can also write it as <img alt="\hat{\tau}(\gamma)=\hat{\tau}(\beta_{1},\beta_{0})." class="m" src="m/d4d3923e6fed.png" style="width:7.54em;vertical-align:-0.36em"/> Similarly, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator has an equivalent form</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S30.E37"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}_{\textsc{L}}=\hat{\tau}-\hat{\gamma}^{\mkern-1.5mu\mathsf{T}}\hat{\tau}_{X}," class="m" src="m/1b52aa825e3a.png" style="width:6.84em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(37)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS2.SSS3.p1.3">where <img alt="\hat{\gamma}=\frac{n_{0}}{n}\hat{\beta}_{1}+\frac{n_{1}}{n}\hat{\beta}_{0}" class="m" src="m/7aad2ea0ecf2.png" style="width:7.64em;vertical-align:-0.46em"/>.
+I leave the proofs of (<a class="ltx_ref" href="#S30.E36" title="In 30.2.3 Understanding ( ) ’s estimator via adjusting for covariate imbalance ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">36</span></a>) and (<a class="ltx_ref" href="#S30.E37" title="In 30.2.3 Understanding ( ) ’s estimator via adjusting for covariate imbalance ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">37</span></a>) to Problem <a class="ltx_ref" href="#S34.SS0.SSS0.P9" title="6.9 Equivalent form of the covariate-adjusted estimator ‣ 34 Homework Problems ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.9</span></a>. The forms (<a class="ltx_ref" href="#S30.E36" title="In 30.2.3 Understanding ( ) ’s estimator via adjusting for covariate imbalance ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">36</span></a>) and (<a class="ltx_ref" href="#S30.E37" title="In 30.2.3 Understanding ( ) ’s estimator via adjusting for covariate imbalance ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">37</span></a>) are the mathematical statements of “adjusting for the covariate imbalance.” They essentially subtract some linear combinations of the difference in means of the covariates. Since <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> and <img alt="\hat{\tau}_{X}" class="m" src="m/fbd6fd0a5c2f.png" style="width:1.42em;vertical-align:-0.26em"/> are correlated under the CRE, the covariate adjustment with an appropriately chosen <img alt="\gamma" class="m" src="m/68923f208210.png" style="width:0.79em;vertical-align:-0.31em"/> reduces the variance of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/>.
+Another interesting feature of (<a class="ltx_ref" href="#S30.E36" title="In 30.2.3 Understanding ( ) ’s estimator via adjusting for covariate imbalance ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">36</span></a>) and (<a class="ltx_ref" href="#S30.E37" title="In 30.2.3 Understanding ( ) ’s estimator via adjusting for covariate imbalance ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">37</span></a>) is that the final estimators depend only on <img alt="\gamma" class="m" src="m/68923f208210.png" style="width:0.79em;vertical-align:-0.31em"/> or <img alt="\hat{\gamma}" class="m" src="m/8b89177d7174.png" style="width:0.79em;vertical-align:-0.31em"/>, so the choice of the <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/>-coefficients is not unique. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib206" title="">Li and Ding, (2020)</a></cite> pointed out this simple fact. Therefore, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator is just one of the optimal estimators. However, it can be easily implemented via the standard OLS with the EHW standard error. That’s why this book focuses on it.</p>
+</div>
+</section>
+</section>
+<section class="ltx_subsection" id="S30.SS3">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.3 </span>Some additional remarks on regression adjustment</h5>
+<section class="ltx_subsubsection" id="S30.SS3.SSS1">
+<h6 class="ltx_title ltx_title_subsubsection"><span class="ltx_tag ltx_tag_subsubsection">30.3.1 </span>Duality between ReM and regression adjustment</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS3.SSS1.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib207" title="">Li et al., 2018b ()</a></cite> pointed out that ReM and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s regression adjustment are duals in using covariates in the design and analysis stages of the experiment. To be more specific, when <img alt="a" class="m" src="m/4962a1914f6a.png" style="width:0.77em;vertical-align:-0.12em"/> is small, the asymptotic distribution of <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> under ReM is almost identical to the asymptotic distribution of <img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> under the CRE. So ReM uses covariates in the design stage and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s regression adjustment uses covariates in the analysis stage, achieving nearly the same asymptotic efficiency gain when <img alt="a" class="m" src="m/4962a1914f6a.png" style="width:0.77em;vertical-align:-0.12em"/> is small.</p>
+</div>
+</section>
+<section class="ltx_subsubsection" id="S30.SS3.SSS2">
+<h6 class="ltx_title ltx_title_subsubsection"><span class="ltx_tag ltx_tag_subsubsection">30.3.2 </span>Equivalence of regression adjustment and post-stratification</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS3.SSS2.p1.1">If we have discrete covariate <img alt="C_{i}" class="m" src="m/2c05b859a3a2.png" style="width:1.28em;vertical-align:-0.26em"/> with <img alt="K" class="m" src="m/7ab2200d24b1.png" style="width:1.16em;vertical-align:-0.12em"/> categories, we can create <img alt="K-1" class="m" src="m/be74ca1f956f.png" style="width:2.87em;vertical-align:-0.19em"/> centered dummy variables</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="X_{i}=(I(C_{i}=1)-\pi_{[1]},\ldots,I(C_{i}=K-1)-\pi_{[K-1]})" class="m" src="m/0ecaeedef8c8.png" style="width:22.96em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S30.SS3.SSS2.p1.2">where <img alt="\pi_{[k]}" class="m" src="m/4d173f5a71d5.png" style="width:1.76em;vertical-align:-0.46em"/> equals the proportion of units with <img alt="C_{i}=k" class="m" src="m/84b837896269.png" style="width:3.16em;vertical-align:-0.26em"/>.
+In this case, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s regression adjustment is equivalent to post-stratification, as summarized by the following proposition.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_proposition" id="Thmproposition3">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Proposition 6.3</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmproposition3.p1.1"><img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/><span class="ltx_text ltx_font_italic"> based in <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/> is numerically identical to the post-stratification estimator <img alt="\hat{\tau}_{\textsc{PS}}" class="m" src="m/c5b7e14d44ff.png" style="width:1.66em;vertical-align:-0.26em"/> based on <img alt="C_{i}" class="m" src="m/2c05b859a3a2.png" style="width:1.28em;vertical-align:-0.26em"/> (see Chapter <a class="ltx_ref" href="08.html#S26" title="26 Post-stratification in a CRE ‣ Chapter 5 Stratification and Post-Stratification in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">26</span></a>).</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS3.SSS2.p2.1">I leave the proof of Proposition <a class="ltx_ref" href="#Thmproposition3" title="Proposition 6.3 ‣ 30.3.2 Equivalence of regression adjustment and post-stratification ‣ 30.3 Some additional remarks on regression adjustment ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.3</span></a> as Problem <a class="ltx_ref" href="#S34.SS0.SSS0.P11" title="6.11 Regression adjustment / post-stratification of CRE ‣ 34 Homework Problems ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.11</span></a>.</p>
+</div>
+</section>
+<section class="ltx_subsubsection" id="S30.SS3.SSS3">
+<h6 class="ltx_title ltx_title_subsubsection"><span class="ltx_tag ltx_tag_subsubsection">30.3.3 </span>Difference-in-difference as a special case of covariate adjustment <img alt="\hat{\tau}(\beta_{1},\beta_{0})" class="m" src="m/634bb7b6c1eb.png" style="width:4.02em;vertical-align:-0.36em"/></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS3.SSS3.p1.1">An important covariate <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> in many studies is the lagged outcome before the treatment. For instance, the covariate <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> is the pre-test score if the outcome <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> is the post-test score in educational research; the covariate <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> is the log wage before the job training program if the outcome <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> is the log wage after the job training program. With the lagged outcome <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> as a covariate, a popular estimator is the <span class="ltx_text ltx_font_italic">gain score</span> or <span class="ltx_text ltx_font_italic">difference-in-difference</span> estimator with <img alt="\beta_{1}=\beta_{0}=1" class="m" src="m/c52d9b7ed9e6.png" style="width:5.42em;vertical-align:-0.31em"/> in (<a class="ltx_ref" href="#S30.E27" title="In 30.2.1 Some heuristics for ( ) ’s results ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">27</span></a>) and (<a class="ltx_ref" href="#S30.E28" title="In 30.2.1 Some heuristics for ( ) ’s results ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">28</span></a>):</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}(1,1)" class="m" src="m/a3acba9f0d61.png" style="width:3.01em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n_{1}^{-1}\sum_{i=1}^{n}Z_{i}(Y_{i}-X_{i})-n_{0}^{-1}\sum_{i=1}^{n}(1-Z_{i})(Y_{i}-X_{i})" class="m" src="m/7fb8e59aabd4.png" style="width:20.86em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\left\{\hat{\bar{Y}}(1)-\hat{\bar{Y}}(0)\right\}-\left\{\hat{\bar{X}}(1)-\hat{\bar{X}}(0)\right\}." class="m" src="m/bf65b6c979ef.png" style="width:15.54em;vertical-align:-0.77em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS3.SSS3.p1.2">The first form of <img alt="\hat{\tau}(1,1)" class="m" src="m/28a5ac255778.png" style="width:3.01em;vertical-align:-0.36em"/> justifies the name <span class="ltx_text ltx_font_italic">gain score</span> because it is essentially the difference in means of the gain score <img alt="g_{i}=Y_{i}-X_{i}" class="m" src="m/d038d12248c6.png" style="width:5.66em;vertical-align:-0.31em"/>.
+The second form of <img alt="\hat{\tau}(1,1)" class="m" src="m/28a5ac255778.png" style="width:3.01em;vertical-align:-0.36em"/> justifies the name <span class="ltx_text ltx_font_italic">difference-in-difference</span> because it is the difference between two differences in means.
+This estimator is different from <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator: it fixes <img alt="\beta_{1}=\beta_{0}=1" class="m" src="m/c52d9b7ed9e6.png" style="width:5.42em;vertical-align:-0.31em"/> in advance while <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator involves two estimated <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/>’s. The <img alt="\hat{\tau}(1,1)" class="m" src="m/28a5ac255778.png" style="width:3.01em;vertical-align:-0.36em"/> is unbiased
+with a conservative variance estimator</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{V}(1,1)" class="m" src="m/782a487151e9.png" style="width:3.25em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{1}{n_{1}(n_{1}-1)}\sum_{i=1}^{n}Z_{i}\{g_{i}-\hat{\bar{g}}(1)\}^{2}" class="m" src="m/2a6dead9affd.png" style="width:13.13em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\qquad+\frac{1}{n_{0}(n_{0}-1)}\sum_{i=1}^{n}(1-Z_{i})\{g_{i}-\hat{\bar{g}}(0)\}^{2}," class="m" src="m/3f9813a49a24.png" style="width:18.53em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S30.SS3.SSS3.p1.3">where <img alt="\hat{\bar{g}}(1)" class="m" src="m/914f7a644480.png" style="width:2.02em;vertical-align:-0.36em"/> and <img alt="\hat{\bar{g}}(0)" class="m" src="m/5d96e41b74fb.png" style="width:2.02em;vertical-align:-0.36em"/> are the sample means of the gain score <img alt="g_{i}=Y_{i}-X_{i}" class="m" src="m/d038d12248c6.png" style="width:5.66em;vertical-align:-0.31em"/> under the treatment and control, respectively.
+When the lagged outcome is a strong predictor of the outcome, the gain score <img alt="g_{i}=Y_{i}-X_{i}" class="m" src="m/d038d12248c6.png" style="width:5.66em;vertical-align:-0.31em"/> often has a much smaller variance than the outcome itself. In this case, <img alt="\hat{\tau}(1,1)" class="m" src="m/28a5ac255778.png" style="width:3.01em;vertical-align:-0.36em"/> often greatly reduces the variance of the simple difference in means of the outcome.
+See Problem <a class="ltx_ref" href="#S34.SS0.SSS0.P12" title="6.12 More on the difference-in-difference estimator in the CRE ‣ 34 Homework Problems ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.12</span></a> for more details.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS3.SSS3.p2.1">In theory, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator is always more efficient than <img alt="\hat{\tau}(1,1)" class="m" src="m/28a5ac255778.png" style="width:3.01em;vertical-align:-0.36em"/> with large samples. However, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator is biased in finite samples, whereas <img alt="\hat{\tau}(1,1)" class="m" src="m/28a5ac255778.png" style="width:3.01em;vertical-align:-0.36em"/> is always unbiased.</p>
+</div>
+</section>
+</section>
+<section class="ltx_subsection" id="S30.SS4">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.4 </span>Extension to the SRE</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S30.SS4.p1.1">It is possible that we have an experiment stratified on a discrete variable <img alt="C" class="m" src="m/dc3a6c32f5a8.png" style="width:1.01em;vertical-align:-0.12em"/> and we also observe additional covariates <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. If all strata are large, then we can obtain
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimators within strata <img alt="\hat{\tau}_{\textsc{L},[k]}" class="m" src="m/96fd43ae1dbb.png" style="width:2.34em;vertical-align:-0.46em"/> and obtain the final estimator as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{L},\textsc{S}}=\sum_{k=1}^{K}\pi_{[k]}\hat{\tau}_{\textsc{L},[k]}." class="m" src="m/76be0506b6dd.png" style="width:8.70em;vertical-align:-1.42em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S30.SS4.p1.2">A conservative variance estimator is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{V}_{\textsc{L},\textsc{S}}=\sum_{k=1}^{K}\pi_{[k]}^{2}\hat{V}_{\textsc{ehw},[k]}," class="m" src="m/0febf652482d.png" style="width:9.93em;vertical-align:-1.42em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S30.SS4.p1.3">where <img alt="\hat{V}_{\textsc{ehw},[k]}" class="m" src="m/2b8f8491a43f.png" style="width:3.40em;vertical-align:-0.46em"/> is the EHW variance estimator from the OLS fit of the outcome on the intercept, the treatment indicator, the covariates, and their interactions within stratum <img alt="k." class="m" src="m/bd10b5155149.png" style="width:1.06em;vertical-align:-0.12em"/> Importantly, we need to center covariates by their stratum-specific means.</p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S31">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">31 </span>Unification, combination, and comparison</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S31.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib206" title="">Li and Ding, (2020)</a></cite> unified the literature and showed that we can combine rerandomization and regression adjustment. That is, if we rerandomize in the design stage, we can use <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator with the EHW standard error in the analysis stage. The combination of rerandomization and regression adjustment improves covariate balance in the design stage and estimation efficiency in the analysis stage.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S31.p2.1">Table <a class="ltx_ref" href="#S31.T2" title="Table 2 ‣ 31 Unification, combination, and comparison ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2</span></a> summarizes the literature from <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite> to <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib206" title="">Li and Ding, (2020)</a></cite>. Arrow 1 illustrates the efficiency gain of covariate adjustment in the CRE: asymptotically, <img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> has a smaller variance than <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/>.
+Arrow 2 illustrates the efficiency gain of ReM: asymptotically, <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> has narrower quantile ranges under the ReM than under the CRE.
+Arrows 3 and 4 illustrate the benefits of the combination of ReM and the CRE.</p>
+</div>
+<figure class="ltx_table" id="S31.T2">
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">Table 2</span>: </span><span class="ltx_text" style="font-size:90%;">Design and analysis of experiments</span></figcaption>
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_column ltx_th_row ltx_border_r ltx_border_t"></th>
+<th class="ltx_td ltx_th ltx_th_column ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_th ltx_th_column ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">analysis</th>
+<th class="ltx_td ltx_th ltx_th_column ltx_border_t"></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_r ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t">CRE</th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman,, 1923</a>)</cite></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="\stackrel{{\scriptstyle 1}}{{\longrightarrow}}" class="m" src="m/d73565997a08.png" style="width:1.85em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib208" title="">Lin,, 2013</a>)</cite></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_r">design</th>
+<th class="ltx_td ltx_th ltx_th_row"></th>
+<td class="ltx_td ltx_align_center"><img alt="2\Big\downarrow" class="m" src="m/c3196a2eb7ba.png" style="width:1.40em;vertical-align:-0.77em"/></td>
+<td class="ltx_td"></td>
+<td class="ltx_td ltx_align_center"><img alt="\Big\downarrow 4" class="m" src="m/f765a8899205.png" style="width:1.40em;vertical-align:-0.77em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_b ltx_border_r"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b">ReM</th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib207" title="">Li et al., 2018b, </a>)</cite></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="\stackrel{{\scriptstyle 3}}{{\longrightarrow}}" class="m" src="m/fed75e16c0f9.png" style="width:1.85em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib206" title="">Li and Ding,, 2020</a>)</cite></td></tr>
+</tbody>
+</table></div>
+</figure>
+</section>
+<section class="ltx_section" id="S32">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">32 </span>Simulation</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S32.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib9" title="">Angrist et al., (2009)</a></cite> conducted an experiment to evaluate different strategies to improve academic performance among college freshmen in a Canadian university. Here I use a subset of the original data, focusing on the control group and the treatment group offered academic support services and financial incentives for good grades. The outcome is the GPA at the end of the first year. I impute the missing outcomes with the observed average which is somewhat arbitrary (see Problem <a class="ltx_ref" href="#S34.SS0.SSS0.P14" title="6.14 Missing outcomes in randomized experiments ‣ 34 Homework Problems ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.14</span></a>). Two covariates are the gender and baseline GPA.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">angrist</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">read</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dta</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"star.dta"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">angrist2</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">subset</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">angrist</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">control</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1||</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">sfsp</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>imputing<span class="ltx_text ltx_lst_space"> </span>missing<span class="ltx_text ltx_lst_space"> </span>outcomes</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">angrist2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">GPA</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">year1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">meany</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">na</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rm</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">TRUE</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">ifelse</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">is</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">na</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">),</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">meany</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">angrist2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">sfsp</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">angrist2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"female"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"gpa0"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)]</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S32.p3.1">The following code gives the results based on the unadjusted and adjusted estimators.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>unadjusted<span class="ltx_text ltx_lst_space"> </span>estimator</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">unadj</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">unadj</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">unadj</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[2]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">unadj</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hccm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">unadj</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">type</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc2"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>regression<span class="ltx_text ltx_lst_space"> </span>adjustment</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">scale</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">adj</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">adj</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">adj</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[2]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">adj</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hccm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">adj</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">type</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc2"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">unadj</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">adj</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">unadj</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">adj</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">dim</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">t</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">stat</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1]/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">value</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2*</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">pnorm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">abs</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">t</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">stat</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">),</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lower</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tail</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">FALSE</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">cbind</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">t</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">stat</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">value</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rownames</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"Neyman"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"Lin"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">colnames</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"estimate"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"s.e."</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"t-stat"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"p-value"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">round</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">estimate</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">s</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">t</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">stat</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">value</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Neyman</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.054</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.076</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.719</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.472</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Lin</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.075</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.072</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.036</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.300</span>
+</div>
+</div>
+<p class="ltx_p" id="S32.p3.3">The adjusted estimator has a smaller standard error although it gives the same insignificant result as the unadjusted estimator.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S32.p4.1">I also use this dataset to conduct simulation studies to evaluate the four design and analysis strategies summarized in Table <a class="ltx_ref" href="#S31.T2" title="Table 2 ‣ 31 Unification, combination, and comparison ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2</span></a>. I fit quadratic functions of the outcome on the covariates and use them to impute all the missing potential outcomes, separately for the treated and control groups. To show the improvement of ReM and regression adjustment, I also rescale the error terms by <img alt="0.1" class="m" src="m/20655b85bd89.png" style="width:1.52em;vertical-align:-0.12em"/> and <img alt="0.25" class="m" src="m/02b7a407d324.png" style="width:2.00em;vertical-align:-0.12em"/> to increase the signal-to-noise ratio. With the imputed Science Table, I generate 2000 treatments, obtain the observed data, and calculate the estimators. In the simulation, the “true” outcome model is nonlinear, but we still use linear adjustment for estimation. By doing this, we can evaluate the properties of the estimators even when the linear model is misspecified.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S32.p5.1">Figure <a class="ltx_ref" href="#S32.F13" title="Figure 13 ‣ 32 Simulation ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13</span></a> shows the violin plots<sup><a href="#fn-chapter6-21" id="fn-chapter6-21-ref">21</a></sup> of the four combinations, subtracting the true <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> from the estimates. As predicted by the theory, all estimators are nearly unbiased, and both ReM and regression adjustment improve efficiency. They are more effective when the noise level is smaller.</p>
+</div>
+<figure class="ltx_figure" id="S32.F13"><img alt="插图" src="img/RemReg_violin.png"/>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 13</span>: </span><span class="ltx_text" style="font-size:90%;">Simulation with <img alt="2000" class="m" src="m/eb93b3a8b5a2.png" style="width:2.24em;vertical-align:-0.12em"/> Monte Carlo replicates and <img alt="a=0.05" class="m" src="m/a2e3fb50475a.png" style="width:3.88em;vertical-align:-0.12em"/> for ReM</span></figcaption>
+</figure>
+</section>
+<section class="ltx_section" id="S33">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">33 </span>Final remarks</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S33.p1.1">ReM uses the Mahalanobis distance as the balance criterion. We can consider general rerandomization with the balance criterion defined as a function of <img alt="\bm{Z}" class="m" src="m/49573002cc32.png" style="width:1.08em;vertical-align:-0.12em"/> and <img alt="\bm{X}" class="m" src="m/d56165b2f99e.png" style="width:1.25em;vertical-align:-0.12em"/>. For example, we can use the following criterion based on marginal tests for all coordinates of <img alt="X_{i}=(x_{i1},\ldots,x_{iK})^{\mkern-1.5mu\mathsf{T}}" class="m" src="m/3ae32ccc742b.png" style="width:9.15em;vertical-align:-0.36em"/>. We accept <img alt="\bm{Z}" class="m" src="m/49573002cc32.png" style="width:1.08em;vertical-align:-0.12em"/> if and only if</p>
+<table class="ltx_equation ltx_eqn_table" id="S33.E38">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\left|\frac{\hat{\tau}_{xk}}{\sqrt{\frac{n}{n_{1}n_{0}}S_{xk}^{2}}}\right|\leq a\quad(k=1,\ldots,K)" class="m" src="m/d1beca3a647c.png" style="width:14.86em;vertical-align:-1.83em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(38)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S33.p1.2">for some predetermined constant <img alt="a&gt;0" class="m" src="m/f1df7541202c.png" style="width:2.60em;vertical-align:-0.14em"/>, where <img alt="S_{xk}^{2}" class="m" src="m/31d289169f2e.png" style="width:1.78em;vertical-align:-0.39em"/> is the finite-population variance of covariate <img alt="x_{ik}" class="m" src="m/14a5804da2d0.png" style="width:1.59em;vertical-align:-0.26em"/>. For example, <img alt="a" class="m" src="m/4962a1914f6a.png" style="width:0.77em;vertical-align:-0.12em"/> is some upper quantile of a standard Normal distribution. See <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib350" title="">Zhao and Ding, 2021b ()</a></cite> for the theory for the rerandomization based on criterion (<a class="ltx_ref" href="#S33.E38" title="In 33 Final remarks ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">38</span></a>) as well as other criteria.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S33.p2.1">With a continuous outcome, Fisher’s ANCOVA has been the standard approach for many years. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s improvement has better theoretical properties even when the linear model is misspecified. With a binary outcome, it is common to use the coefficient of the treatment in the logistic regression of the observed outcome on the intercept, the treatment indicator, and covariates to estimate the causal effects. However, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib114" title="">Freedman, 2008c ()</a></cite> showed that this logistic regression does not have nice properties under the potential outcomes framework. Even if the logistic model is correct, the coefficient estimates the conditional odds ratio (see Chapter <a class="ltx_ref" href="34.html#chapter31.A6" title="Appendix 31.F Logistic regression ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31.F</span></a>) which may not be the parameter of interest; when the logistic model is incorrect, it is even harder to interpret the coefficient. From the discussion above, if the parameter of interest is the average causal effect, we can still use <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator to analyze the binary outcome data in the CRE. <cite class="ltx_cite ltx_citemacro_cite"><a class="ltx_ref" href="35.html#bib.bib124" title="">Guo and Basse, (2023)</a></cite> extend <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s theory to allow for using generalized linear models to construct estimators for the average causal effect under the potential outcomes framework.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S33.p3.1">Other extensions of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s theory focus on high dimensional covariates. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib36" title="">Bloniarz et al., (2016)</a></cite> focus on the regime with many covariates than the sample size, and suggest replacing the OLS fits with the least absolute shrinkage and selection operator (LASSO) fits <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib315" title="">Tibshirani,, 1996</a>)</cite> of the outcome on the intercept, the treatment, covariates and their interactions. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib198" title="">Lei and Ding, (2021)</a></cite> focus on the regime with a diverging number of covariates without assuming sparsity, and under certain regularity conditions, they show that <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator is still consistent and asymptotically Normal. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib334" title="">Wager et al., (2016)</a></cite> propose to use machine learning methods to analyze high dimensional experimental data.</p>
+</div>
+</section>
+<section class="ltx_section" id="S34">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">34 </span>Homework Problems</h4>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.1 </span>FRT under ReM</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P1.p1.1">Describe the FRT under ReM.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.2 </span>Invariance of the Mahalanobis Distance</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P2.p1.1">Prove Lemma <a class="ltx_ref" href="#Thmlemma1b" title="Lemma 6.1 ‣ 29.1 Experimental design ‣ 29 Rerandomization ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.1</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.3 </span>Bias of the difference-in-means estimator under rerandomization</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P3.p1.1">Assume that we draw <img alt="\bm{Z}=(Z_{1},\ldots,Z_{n})" class="m" src="m/663c0ff51434.png" style="width:7.76em;vertical-align:-0.36em"/> from a CRE and accept it if and only if <img alt="\phi(\bm{Z},\bm{X})=1" class="m" src="m/3efa318eb322.png" style="width:5.76em;vertical-align:-0.36em"/>, where <img alt="\phi" class="m" src="m/e93c93e66295.png" style="width:0.82em;vertical-align:-0.31em"/> is a predetermined balance criterion. Show that if <img alt="n_{1}=n_{0}" class="m" src="m/8ff03e6a2e3c.png" style="width:3.66em;vertical-align:-0.26em"/> and</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S34.E39"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\phi(\bm{Z},\bm{X})=\phi(\bm{1}_{n}-\bm{Z},\bm{X})," class="m" src="m/12b9559070a1.png" style="width:11.56em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(39)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S34.SS0.SSS0.P3.p1.2">then <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> is unbiased for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>.
+Verify that rerandomization using the Mahalanobis distance satisfies (<a class="ltx_ref" href="#S34.E39" title="In 6.3 Bias of the difference-in-means estimator under rerandomization ‣ 34 Homework Problems ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">39</span></a>) if <img alt="n_{1}=n_{0}" class="m" src="m/8ff03e6a2e3c.png" style="width:3.66em;vertical-align:-0.26em"/>.
+Give a counterexample that <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> is biased for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> when these two conditions do not hold.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P3.p2.1">Remark: <img alt="\phi(\bm{Z},\bm{X})" class="m" src="m/41bee20f5fac.png" style="width:3.93em;vertical-align:-0.36em"/> can be a general balance criterion in this problem. ReM is a special case with <img alt="\phi(\bm{Z},\bm{X})=I(M\leq a)" class="m" src="m/edc378e9b779.png" style="width:9.49em;vertical-align:-0.36em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.4 </span>Equivalent form of <img alt="R^{2}" class="m" src="m/b5f2662fd970.png" style="width:1.45em;vertical-align:-0.12em"/> in the CRE</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P4.p1.1">Prove Proposition <a class="ltx_ref" href="#Thmproposition1a" title="Proposition 6.1 ‣ 29.2 Statistical inference ‣ 29 Rerandomization ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.1</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.5 </span>More on linear projections of the potential outcomes onto covariates</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P5.p1.1">Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="S^{2}(1\mid X)=S_{Y(1)X}(S_{X}^{2})^{-1}S_{XY(1)}" class="m" src="m/6ee9c9f3d2ae.png" style="width:15.01em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S34.SS0.SSS0.P5.p1.2">where <img alt="S_{XY(1)}" class="m" src="m/bec5a00690c4.png" style="width:3.28em;vertical-align:-0.46em"/> is the finite population covariance between <img alt="Y_{i}(1)" class="m" src="m/310e7f69c7c8.png" style="width:2.43em;vertical-align:-0.36em"/>’s and <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/>’s, <img alt="S_{Y(1)X}=S_{XY(1)}^{\mkern-1.5mu\mathsf{T}}" class="m" src="m/daaabe051f2a.png" style="width:7.64em;vertical-align:-0.60em"/>, and <img alt="S_{X}^{2}" class="m" src="m/86e5b73f4fe6.png" style="width:1.61em;vertical-align:-0.39em"/> is the finite population covariance matrix of <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/>’s.
+Find the analogous formulas for <img alt="S^{2}(0\mid X)" class="m" src="m/d24a0c656b30.png" style="width:4.36em;vertical-align:-0.36em"/> and <img alt="S^{2}(\tau\mid X)." class="m" src="m/c8777c57919d.png" style="width:4.70em;vertical-align:-0.36em"/></p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.6 </span>Comparing the true variances within the family of linearly adjusted estimator</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P6.p1.1">Show that the variance <img alt="\hat{\tau}(\beta_{1},\beta_{0})" class="m" src="m/634bb7b6c1eb.png" style="width:4.02em;vertical-align:-0.36em"/> decomposes into</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}\{\hat{\tau}(\beta_{1},\beta_{0})\}=\textup{var}\{\hat{\tau}(\tilde{\beta}_{1},\tilde{\beta}_{0})\}+\textup{var}\{\hat{\tau}(\beta_{1},\beta_{0})-\hat{\tau}(\tilde{\beta}_{1},\tilde{\beta}_{0})\}" class="m" src="m/d9be667ce868.png" style="width:26.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S34.SS0.SSS0.P6.p1.2">where <img alt="\tilde{\beta}_{1}" class="m" src="m/38437cc41a57.png" style="width:1.25em;vertical-align:-0.31em"/> and <img alt="\tilde{\beta}_{0}" class="m" src="m/806299d97d70.png" style="width:1.25em;vertical-align:-0.31em"/> are the coefficients of <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/> in the OLS projection of <img alt="Y_{i}(1)" class="m" src="m/310e7f69c7c8.png" style="width:2.43em;vertical-align:-0.36em"/>’s and <img alt="Y_{i}(0)" class="m" src="m/cff26d98475e.png" style="width:2.43em;vertical-align:-0.36em"/>’s onto <img alt="(1,X_{i})" class="m" src="m/c63893420ce1.png" style="width:3.11em;vertical-align:-0.36em"/>’s, respectively.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P6.p2.1">Remark: <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib205" title="">Li and Ding, (2017, Example 9)</a></cite> derived the decomposition. It shows that based on the true variance, <img alt="\hat{\tau}(\tilde{\beta}_{1},\tilde{\beta}_{0})" class="m" src="m/92c3f3211919.png" style="width:4.02em;vertical-align:-0.36em"/> is an optimal choice within the family of linearly adjusted estimator because <img alt="\textup{var}\{\hat{\tau}(\beta_{1},\beta_{0})-\hat{\tau}(\tilde{\beta}_{1},\tilde{\beta}_{0})\}" class="m" src="m/e1c31d58aba9.png" style="width:11.42em;vertical-align:-0.36em"/> is always non-negative.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P7">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.7 </span>Lin’s estimator for covariate adjustment</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P7.p1.1">Prove Proposition <a class="ltx_ref" href="#Thmproposition2" title="Proposition 6.2 ‣ 30.2.1 Some heuristics for ( ) ’s results ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.2</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P8">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.8 </span>Predictive and projective estimators</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P8.p1.1">Prove (<a class="ltx_ref" href="#S30.E33" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">33</span></a>) and (<a class="ltx_ref" href="#S30.E35" title="In 30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">35</span></a>).</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P9">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.9 </span>Equivalent form of the covariate-adjusted estimator</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P9.p1.1">Prove (<a class="ltx_ref" href="#S30.E36" title="In 30.2.3 Understanding ( ) ’s estimator via adjusting for covariate imbalance ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">36</span></a>) and (<a class="ltx_ref" href="#S30.E37" title="In 30.2.3 Understanding ( ) ’s estimator via adjusting for covariate imbalance ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">37</span></a>).</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P10">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.10 </span>ANCOVA also adjusts for covariate imbalance</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P10.p1.1">This problem gives a result for ANCOVA that is similar to (<a class="ltx_ref" href="#S30.E37" title="In 30.2.3 Understanding ( ) ’s estimator via adjusting for covariate imbalance ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">37</span></a>).</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P10.p2.1">Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{F}}=\hat{\tau}-\hat{\gamma}_{\textsc{F}}^{\mkern-1.5mu\mathsf{T}}\hat{\tau}_{X}," class="m" src="m/439a036d5975.png" style="width:6.87em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S34.SS0.SSS0.P10.p2.2">where <img alt="\hat{\gamma}_{\textsc{F}}" class="m" src="m/9482235f184f.png" style="width:1.30em;vertical-align:-0.31em"/> is the coefficient of <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/> in the OLS fit of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> on <img alt="(1,Z_{i},X_{i})" class="m" src="m/e2be079e781b.png" style="width:4.58em;vertical-align:-0.36em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P11">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.11 </span>Regression adjustment / post-stratification of CRE</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P11.p1.1">Prove Proposition <a class="ltx_ref" href="#Thmproposition3" title="Proposition 6.3 ‣ 30.3.2 Equivalence of regression adjustment and post-stratification ‣ 30.3 Some additional remarks on regression adjustment ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.3</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P11.p2.1">Remark: Sometimes <img alt="\hat{\tau}_{\textsc{ps}}" class="m" src="m/335189c877ab.png" style="width:1.42em;vertical-align:-0.26em"/> or <img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> may not be well-defined. In those cases, we treat <img alt="\hat{\tau}_{\textsc{ps}}" class="m" src="m/335189c877ab.png" style="width:1.42em;vertical-align:-0.26em"/> and <img alt="\hat{\tau}_{\textsc{L}}" class="m" src="m/ec1aae85be2c.png" style="width:1.20em;vertical-align:-0.26em"/> as equal. You can ignore this complexity in the proof.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P12">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.12 </span>More on the difference-in-difference estimator in the CRE</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P12.p1.1">This problem gives more details for the difference-in-difference estimator in the CRE in Section <a class="ltx_ref" href="#S30.SS3.SSS3" title="30.3.3 Difference-in-difference as a special case of covariate adjustment 𝜏̂⁢(𝛽_1,𝛽_0) ‣ 30.3 Some additional remarks on regression adjustment ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.3.3</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P12.p2.1">Show that <img alt="\hat{\tau}(1,1)" class="m" src="m/28a5ac255778.png" style="width:3.01em;vertical-align:-0.36em"/> is unbiased for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>, calculate its variance, and show that <img alt="\hat{V}(1,1)" class="m" src="m/e90722ba8779.png" style="width:3.25em;vertical-align:-0.36em"/> is a conservative estimator for the true variance of <img alt="\hat{\tau}(1,1)" class="m" src="m/28a5ac255778.png" style="width:3.01em;vertical-align:-0.36em"/>. When does <img alt="E\{\hat{V}(1,1)\}=\textup{var}\{\hat{\tau}(1,1)\}" class="m" src="m/5f0293e3d7e8.png" style="width:11.52em;vertical-align:-0.36em"/> hold?</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P12.p3.1">Compare the variances of <img alt="\hat{\tau}(0,0)" class="m" src="m/e36b42dccefe.png" style="width:3.01em;vertical-align:-0.36em"/> and <img alt="\hat{\tau}(1,1)" class="m" src="m/28a5ac255778.png" style="width:3.01em;vertical-align:-0.36em"/> to show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}\{\hat{\tau}(0,0)\}\geq\textup{var}\{\hat{\tau}(1,1)\}" class="m" src="m/29d142b08331.png" style="width:11.83em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S34.SS0.SSS0.P12.p3.2">if and only if</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="2\frac{n_{0}}{n}\beta_{1}+2\frac{n_{1}}{n}\beta_{0}\geq 1," class="m" src="m/df6f96daf7c9.png" style="width:9.18em;vertical-align:-0.79em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S34.SS0.SSS0.P12.p3.3">where</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\beta_{1}=\frac{\sum_{i=1}^{n}(X_{i}-\bar{X})\{Y_{i}(1)-\bar{Y}(1)\}}{\sum_{i=1}^{n}(X_{i}-\bar{X})^{2}},\quad\beta_{0}=\frac{\sum_{i=1}^{n}(X_{i}-\bar{X})\{Y_{i}(0)-\bar{Y}(0)\}}{\sum_{i=1}^{n}(X_{i}-\bar{X})^{2}}" class="m" src="m/59becd913cdf.png" style="width:32.79em;vertical-align:-1.13em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S34.SS0.SSS0.P12.p3.4">are the coefficients of <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/> in the OLS fits of <img alt="Y_{i}(1)" class="m" src="m/310e7f69c7c8.png" style="width:2.43em;vertical-align:-0.36em"/> and <img alt="Y_{i}(0)" class="m" src="m/cff26d98475e.png" style="width:2.43em;vertical-align:-0.36em"/> on <img alt="(1,X_{i})" class="m" src="m/c63893420ce1.png" style="width:3.11em;vertical-align:-0.36em"/>, respectively.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P12.p4.1">Remark: <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib119" title="">Gerber and Green, (2012, page 28)</a></cite> discussed a special case of this problem with <img alt="n_{1}=n_{0}." class="m" src="m/41d7e59d60d0.png" style="width:3.95em;vertical-align:-0.26em"/></p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P13">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.13 </span>Data re-analyses of the Penn Bonus Experiment</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P13.p1.1">Re-analyze the Penn Bonus Experiment data. The analysis in Chapter <a class="ltx_ref" href="08.html#chapter5" title="Chapter 5 Stratification and Post-Stratification in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">5</span></a> uses the treatment indicator, the outcome, and the block indicator. Now we want to use all other covariates.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P13.p2.1">Conduct regression adjustments within the strata of the experiment, and then combine these adjusted estimators to estimate the average causal effect. Report the point estimator, estimated standard error, and 95% confidence interval. Compare them with those without regression adjustment.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P14">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.14 </span>Missing outcomes in randomized experiments</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P14.p1.1">The data analysis in Section <a class="ltx_ref" href="#S32" title="32 Simulation ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">32</span></a> uses a naive imputation method to deal with missing outcomes. It is somewhat arbitrary.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P14.p2.1">Impute the missing outcomes under the treatment and control, respectively, based on the observed means. Do the results change?</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P14.p3.1">Impute the missing outcomes under the treatment and control, respectively, based on linear regressions of the observed outcomes on the covariates. Do the results change?</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P14.p4.1">Do you have other ways to deal with missing outcomes? Justify them and implement them to analyze the dataset.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S34.SS0.SSS0.P15">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">6.15 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S34.SS0.SSS0.P15.p1.1">The title of this chapter is the same as that of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib206" title="">Li and Ding, (2020)</a></cite>, which studied the roles of rerandomization and regression adjustment in the design and analysis stages of randomized experiments, respectively.</p>
+</div>
+</section>
+</section>
+<section class="footnotes"><h4>脚注</h4><p id="fn-chapter6-18"><a href="#fn-chapter6-18-ref">18</a>. <span class="ltx_text ltx_font_upright">The notation “</span><img alt="A\stackrel{{\scriptstyle\cdot}}{{\sim}}B" class="m" src="m/9f37ba470dc9.png" style="width:3.13em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_upright">” means that </span><img alt="A" class="m" src="m/b97267fa7855.png" style="width:0.99em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_upright"> and </span><img alt="B" class="m" src="m/fa2452c388ed.png" style="width:1.04em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_upright"> have the same asymptotic distributions.</span></p><p id="fn-chapter6-19"><a href="#fn-chapter6-19-ref">19</a>. Without covariates, the HC2 correction yields identical variance estimator as <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib237" title="">Neyman, (1923)</a></cite>’s classic one; see Problem <a class="ltx_ref" href="07.html#S22.SS0.SSS0.P3" title="4.3 Neymanian inference and OLS ‣ 22 Homework Problems ‣ Chapter 4 Neymanian Repeated Sampling Inference in Completely Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4.3</span></a>. For coherence, we can also use the HC2 correction for <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator with covariate adjustment. When the number of covariates is small compared with the sample size and the covariates do not contain outliers, the variants of the EHW standard error perform similarly to the original one. When the number of covariates is large compared with the sample size or the covariates contain outliers, the variants can outperform the original one. In those cases, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib198" title="">Lei and Ding, (2021)</a></cite> recommend using the HC3 variant of the EHW standard error.</p><p id="fn-chapter6-20"><a href="#fn-chapter6-20-ref">20</a>. We can also minimize the true variance of <img alt="\hat{\tau}(\beta_{1},\beta_{0})" class="m" src="m/634bb7b6c1eb.png" style="width:4.02em;vertical-align:-0.36em"/>.
+See Problem <a class="ltx_ref" href="#S34.SS0.SSS0.P6" title="6.6 Comparing the true variances within the family of linearly adjusted estimator ‣ 34 Homework Problems ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6.6</span></a> for more details.</p><p id="fn-chapter6-21"><a href="#fn-chapter6-21-ref">21</a>. A violin plot is similar to a box plot, with the addition of a rotated kernel density plot on each side.</p></section></section><p class="nav bottom"><a href="index.html">目录</a><a href="08.html">← 上一章</a><a href="10.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

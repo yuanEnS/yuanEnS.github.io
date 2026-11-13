@@ -376,7 +376,7 @@ def lite_page(title, body, canonical=None):
             '<meta name="viewport" content="width=device-width, initial-scale=1">'
             f'<title>{esc(title)} · 研究园简易版</title><meta name="robots" content="noindex">'
             f'{LITE_STYLE}</head><body>')
-    nav = ('<p class="nav"><a href="/research/lite/">研究园简易版</a> · '
+    nav = ('<p class="nav"><a href="/research/lite/">研究园简易版</a> · <a href="books.html">经典书籍</a> · <a href="papers.html">期刊文章</a> · '
            '<a href="/research/?full=1">完整版（可多选筛选、搜索）</a> · <a href="/">首页</a></p>')
     return head + nav + body + '</body></html>\n'
 
@@ -450,14 +450,22 @@ def write_lite(data, folder, books):
         journal_rows.append(f'<li><a href="j-{slug(journal["code"])}.html">{esc(journal["code"])}</a> {esc(journal["name"])} · {len(chosen)} 篇</li>')
     lite_list(folder, 'all', '全部文章', papers, zh_of)
     latest = papers[:20]
-    body = ('<h1>研究园 · 简易版</h1>'
-            f'<p class="note">统计学期刊每周的新文章，共 {len(papers)} 篇，更新到 {esc(data["updated"])} 的周报。'
-            '这个版本不用 JavaScript，适合 Kindle 和老浏览器；按主题或按期刊点进去看。</p>'
-            + ('<h2>经典书籍</h2>' + ''.join(lite_book(b) for b in books) if books else '')
-            + '<h2>按主题</h2><ul class="links">' + ''.join(topic_rows) + '</ul>'
+    body = ('<h1>研究园 · 期刊文章</h1>'
+            f'<p class="note">统计学期刊每周的新文章，共 {len(papers)} 篇，更新到 {esc(data["updated"])} 的周报。按主题或按期刊点进去看。</p>'
+            '<h2>按主题</h2><ul class="links">' + ''.join(topic_rows) + '</ul>'
             '<h2>按期刊</h2><ul class="links">' + ''.join(journal_rows) + '</ul>'
             f'<h2>最新 {len(latest)} 篇</h2>' + ''.join(lite_item(p, zh_of) for p in latest)
             + '<p class="pager"><a href="all.html">看全部文章 →</a></p>')
+    with open(os.path.join(folder, 'papers.html'), 'w', encoding='utf-8') as handle:
+        handle.write(lite_page('期刊文章', body))
+    body = ('<h1>研究园 · 经典书籍</h1>'
+            + (''.join(lite_book(b) for b in books) if books else '<p>还没有书。</p>'))
+    with open(os.path.join(folder, 'books.html'), 'w', encoding='utf-8') as handle:
+        handle.write(lite_page('经典书籍', body))
+    body = ('<h1>研究园 · 简易版</h1>'
+            '<p class="note">这个版本不用 JavaScript，适合 Kindle 和老浏览器。</p>'
+            f'<h2><a href="books.html">经典书籍 →</a></h2><p>值得反复读的教材和专著，共 {len(books)} 本，有的可以在线分章读。</p>'
+            f'<h2><a href="papers.html">期刊文章 →</a></h2><p>统计学期刊每周的新文章，共 {len(papers)} 篇，按主题、按期刊看。</p>')
     with open(os.path.join(folder, 'index.html'), 'w', encoding='utf-8') as handle:
         handle.write(lite_page('研究园', body))
     return len(glob.glob(os.path.join(folder, '*.html')))

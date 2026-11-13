@@ -1,0 +1,829 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="12.html">← 上一章</a><a href="14.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter10">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 10 </span>Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects</h3>
+
+<div class="ltx_para">
+<p class="ltx_p" id="chapter10.p2.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib63" title="">Cochran, (1965)</a></cite> summarized two common characteristics of observational studies:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S52.I2.i1.p1.1">the objective is to elucidate cause-and-effect relationships;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S52.I2.i2.p1.1">it is not feasible to use controlled experimentation.</p>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter10.p3.1">The first characteristic is identical to that of randomized experiments discussed in Part <a class="ltx_ref" href="#Pt2" title="Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">II</span></a> of this book, but the second differs fundamentally from randomized experiments.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter10.p4.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib96" title="">Dorn, (1953)</a></cite> suggested that the planner of an observational study should always ask the following question:</p>
+<blockquote class="ltx_quote">
+<p class="ltx_p" id="chapter10.p4.2.1">How would the study be conducted if it were possible to do
+it by controlled experimentation?</p>
+</blockquote>
+<p class="ltx_p" id="chapter10.p4.3">It is always helpful to follow <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib96" title="">Dorn, (1953)</a></cite>’s suggestion because the potential outcomes framework has an intrinsic link to an experiment, either a real experiment or a thought experiment. Part <a class="ltx_ref" href="#Pt3" title="Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">III</span></a> of this book will discuss causal inference with observational studies. It will clarify the fundamental differences between observational studies and randomized experiments. Nevertheless, many ideas of causal inference with observational studies are deeply connected to those with randomized experiments.</p>
+</div>
+<section class="ltx_section" id="S53">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">53 </span>Motivating Examples</h4>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample1e">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 10.1</span></span><span class="ltx_text ltx_font_bold"> (job training program)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1e.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib190" title="">LaLonde, (1986)</a></cite><span class="ltx_text ltx_font_italic"> was interested in the causal effect of a job training program on earnings. He compared the results based on a randomized experiment to the results based on observational studies. We have used the experimental data before, which is the <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">lalonde</span> dataset in the <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">Matching</span> package. We have also used an observational counterpart <span class="ltx_text ltx_lst_language_R ltx_lstlisting"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">cps1re74</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.<span class="ltx_text ltx_lst_keyword ltx_font_bold">csv</span></span></span> in Chapter <a class="ltx_ref" href="04.html#S2.SS1" title="2.1 Correlation and regression ‣ 2 Some commonly-used measures of association ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.1</span></a> and Problem <a class="ltx_ref" href="04.html#S5.SS0.SSS0.P4" title="1.4 Specification searches ‣ 5 Homework Problems ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1.4</span></a>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib190" title="">LaLonde, (1986)</a></cite> found that many traditional statistical or econometric methods for observational studies gave quite different estimates compared with the estimates based on the experimental data. <cite class="ltx_cite ltx_citemacro_cite"><a class="ltx_ref" href="35.html#bib.bib79" title="">Dehejia and Wahba, (1999)</a></cite> re-analyzed the data using methods motivated by causal inference, and found that those methods can recover the experimental gold standard well. Since then, this has become a canonical example in causal inference with observational studies.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample2d">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 10.2</span></span><span class="ltx_text ltx_font_bold"> (smoking and homocysteine)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2d.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib29" title="">Bazzano et al., (2003)</a></cite><span class="ltx_text ltx_font_italic"> compared the homocysteine<sup><a href="#fn-chapter10-27" id="fn-chapter10-27-ref">27</a></sup> levels in daily smokers and non-smokers based on the data from the National Health and Nutrition Examination Survey (NHANES) 2005–2006. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib275" title="">Rosenbaum, (2018)</a></cite> documented the data as <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">homocyst</span> in the package <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">senstrat</span>. The dataset has the following important covariates:</span></p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left ltx_border_t"><span class="ltx_text ltx_font_typewriter ltx_font_italic">female</span></td>
+<td class="ltx_td ltx_align_left ltx_border_t"><span class="ltx_text ltx_font_italic">1=female, 0=male</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">age3</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">three age categories: 20–39, 40–50, <img alt="\geq" class="m" src="m/116f5d2ac816.png" style="width:1.01em;vertical-align:-0.24em"/>60</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">ed3</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">three education categories: <img alt="&lt;" class="m" src="m/d35e004ab92a.png" style="width:1.01em;vertical-align:-0.14em"/> high school, high school, some college</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">bmi3</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">three BMI categories: <img alt="&lt;" class="m" src="m/d35e004ab92a.png" style="width:1.01em;vertical-align:-0.14em"/>30, <img alt="[30,35)" class="m" src="m/a827cce61ad0.png" style="width:3.35em;vertical-align:-0.36em"/>, <img alt="\geq" class="m" src="m/116f5d2ac816.png" style="width:1.01em;vertical-align:-0.24em"/> 35</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left ltx_border_b"><span class="ltx_text ltx_font_typewriter ltx_font_italic">pov2</span></td>
+<td class="ltx_td ltx_align_left ltx_border_b"><span class="ltx_text ltx_font_italic">TRUE=income at least twice the poverty level, FALSE otherwise</span></td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample3d">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 10.3</span></span><span class="ltx_text ltx_font_bold"> (school meal program and body mass index)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample3d.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib53" title="">Chan et al., (2016)</a></cite><span class="ltx_text ltx_font_italic"> used a subsample of the data from NHANES 2007–2008 to study whether participation in school meal programs led to an increase in BMI for school children. They documented the data as <span class="ltx_text ltx_lst_language_R ltx_lstlisting"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nhanes</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_<span class="ltx_text ltx_lst_identifier">bmi</span></span></span> in the package <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">ATE</span>. The dataset has the following important covariates:</span></p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left ltx_border_t"><span class="ltx_text ltx_font_typewriter ltx_font_italic">age</span></td>
+<td class="ltx_td ltx_align_left ltx_border_t"><span class="ltx_text ltx_font_italic">Age</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">ChildSex</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">Sex (1: male, 0: female)</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">black</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">Race (1: black, 0: otherwise)</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">mexam</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">Race (1: Hispanic: 0 otherwise)</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">pir200_plus</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">Family above 200% of the federal poverty level</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">WIC</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">Participation in the special supplemental nutrition program</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">Food_Stamp</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">Participation in food stamp program</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">fsdchbi</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">Childhood food security</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">AnyIns</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">Any insurance</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_typewriter ltx_font_italic">RefSex</span></td>
+<td class="ltx_td ltx_align_left"><span class="ltx_text ltx_font_italic">Sex of the adult respondent (1: male, 0: female)</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_left ltx_border_b"><span class="ltx_text ltx_font_typewriter ltx_font_italic">RefAge</span></td>
+<td class="ltx_td ltx_align_left ltx_border_b"><span class="ltx_text ltx_font_italic">Age of the adult respondent</span></td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S53.p1.1">A common feature of Examples <a class="ltx_ref" href="#Thmexample1e" title="Example 10.1 (job training program) ‣ 53 Motivating Examples ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.1</span></a>–<a class="ltx_ref" href="#Thmexample3d" title="Example 10.3 (school meal program and body mass index) ‣ 53 Motivating Examples ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.3</span></a> is that we are interested in estimating the causal effect of a nonrandomized treatment on an outcome. They are all from observational studies.</p>
+</div>
+</section>
+<section class="ltx_section" id="S54">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">54 </span>Causal effects and selection bias under the potential outcomes framework</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S54.p1.1">For unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/> <img alt="(i=1,\ldots,n)" class="m" src="m/51ff63901286.png" style="width:6.00em;vertical-align:-0.36em"/>, we have pretreatment covariates <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/>, a binary treatment indicator <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/>, and an observed outcome <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> with two potential outcomes <img alt="Y_{i}(1)" class="m" src="m/310e7f69c7c8.png" style="width:2.43em;vertical-align:-0.36em"/> and <img alt="Y_{i}(0)" class="m" src="m/cff26d98475e.png" style="width:2.43em;vertical-align:-0.36em"/> under the treatment and control, respectively. For simplicity, we assume</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\{X_{i},Z_{i},Y_{i}(1),Y_{i}(0)\}_{i=1}^{n}\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}\{X,Z,Y(1),Y(0)\}." class="m" src="m/ea1dc871616f.png" style="width:20.55em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S54.p1.2">So we can drop the subscript <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/> for quantities of this population.
+The causal effects of interest are the average causal effect</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=E\{Y(1)-Y(0)\}," class="m" src="m/d333f1f70692.png" style="width:9.56em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S54.p1.3">the average causal effect on the treated units</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{T}}=E\{Y(1)-Y(0)\mid Z=1\}," class="m" src="m/835eb196c53f.png" style="width:13.49em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S54.p1.4">and the average causal effect on the control units:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{C}}=E\{Y(1)-Y(0)\mid Z=0\}." class="m" src="m/4d89d2ecd8c9.png" style="width:13.49em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S54.p2.1">By the linearity of the expectation, we have</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{T}}" class="m" src="m/d20343d63f6d.png" style="width:1.28em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid Z=1\}-E\{Y(0)\mid Z=1\}" class="m" src="m/48e3c39f729e.png" style="width:16.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1)-E\{Y(0)\mid Z=1\}" class="m" src="m/e4b432feade5.png" style="width:14.55em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S54.p2.2">and</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{C}}" class="m" src="m/325b2393e8b6.png" style="width:1.28em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid Z=0\}-E\{Y(0)\mid Z=0\}" class="m" src="m/3f4708c45c6f.png" style="width:16.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid Z=0\}-E(Y\mid Z=0)." class="m" src="m/351433be6fb7.png" style="width:14.82em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S54.p2.3">In the above two formulas of <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/> and <img alt="\tau_{\textsc{C}}" class="m" src="m/a391a7b1b360.png" style="width:1.28em;vertical-align:-0.26em"/>, the quantities <img alt="E(Y\mid Z=1)" class="m" src="m/28d9c04da49f.png" style="width:6.02em;vertical-align:-0.36em"/> and <img alt="E(Y\mid Z=0)" class="m" src="m/c6a904c0c1eb.png" style="width:6.02em;vertical-align:-0.36em"/> are directly estimable from the data, but the quantities <img alt="E\{Y(0)\mid Z=1\}" class="m" src="m/e6d75a34b0e9.png" style="width:7.54em;vertical-align:-0.36em"/> and <img alt="E\{Y(1)\mid Z=0\}" class="m" src="m/d80bb3bec58d.png" style="width:7.54em;vertical-align:-0.36em"/> are not. The latter two are <span class="ltx_text ltx_font_italic">counterfactuals</span> because they are the means of the potential outcomes corresponding to the treatment level that is the opposite of the actual received treatment.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S54.p3.1">The simple difference in means, also known as the <span class="ltx_text ltx_font_italic">prima facie<sup><a href="#fn-chapter10-28" id="fn-chapter10-28-ref">28</a></sup></span> causal effect,</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{PF}}" class="m" src="m/3e1be554cdad.png" style="width:1.73em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1)-E(Y\mid Z=0)" class="m" src="m/6e76ec68cb10.png" style="width:13.06em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid Z=1\}-E\{Y(0)\mid Z=0\}" class="m" src="m/c403f5c31721.png" style="width:16.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S54.p3.2">is generally biased for the causal effects defined above. For example,</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{PF}}-\tau_{\textsc{T}}=E\{Y(0)\mid Z=1\}-E\{Y(0)\mid Z=0\}" class="m" src="m/8eae7fa3943f.png" style="width:21.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S54.p3.3">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{PF}}-\tau_{\textsc{C}}=E\{Y(1)\mid Z=1\}-E\{Y(1)\mid Z=0\}" class="m" src="m/4c981464cd61.png" style="width:21.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S54.p3.4">are not zero in general, and they quantify the <span class="ltx_text ltx_font_italic">selection bias</span>. They measure the differences in the means of the potential outcomes across the treatment and control groups.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S54.p4.1">Why is randomization so important? <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib284" title="">Rubin, (1978)</a></cite> first used potential outcomes to quantify the benefit of randomization. We have used the fact in Chapter <a class="ltx_ref" href="12.html#chapter9" title="Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">9</span></a> that</p>
+<table class="ltx_equation ltx_eqn_table" id="S54.E46">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z\ind \{Y(1),Y(0)\}" class="m" src="m/f60773047596.png" style="width:7.49em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(46)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S54.p4.2">in the CRE, which implies that the selection bias terms are both zero:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{PF}}-\tau_{\textsc{T}}=E\{Y(0)\mid Z=1\}-E\{Y(0)\mid Z=0\}=0" class="m" src="m/78e880fe35fa.png" style="width:22.98em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S54.p4.3">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{PF}}-\tau_{\textsc{C}}=E\{Y(1)\mid Z=1\}-E\{Y(1)\mid Z=0\}=0." class="m" src="m/76e4e1231373.png" style="width:23.25em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S54.p4.4">So under the CRE in (<a class="ltx_ref" href="#S54.E46" title="In 54 Causal effects and selection bias under the potential outcomes framework ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">46</span></a>), we have</p>
+<table class="ltx_equation ltx_eqn_table" id="S54.E47">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=\tau_{\textsc{T}}=\tau_{\textsc{C}}=\tau_{\textsc{PF}}." class="m" src="m/718fa12d7330.png" style="width:8.65em;vertical-align:-0.26em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(47)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S54.p4.5">From the above discussion, the fundamental benefit of randomization is to balance the distributions of the potential outcomes across the treatment and control groups. This is a much stronger guarantee than balancing the distributions of the observed covariates.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S54.p5.1">Without randomization, the selection bias terms can be arbitrarily large, especially for unbounded outcomes. This highlights the fundamental difficulty of causal inference with observational studies.</p>
+</div>
+</section>
+<section class="ltx_section" id="S55">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">55 </span>Sufficient conditions for nonparametric identification of causal effects</h4>
+<section class="ltx_subsection" id="S55.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">55.1 </span>Identification</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS1.p1.1">Causal inference with observational studies is challenging. It relies on strong assumptions. A strategy is to use the information from the pretreatment covariates and assume that conditioning on the observed covariates <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, the selection bias terms are zero, that is,</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S55.E48"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid Z=1,X\}" class="m" src="m/13cc6fae7949.png" style="width:8.89em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid Z=0,X\}," class="m" src="m/f5f05620d57b.png" style="width:9.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(48)</span></td></tr></tbody>
+<tbody id="S55.E49"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid Z=1,X\}" class="m" src="m/b7b2e3c917c0.png" style="width:8.89em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid Z=0,X\}." class="m" src="m/e28758330118.png" style="width:9.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(49)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S55.SS1.p1.2">The assumptions in (<a class="ltx_ref" href="#S55.E48" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">48</span></a>) and (<a class="ltx_ref" href="#S55.E49" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">49</span></a>) state that the differences in the means of the potential outcomes across the treatment and control groups are entirely due to the difference in the observed covariates. So given the same value of the covariates, the potential outcomes have the same means across the treatment and control groups. Mathematically, (<a class="ltx_ref" href="#S55.E48" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">48</span></a>) and (<a class="ltx_ref" href="#S55.E49" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">49</span></a>) ensure that the conditional versions of the effects in (<a class="ltx_ref" href="#S54.E47" title="In 54 Causal effects and selection bias under the potential outcomes framework ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">47</span></a>) are identical:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau(X)=\tau_{\textsc{T}}(X)=\tau_{\textsc{C}}(X)=\tau_{\textsc{PF}}(X)," class="m" src="m/48fe69539391.png" style="width:15.37em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S55.SS1.p1.3">where</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau(X)" class="m" src="m/3420840736aa.png" style="width:2.46em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)-Y(0)\mid X\}," class="m" src="m/b4cd32e9f85b.png" style="width:9.42em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{T}}(X)" class="m" src="m/53417ed5ffaa.png" style="width:2.96em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)-Y(0)\mid Z=1,X\}," class="m" src="m/4ce7eb364de6.png" style="width:12.45em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{C}}(X)" class="m" src="m/414eef44b0cd.png" style="width:2.96em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)-Y(0)\mid Z=0,X\}," class="m" src="m/886fb8220fb4.png" style="width:12.45em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{PF}}(X)" class="m" src="m/a4724175f430.png" style="width:3.42em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1,X)-E(Y\mid Z=0,X)." class="m" src="m/a2d59af7d646.png" style="width:16.02em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S55.SS1.p1.4">In particular, <img alt="\tau(X)" class="m" src="m/315d0cd0edbf.png" style="width:2.46em;vertical-align:-0.36em"/> is often called the <span class="ltx_text ltx_font_italic">conditional average causal effect</span> (CATE).</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS1.p2.1">A key result in this chapter is that the average causal effect <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> is <span class="ltx_text ltx_font_italic">nonparametrically identifiable</span> under (<a class="ltx_ref" href="#S55.E48" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">48</span></a>) and (<a class="ltx_ref" href="#S55.E49" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">49</span></a>). The notion of nonparametrically identifiability does not appear frequently in classic statistics, but it is key to causal inference with observational studies. I first give an abstract definition below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition1f">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 10.1</span></span><span class="ltx_text ltx_font_bold"> (identification)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition1f.p1.1"><span class="ltx_text ltx_font_italic">A parameter <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> is identifiable if it can be written as a function of the distribution of the observed data under certain model assumptions.
+A parameter <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> is nonparametrically identifiable if it can be written as a function of the distribution of the observed data without any parametric model assumptions.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS1.p3.1">Definition <a class="ltx_ref" href="#Thmdefinition1f" title="Definition 10.1 (identification) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.1</span></a> is too abstract at the moment. I will use more concrete examples in later chapters to illustrate its meaning. It is often neglected in classic statistics problems. For instance, the mean <img alt="\theta=E(Y)" class="m" src="m/803043ed9bcf.png" style="width:4.43em;vertical-align:-0.36em"/> is nonparametrically identifiable if we have IID draws of <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/>’s; the Pearson correlation coefficient <img alt="\theta=\rho_{YX}" class="m" src="m/950a7468c5d2.png" style="width:3.97em;vertical-align:-0.31em"/> is nonparametrically identifiable if we have IID draws of the pairs <img alt="(X_{i},Y_{i})" class="m" src="m/27c0262ef2dd.png" style="width:3.54em;vertical-align:-0.36em"/>’s. In those examples, the parameters are nonparametrically identifiable automatically. However, Definition <a class="ltx_ref" href="#Thmdefinition1f" title="Definition 10.1 (identification) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.1</span></a> is fundamental in causal inference with observational studies. In particular, the parameter of interest <img alt="\tau=E\{Y(1)-Y(0)\}" class="m" src="m/1f7ced1088b6.png" style="width:9.30em;vertical-align:-0.36em"/> depends on some unobserved random variables, so it is unclear whether it is nonparametrically identifiable based on observed data. Under the assumptions in (<a class="ltx_ref" href="#S55.E48" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">48</span></a>) and (<a class="ltx_ref" href="#S55.E49" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">49</span></a>), it is nonparametrically identifiable, with details below.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS1.p4.1">Because <img alt="\tau_{\textsc{PF}}(X)" class="m" src="m/5ffc617ccf9d.png" style="width:3.42em;vertical-align:-0.36em"/> depends only on the observables, it is nonparametrically identified by definition. Moreover, (<a class="ltx_ref" href="#S55.E48" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">48</span></a>) and (<a class="ltx_ref" href="#S55.E49" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">49</span></a>) ensure that the three causal effects are the same as <img alt="\tau_{\textsc{PF}}(X)" class="m" src="m/5ffc617ccf9d.png" style="width:3.42em;vertical-align:-0.36em"/>, so <img alt="\tau(X)" class="m" src="m/315d0cd0edbf.png" style="width:2.46em;vertical-align:-0.36em"/>, <img alt="\tau_{\textsc{T}}(X)" class="m" src="m/6c212cafe433.png" style="width:2.96em;vertical-align:-0.36em"/> and <img alt="\tau_{\textsc{C}}(X)" class="m" src="m/d50d6839f694.png" style="width:2.96em;vertical-align:-0.36em"/> are all nonparametrically identified. Consequently, the unconditional versions are also nonparametrically identified under (<a class="ltx_ref" href="#S55.E48" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">48</span></a>) and (<a class="ltx_ref" href="#S55.E49" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">49</span></a>) due to the law of total expectation:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=E\{\tau(X)\},\quad\tau_{\textsc{T}}=E\{\tau_{\textsc{T}}(X)\mid Z=1\},\quad\tau_{\textsc{C}}=E\{\tau_{\textsc{C}}(X)\mid Z=0\}." class="m" src="m/5af5221a2471.png" style="width:29.94em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S55.SS1.p4.2">From now on, I will focus on <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> unless stated otherwise (Chapter <a class="ltx_ref" href="16.html#chapter13" title="Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13</span></a> will be an exception). The following theorem summarizes the identification formulas of <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1c">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 10.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1c.p1.1"><span class="ltx_text ltx_font_italic">Under (<a class="ltx_ref" href="#S55.E48" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">48</span></a>) and (<a class="ltx_ref" href="#S55.E49" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">49</span></a>), the average causal effect <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> is identified by</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau" class="m" src="m/10de0cdadd8d.png" style="width:0.77em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{\tau(X)\}" class="m" src="m/1a91ac445c8d.png" style="width:4.26em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(50)</span></td></tr></tbody>
+<tbody id="S55.E51"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{E(Y\mid Z=1,X)-E(Y\mid Z=0,X)\}" class="m" src="m/5e5b43558f6b.png" style="width:17.54em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(51)</span></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\int\{E(Y\mid Z=1,X=x)-E(Y\mid Z=0,X=x)\}f(x)\textup{d}x." class="m" src="m/76af57a09f76.png" style="width:24.91em;vertical-align:-0.96em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(52)</span></td></tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS1.p5.1">The formula (<a class="ltx_ref" href="#S55.E51" title="In Theorem 10.1 ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">51</span></a>) was formally established by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib278" title="">Rosenbaum and Rubin, 1983b ()</a></cite>, which is also called the g-formula by Robins <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib141" title="">Hernán and Robins,, 2020</a>, see)</cite>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS1.p6.1">With a discrete covariate, we can write the identification formula in Theorem <a class="ltx_ref" href="#Thmtheorem1c" title="Theorem 10.1 ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.1</span></a> as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S55.E53"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau" class="m" src="m/10de0cdadd8d.png" style="width:0.77em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\sum_{x}E(Y\mid Z=1,X=x)\textup{pr}(X=x)" class="m" src="m/e4a7c17c8dd2.png" style="width:15.44em;vertical-align:-1.37em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="2"><span class="ltx_tag ltx_tag_equation ltx_align_right">(53)</span></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle-\sum_{x}E(Y\mid Z=0,X=x)\textup{pr}(X=x)," class="m" src="m/7237a41235f9.png" style="width:16.65em;vertical-align:-1.37em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S55.SS1.p6.2">and also the simple difference in means as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S55.E54"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{PF}}" class="m" src="m/3e1be554cdad.png" style="width:1.73em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\sum_{x}E(Y\mid Z=1,X=x)\textup{pr}(X=x\mid Z=1)" class="m" src="m/029883e3b8a2.png" style="width:18.86em;vertical-align:-1.37em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="2"><span class="ltx_tag ltx_tag_equation ltx_align_right">(54)</span></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle-\sum_{x}E(Y\mid Z=0,X=x)\textup{pr}(X=x\mid Z=0)" class="m" src="m/e4ce097903c2.png" style="width:19.80em;vertical-align:-1.37em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S55.SS1.p6.3">by the law of total probability. Comparing (<a class="ltx_ref" href="#S55.E53" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">53</span></a>) and (<a class="ltx_ref" href="#S55.E54" title="In 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">54</span></a>), we can see that although both formulas compare the conditional expectations <img alt="E(Y\mid Z=1,X=x)" class="m" src="m/060e1885ac3e.png" style="width:9.27em;vertical-align:-0.36em"/> and <img alt="E(Y\mid Z=0,X=x)" class="m" src="m/f0a9e31b6eb3.png" style="width:9.27em;vertical-align:-0.36em"/>, they average over different distributions of the covariates. The causal parameter <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> averages the conditional expectations over the common distribution of the covariates, but the difference in means <img alt="\tau_{\textsc{PF}}" class="m" src="m/f9538b2c016b.png" style="width:1.73em;vertical-align:-0.26em"/> averages the conditional expectations over two different distributions of the covariates in the treated and control groups.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS1.p7.1">Usually, we impose a stronger assumption.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption1a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 10.1</span></span><span class="ltx_text ltx_font_bold"> (ignorability)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption1a.p1.1"><span class="ltx_text ltx_font_italic">We have</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S55.E55"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Y(z)\ind Z\mid X\quad(z=0,1)." class="m" src="m/9fb9bcc3b55c.png" style="width:11.06em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(55)</span></td></tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS1.p8.1">Assumption <a class="ltx_ref" href="#Thmassumption1a" title="Assumption 10.1 (ignorability) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.1</span></a> has many names:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.I1.i1.p1.1"><span class="ltx_text ltx_font_italic">ignorability</span> due to <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib284" title="">Rubin, (1978)</a></cite><sup><a href="#fn-chapter10-29" id="fn-chapter10-29-ref">29</a></sup>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.I1.i2.p1.1"><span class="ltx_text ltx_font_italic">unconfoundedness</span> which is popular among epidemiologists;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.I1.i3.p1.1"><span class="ltx_text ltx_font_italic">selection on observables</span> which is popular among social scientists;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">4.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.I1.i4.p1.1"><span class="ltx_text ltx_font_italic">conditional independence</span> which is merely a description of the notation <span class="ltx_picture ltx_markedasmath" style="width:9.0pt;height:8.0pt;"><svg height="10.63" overflow="visible" version="1.1" width="11.96" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0,10.63) scale(1,-1)"><g transform="translate(0,0)"><line stroke="#000000" stroke-width="0.4" x1="0" x2="12.45" y1="0" y2="0"></line></g><g transform="translate(4.15,0)"><line stroke="#000000" stroke-width="0.4" x1="0" x2="0" y1="0" y2="11.07"></line></g><g transform="translate(8.3,0)"><line stroke="#000000" stroke-width="0.4" x1="0" x2="0" y1="0" y2="11.07"></line></g></g></svg></span> in the assumption.</p>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS1.p9.1">Sometimes, we impose an even stronger assumption.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption2a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 10.2</span></span><span class="ltx_text ltx_font_bold"> (strong ignorability)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption2a.p1.1"><span class="ltx_text ltx_font_italic">We have</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\{Y(1),Y(0)\}\ind Z\mid X." class="m" src="m/f9f236310b93.png" style="width:9.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(56)</span></td></tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS1.p10.1">Assumption <a class="ltx_ref" href="#Thmassumption2a" title="Assumption 10.2 (strong ignorability) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.2</span></a> is called <span class="ltx_text ltx_font_italic">strong ignorability</span> <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib284" title="">Rubin,, 1978</a>; <a class="ltx_ref" href="35.html#bib.bib278" title="">Rosenbaum and Rubin, 1983b, </a>)</cite>. If the parameter of interest is <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>, then the stronger Assumptions <a class="ltx_ref" href="#Thmassumption1a" title="Assumption 10.1 (ignorability) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.1</span></a> and <a class="ltx_ref" href="#Thmassumption2a" title="Assumption 10.2 (strong ignorability) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.2</span></a> are just imposed for notational simplicity thanks to the conditional independence notation <span class="ltx_picture ltx_markedasmath" style="width:9.0pt;height:8.0pt;"><svg height="10.63" overflow="visible" version="1.1" width="11.96" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0,10.63) scale(1,-1)"><g transform="translate(0,0)"><line stroke="#000000" stroke-width="0.4" x1="0" x2="12.45" y1="0" y2="0"></line></g><g transform="translate(4.15,0)"><line stroke="#000000" stroke-width="0.4" x1="0" x2="0" y1="0" y2="11.07"></line></g><g transform="translate(8.3,0)"><line stroke="#000000" stroke-width="0.4" x1="0" x2="0" y1="0" y2="11.07"></line></g></g></svg></span>. They are not necessary for identifying <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>. However, they can not be relaxed if the parameter of interest is the causal effects on other scales (for example, distribution, quantile, or some transformation of the outcome).
+The <span class="ltx_text ltx_font_italic">strong ignorability</span> assumption requires that the potential outcomes vector be independent of the treatment given the covariates, but the <span class="ltx_text ltx_font_italic">ignorability</span> assumption only requires each potential outcome be independent of the treatment given covariates. The former is stronger than the latter. However, their difference is rather technical and of pure theoretical interests; see Problem <a class="ltx_ref" href="#S57.SS0.SSS0.P5" title="10.5 Ignorability versus strong ignorability ‣ 57 Homework Problems ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.5</span></a>. In most reasonable statistical models, they both hold; see Section <a class="ltx_ref" href="#S55.SS2" title="55.2 Plausibility of the ignorability assumption ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">55.2</span></a> below. We will not distinguish them in this book and will simply use <span class="ltx_text ltx_font_italic">ignorability</span> to refer to both.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S55.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">55.2 </span>Plausibility of the ignorability assumption</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS2.p1.1">A fundamental problem of causal inference with observational studies is the plausibility of the ignorability assumption. The discussion in Chapter <a class="ltx_ref" href="#S55.SS1" title="55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">55.1</span></a> may seem too mathematical in the sense that the ignorability assumption serves as a sufficient condition to ensure the nonparametric identification of the average causal effect. What is its scientific meaning? Intuitively, it rules out all unmeasured covariates that affect the treatment and outcome simultaneously. Those “common causes” of the treatment and outcome are called confounders. That is why the ignorability assumption is also called the unconfoundedness assumption. More transparently, we can interpret the ignorability assumption based on the outcome data-generating process. If</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Y(1)" class="m" src="m/cefa7fe07274.png" style="width:2.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle g_{1}(X,V_{1})," class="m" src="m/51b2e9a91eb2.png" style="width:4.55em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Y(0)" class="m" src="m/a31e3f33ecdb.png" style="width:2.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle g_{0}(X,V_{0})," class="m" src="m/86176edf9fee.png" style="width:4.55em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Z" class="m" src="m/cf0a64f98626.png" style="width:0.99em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 1\{g(X,V)\geq 0\}" class="m" src="m/b995d33fb4de.png" style="width:6.96em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S55.SS2.p1.2">with <img alt="(V_{1},V_{0})\ind V" class="m" src="m/0b14deee003f.png" style="width:5.23em;vertical-align:-0.36em"/>, then both Assumptions <a class="ltx_ref" href="#Thmassumption1a" title="Assumption 10.1 (ignorability) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.1</span></a> and <a class="ltx_ref" href="#Thmassumption2a" title="Assumption 10.2 (strong ignorability) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.2</span></a> hold. In the above data-generating process, the “common causes” <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> of the treatment and the outcome are all observed, and the remaining random components are independent. If the data-generating process changes to</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Y(1)" class="m" src="m/cefa7fe07274.png" style="width:2.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle g_{1}(X,U,V_{1})," class="m" src="m/67f34b729693.png" style="width:5.66em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Y(0)" class="m" src="m/a31e3f33ecdb.png" style="width:2.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle g_{0}(X,U,V_{0})," class="m" src="m/7eb09be53077.png" style="width:5.66em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle Z" class="m" src="m/cf0a64f98626.png" style="width:0.99em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 1\{g(X,U,V)\geq 0\}" class="m" src="m/f1c8285209a2.png" style="width:8.09em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S55.SS2.p1.3">with <img alt="(V_{1},V_{0})\ind V" class="m" src="m/0b14deee003f.png" style="width:5.23em;vertical-align:-0.36em"/>, then Assumptions <a class="ltx_ref" href="#Thmassumption1a" title="Assumption 10.1 (ignorability) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.1</span></a> and <a class="ltx_ref" href="#Thmassumption2a" title="Assumption 10.2 (strong ignorability) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.2</span></a> do not hold in general. The unmeasured “common cause” <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/> induces dependence between the treatment and the potential outcomes even conditional on the observed covariates <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. If we do not have access to <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/> and analyze the data based only on <img alt="(Z,X,Y)" class="m" src="m/2a4b837915f3.png" style="width:4.24em;vertical-align:-0.36em"/>, the final estimator will be biased for the causal parameter in general. This type of bias is called the <span class="ltx_text ltx_font_italic">omitted variable bias</span> in econometrics; see Problem <a class="ltx_ref" href="19.html#S85.SS0.SSS0.P2" title="16.2 Cochran’s formula or the omitted variable bias formula ‣ 85 Homework Problems ‣ Chapter 16 Difficulties of Unconfoundedness in Observational Studies for Causal Effects ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">16.2</span></a> in a later chapter.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S55.SS2.p2.1">The ignorability assumption can be reasonable if we observe a rich set of covariates <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> that affect the treatment and the outcome simultaneously. I start with this assumption to discuss identification and estimation strategies in Part <a class="ltx_ref" href="#Pt3" title="Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">III</span></a> of this book. However, it is fundamentally untestable. We may justify it based on the scientific background knowledge, but we are often not sure whether it holds or not. Parts <a class="ltx_ref" href="#Pt4" title="Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">IV</span></a> and <a class="ltx_ref" href="#Pt5" title="Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">V</span></a> of this book will discuss other strategies when the ignorability assumption is not plausible.</p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S56">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">56 </span>Two simple estimation strategies and their limitations</h4>
+<section class="ltx_subsection" id="S56.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">56.1 </span>Stratification or standardization based on discrete covariates</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S56.SS1.p1.1">If the covariate <img alt="X_{i}\in\{1,\ldots,K\}" class="m" src="m/9b59125332f3.png" style="width:7.25em;vertical-align:-0.36em"/> is discrete, then ignorability (<a class="ltx_ref" href="#S55.E55" title="In Assumption 10.1 (ignorability) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">55</span></a>) reads as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y(z)\ind Z\mid X=k\quad(z=0,1;k=1,\ldots,K)," class="m" src="m/153a3f1e5e60.png" style="width:18.91em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S56.SS1.p1.2">which essentially assumes that the observational study is an SRE under the superpopulation framework in Chapter <a class="ltx_ref" href="12.html#chapter9" title="Chapter 9 Bridging Finite and Super Population Causal Inference ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">9</span></a>. Therefore, we can use the estimator</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}=\sum_{k=1}^{K}\pi_{[k]}\left\{\hat{\bar{Y}}_{[k]}(1)-\hat{\bar{Y}}_{[k]}(0)\right\}," class="m" src="m/f9aaad411632.png" style="width:14.02em;vertical-align:-1.42em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S56.SS1.p1.3">which is identical to the stratified or post-stratified estimator discussed in Chapter <a class="ltx_ref" href="08.html#chapter5" title="Chapter 5 Stratification and Post-Stratification in Randomized Experiments ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">5</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S56.SS1.p2.1">This method is still widely used in practice. Example <a class="ltx_ref" href="#Thmexample2d" title="Example 10.2 (smoking and homocysteine) ‣ 53 Motivating Examples ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.2</span></a> contains discrete covariates, and I relegate the analysis to
+Problem <a class="ltx_ref" href="#S57.SS0.SSS0.P4" title="10.4 Data analysis: stratification and regression ‣ 57 Homework Problems ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.4</span></a>. However, there are several obvious difficulties in implementing this method. First, it works well for the case with small <img alt="K" class="m" src="m/7ab2200d24b1.png" style="width:1.16em;vertical-align:-0.12em"/>. For large <img alt="K" class="m" src="m/7ab2200d24b1.png" style="width:1.16em;vertical-align:-0.12em"/>, it is very likely that many strata have <img alt="n_{[k]1}=0" class="m" src="m/50e9778e59aa.png" style="width:4.00em;vertical-align:-0.46em"/> or <img alt="n_{[k]0}=0" class="m" src="m/e59d717bb591.png" style="width:4.00em;vertical-align:-0.46em"/>, leading to the poorly defined <img alt="\hat{\tau}_{[k]}" class="m" src="m/fe3e01b86cf8.png" style="width:1.61em;vertical-align:-0.46em"/>’s for those strata. This is related to the issue of overlap which will be discussed in Chapter <a class="ltx_ref" href="23.html#chapter20" title="Chapter 20 Overlap in Observational Studies: Difficulties and Opportunities ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">20</span></a> later. Second, it is not obvious how to apply this stratification method to multidimensional continuous or mixed covariates <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. A standard method is to create strata based on the initial covariates and then apply the stratification method. This may result in arbitrariness in the analysis.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S56.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">56.2 </span>Outcome regression</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S56.SS2.p1.1">The most commonly used method based on outcome regression is to run the OLS with an additive model of the observed outcome on the treatment indicator and covariates, which assumes</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z,X)=\beta_{0}+\beta_{z}Z+\beta_{x}^{\mkern-1.5mu\mathsf{T}}X." class="m" src="m/0a454d18c832.png" style="width:14.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S56.SS2.p1.2">If the above linear model is correct, then we have</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau(X)" class="m" src="m/3420840736aa.png" style="width:2.46em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1,X)-E(Y\mid Z=0,X)" class="m" src="m/cbd6b2e2a670.png" style="width:15.75em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle(\beta_{0}+\beta_{z}+\beta_{x}^{\mkern-1.5mu\mathsf{T}}X)-(\beta_{0}+\beta_{x}^{\mkern-1.5mu\mathsf{T}}X)" class="m" src="m/049d6567b796.png" style="width:13.76em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\beta_{z}," class="m" src="m/f95d4f473be2.png" style="width:1.54em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S56.SS2.p1.3">which implies that the causal effect is homogeneous with respect to the covariates. This, coupled with ignorability, implies that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=E\{\tau(X)\}=\beta_{z}." class="m" src="m/cda60ea15d69.png" style="width:8.79em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S56.SS2.p1.4">Therefore, if ignorability holds and the outcome model is linear, then the average causal effect equals the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/>. This is one of the most important applications of the linear model. However, the causal interpretation of the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> is valid only under two strong assumptions: ignorability and the linear model.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S56.SS2.p2.1">We have discussed in Chapter <a class="ltx_ref" href="09.html#chapter6" title="Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6</span></a>, the above procedure is suboptimal even in CREs because it ignores the treatment effect heterogeneity induced by the covariates.
+If we assume</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z,X)=\beta_{0}+\beta_{z}Z+\beta_{x}^{\mkern-1.5mu\mathsf{T}}X+\beta_{zx}^{\mkern-1.5mu\mathsf{T}}XZ," class="m" src="m/8a6be5b2f20b.png" style="width:18.67em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S56.SS2.p2.2">we have</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau(X)" class="m" src="m/3420840736aa.png" style="width:2.46em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1,X)-E(Y\mid Z=0,X)" class="m" src="m/cbd6b2e2a670.png" style="width:15.75em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle(\beta_{0}+\beta_{z}+\beta_{x}^{\mkern-1.5mu\mathsf{T}}X+\beta_{zx}^{\mkern-1.5mu\mathsf{T}}X)-(\beta_{0}+\beta_{x}^{\mkern-1.5mu\mathsf{T}}X)" class="m" src="m/c9ac225198bf.png" style="width:17.37em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\beta_{z}+\beta_{zx}^{\mkern-1.5mu\mathsf{T}}X," class="m" src="m/c4335cde4a22.png" style="width:5.08em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S56.SS2.p2.3">which, coupled with ignorability, implies that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=E\{\tau(X)\}=E(\beta_{z}+\beta_{zx}^{\mkern-1.5mu\mathsf{T}}X)=\beta_{z}+\beta_{zx}^{\mkern-1.5mu\mathsf{T}}E(X)." class="m" src="m/232658d5767a.png" style="width:21.51em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S56.SS2.p2.4">The estimator for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> is then <img alt="\hat{\beta}_{z}+\hat{\beta}_{zx}^{\mkern-1.5mu\mathsf{T}}\bar{X}" class="m" src="m/20c7329fc6ae.png" style="width:4.87em;vertical-align:-0.36em"/>, where <img alt="\hat{\beta}_{z}" class="m" src="m/5f49124c2788.png" style="width:1.25em;vertical-align:-0.31em"/> is the regression coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="\bar{X}" class="m" src="m/8c38e9479061.png" style="width:1.13em;vertical-align:-0.12em"/> is the sample mean of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. If we center the covariates to ensure <img alt="\bar{X}=0" class="m" src="m/9c61142e9121.png" style="width:2.96em;vertical-align:-0.12em"/>, then the estimator is simply the regression coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/>. To simplify the procedure, we usually center the covariates at the beginning; also recall <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator introduced in Chapter <a class="ltx_ref" href="09.html#chapter6" title="Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6</span></a>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib278" title="">Rosenbaum and Rubin, 1983b ()</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib144" title="">Hirano and Imbens, (2001)</a></cite> discussed this estimator.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S56.SS2.p3.1">In general, we can use other more complex models to estimate the causal effects. For example, if we build two predictors <img alt="\hat{\mu}_{1}(X)" class="m" src="m/6470e60b6d67.png" style="width:2.96em;vertical-align:-0.36em"/> and <img alt="\hat{\mu}_{0}(X)" class="m" src="m/c0effa15612f.png" style="width:2.96em;vertical-align:-0.36em"/> based on the treated and control data, respectively, then we have an estimator for the conditional average causal effect</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}(X)=\hat{\mu}_{1}(X)-\hat{\mu}_{0}(X)" class="m" src="m/85f99f73a92e.png" style="width:10.50em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S56.SS2.p3.2">and an estimator for the average causal effect:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}^{\text{reg}}=n^{-1}\sum_{i=1}^{n}\{\hat{\mu}_{1}(X_{i})-\hat{\mu}_{0}(X_{i})\}." class="m" src="m/9db6fe302178.png" style="width:15.01em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S56.SS2.p3.3">The estimator <img alt="\hat{\tau}" class="m" src="m/44e946ca66e8.png" style="width:0.77em;vertical-align:-0.12em"/> above has the same form as the projective estimator discussed in Chapter <a class="ltx_ref" href="09.html#chapter6" title="Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">6</span></a>. It is sometimes called the <span class="ltx_text ltx_font_italic">outcome regression</span> estimator. The OLS-based estimators above are special cases. We can use the nonparametric bootstrap (see Chapter <a class="ltx_ref" href="33.html#chapter30.A6" title="Appendix 30.F Bootstrap ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.F</span></a>) to estimate the standard error of the outcome regression estimator.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S56.SS2.p4.1">I give another example for binary outcomes below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample4d">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 10.4</span></span><span class="ltx_text ltx_font_bold"> (outcome regression estimator for binary outcomes)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample4d.p1.1"><span class="ltx_text ltx_font_italic">With a binary outcome, we may model <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> using a logistic model</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z,X)=\textup{pr}(Y=1\mid Z,X)=\frac{e^{\beta_{0}+\beta_{z}Z+\beta_{x}^{\mkern-1.5mu\mathsf{T}}X}}{1+e^{\beta_{0}+\beta_{z}Z+\beta_{x}^{\mkern-1.5mu\mathsf{T}}X}}," class="m" src="m/928d364bea1e.png" style="width:23.30em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample4d.p1.2"><span class="ltx_text ltx_font_italic">then based on the estimators of the coefficients <img alt="\hat{\beta}_{0},\hat{\beta}_{z},\hat{\beta}_{x}" class="m" src="m/25edd941edb6.png" style="width:4.24em;vertical-align:-0.31em"/>, we have the following estimator for the average causal effect:</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}=n^{-1}\sum_{i=1}^{n}\left\{\frac{e^{\hat{\beta}_{0}+\hat{\beta}_{z}+\hat{\beta}_{x}^{\mkern-1.5mu\mathsf{T}}X_{i}}}{1+e^{\hat{\beta}_{0}+\hat{\beta}_{z}+\hat{\beta}_{x}^{\mkern-1.5mu\mathsf{T}}X_{i}}}-\frac{e^{\hat{\beta}_{0}+\hat{\beta}_{x}^{\mkern-1.5mu\mathsf{T}}X_{i}}}{1+e^{\hat{\beta}_{0}+\hat{\beta}_{x}^{\mkern-1.5mu\mathsf{T}}X_{i}}}\right\}." class="m" src="m/6a58808b845f.png" style="width:21.95em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample4d.p1.3"><span class="ltx_text ltx_font_italic">This estimator is not simply the coefficient of the treatment in the logistic model.<sup><a href="#fn-chapter10-30" id="fn-chapter10-30-ref">30</a></sup> It is a nonlinear function of all the coefficients as well as the empirical distribution of the covariates. In econometrics, this estimator is called the “average partial effect” or “average marginal effect” of the treatment in the logistic model. Many econometric software packages can report this estimator associated with the standard error. Similarly, we can also derive the corresponding estimator based on a fully interacted logistic model; see Problem <a class="ltx_ref" href="#S57.SS0.SSS0.P3" title="10.3 Outcome imputation estimator in the fully interacted logistic model ‣ 57 Homework Problems ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.3</span></a>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S56.SS2.p5.1">The above predictors for the conditional means of the outcome can also be other machine learning tools. In particular,
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib143" title="">Hill, (2011)</a></cite> championed the use of tree methods for estimating <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>, and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib333" title="">Wager and Athey, (2018)</a></cite> proposed to use them also for estimating <img alt="\tau(X)" class="m" src="m/315d0cd0edbf.png" style="width:2.46em;vertical-align:-0.36em"/>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib333" title="">Wager and Athey, (2018)</a></cite> also combined the tree methods with the idea of the <span class="ltx_text ltx_font_italic">propensity score</span> in the next chapter. Since then, the intersection of machine learning and causal inference has been an active research area <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib128" title="">Hahn et al.,, 2020</a>; <a class="ltx_ref" href="35.html#bib.bib188" title="">Künzel et al.,, 2019</a>, e.g.,)</cite>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S56.SS2.p6.1">The biggest problem with the above approach based on outcome regressions is its sensitivity to the specification of the outcome model. Problem <a class="ltx_ref" href="04.html#S5.SS0.SSS0.P4" title="1.4 Specification searches ‣ 5 Homework Problems ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1.4</span></a> gave such an example. Depending on the incentive of empirical research and publications, people might report their favorable causal effects estimates after searching over a wide set of candidate models, without confessing this model searching process. This is a major source of <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-hacking in causal inference. Problem <a class="ltx_ref" href="04.html#S5.SS0.SSS0.P4" title="1.4 Specification searches ‣ 5 Homework Problems ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1.4</span></a> hinted at this issue. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib191" title="">Leamer, (1978)</a></cite> criticized this approach in empirical research.</p>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S57">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">57 </span>Homework Problems</h4>
+<section class="ltx_paragraph" id="S57.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">10.1 </span>A simple identity</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.SS0.SSS0.P1.p1.1">Show that <img alt="\tau=\textup{pr}(Z=1)\tau_{\textsc{T}}+\textup{pr}(Z=0)\tau_{\textsc{C}}" class="m" src="m/5c1c3075b437.png" style="width:14.04em;vertical-align:-0.36em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S57.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">10.2 </span>Nonparametric identification of other causal effects</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.SS0.SSS0.P2.p1.1">Under ignorability, show that</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.I1.i1.p1.1">the distributional causal effect</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{DCE}_{y}=\textup{pr}\{Y(1)&gt;y\}-\textup{pr}\{Y(0)&gt;y\}" class="m" src="m/bde6bc218922.png" style="width:17.39em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S57.I1.i1.p1.2">is nonparametrically identifiable for all <img alt="y" class="m" src="m/64c8a7cf95e9.png" style="width:0.75em;vertical-align:-0.31em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.I1.i2.p1.1">the quantile causal effect</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{QCE}_{q}=\text{quantile}_{q}\{Y(1)\}-\text{quantile}_{q}\{Y(0)\}," class="m" src="m/2106e7418310.png" style="width:19.92em;vertical-align:-0.48em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S57.I1.i2.p1.2">is nonparametrically identifiable for all <img alt="q" class="m" src="m/277e3e56c631.png" style="width:0.72em;vertical-align:-0.31em"/>, where <img alt="\text{quantile}_{q}\{\cdot\}" class="m" src="m/7a35d33223db.png" style="width:5.44em;vertical-align:-0.48em"/> is the <img alt="q" class="m" src="m/277e3e56c631.png" style="width:0.72em;vertical-align:-0.31em"/>th quantile of a random variable.</p>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.SS0.SSS0.P2.p2.1">Remark:
+In probability theory, <img alt="\textup{pr}\{Y(z)\leq y\}" class="m" src="m/8b6e4eb25c28.png" style="width:6.12em;vertical-align:-0.36em"/> is the cumulative distribution function and <img alt="\textup{pr}\{Y(z)&gt;y\}" class="m" src="m/f6fb95082992.png" style="width:6.12em;vertical-align:-0.36em"/> is the survival function of the potential outcome <img alt="Y(z)" class="m" src="m/1bab9ed6c8f2.png" style="width:2.31em;vertical-align:-0.36em"/>.
+The distributional causal effect compares the survival functions of the potential outcomes under treatment and control.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.SS0.SSS0.P2.p3.1">The quantile causal effect compares the marginal quantiles of the potential outcomes, which is different from the quantile of the individual causal effect</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{q}=\text{quantile}_{q}\{Y(1)-Y(0)\}." class="m" src="m/5a0f43bcb402.png" style="width:13.06em;vertical-align:-0.48em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S57.SS0.SSS0.P2.p3.2">In fact, <img alt="\tau_{q}" class="m" src="m/e5fa208db474.png" style="width:1.11em;vertical-align:-0.41em"/> is not identifiable in the sense that the marginal distributions <img alt="\textup{pr}\{Y(1)\leq y\}" class="m" src="m/d776b9247811.png" style="width:6.12em;vertical-align:-0.36em"/> and <img alt="\textup{pr}\{Y(0)\leq y\}" class="m" src="m/d909068dc8b1.png" style="width:6.12em;vertical-align:-0.36em"/> can not uniquely determine <img alt="\tau_{q}" class="m" src="m/e5fa208db474.png" style="width:1.11em;vertical-align:-0.41em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S57.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">10.3 </span>Outcome imputation estimator in the fully interacted logistic model</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.SS0.SSS0.P3.p1.1">This problem extends Example <a class="ltx_ref" href="#Thmexample4d" title="Example 10.4 (outcome regression estimator for binary outcomes) ‣ 56.2 Outcome regression ‣ 56 Two simple estimation strategies and their limitations ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.4</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.SS0.SSS0.P3.p2.1">Assume that a binary outcome follows a logistic model</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z,X)=\textup{pr}(Y=1\mid Z,X)=\frac{e^{\beta_{0}+\beta_{z}Z+\beta_{x}^{\mkern-1.5mu\mathsf{T}}X+\beta_{xz}^{\mkern-1.5mu\mathsf{T}}XZ}}{1+e^{\beta_{0}+\beta_{z}Z+\beta_{x}^{\mkern-1.5mu\mathsf{T}}X+\beta_{xz}^{\mkern-1.5mu\mathsf{T}}XZ}}." class="m" src="m/72ed002aec75.png" style="width:26.47em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S57.SS0.SSS0.P3.p2.2">What is the corresponding outcome regression estimator for the average causal effect?</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S57.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">10.4 </span>Data analysis: stratification and regression</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.SS0.SSS0.P4.p1.1">Use the dataset <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">homocyst</span> in the package <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">senstrat</span>.
+The outcome is <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">homocysteine</span>, the homocysteine level, and the treatment is <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">z</span>, where <img alt="z=1" class="m" src="m/8d0a36042009.png" style="width:2.58em;vertical-align:-0.12em"/> for a daily smoker and <img alt="z=0" class="m" src="m/727a2f9242be.png" style="width:2.58em;vertical-align:-0.12em"/> for a never smoker. Covariates are <span class="ltx_text ltx_lst_language_R ltx_lstlisting"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">female</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,<span class="ltx_text ltx_lst_space"> </span><span class="ltx_text ltx_lst_identifier">age3</span>,<span class="ltx_text ltx_lst_space"> </span><span class="ltx_text ltx_lst_identifier">ed3</span>,<span class="ltx_text ltx_lst_space"> </span><span class="ltx_text ltx_lst_identifier">bmi3</span>,<span class="ltx_text ltx_lst_space"> </span><span class="ltx_text ltx_lst_identifier">pov2</span></span></span> with detailed explanations in the package, and <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">st</span> is a stratum indicator, defined by all the combinations of the discrete covariates.</p>
+</div>
+<div class="ltx_para">
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item"></span>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.I2.p1.1">[(1)]</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.I2.i1.p1.1">How many strata have only treated or control units? What is the proportion of the units in these strata? Drop these strata and perform a stratified analysis of the observational study. Report the point estimator, variance estimator, and 95% confidence interval for the average causal effect.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.I2.i2.p1.1">Run the OLS of the outcome on the treatment indicator and covariates without interactions. Report the coefficient of the treatment and the robust standard error.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.I2.i2.p2.1">Drop the strata with only treated or control units. Re-run the OLS and report the result.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.I2.i3.p1.1">Apply <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib208" title="">Lin, (2013)</a></cite>’s estimator of the average causal effect. Report the coefficient of the treatment and the robust standard error.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.I2.i3.p2.1">If you do not drop the strata with only treated or control units, what will happen?</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">4.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.I2.i4.p1.1">Compare the results in the above three analyses. Which one is more credible?</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section class="ltx_paragraph" id="S57.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">10.5 </span>Ignorability versus strong ignorability</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.SS0.SSS0.P5.p1.1">Give an example such that the ignorability holds but the strong ignorability does not hold.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.SS0.SSS0.P5.p2.1">Remark: This is related to a classic probability problem of finding three random variables <img alt="A,B,C" class="m" src="m/1e16d03bad8a.png" style="width:3.47em;vertical-align:-0.31em"/> such that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="A\ind C\text{ and }B\ind C\text{ but }(A,B)\nind C." class="m" src="m/03383c777e24.png" style="width:14.29em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</section>
+<section class="ltx_paragraph" id="S57.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">10.6 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S57.SS0.SSS0.P6.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib63" title="">Cochran, (1965)</a></cite> is a classic reference on observational studies. It contains many useful insights but does not use the formal potential outcomes framework.
+Dylan Small founded a new journal called <span class="ltx_text ltx_font_italic">Observational Studies</span> in 2015 <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib304" title="">Small,, 2015</a>)</cite> and reprinted an old article “Observational Studies” by W. G. Cochran as <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib65" title="">Cochran, (2015)</a></cite>. Many leading researchers also made insightful comments on <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib65" title="">Cochran, (2015)</a></cite>.</p>
+</div>
+</section>
+</section>
+<section class="footnotes"><h4>脚注</h4><p id="fn-chapter10-27"><a href="#fn-chapter10-27-ref">27</a>. <span class="ltx_text ltx_font_upright">Homocysteine is a type of amino acid. A high level of homocysteine in the blood is regarded as a marker of cardiovascular disease.</span></p><p id="fn-chapter10-28"><a href="#fn-chapter10-28-ref">28</a>. <span class="ltx_text ltx_font_upright">It is a Latin phrase, which means “based on the first impression” or “accepted as correct until proved otherwise.”
+</span><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib149" title="">Holland, (1986)</a></cite><span class="ltx_text ltx_font_upright"> used this phrase.
+</span></p><p id="fn-chapter10-29"><a href="#fn-chapter10-29-ref">29</a>. The reason for using this name is unclear based on the discussion in this book. In fact, it is from the Bayesian perspective of causal inference. It is beyond the scope of this book.</p><p id="fn-chapter10-30"><a href="#fn-chapter10-30-ref">30</a>. <span class="ltx_text ltx_font_upright">If the logistic outcome model is correct, then </span><img alt="\hat{\beta}_{z}" class="m" src="m/5f49124c2788.png" style="width:1.25em;vertical-align:-0.31em"/><span class="ltx_text ltx_font_upright"> estimates the conditional odds ratio of the treatment on the outcome given covariates, which does not equal </span><img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_upright">.
+</span><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib114" title="">Freedman, 2008c ()</a></cite><span class="ltx_text ltx_font_upright"> gave a warning of using the logistic regression coefficient to estimate </span><img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/><span class="ltx_text ltx_font_upright"> in CREs.
+See Chapter </span><a class="ltx_ref ltx_font_upright" href="34.html#chapter31" title="Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31</span></a><span class="ltx_text ltx_font_upright"> for more details of the logistic regression.</span></p></section></section><p class="nav bottom"><a href="index.html">目录</a><a href="12.html">← 上一章</a><a href="14.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

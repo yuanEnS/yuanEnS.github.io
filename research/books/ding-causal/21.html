@@ -1,0 +1,789 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="20.html">← 上一章</a><a href="22.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter18">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 18 </span>Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding</h3>
+
+<div class="ltx_para">
+<p class="ltx_p" id="chapter18.p2.1">Cornfield-type sensitivity analysis works best for binary outcomes on the risk ratio scale, conditional on the observed covariates. Although <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib92" title="">Ding and VanderWeele, (2016)</a></cite> also proposed Cornfield-type sensitivity analysis methods for the average causal effect, they are not general enough and are not convenient to apply. Below I give a more direct approach to sensitivity analysis based on the conditional expectations of the potential outcomes. The advantage of this approach is that it can deal with commonly used estimators for the average causal effect under the sensitivity analysis framework.
+The idea appeared in the early work of <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib262" title="">Robins, (1999)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib297" title="">Scharfstein et al., (1999)</a></cite>. This chapter is based on <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib215" title="">Lu and Ding, (2023)</a></cite>’s recent formulation.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter18.p3.1">The approach is closely related to the idea of deriving worse-case bounds on the average potential outcomes. I will first review the simpler idea of bounds, and then extend the approach to sensitivity analysis.</p>
+</div>
+<section class="ltx_section" id="S92">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">92 </span>Introduction</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S92.p1.1">Recall the canonical setup of an observational study with <img alt="\{Z_{i},X_{i},Y_{i}(1),Y_{i}(0)\}_{i=1}^{n}\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}\{Z,X,Y(1),Y(0)\}" class="m" src="m/1753c8e09fe7.png" style="width:20.26em;vertical-align:-0.36em"/> and focus on the average causal effect</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau=E\{Y(1)-Y(0)\}." class="m" src="m/e7e995414500.png" style="width:9.56em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S92.p1.2">It decomposes to</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau" class="m" src="m/10de0cdadd8d.png" style="width:0.77em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\left[E(Y\mid Z=1)\textup{pr}(Z=1)+E\{Y(1)\mid Z=0\}\textup{pr}(Z=0)\right]" class="m" src="m/b24630e1b1f5.png" style="width:23.73em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle-\left[E\{Y(0)\mid Z=1\}\textup{pr}(Z=1)+E(Y\mid Z=0)\textup{pr}(Z=0)\right]." class="m" src="m/85a5cb093e7a.png" style="width:25.13em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S92.p1.3">So the fundamental difficulty is to estimate the counterfactual means</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(1)\mid Z=0\},\quad\quad E\{Y(0)\mid Z=1\}." class="m" src="m/b5aaf3b57f12.png" style="width:17.54em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S92.p1.4">There are in general two extreme strategies to estimate them.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S92.p2.1">We have discussed the first strategy in Part <a class="ltx_ref" href="#Pt3" title="Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">III</span></a>, which relies on ignorability.
+Assuming</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid Z=1,X\}" class="m" src="m/b7b2e3c917c0.png" style="width:8.89em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid Z=0,X\}," class="m" src="m/69842ae50603.png" style="width:9.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid Z=1,X\}" class="m" src="m/13cc6fae7949.png" style="width:8.89em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid Z=0,X\}," class="m" src="m/f5f05620d57b.png" style="width:9.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S92.p2.2">we can identify the counterfactual means by the observables:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(1)\mid Z=0\}=E\left\{E(Y\mid Z=1,X)\mid Z=0\right\}" class="m" src="m/142a2a8bc2ad.png" style="width:21.39em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S92.p2.3">and, similarly,</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(0)\mid Z=1\}=E\left\{E(Y\mid Z=0,X)\mid Z=1\right\}." class="m" src="m/ef8c8ed0375d.png" style="width:21.85em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S92.p3.1">The second strategy in the next section assumes nothing except that the outcomes are bounded between <img alt="\underline{y}" class="m" src="m/a2c8e7d2e1fd.png" style="width:0.75em;vertical-align:-0.51em"/> and <img alt="\overline{y}" class="m" src="m/d6217438401d.png" style="width:0.75em;vertical-align:-0.31em"/>.
+This is natural for binary outcomes with <img alt="\underline{y}=0" class="m" src="m/2303cfd0133d.png" style="width:2.60em;vertical-align:-0.51em"/> and <img alt="\overline{y}=1" class="m" src="m/15d65611b4ea.png" style="width:2.60em;vertical-align:-0.31em"/>.
+With this assumption, the two counterfactual means are also bounded between <img alt="\underline{y}" class="m" src="m/a2c8e7d2e1fd.png" style="width:0.75em;vertical-align:-0.51em"/> and <img alt="\overline{y}" class="m" src="m/d6217438401d.png" style="width:0.75em;vertical-align:-0.31em"/>, which implies the worst-case bounds on <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>.
+Table <a class="ltx_ref" href="#S92.T7" title="Table 7 ‣ 92 Introduction ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a> illustrates the basic idea and Chapter <a class="ltx_ref" href="#S93" title="93 Manski-type worse-case bounds on the average causal effect without assumptions ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">93</span></a> below reviews this strategy in more detail.</p>
+</div>
+<figure class="ltx_table" id="S92.T7">
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">Table 7</span>: </span><span class="ltx_text" style="font-size:90%;">Science Table with bounded outcome <img alt="[\underline{y},\overline{y}]" class="m" src="m/bf46bce6cf02.png" style="width:2.29em;vertical-align:-0.51em"/>, where <img alt="\underline{y}" class="m" src="m/a2c8e7d2e1fd.png" style="width:0.75em;vertical-align:-0.51em"/> and <img alt="\overline{y}" class="m" src="m/d6217438401d.png" style="width:0.75em;vertical-align:-0.31em"/> are two constants</span></figcaption>
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_th_row ltx_border_t"><img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_th_row ltx_border_t"><img alt="Y(1)" class="m" src="m/ad64600ca3da.png" style="width:2.31em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_th_row ltx_border_t"><img alt="Y(0)" class="m" src="m/1b485f154c2a.png" style="width:2.31em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">Lower <img alt="Y(1)" class="m" src="m/ad64600ca3da.png" style="width:2.31em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">Upper <img alt="Y(1)" class="m" src="m/ad64600ca3da.png" style="width:2.31em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">Lower <img alt="Y(0)" class="m" src="m/1b485f154c2a.png" style="width:2.31em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">Upper <img alt="Y(0)" class="m" src="m/1b485f154c2a.png" style="width:2.31em;vertical-align:-0.36em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t"><img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t"><img alt="Y_{1}(1)" class="m" src="m/768ba1bd988a.png" style="width:2.53em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t">?</th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y_{1}(1)" class="m" src="m/768ba1bd988a.png" style="width:2.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y_{1}(1)" class="m" src="m/768ba1bd988a.png" style="width:2.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="\underline{y}" class="m" src="m/a2c8e7d2e1fd.png" style="width:0.75em;vertical-align:-0.51em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="\overline{y}" class="m" src="m/d6217438401d.png" style="width:0.75em;vertical-align:-0.31em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row"><img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row"><img alt="Y_{n_{1}}(1)" class="m" src="m/40d7503e0e30.png" style="width:3.04em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row">?</th>
+<td class="ltx_td ltx_align_center"><img alt="Y_{n_{1}}(1)" class="m" src="m/40d7503e0e30.png" style="width:3.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="Y_{n_{1}}(1)" class="m" src="m/40d7503e0e30.png" style="width:3.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\underline{y}" class="m" src="m/a2c8e7d2e1fd.png" style="width:0.75em;vertical-align:-0.51em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\overline{y}" class="m" src="m/d6217438401d.png" style="width:0.75em;vertical-align:-0.31em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t"><img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t">?</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t"><img alt="Y_{n_{1}+1}(0)" class="m" src="m/49cd2735ec78.png" style="width:4.05em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="\underline{y}" class="m" src="m/a2c8e7d2e1fd.png" style="width:0.75em;vertical-align:-0.51em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="\overline{y}" class="m" src="m/d6217438401d.png" style="width:0.75em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y_{n_{1}+1}(0)" class="m" src="m/49cd2735ec78.png" style="width:4.05em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Y_{n_{1}+1}(0)" class="m" src="m/49cd2735ec78.png" style="width:4.05em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\vdots" class="m" src="m/d528175dd322.png" style="width:0.51em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b"><img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b">?</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b"><img alt="Y_{n}(0)" class="m" src="m/f344a375eb4b.png" style="width:2.63em;vertical-align:-0.36em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="\underline{y}" class="m" src="m/a2c8e7d2e1fd.png" style="width:0.75em;vertical-align:-0.51em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="\overline{y}" class="m" src="m/d6217438401d.png" style="width:0.75em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="Y_{n}(0)" class="m" src="m/f344a375eb4b.png" style="width:2.63em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="Y_{n}(0)" class="m" src="m/f344a375eb4b.png" style="width:2.63em;vertical-align:-0.36em"/></td></tr>
+</tbody>
+</table></div>
+</figure>
+</section>
+<section class="ltx_section" id="S93">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">93 </span>Manski-type worse-case bounds on the average causal effect without assumptions</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S93.p1.1">Assume that the outcome is bounded between <img alt="\underline{y}" class="m" src="m/a2c8e7d2e1fd.png" style="width:0.75em;vertical-align:-0.51em"/> and <img alt="\overline{y}" class="m" src="m/d6217438401d.png" style="width:0.75em;vertical-align:-0.31em"/>.
+From the decomposition</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(1)\}=E\{Y(1)\mid Z=1\}\textup{pr}(Z=1)+E\{Y(1)\mid Z=0\}\textup{pr}(Z=0)," class="m" src="m/12a23c242ef4.png" style="width:30.16em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S93.p1.2">we can derive that <img alt="E\{Y(1)\}" class="m" src="m/aaa482b4b72c.png" style="width:4.12em;vertical-align:-0.36em"/> has lower bound</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y\mid Z=1\}\textup{pr}(Z=1)+\underline{y}\textup{pr}(Z=0)" class="m" src="m/d02a908cd9bd.png" style="width:16.62em;vertical-align:-0.51em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S93.p1.3">and upper bound</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y\mid Z=1\}\textup{pr}(Z=1)+\overline{y}\textup{pr}(Z=0)." class="m" src="m/b43a1e040cf5.png" style="width:16.91em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S93.p1.4">Similarly, from the decomposition</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(0)\}=E\{Y(0)\mid Z=1\}\textup{pr}(Z=1)+E\{Y(0)\mid Z=0\}\textup{pr}(Z=0)," class="m" src="m/35881135d8f2.png" style="width:30.16em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S93.p1.5">we can derive that <img alt="E\{Y(0)\}" class="m" src="m/aaadd0c60b3f.png" style="width:4.12em;vertical-align:-0.36em"/> has lower bound</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\underline{y}\textup{pr}(Z=1)+E\{Y\mid Z=0\}\textup{pr}(Z=0)" class="m" src="m/c8531a345ff3.png" style="width:16.62em;vertical-align:-0.51em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S93.p1.6">and upper bound</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\overline{y}\textup{pr}(Z=1)+E\{Y\mid Z=0\}\textup{pr}(Z=0)." class="m" src="m/96d3f065f9fa.png" style="width:16.91em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S93.p1.7">Combining these bounds, we can derive that the average causal effect <img alt="\tau=E\{Y(1)\}-E\{Y(0)\}" class="m" src="m/020c41d8b453.png" style="width:11.08em;vertical-align:-0.36em"/> has the lower bound</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y\mid Z=1\}\textup{pr}(Z=1)+\underline{y}\textup{pr}(Z=0)-\overline{y}\textup{pr}(Z=1)-E\{Y\mid Z=0\}\textup{pr}(Z=0)" class="m" src="m/b11b0224244c.png" style="width:34.23em;vertical-align:-0.51em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S93.p1.8">and the upper bound</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y\mid Z=1\}\textup{pr}(Z=1)+\overline{y}\textup{pr}(Z=0)-\underline{y}\textup{pr}(Z=1)-E\{Y\mid Z=0\}\textup{pr}(Z=0)." class="m" src="m/2455243fcbc4.png" style="width:34.52em;vertical-align:-0.51em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S93.p1.9">The length of the bounds is <img alt="\overline{y}-\underline{y}" class="m" src="m/178cee7ea792.png" style="width:2.51em;vertical-align:-0.51em"/>. The bounds are not informative but are better than the a priori bounds <img alt="[\underline{y}-\overline{y},\overline{y}-\underline{y}]" class="m" src="m/8a4f2d2a62a3.png" style="width:5.78em;vertical-align:-0.51em"/> with length <img alt="2(\overline{y}-\underline{y})" class="m" src="m/aa607c9c05d0.png" style="width:3.78em;vertical-align:-0.51em"/>. Without further assumptions, the observed data distribution does not uniquely determine <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>. In this case, we say that <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> is <span class="ltx_text ltx_font_italic">partially identified</span>, with the formal definition below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition1k">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 18.1</span></span><span class="ltx_text ltx_font_bold"> (partial identification)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition1k.p1.1"><span class="ltx_text ltx_font_italic">A parameter <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> is partially identified if the observed data distribution is compatible with multiple values of <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S93.p2.1">Compare Definitions <a class="ltx_ref" href="13.html#Thmdefinition1f" title="Definition 10.1 (identification) ‣ 55.1 Identification ‣ 55 Sufficient conditions for nonparametric identification of causal effects ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.1</span></a> and <a class="ltx_ref" href="#Thmdefinition1k" title="Definition 18.1 (partial identification) ‣ 93 Manski-type worse-case bounds on the average causal effect without assumptions ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.1</span></a>. If the parameter <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> is uniquely determined by the observed data distribution, then it is identifiable; otherwise, it is only partially identifiable. Therefore, <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> is identifiable with the ignorability assumption, but only partially identifiable without the ignorability assumption.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S93.p3.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib61" title="">Cochran, (1953)</a></cite> used the idea of worse-case bounds in surveys with missing data but abandoned the idea because it often gives very conservative results. Similarly, the above worst-case bounds on <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> are often uninteresting from a practical perspective because they often cover <img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/>. Moreover, this strategy does not apply to the settings with unbounded outcomes.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S93.p4.1">Manski applied the idea to causal inference <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib219" title="">Manski,, 1990</a>)</cite> and many other econometric models <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib220" title="">Manski,, 2003</a>)</cite>.
+This idea of bounding causal parameters with minimal assumptions is powerful when coupled with other qualitative assumptions. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib220" title="">Manski, (2003)</a></cite> surveyed many strategies.
+For instance, we may believe that the treatment does not harm any units, so the monotonicity assumption holds:
+<img alt="Y(1)\geq Y(0)." class="m" src="m/ff1da5fa41b9.png" style="width:6.00em;vertical-align:-0.36em"/>
+Then the lower bound on <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> is zero but the upper bound is unchanged.
+Another type of assumption is
+<img alt="Z=I\{Y(1)\geq Y(0)\}" class="m" src="m/6ab23ae850cd.png" style="width:9.32em;vertical-align:-0.36em"/>, that is, the treatment selection is based on the difference between the latent potential outcomes. This assumption can also improve the bounds on <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>.
+A more detailed discussion of this approach is beyond the scope of this book.</p>
+</div>
+</section>
+<section class="ltx_section" id="S94">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">94 </span>Sensitivity analysis for the average causal effect</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S94.p1.1">The first strategy is optimistic and assumes that the potential outcomes do not differ across treatment and control groups, conditional on the observed covariates. The second strategy is pessimistic and does not infer the counterfactual means based on the observed data at all. The following strategy is in-between.</p>
+</div>
+<section class="ltx_subsection" id="S94.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">94.1 </span>Identification formulas</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S94.SS1.p1.1">Define</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\frac{E\{Y(1)\mid Z=1,X\}}{E\{Y(1)\mid Z=0,X\}}=\varepsilon_{1}(X)," class="m" src="m/30d2d4c46bb6.png" style="width:13.32em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\frac{E\{Y(0)\mid Z=1,X\}}{E\{Y(0)\mid Z=0,X\}}=\varepsilon_{0}(X)," class="m" src="m/a2fcd3ed5330.png" style="width:13.32em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S94.SS1.p1.2">which are the sensitivity parameters. For simplicity, we can further assume that they are constant independent of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. In practice, we need to fix them or vary them in a pre-specified range. Recall that <img alt="\mu_{1}(X)=E(Y\mid Z=1,X)" class="m" src="m/138bc18f0ead.png" style="width:11.44em;vertical-align:-0.36em"/> and <img alt="\mu_{0}(X)=E(Y\mid Z=0,X)" class="m" src="m/a1e1bb6530ee.png" style="width:11.44em;vertical-align:-0.36em"/> are the conditional mean functions of the observed outcomes under treatment and control, respectively. We can identify the two counterfactual means and the average causal effect as follows.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1i">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 18.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1i.p1.1"><span class="ltx_text ltx_font_italic">With known <img alt="\varepsilon_{1}(X)" class="m" src="m/a1851349a7f4.png" style="width:2.84em;vertical-align:-0.36em"/> and <img alt="\varepsilon_{0}(X)" class="m" src="m/3d8ee7daac80.png" style="width:2.84em;vertical-align:-0.36em"/>, we have</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid Z=0\}" class="m" src="m/7843c4dd3a0c.png" style="width:7.54em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left\{\mu_{1}(X)/\varepsilon_{1}(X)\mid Z=0\right\}," class="m" src="m/b8c5efa64e2f.png" style="width:11.90em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid Z=1\}" class="m" src="m/2d5210500cff.png" style="width:7.54em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left\{\mu_{0}(X)\varepsilon_{0}(X)\mid Z=1\right\}" class="m" src="m/147970419edf.png" style="width:10.96em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="Thmtheorem1i.p1.2"><span class="ltx_text ltx_font_italic">and therefore</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S94.Ex672"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau" class="m" src="m/10de0cdadd8d.png" style="width:0.77em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{ZY+(1-Z)\mu_{1}(X)/\varepsilon_{1}(X)\}" class="m" src="m/cce99afdacf7.png" style="width:13.90em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="3"><span class="ltx_tag ltx_tag_equation ltx_align_right">(90)</span></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle-E\{Z\mu_{0}(X)\varepsilon_{0}(X)+(1-Z)Y\}" class="m" src="m/9829841d9976.png" style="width:14.16em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Z\mu_{1}(X)+(1-Z)\mu_{1}(X)/\varepsilon_{1}(X)\}" class="m" src="m/291310ba9a43.png" style="width:15.83em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody id="S94.E91"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle-E\{Z\mu_{0}(X)\varepsilon_{0}(X)+(1-Z)\mu_{0}(X)\}." class="m" src="m/b11966fd2827.png" style="width:16.38em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(91)</span></td></tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S94.SS1.p2.1">I leave the proof of Theorem <a class="ltx_ref" href="#Thmtheorem1i" title="Theorem 18.1 ‣ 94.1 Identification formulas ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.1</span></a> to Problem <a class="ltx_ref" href="#S95.SS0.SSS0.P1" title="18.1 Proof of Theorem ‣ 95 Homework Problems ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.1</span></a>.
+With the fitted outcome model, (<a class="ltx_ref" href="#S94.Ex672" title="In Theorem 18.1 ‣ 94.1 Identification formulas ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">90</span></a>) and (<a class="ltx_ref" href="#S94.E91" title="In Theorem 18.1 ‣ 94.1 Identification formulas ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">91</span></a>) motivate the following predictive and projective estimators for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}^{\textup{pred}}" class="m" src="m/9b6909fa31b6.png" style="width:2.38em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\left\{n^{-1}\sum_{i=1}^{n}Z_{i}Y_{i}+n^{-1}\sum_{i=1}^{n}(1-Z_{i})\hat{\mu}_{1}(X_{i})/\varepsilon_{1}(X_{i})\right\}" class="m" src="m/b5e83c2218c7.png" style="width:21.58em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle-\left\{n^{-1}\sum_{i=1}^{n}Z_{i}\hat{\mu}_{0}(X_{i})\varepsilon_{0}(X_{i})+n^{-1}\sum_{i=1}^{n}(1-Z_{i})Y_{i}\right\}," class="m" src="m/8bb6b303cf2c.png" style="width:22.48em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S94.SS1.p2.2">and</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}^{\textup{proj}}" class="m" src="m/3ad2f2442fbe.png" style="width:2.29em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\left\{n^{-1}\sum_{i=1}^{n}Z_{i}\hat{\mu}_{1}(X_{i})+n^{-1}\sum_{i=1}^{n}(1-Z_{i})\hat{\mu}_{1}(X_{i})/\varepsilon_{1}(X_{i})\right\}" class="m" src="m/a9b4b14cf09f.png" style="width:23.66em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle-\left\{n^{-1}\sum_{i=1}^{n}Z_{i}\hat{\mu}_{0}(X_{i})\varepsilon_{0}(X_{i})+n^{-1}\sum_{i=1}^{n}(1-Z_{i})\hat{\mu}_{0}(X_{i})\right\}." class="m" src="m/47b126b04a84.png" style="width:24.55em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S94.SS1.p2.3">The terminology “predictive” and “projective” is from the survey sampling literature <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib103" title="">Firth and Bennett,, 1998</a>; <a class="ltx_ref" href="35.html#bib.bib87" title="">Ding and Li,, 2018</a>)</cite>; see also Chapter <a class="ltx_ref" href="09.html#S30.SS2.SSS2" title="30.2.2 Understanding ( ) ’s estimator via predicting the potential outcomes ‣ 30.2 Analysis of covariance and extensions ‣ 30 Regression adjustment ‣ Chapter 6 Rerandomization and Regression Adjustment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.2.2</span></a>. The estimators <img alt="\hat{\tau}^{\textup{pred}}" class="m" src="m/5de62fa896a7.png" style="width:2.38em;vertical-align:-0.12em"/> and <img alt="\hat{\tau}^{\textup{proj}}" class="m" src="m/d2258076e1ec.png" style="width:2.29em;vertical-align:-0.12em"/> differ slightly: the former uses the observed outcomes when available, whereas the latter replaces the observed outcomes with the fitted values.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S94.SS1.p3.1">More interesting, we can also identify <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> by an inverse probability weighting formula.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem2f">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 18.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem2f.p1.1"><span class="ltx_text ltx_font_italic">With known <img alt="\varepsilon_{1}(X)" class="m" src="m/a1851349a7f4.png" style="width:2.84em;vertical-align:-0.36em"/> and <img alt="\varepsilon_{0}(X)" class="m" src="m/3d8ee7daac80.png" style="width:2.84em;vertical-align:-0.36em"/>, we have</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\}=E\left\{w_{1}(X)\frac{Z}{e(X)}Y\right\},\quad E\{Y(0)\}=E\left\{w_{0}(X)\frac{1-Z}{1-e(X)}Y\right\}," class="m" src="m/b705bc4035d5.png" style="width:31.44em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="Thmtheorem2f.p1.2"><span class="ltx_text ltx_font_italic">where</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="w_{1}(X)=e(X)+\{1-e(X)\}/\varepsilon_{1}(X),\quad w_{0}(X)=e(X)\varepsilon_{0}(X)+1-e(X)." class="m" src="m/6a6bb629dd88.png" style="width:31.51em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S94.SS1.p4.1">I leave the proof of Theorem <a class="ltx_ref" href="#Thmtheorem2f" title="Theorem 18.2 ‣ 94.1 Identification formulas ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.2</span></a> to Problem <a class="ltx_ref" href="#S95.SS0.SSS0.P2" title="18.2 Proof of Theorem ‣ 95 Homework Problems ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.2</span></a>.
+Theorem <a class="ltx_ref" href="#Thmtheorem2f" title="Theorem 18.2 ‣ 94.1 Identification formulas ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.2</span></a> modifies the classic IPW formulas with two extra factors <img alt="w_{1}(X)" class="m" src="m/a321e3909746.png" style="width:3.08em;vertical-align:-0.36em"/> and <img alt="w_{0}(X)" class="m" src="m/eebe755eb340.png" style="width:3.08em;vertical-align:-0.36em"/>, which depend on both the propensity score and the sensitivity parameters. With the fitted propensity scores, Theorem <a class="ltx_ref" href="#Thmtheorem2f" title="Theorem 18.2 ‣ 94.1 Identification formulas ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.2</span></a> motivates the following estimators for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}^{\textup{ht}}" class="m" src="m/ceac3c629bcc.png" style="width:1.57em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n^{-1}\sum_{i=1}^{n}\frac{\{\hat{e}(X_{i})\varepsilon_{1}(X_{i})+1-\hat{e}(X_{i})\}Z_{i}Y_{i}}{\varepsilon_{1}(X_{i})\hat{e}(X_{i})}" class="m" src="m/26a3492e2792.png" style="width:17.47em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle-n^{-1}\sum_{i=1}^{n}\frac{\{\hat{e}(X_{i})\varepsilon_{0}(X_{i})+1-\hat{e}(X_{i})\}(1-Z_{i})Y_{i}}{1-\hat{e}(X_{i})}" class="m" src="m/259642428a43.png" style="width:20.74em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S94.SS1.p4.2">and</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}^{\textup{haj}}" class="m" src="m/7172ee9d5694.png" style="width:1.98em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\sum_{i=1}^{n}\frac{\{\hat{e}(X_{i})\varepsilon_{1}(X_{i})+1-\hat{e}(X_{i})\}Z_{i}Y_{i}}{\varepsilon_{1}(X_{i})\hat{e}(X_{i})}\Big/\sum_{i=1}^{n}\frac{Z_{i}}{\hat{e}(X_{i})}" class="m" src="m/db6ee7c90daa.png" style="width:20.86em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle-n^{-1}\sum_{i=1}^{n}\frac{\{\hat{e}(X_{i})\varepsilon_{0}(X_{i})+1-\hat{e}(X_{i})\}(1-Z_{i})Y_{i}}{1-\hat{e}(X_{i})}\Big/\sum_{i=1}^{n}\frac{1-Z_{i}}{1-\hat{e}(X_{i})}." class="m" src="m/03aeffc07ea4.png" style="width:27.97em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S94.SS1.p5.1">More interestingly, with fitted propensity score and outcome models, the following estimator for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> is doubly robust:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\tau}^{\textup{ht}}=\hat{\tau}^{\textup{ht}}-n^{-1}\sum_{i=1}^{n}\{Z_{i}-\hat{e}(X_{i})\}\left\{\frac{\hat{\mu}_{1}(X_{i})}{\hat{e}(X_{i})\varepsilon_{1}(X_{i})}+\frac{\hat{\mu}_{0}(X_{i})\varepsilon_{0}(X_{i})}{1-\hat{e}(X_{i})}\right\}." class="m" src="m/013b854e28cf.png" style="width:29.29em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S94.SS1.p5.2">That is, with known <img alt="\varepsilon_{1}(X_{i})" class="m" src="m/e9c0c1949dc7.png" style="width:3.08em;vertical-align:-0.36em"/> and <img alt="\varepsilon_{0}(X_{i})" class="m" src="m/e85bb3775c8e.png" style="width:3.08em;vertical-align:-0.36em"/>, the estimator <img alt="\hat{\tau}^{\textup{dr}}" class="m" src="m/4b96376d0b51.png" style="width:1.59em;vertical-align:-0.12em"/> is consistent for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> if either the propensity score model or the outcome model is correctly specified. We can use the bootstrap to approximate the variance of the above estimators. See <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib215" title="">Lu and Ding, (2023)</a></cite> for technical details.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S94.SS1.p6.1">When <img alt="\varepsilon_{1}(X_{i})=\varepsilon_{0}(X_{i})=1" class="m" src="m/973436fe5bb3.png" style="width:9.11em;vertical-align:-0.36em"/>, the above estimators reduce to the predictive estimator, IPW estimator, and the doubly robust estimators introduced in Part <a class="ltx_ref" href="#Pt3" title="Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">III</span></a>.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S94.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">94.2 </span>Example</h5>
+<section class="ltx_subsubsection" id="S94.SS2.SSS1">
+<h6 class="ltx_title ltx_title_subsubsection"><span class="ltx_tag ltx_tag_subsubsection">94.2.1 </span>R functions for sensitivity analysis</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S94.SS2.SSS1.p1.1">The following <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> function can compute the point estimates for sensitivity analysis.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">OS</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">sa</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">function</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">out</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">gaussian</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">truncps</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(0,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1),</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>fitted<span class="ltx_text ltx_lst_space"> </span>propensity<span class="ltx_text ltx_lst_space"> </span>score</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">glm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">binomial</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">fitted</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">values</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">pmax</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">truncps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1],</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">pmin</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">truncps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2],</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>fitted<span class="ltx_text ltx_lst_space"> </span>potential<span class="ltx_text ltx_lst_space"> </span>outcomes</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">outcome1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">glm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">weights</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">out</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">fitted</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">values</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">outcome0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">glm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">weights</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">),</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">out</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">fitted</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">values</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>outcome<span class="ltx_text ltx_lst_space"> </span>regression<span class="ltx_text ltx_lst_space"> </span>estimator</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">reg</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">((1-</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">outcome1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">outcome0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">((1-</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>IPW<span class="ltx_text ltx_lst_space"> </span>estimators</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">w1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1-</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">w0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1-</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ipw0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">w1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">((1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">w0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ipw</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">w1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)/</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">((1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">w0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))/</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">((1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)/(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>doubly<span class="ltx_text ltx_lst_space"> </span>robust<span class="ltx_text ltx_lst_space"> </span>estimator</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">aug</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">outcome1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">outcome0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/(1-</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dr</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ipw0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">((</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">aug</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">return</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">reg</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ipw0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ipw</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dr</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">}</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S94.SS2.SSS1.p3.1">I relegate the calculation of the standard errors to Problem <a class="ltx_ref" href="#S95.SS0.SSS0.P3" title="18.3 Standard errors in sensitivity analysis ‣ 95 Homework Problems ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.3</span></a>.</p>
+</div>
+</section>
+<section class="ltx_subsubsection" id="S94.SS2.SSS2">
+<h6 class="ltx_title ltx_title_subsubsection"><span class="ltx_tag ltx_tag_subsubsection">94.2.2 </span>Revisit Example <a class="ltx_ref" href="13.html#Thmexample3d" title="Example 10.3 (school meal program and body mass index) ‣ 53 Motivating Examples ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.3</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S94.SS2.SSS2.p1.1">With</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\varepsilon_{1}(X)=\varepsilon_{0}(X)\in\{1/2,1/1.7,1/1.5,1/1.3,1,1.3,1.5,1.7,2\}," class="m" src="m/11213b223a6a.png" style="width:25.99em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S94.SS2.SSS2.p1.2">we obtain an array of doubly robust estimates of <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> based on the following <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> code:</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nhanes</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">bmi</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">read</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">csv</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"nhanes_bmi.csv"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nhanes</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">bmi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">School</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">meal</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nhanes</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">bmi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">BMI</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">as</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">matrix</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nhanes</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">bmi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2)])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">scale</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">E1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1/2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1/1.7,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1/1.5,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1/1.3,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.3,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.5,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.7,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">E0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1/2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1/1.7,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1/1.5,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1/1.3,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.3,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.5,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.7,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">EST</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">outer</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">E1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">E0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ll1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">length</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">E1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ll0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">length</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">E0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">for</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">i</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">in</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1:</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ll1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">for</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">j</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">in</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1:</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ll0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">EST</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">i</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">j</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">OS</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">sa</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">E1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">i</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">],</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">E0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">j</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])[4]</span>
+</div>
+</div>
+</div>
+<figure class="ltx_table" id="S94.T8">
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">Table 8</span>: </span><span class="ltx_text" style="font-size:90%;">Sensitivity analysis for the average causal effect</span></figcaption>
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_border_t"></td>
+<th class="ltx_td ltx_align_right ltx_th ltx_th_column ltx_border_t">1/2</th>
+<th class="ltx_td ltx_align_right ltx_th ltx_th_column ltx_border_t">1/1.7</th>
+<th class="ltx_td ltx_align_right ltx_th ltx_th_column ltx_border_t">1/1.5</th>
+<th class="ltx_td ltx_align_right ltx_th ltx_th_column ltx_border_t">1/1.3</th>
+<th class="ltx_td ltx_align_right ltx_th ltx_th_column ltx_border_t">1</th>
+<th class="ltx_td ltx_align_right ltx_th ltx_th_column ltx_border_t">1.3</th>
+<th class="ltx_td ltx_align_right ltx_th ltx_th_column ltx_border_t">1.5</th>
+<th class="ltx_td ltx_align_right ltx_th ltx_th_column ltx_border_t">1.7</th>
+<th class="ltx_td ltx_align_right ltx_th ltx_th_column ltx_border_t">2</th></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right ltx_border_t">1/2</td>
+<td class="ltx_td ltx_align_right ltx_border_t">11.62</td>
+<td class="ltx_td ltx_align_right ltx_border_t">10.44</td>
+<td class="ltx_td ltx_align_right ltx_border_t">9.40</td>
+<td class="ltx_td ltx_align_right ltx_border_t">8.03</td>
+<td class="ltx_td ltx_align_right ltx_border_t">4.96</td>
+<td class="ltx_td ltx_align_right ltx_border_t">0.97</td>
+<td class="ltx_td ltx_align_right ltx_border_t">-1.69</td>
+<td class="ltx_td ltx_align_right ltx_border_t">-4.35</td>
+<td class="ltx_td ltx_align_right ltx_border_t">-8.34</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">1/1.7</td>
+<td class="ltx_td ltx_align_right">9.22</td>
+<td class="ltx_td ltx_align_right">8.05</td>
+<td class="ltx_td ltx_align_right">7.00</td>
+<td class="ltx_td ltx_align_right">5.64</td>
+<td class="ltx_td ltx_align_right">2.57</td>
+<td class="ltx_td ltx_align_right">-1.42</td>
+<td class="ltx_td ltx_align_right">-4.08</td>
+<td class="ltx_td ltx_align_right">-6.75</td>
+<td class="ltx_td ltx_align_right">-10.74</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">1/1.5</td>
+<td class="ltx_td ltx_align_right">7.63</td>
+<td class="ltx_td ltx_align_right">6.45</td>
+<td class="ltx_td ltx_align_right">5.41</td>
+<td class="ltx_td ltx_align_right">4.05</td>
+<td class="ltx_td ltx_align_right">0.97</td>
+<td class="ltx_td ltx_align_right">-3.02</td>
+<td class="ltx_td ltx_align_right">-5.68</td>
+<td class="ltx_td ltx_align_right">-8.34</td>
+<td class="ltx_td ltx_align_right">-12.33</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">1/1.3</td>
+<td class="ltx_td ltx_align_right">6.03</td>
+<td class="ltx_td ltx_align_right">4.86</td>
+<td class="ltx_td ltx_align_right">3.81</td>
+<td class="ltx_td ltx_align_right">2.45</td>
+<td class="ltx_td ltx_align_right">-0.62</td>
+<td class="ltx_td ltx_align_right">-4.61</td>
+<td class="ltx_td ltx_align_right">-7.27</td>
+<td class="ltx_td ltx_align_right">-9.94</td>
+<td class="ltx_td ltx_align_right">-13.93</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">1</td>
+<td class="ltx_td ltx_align_right">3.64</td>
+<td class="ltx_td ltx_align_right">2.47</td>
+<td class="ltx_td ltx_align_right">1.42</td>
+<td class="ltx_td ltx_align_right">0.06</td>
+<td class="ltx_td ltx_align_right">-3.01</td>
+<td class="ltx_td ltx_align_right">-7.01</td>
+<td class="ltx_td ltx_align_right">-9.67</td>
+<td class="ltx_td ltx_align_right">-12.33</td>
+<td class="ltx_td ltx_align_right">-16.32</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">1.3</td>
+<td class="ltx_td ltx_align_right">1.80</td>
+<td class="ltx_td ltx_align_right">0.63</td>
+<td class="ltx_td ltx_align_right">-0.42</td>
+<td class="ltx_td ltx_align_right">-1.78</td>
+<td class="ltx_td ltx_align_right">-4.85</td>
+<td class="ltx_td ltx_align_right">-8.85</td>
+<td class="ltx_td ltx_align_right">-11.51</td>
+<td class="ltx_td ltx_align_right">-14.17</td>
+<td class="ltx_td ltx_align_right">-18.16</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">1.5</td>
+<td class="ltx_td ltx_align_right">0.98</td>
+<td class="ltx_td ltx_align_right">-0.19</td>
+<td class="ltx_td ltx_align_right">-1.24</td>
+<td class="ltx_td ltx_align_right">-2.60</td>
+<td class="ltx_td ltx_align_right">-5.67</td>
+<td class="ltx_td ltx_align_right">-9.66</td>
+<td class="ltx_td ltx_align_right">-12.33</td>
+<td class="ltx_td ltx_align_right">-14.99</td>
+<td class="ltx_td ltx_align_right">-18.98</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right">1.7</td>
+<td class="ltx_td ltx_align_right">0.36</td>
+<td class="ltx_td ltx_align_right">-0.82</td>
+<td class="ltx_td ltx_align_right">-1.86</td>
+<td class="ltx_td ltx_align_right">-3.23</td>
+<td class="ltx_td ltx_align_right">-6.30</td>
+<td class="ltx_td ltx_align_right">-10.29</td>
+<td class="ltx_td ltx_align_right">-12.95</td>
+<td class="ltx_td ltx_align_right">-15.61</td>
+<td class="ltx_td ltx_align_right">-19.60</td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_right ltx_border_b">2</td>
+<td class="ltx_td ltx_align_right ltx_border_b">-0.35</td>
+<td class="ltx_td ltx_align_right ltx_border_b">-1.52</td>
+<td class="ltx_td ltx_align_right ltx_border_b">-2.57</td>
+<td class="ltx_td ltx_align_right ltx_border_b">-3.93</td>
+<td class="ltx_td ltx_align_right ltx_border_b">-7.00</td>
+<td class="ltx_td ltx_align_right ltx_border_b">-10.99</td>
+<td class="ltx_td ltx_align_right ltx_border_b">-13.65</td>
+<td class="ltx_td ltx_align_right ltx_border_b">-16.32</td>
+<td class="ltx_td ltx_align_right ltx_border_b">-20.31</td></tr>
+</tbody>
+</table></div>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="S94.SS2.SSS2.p2.1">Table <a class="ltx_ref" href="#S94.T8" title="Table 8 ‣ 94.2.2 Revisit Example ‣ 94.2 Example ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">8</span></a> presents the point estimates.
+The signs of the estimates are not sensitive to sensitivity parameters larger than 1, but they are quite sensitive to sensitivity parameters smaller than 1. When the participants of the meal plan tend to have higher BMI (that is, <img alt="\varepsilon_{1}(X)&gt;1" class="m" src="m/2c5194354631.png" style="width:4.67em;vertical-align:-0.36em"/> and <img alt="\varepsilon_{0}(X)&gt;1" class="m" src="m/6557af8eb36a.png" style="width:4.67em;vertical-align:-0.36em"/>), the average causal effect of the meal plan on BMI is negative. However, this conclusion can be quite sensitive if the participants of the meal plan tend to have lower BMI.</p>
+</div>
+</section>
+</section>
+</section>
+<section class="ltx_section" id="S95">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">95 </span>Homework Problems</h4>
+<section class="ltx_paragraph" id="S95.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">18.1 </span>Proof of Theorem <a class="ltx_ref" href="#Thmtheorem1i" title="Theorem 18.1 ‣ 94.1 Identification formulas ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.1</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S95.SS0.SSS0.P1.p1.1">Prove Theorem <a class="ltx_ref" href="#Thmtheorem1i" title="Theorem 18.1 ‣ 94.1 Identification formulas ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.1</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S95.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">18.2 </span>Proof of Theorem <a class="ltx_ref" href="#Thmtheorem2f" title="Theorem 18.2 ‣ 94.1 Identification formulas ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.2</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S95.SS0.SSS0.P2.p1.1">Prove Theorem <a class="ltx_ref" href="#Thmtheorem2f" title="Theorem 18.2 ‣ 94.1 Identification formulas ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">18.2</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S95.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">18.3 </span>Standard errors in sensitivity analysis</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S95.SS0.SSS0.P3.p1.1">Chapter <a class="ltx_ref" href="#S94.SS2" title="94.2 Example ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">94.2</span></a> only presents the point estimates. Report the corresponding bootstrap standard errors.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S95.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">18.4 </span>Sensitivity analysis for the average causal effect on the treated units <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S95.SS0.SSS0.P4.p1.1">This problem extends Chapter <a class="ltx_ref" href="16.html#chapter13" title="Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13</span></a> to allow for unmeasured confounding for estimating</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{T}}=E\{Y(1)-Y(0)\mid Z=1\}=E(Y\mid Z=1)-E\{Y(0)\mid Z=1\}." class="m" src="m/c1d314562170.png" style="width:29.12em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S95.SS0.SSS0.P4.p1.2">We can easily estimate <img alt="E(Y\mid Z=1)" class="m" src="m/28d9c04da49f.png" style="width:6.02em;vertical-align:-0.36em"/> by the sample moment, <img alt="\hat{\mu}_{\textsc{t}1}=\sum_{i=1}^{n}Z_{i}Y_{i}/\sum_{i=1}^{n}Z_{i}" class="m" src="m/0f5594a3afdb.png" style="width:11.78em;vertical-align:-0.41em"/>. The only counterfactual term is <img alt="E\{Y(0)\mid Z=1\}" class="m" src="m/e6d75a34b0e9.png" style="width:7.54em;vertical-align:-0.36em"/>. Therefore, we only need the sensitivity parameter <img alt="\varepsilon_{0}(X)" class="m" src="m/3d8ee7daac80.png" style="width:2.84em;vertical-align:-0.36em"/>. We have the following two identification formulas with a known <img alt="\varepsilon_{0}(X)." class="m" src="m/db385ec605c8.png" style="width:3.11em;vertical-align:-0.36em"/></p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem3d">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 18.3</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem3d.p1.1"><span class="ltx_text ltx_font_italic">With known <img alt="\varepsilon_{0}(X)" class="m" src="m/3d8ee7daac80.png" style="width:2.84em;vertical-align:-0.36em"/>, we have</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid Z=1\}" class="m" src="m/2d5210500cff.png" style="width:7.54em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left\{Z\mu_{0}(X)\varepsilon_{0}(X)\right\}/e" class="m" src="m/6dc3a5da18c3.png" style="width:9.42em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left\{e(X)\varepsilon_{0}(X)\frac{1-Z}{1-e(X)}Y\right\}/e," class="m" src="m/b7d8a5b0e1c8.png" style="width:13.78em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="Thmtheorem3d.p1.2"><span class="ltx_text ltx_font_italic">where <img alt="e=\textup{pr}(Z=1)" class="m" src="m/f4144f4e7c3c.png" style="width:6.34em;vertical-align:-0.36em"/></span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S95.SS0.SSS0.P4.p2.1">Prove Theorem <a class="ltx_ref" href="#Thmtheorem3d" title='Theorem 18.3 ‣ 18.4 Sensitivity analysis for the average causal effect on the treated units 𝜏_"T" ‣ 95 Homework Problems ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">18.3</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S95.SS0.SSS0.P4.p3.1">Remark: Theorem <a class="ltx_ref" href="#Thmtheorem3d" title='Theorem 18.3 ‣ 18.4 Sensitivity analysis for the average causal effect on the treated units 𝜏_"T" ‣ 95 Homework Problems ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">18.3</span></a> motivates using <img alt="\hat{\tau}_{\textsc{t}}^{*}=\hat{\mu}_{\textsc{t}1}-\hat{\mu}_{\textsc{t}0}^{*}" class="m" src="m/27b16e96a7bc.png" style="width:6.72em;vertical-align:-0.36em"/> to estimate <img alt="\tau_{\textsc{t}}" class="m" src="m/85509264c8bc.png" style="width:1.13em;vertical-align:-0.26em"/>, where</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\mu}_{\textsc{t}0}^{\text{reg}}" class="m" src="m/53ba29cc5969.png" style="width:1.95em;vertical-align:-0.39em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n_{1}^{-1}\sum_{i=1}^{n}Z_{i}\varepsilon_{0}(X_{i})\hat{\mu}_{0}(X_{i})," class="m" src="m/01e5845462c5.png" style="width:10.82em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\mu}_{\textsc{t}0}^{\text{ht}}" class="m" src="m/63f558e43f2b.png" style="width:1.69em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle n_{1}^{-1}\sum_{i=1}^{n}\varepsilon_{0}(X_{i})\hat{o}(X_{i})(1-Z_{i})Y_{i}," class="m" src="m/c6c882fb5e99.png" style="width:13.66em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\mu}_{\textsc{t}0}^{\text{haj}}" class="m" src="m/137cc876d4e6.png" style="width:2.02em;vertical-align:-0.39em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\sum_{i=1}^{n}\varepsilon_{0}(X_{i})\hat{o}(X_{i})(1-Z_{i})Y_{i}/\sum_{i=1}^{n}\hat{o}(X_{i})(1-Z_{i})," class="m" src="m/c127e5deaff6.png" style="width:20.04em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S95.SS0.SSS0.P4.p3.2">with <img alt="\hat{o}(X_{i})=\hat{e}(X_{i})/\{1-\hat{e}(X_{i})\}" class="m" src="m/b47756caf6cc.png" style="width:12.02em;vertical-align:-0.36em"/> being the estimated conditional odds of the treatment given the observed covariates.
+Moreover, we can construct the doubly robust estimator
+<img alt="\hat{\tau}_{\textsc{t}}^{\text{dr}}=\hat{\mu}_{\textsc{t}1}-\hat{\mu}_{\textsc{t}0}^{\text{dr}}" class="m" src="m/b6f7a8030089.png" style="width:7.08em;vertical-align:-0.36em"/> for <img alt="\tau_{\textsc{t}}" class="m" src="m/85509264c8bc.png" style="width:1.13em;vertical-align:-0.26em"/>, where</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\mu}_{\textsc{t}0}^{\text{dr}}=\hat{\mu}_{\textsc{t}0}^{\text{ht}}-n_{1}^{-1}\sum_{i=1}^{n}\varepsilon_{0}(X_{i})\frac{\hat{e}(X_{i})-Z}{1-\hat{e}(X_{i})}\hat{\mu}_{0}(X_{i})." class="m" src="m/ccdf7ba8267e.png" style="width:19.92em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S95.SS0.SSS0.P4.p3.3"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib215" title="">Lu and Ding, (2023)</a></cite> provide more details.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S95.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">18.5 </span>R code</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S95.SS0.SSS0.P5.p1.1">Implement the estimators in Problem <a class="ltx_ref" href="#S95.SS0.SSS0.P4" title='18.4 Sensitivity analysis for the average causal effect on the treated units 𝜏_"T" ‣ 95 Homework Problems ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">18.4</span></a>.
+Analyze the data used in Chapter <a class="ltx_ref" href="#S94.SS2" title="94.2 Example ‣ 94 Sensitivity analysis for the average causal effect ‣ Chapter 18 Sensitivity Analysis for the Average Causal Effect with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">94.2</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S95.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">18.6 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S95.SS0.SSS0.P6.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib277" title="">Rosenbaum and Rubin, 1983a ()</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib162" title="">Imbens, (2003)</a></cite> are two classic papers on sensitivity analysis which, however, involve more complicated procedures.</p>
+</div>
+</section>
+</section>
+</section><p class="nav bottom"><a href="index.html">目录</a><a href="20.html">← 上一章</a><a href="22.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

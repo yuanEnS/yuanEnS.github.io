@@ -1,0 +1,1272 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="24.html">← 上一章</a><a href="26.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter22">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 22 </span>Disentangle Mixture Distributions and Instrumental Variable Inequalities</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter22.p1.1">The IV model in Chapter <a class="ltx_ref" href="24.html#chapter21" title="Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21</span></a> imposes Assumptions <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a>–<a class="ltx_ref" href="24.html#Thmassumption3a" title="Assumption 21.3 (exclusion restriction) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.3</span></a>:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S109.I1.i1.p1.1"><img alt="Z\ind \{D(1),D(0),Y(1),Y(0)\}" class="m" src="m/fce28291caff.png" style="width:12.65em;vertical-align:-0.36em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S109.I1.i2.p1.1"><img alt="\textup{pr}(U=\textup{d})=0" class="m" src="m/9df9dc1e73db.png" style="width:6.48em;vertical-align:-0.36em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S109.I1.i3.p1.1"><img alt="Y(1)=Y(0)" class="m" src="m/8f405d9f3a90.png" style="width:5.73em;vertical-align:-0.36em"/> for <img alt="U=\textup{a}" class="m" src="m/0d0c5bd6530c.png" style="width:2.87em;vertical-align:-0.12em"/> or <span class="ltx_text ltx_markedasmath">n</span>.</p>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter22.p2.1">Table <a class="ltx_ref" href="#S109.T9" title="Table 9 ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">9</span></a> summarizes the observed groups and the corresponding latent groups under the monotonicity assumption.</p>
+</div>
+<figure class="ltx_table" id="S109.T9">
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">Table 9</span>: </span><span class="ltx_text" style="font-size:90%;">Observed groups and latent groups under Assumption <a class="ltx_ref" href="24.html#Thmassumption2c" title="Assumption 21.2 (monotonicity) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.2</span></a> </span></figcaption>
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="D" class="m" src="m/b718adec73e0.png" style="width:1.08em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="D(1)" class="m" src="m/36054f5561cf.png" style="width:2.36em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">latent groups</th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=1" class="m" src="m/dfb4dd499b8e.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D(1)=1" class="m" src="m/ae12d9c71b9f.png" style="width:4.19em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="U=\textup{c}" class="m" src="m/7a438b28739a.png" style="width:2.79em;vertical-align:-0.12em"/> or <span class="ltx_text ltx_markedasmath">a</span></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="D=0" class="m" src="m/5bdffade6d87.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="D(1)=0" class="m" src="m/efeef8e95d2a.png" style="width:4.19em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="U=\textup{n}" class="m" src="m/e882e46fe4e8.png" style="width:2.91em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="D=1" class="m" src="m/dfb4dd499b8e.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="D(0)=1" class="m" src="m/1e57170dbdc5.png" style="width:4.19em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="U=\textup{a}" class="m" src="m/0d0c5bd6530c.png" style="width:2.87em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="D=0" class="m" src="m/5bdffade6d87.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="D(0)=0" class="m" src="m/3bd6612e41cd.png" style="width:4.19em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="U=\textup{c}" class="m" src="m/7a438b28739a.png" style="width:2.79em;vertical-align:-0.12em"/> or <span class="ltx_text ltx_markedasmath">n</span></td></tr>
+</tbody>
+</table></div>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter22.p3.1">Interestingly, Assumptions <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a>–<a class="ltx_ref" href="24.html#Thmassumption3a" title="Assumption 21.3 (exclusion restriction) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.3</span></a> together have some testable implications. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib23" title="">Balke and Pearl, (1997)</a></cite> called them the <span class="ltx_text ltx_font_italic">instrumental variable inequalities</span>. This chapter will give an intuitive derivation of a special case of these inequalities. The proof is a direct consequence of identifying the means of the potential outcomes for all latent groups defined by <img alt="U" class="m" src="m/d4151ccebfba.png" style="width:1.04em;vertical-align:-0.12em"/>.</p>
+</div>
+<section class="ltx_section" id="S110">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">110 </span>Disentangle Mixture Distributions</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S110.p1.1">We summarize the main results in Theorem <a class="ltx_ref" href="#Thmtheorem1l" title="Theorem 22.1 ‣ 110 Disentangle Mixture Distributions ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.1</span></a> below.
+Define</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\pi_{u}=\textup{pr}(U=u)\quad\quad(u=\textup{a},\textup{n},\textup{c})" class="m" src="m/b9dd397cbfa5.png" style="width:14.16em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S110.p1.2">as the proportion of type <img alt="U=u" class="m" src="m/9545b3a804a1.png" style="width:2.94em;vertical-align:-0.12em"/>, and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\mu_{zu}=E\{Y(z)\mid U=u\}\quad\quad(z=0,1;u=\textup{a},\textup{n},\textup{c})." class="m" src="m/45a457841209.png" style="width:21.61em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S110.p1.3">as the mean of the potential outcome <img alt="Y(z)" class="m" src="m/1bab9ed6c8f2.png" style="width:2.31em;vertical-align:-0.36em"/> for type <img alt="U=u" class="m" src="m/9545b3a804a1.png" style="width:2.94em;vertical-align:-0.12em"/>.
+Exclusion restriction implies that <img alt="\mu_{1\textup{n}}=\mu_{0\textup{n}}" class="m" src="m/24f2383893c1.png" style="width:4.55em;vertical-align:-0.31em"/> and <img alt="\mu_{1\textup{a}}=\mu_{0\textup{a}}" class="m" src="m/32c888d3d60c.png" style="width:4.46em;vertical-align:-0.31em"/>. Let <img alt="\mu_{\textup{n}}" class="m" src="m/61b6a365a9c9.png" style="width:1.32em;vertical-align:-0.31em"/> and <img alt="\mu_{\textup{a}}" class="m" src="m/c875da6649c0.png" style="width:1.28em;vertical-align:-0.31em"/> denote them, respectively.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1l">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 22.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1l.p1.1"><span class="ltx_text ltx_font_italic">Under Assumptions <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a>–<a class="ltx_ref" href="24.html#Thmassumption3a" title="Assumption 21.3 (exclusion restriction) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.3</span></a>, we can identify the proportions of the latent types by</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{n}}" class="m" src="m/413401131c5c.png" style="width:1.30em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=0\mid Z=1)," class="m" src="m/29d5e1d14a7f.png" style="width:8.34em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{a}}" class="m" src="m/2b4ff1c867d1.png" style="width:1.25em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=1\mid Z=0)," class="m" src="m/e373e1fe0c54.png" style="width:8.34em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}" class="m" src="m/8fe08d8ba4c9.png" style="width:1.20em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(D\mid Z=1)-E(D\mid Z=0)," class="m" src="m/6ba911b838e7.png" style="width:13.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="Thmtheorem1l.p1.2"><span class="ltx_text ltx_font_italic">and the type-specific means of the potential outcomes by</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\mu_{\textup{n}}" class="m" src="m/e9cb93b7cb23.png" style="width:1.32em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1,D=0)," class="m" src="m/ed6a54a6c732.png" style="width:9.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\mu_{\textup{a}}" class="m" src="m/b8a82efa0440.png" style="width:1.28em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=0,D=1)," class="m" src="m/19cda93f1c84.png" style="width:9.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\mu_{1\textup{c}}" class="m" src="m/c66f2df8b361.png" style="width:1.64em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}^{-1}\left\{E(DY\mid Z=1)-E(DY\mid Z=0)\right\}," class="m" src="m/263dead67b31.png" style="width:18.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\mu_{0\textup{c}}" class="m" src="m/0bb138aaf5d5.png" style="width:1.64em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}^{-1}\big[E\{(1-D)Y\mid Z=0\}-E\{(1-D)Y\mid Z=1\}\big]." class="m" src="m/24cdcc97c801.png" style="width:23.01em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="ltx_para ltx_noindent">
+<p class="ltx_p" id="S110.p2.1"><span class="ltx_text ltx_font_bold">Proof of Theorem <a class="ltx_ref" href="#Thmtheorem1l" title="Theorem 22.1 ‣ 110 Disentangle Mixture Distributions ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.1</span></a>:</span>
+Part I: We first identify the proportions of the latent compliance types.
+We can identify the proportion of the never takers by</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=0\mid Z=1)" class="m" src="m/116d371dc5c5.png" style="width:8.07em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(U=\textup{n}\mid Z=1)" class="m" src="m/ed98ee3ad1df.png" style="width:8.07em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(U=\textup{n})" class="m" src="m/318d3353a1fa.png" style="width:4.65em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{n}}," class="m" src="m/a368708c4a51.png" style="width:1.57em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S110.p2.2">and the proportion of the always takers by</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=1\mid Z=0)" class="m" src="m/e8f1b868e66c.png" style="width:8.07em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(U=\textup{a}\mid Z=0)" class="m" src="m/55ed6a7643c8.png" style="width:8.00em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(U=\textup{a})=\pi_{\textup{a}}." class="m" src="m/069c85a4d86c.png" style="width:7.20em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S110.p2.3">Therefore, the proportion of compliers is</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}" class="m" src="m/8fe08d8ba4c9.png" style="width:1.20em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(U=\textup{c})" class="m" src="m/30080fc7a697.png" style="width:4.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 1-\pi_{\textup{n}}-\pi_{\textup{a}}" class="m" src="m/74a020066025.png" style="width:5.25em;vertical-align:-0.26em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 1-\textup{pr}(D=0\mid Z=1)-\textup{pr}(D=1\mid Z=0)" class="m" src="m/5d4160a6f379.png" style="width:18.84em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(D\mid Z=1)-E(D\mid Z=0)" class="m" src="m/2b15042b9a7d.png" style="width:13.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\tau_{D}," class="m" src="m/2f7aa92de08a.png" style="width:1.66em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S110.p2.4">which is coherent with our previous discussion. Although we do not know individual latent compliance types for all units, we can identify the proportions of never-takers, always-takers, and compliers.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S110.p3.1">Part II: We then identify the means of the potential outcomes within latent compliance types.
+The observed group <img alt="(Z=1,D=0)" class="m" src="m/cd56da2ada4a.png" style="width:6.72em;vertical-align:-0.36em"/> only has never takers, so</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z=1,D=0)=E\{Y(1)\mid Z=1,U=\textup{n}\}=E\{Y(1)\mid U=\textup{n}\}=\mu_{\textup{n}}." class="m" src="m/f8dabb4fe812.png" style="width:32.35em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S110.p3.2">The observed group <img alt="(Z=0,D=1)" class="m" src="m/90fb57c056e7.png" style="width:6.72em;vertical-align:-0.36em"/> only has always takers, so</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z=0,D=1)=E\{Y(0)\mid Z=0,U=\textup{a}\}=E\{Y(0)\mid U=\textup{a}\}=\mu_{\textup{a}}." class="m" src="m/2365ff4bde27.png" style="width:32.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S110.p3.3">The observed group <img alt="(Z=1,D=1)" class="m" src="m/6e1eed8aee59.png" style="width:6.72em;vertical-align:-0.36em"/> has both compliers and always takers, so</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1,D=1)" class="m" src="m/0aa013f5c769.png" style="width:9.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid Z=1,D(1)=1\}" class="m" src="m/8790808b1adb.png" style="width:11.95em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)\mid D(1)=1\}" class="m" src="m/8db0c42e8ffe.png" style="width:8.91em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}\{D(0)=1\mid D(1)=1\}E\{Y(1)\mid D(1)=1,D(0)=1\}" class="m" src="m/055f8fa3cb28.png" style="width:24.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle+\textup{pr}\{D(0)=0\mid D(1)=1\}E\{Y(1)\mid D(1)=1,D(0)=0\}" class="m" src="m/3a533d4b1000.png" style="width:24.81em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\pi_{\textup{c}}}{\pi_{\textup{c}}+\pi_{\textup{a}}}\mu_{1\textup{c}}+\frac{\pi_{\textup{a}}}{\pi_{\textup{c}}+\pi_{\textup{a}}}\mu_{\textup{a}}." class="m" src="m/26569666a8fe.png" style="width:11.11em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S110.p3.4">Solve the linear equation above to obtain</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\mu_{1\textup{c}}" class="m" src="m/c66f2df8b361.png" style="width:1.64em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}^{-1}\left\{(\pi_{\textup{c}}+\pi_{\textup{a}})E(Y\mid Z=1,D=1)-\pi_{\textup{a}}E(Y\mid Z=0,D=1)\right\}" class="m" src="m/2e2a0a6225a3.png" style="width:27.17em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}^{-1}\left\{\textup{pr}(D=1\mid Z=1)E(Y\mid Z=1,D=1)\right." class="m" src="m/d983bcb62057.png" style="width:19.46em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\left.\qquad-\textup{pr}(D=1\mid Z=0)E(Y\mid Z=0,D=1)\right\}" class="m" src="m/5975d16dd390.png" style="width:20.40em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}^{-1}\left\{E(DY\mid Z=1)-E(DY\mid Z=0)\right\}." class="m" src="m/b8a61162e20e.png" style="width:18.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S110.p3.5">The observed group <img alt="(Z=0,D=0)" class="m" src="m/566688b23498.png" style="width:6.72em;vertical-align:-0.36em"/> has both compliers and never takers, so</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=0,D=0)" class="m" src="m/b49c58304fd4.png" style="width:9.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid Z=0,D(0)=0\}" class="m" src="m/42aa2eece6ac.png" style="width:11.95em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid D(0)=0\}" class="m" src="m/8a1ff330a2d7.png" style="width:8.91em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}\{D(1)=1\mid D(0)=0\}E\{Y(0)\mid D(1)=1,D(0)=0\}" class="m" src="m/3bea6c6fcef0.png" style="width:24.04em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle+\textup{pr}\{D(1)=0\mid D(0)=0\}E\{Y(0)\mid D(1)=0,D(0)=0\}" class="m" src="m/d0fa873feed2.png" style="width:24.81em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\pi_{\textup{c}}}{\pi_{\textup{c}}+\pi_{\textup{n}}}\mu_{0\textup{c}}+\frac{\pi_{\textup{n}}}{\pi_{\textup{c}}+\pi_{\textup{n}}}\mu_{\textup{n}}." class="m" src="m/23b964fa90f5.png" style="width:11.23em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S110.p3.6">Solve the linear equation above to obtain</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\mu_{0\textup{c}}" class="m" src="m/0bb138aaf5d5.png" style="width:1.64em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}^{-1}\left\{(\pi_{\textup{c}}+\pi_{\textup{n}})E(Y\mid Z=0,D=0)-\pi_{\textup{n}}E(Y\mid Z=1,D=0)\right\}" class="m" src="m/8031eccb726e.png" style="width:27.27em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}^{-1}\left\{\textup{pr}(D=0\mid Z=0)E(Y\mid Z=0,D=0)\right." class="m" src="m/0297908b03d8.png" style="width:19.46em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\left.\qquad-\textup{pr}(D=0\mid Z=1)E(Y\mid Z=1,D=0)\right\}" class="m" src="m/261822ccfa5e.png" style="width:20.40em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}^{-1}\big[E\{(1-D)Y\mid Z=0\}-E\{(1-D)Y\mid Z=1\}\big]." class="m" src="m/24cdcc97c801.png" style="width:23.01em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S110.p3.7"><img alt="\square" class="m" src="m/57d1afee0594.png" style="width:1.01em;vertical-align:-0.12em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S110.p4.1">Based on the formulas of <img alt="\mu_{1\textup{c}}" class="m" src="m/6a6702c9e01e.png" style="width:1.64em;vertical-align:-0.31em"/> and <img alt="\mu_{0\textup{c}}" class="m" src="m/19e7e0e0ee2f.png" style="width:1.64em;vertical-align:-0.31em"/> in Theorem <a class="ltx_ref" href="#Thmtheorem1l" title="Theorem 22.1 ‣ 110 Disentangle Mixture Distributions ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.1</span></a>, we can simplify <img alt="\tau_{\textup{c}}=\mu_{1\textup{c}}-\mu_{0\textup{c}}" class="m" src="m/70a8c733fe75.png" style="width:6.43em;vertical-align:-0.31em"/> as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textup{c}}=\{E(Y\mid Z=1)-E(Y\mid Z=0)\}/\pi_{\textup{c}}," class="m" src="m/ffaeca9b26b6.png" style="width:17.97em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S110.p4.2">which is the same as the formula in Theorem <a class="ltx_ref" href="24.html#Thmtheorem1k" title="Theorem 21.1 ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a> before.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S110.p5.1">Theorem <a class="ltx_ref" href="#Thmtheorem1l" title="Theorem 22.1 ‣ 110 Disentangle Mixture Distributions ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.1</span></a> focuses on identifying the means of the potential outcomes, <img alt="\mu_{zu}" class="m" src="m/29347f15a634.png" style="width:1.76em;vertical-align:-0.31em"/>. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib169" title="">Imbens and Rubin, (1997)</a></cite> derived more general identification formulas for the distribution of the potential outcomes; I leave the details to Problem <a class="ltx_ref" href="#S113.SS0.SSS0.P3" title="22.3 Disentangle the mixtures: distributional results ‣ 113 Homework problems ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.3</span></a>.</p>
+</div>
+</section>
+<section class="ltx_section" id="S111">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">111 </span>Testable implications: Instrumental Variable Inequalities</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S111.p1.1">Is there any additional value of the detour to derive the formula of <img alt="\tau_{\textup{c}}" class="m" src="m/347065ad9724.png" style="width:1.08em;vertical-align:-0.26em"/> through Theorem <a class="ltx_ref" href="#Thmtheorem1l" title="Theorem 22.1 ‣ 110 Disentangle Mixture Distributions ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.1</span></a>? The answer is yes. For binary outcome, the following inequalities must be true:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="0\leq\mu_{1\textup{c}}\leq 1,\quad 0\leq\mu_{0\textup{c}}\leq 1," class="m" src="m/00bf9d744fc9.png" style="width:12.09em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S111.p1.2">which implies four inequalities</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E(DY\mid Z=1)-E(DY\mid Z=0)" class="m" src="m/d410aaffae86.png" style="width:14.77em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\geq" class="m" src="m/f80c5d70afe0.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 0," class="m" src="m/f9f95a74e5e8.png" style="width:1.01em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E(DY\mid Z=1)-E(DY\mid Z=0)" class="m" src="m/d410aaffae86.png" style="width:14.77em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\leq" class="m" src="m/e710b7dc81d4.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(D\mid Z=1)-E(D\mid Z=0)," class="m" src="m/6ba911b838e7.png" style="width:13.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{(1-D)Y\mid Z=0\}-E\{(1-D)Y\mid Z=1\}" class="m" src="m/035039bed21f.png" style="width:20.21em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\geq" class="m" src="m/f80c5d70afe0.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 0," class="m" src="m/f9f95a74e5e8.png" style="width:1.01em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{(1-D)Y\mid Z=0\}-E\{(1-D)Y\mid Z=1\}" class="m" src="m/035039bed21f.png" style="width:20.21em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\leq" class="m" src="m/e710b7dc81d4.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(D\mid Z=1)-E(D\mid Z=0)." class="m" src="m/dae84acb8ad0.png" style="width:13.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S111.p1.3">Rearranging terms, we obtain the following unified inequalities.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem2i">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 22.2</span></span><span class="ltx_text ltx_font_bold"> (Instrumental Variable Inequalities)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem2i.p1.1"><span class="ltx_text ltx_font_italic">With a binary outcome <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>, Assumptions <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a>–<a class="ltx_ref" href="24.html#Thmassumption3a" title="Assumption 21.3 (exclusion restriction) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.3</span></a> imply</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S111.E104"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E(Q\mid Z=1)-E(Q\mid Z=0)\geq 0," class="m" src="m/cf810320a291.png" style="width:15.13em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(104)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="Thmtheorem2i.p1.2"><span class="ltx_text ltx_font_italic">where <img alt="Q=DY,D(1-Y),(D-1)Y" class="m" src="m/2d992fd88b9e.png" style="width:13.06em;vertical-align:-0.36em"/> and <img alt="D+Y-DY" class="m" src="m/9eec2c766bbe.png" style="width:6.00em;vertical-align:-0.19em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S111.p2.1">Under the IV assumptions <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a>–<a class="ltx_ref" href="24.html#Thmassumption3a" title="Assumption 21.3 (exclusion restriction) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.3</span></a>, the difference in means for <img alt="Q=DY,D(1-Y),(D-1)Y" class="m" src="m/2d992fd88b9e.png" style="width:13.06em;vertical-align:-0.36em"/> and <img alt="D+Y-DY" class="m" src="m/9eec2c766bbe.png" style="width:6.00em;vertical-align:-0.19em"/> must all be non-negative. Importantly, these implications only involve the distribution of the observed variables. Rejection of the IV inequalities leads to rejection of the IV assumptions.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S111.p3.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib23" title="">Balke and Pearl, (1997)</a></cite> derived more general IV inequalities with and without assuming monotonicity. The proving strategy above is due to <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib175" title="">Jiang and Ding, (2020)</a></cite> for a slightly more complex setting. Theorem <a class="ltx_ref" href="#Thmtheorem2i" title="Theorem 22.2 (Instrumental Variable Inequalities) ‣ 111 Testable implications: Instrumental Variable Inequalities ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.2</span></a> states the testable implications only for a binary outcome. Problem <a class="ltx_ref" href="#S113.SS0.SSS0.P4" title="22.4 Alternative form of Theorem ‣ 113 Homework problems ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.4</span></a> gives an equivalent form, and Problem <a class="ltx_ref" href="#S113.SS0.SSS0.P5" title="22.5 IV inequalities for a general outcome ‣ 113 Homework problems ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.5</span></a> gives the result for a general outcome.</p>
+</div>
+</section>
+<section class="ltx_section" id="S112">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">112 </span>Examples</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S112.p1.1">For a binary outcome, we can estimate all the parameters by the method of moments below.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">IVbinary</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">function</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n111</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n110</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n101</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n100</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n011</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n010</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n001</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n000</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">){</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tr</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n111</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n110</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n101</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n100</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">co</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n011</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n010</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n001</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n000</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tr</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">co</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>proportions<span class="ltx_text ltx_lst_space"> </span>of<span class="ltx_text ltx_lst_space"> </span>the<span class="ltx_text ltx_lst_space"> </span>latent<span class="ltx_text ltx_lst_space"> </span>strata</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n101</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n100</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tr</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n011</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n010</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">co</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>four<span class="ltx_text ltx_lst_space"> </span>observed<span class="ltx_text ltx_lst_space"> </span>means<span class="ltx_text ltx_lst_space"> </span>of<span class="ltx_text ltx_lst_space"> </span>the<span class="ltx_text ltx_lst_space"> </span>outcomes<span class="ltx_text ltx_lst_space"> </span>(Z=z,D=d)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_11</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n111</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n111</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n110</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_10</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n101</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n101</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n100</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n011</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n011</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n010</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n001</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n001</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n000</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>means<span class="ltx_text ltx_lst_space"> </span>of<span class="ltx_text ltx_lst_space"> </span>the<span class="ltx_text ltx_lst_space"> </span>outcomes<span class="ltx_text ltx_lst_space"> </span>of<span class="ltx_text ltx_lst_space"> </span>two<span class="ltx_text ltx_lst_space"> </span>strata</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_10</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_01</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>ER<span class="ltx_text ltx_lst_space"> </span>implies<span class="ltx_text ltx_lst_space"> </span>the<span class="ltx_text ltx_lst_space"> </span>following<span class="ltx_text ltx_lst_space"> </span>two<span class="ltx_text ltx_lst_space"> </span>means</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>stratum<span class="ltx_text ltx_lst_space"> </span>(Z=1,D=1)<span class="ltx_text ltx_lst_space"> </span>is<span class="ltx_text ltx_lst_space"> </span>a<span class="ltx_text ltx_lst_space"> </span>mixture<span class="ltx_text ltx_lst_space"> </span>of<span class="ltx_text ltx_lst_space"> </span>c<span class="ltx_text ltx_lst_space"> </span>and<span class="ltx_text ltx_lst_space"> </span>a</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">c1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">((</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_11</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>stratum<span class="ltx_text ltx_lst_space"> </span>(Z=0,D=0)<span class="ltx_text ltx_lst_space"> </span>is<span class="ltx_text ltx_lst_space"> </span>a<span class="ltx_text ltx_lst_space"> </span>mixture<span class="ltx_text ltx_lst_space"> </span>of<span class="ltx_text ltx_lst_space"> </span>c<span class="ltx_text ltx_lst_space"> </span>and<span class="ltx_text ltx_lst_space"> </span>n</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">c0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">((</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>identifiable<span class="ltx_text ltx_lst_space"> </span>quantities<span class="ltx_text ltx_lst_space"> </span>from<span class="ltx_text ltx_lst_space"> </span>the<span class="ltx_text ltx_lst_space"> </span>observed<span class="ltx_text ltx_lst_space"> </span>data</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">list</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">c1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">c1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">c0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">c0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">a0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tau</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">c1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">c0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">}</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S112.p3.1">We then re-visit two canonical examples with binary data.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample1k">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 22.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1k.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib171" title="">Investigators et al., (2014)</a></cite><span class="ltx_text ltx_font_italic"> assess the effectiveness of the emergency endovascular versus the open surgical repair strategies for patients with a clinical diagnosis of ruptured aortic aneurism. Patients are randomized to either the emergency endovascular or the open repair strategy. The primary outcome is the survival status after 30 days. Let <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> be the treatment assigned, with <img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/> for the endovascular strategy and <img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/> for the open repair. Let <img alt="D" class="m" src="m/b718adec73e0.png" style="width:1.08em;vertical-align:-0.12em"/> be the treatment received.
+Let <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> be the survival status, with <img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/> for dead, and <img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/> for alive. Table <a class="ltx_ref" href="#S112.T10.st1" title="In Table 10 ‣ 112 Examples ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10(a)</span></a> summarizes the observed data.
+Using the <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">IVbinary</span> function above, we can obtain the following estimates:</span></p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">investigators</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">analysis</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">IVbinary</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n111</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">107,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n110</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">42,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n101</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">68,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n100</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">42,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n011</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">24,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n010</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">8,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n001</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">131,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n000</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">79)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">&gt;</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">investigators</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">analysis</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold ltx_font_italic" style="font-size:90%;">c</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.4430582</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.4247104</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">a</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.1322314</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">c1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.7086064</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">c0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.6292042</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.6181818</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.6181818</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">a1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.75</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">a0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.75</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">tau</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold ltx_font_italic" style="font-size:90%;">c</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.07940223</span>
+</div>
+</div>
+<p class="ltx_p" id="Thmexample1k.p1.3"><span class="ltx_text ltx_font_italic">There is no evidence of violating the IV assumptions.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample2i">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 22.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2i.p1.1"><span class="ltx_text ltx_font_italic">In <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib145" title="">Hirano et al., (2000)</a></cite>, physicians are randomly selected to receive a letter encouraging them to inoculate patients at risk for flu. The treatment is the actual flu shot, and the outcome is an indicator of flu-related hospital visits. However, some patients do not comply with their assignments. Let <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> be the indicator of encouragement to receive the flu shot, with <img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/> if the physician receives the encouragement letter, and <img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/> otherwise. Let <img alt="D" class="m" src="m/b718adec73e0.png" style="width:1.08em;vertical-align:-0.12em"/> be the treatment received.
+Let <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> be the outcome, with <img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/> if for a flu-related hospitalization during the winter, and <img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/> otherwise. See Problem <a class="ltx_ref" href="24.html#S109.SS0.SSS0.P7" title="21.7 Data analysis: a flu shot encouragement design ( , ) ‣ 109 Homework problems ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.7</span></a> for more details of the data. Table <a class="ltx_ref" href="#S112.T10.st2" title="In Table 10 ‣ 112 Examples ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10(b)</span></a> summarizes the observed data.
+Using the <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">IVbinary</span> function above, we can obtain the following estimates:</span></p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">flu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">analysis</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">IVbinary</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n111</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">31,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n110</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">422,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n101</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">84,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n100</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">935,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n011</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">30,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n010</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">233,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n001</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">99,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n000</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">1027)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">flu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">analysis</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold ltx_font_italic" style="font-size:90%;">c</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.1183997</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.6922554</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">pi</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">a</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.1893449</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">c1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">-0.004548064</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">c0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.1200094</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.08243376</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">n0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.08243376</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">a1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.1140684</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">a0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0.1140684</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">tau</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold ltx_font_italic" style="font-size:90%;">c</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">-0.1245575</span>
+</div>
+</div>
+<p class="ltx_p" id="Thmexample2i.p1.3"><span class="ltx_text ltx_font_italic">Since <img alt="\hat{\mu}_{1\textup{c}}&lt;0" class="m" src="m/f7fc82f19cc5.png" style="width:3.47em;vertical-align:-0.31em"/>, there is evidence of violating the IV assumptions.</span></p>
+</div>
+</div>
+<figure class="ltx_table">
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">Table 10</span>: </span><span class="ltx_text" style="font-size:90%;">Binary data and IV inequalities</span></figcaption><div class="ltx_flex_figure">
+<div class="ltx_flex_cell ltx_flex_size_2">
+<figure class="ltx_table ltx_figure_panel ltx_align_center" id="S112.T10.st1">
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">(a)</span> </span><span class="ltx_text" style="font-size:90%;"> <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib171" title="">Investigators et al., (2014)</a></cite>’s study</span></figcaption>
+<div class="overflow"><table class="ltx_tabular ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t" colspan="2"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_th ltx_th_column ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t" colspan="2"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row"></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=1" class="m" src="m/dfb4dd499b8e.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=0" class="m" src="m/5bdffade6d87.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<th class="ltx_td ltx_th ltx_th_row"></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=1" class="m" src="m/dfb4dd499b8e.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=0" class="m" src="m/5bdffade6d87.png" style="width:2.91em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center">107</td>
+<td class="ltx_td ltx_align_center">68</td>
+<th class="ltx_td ltx_th ltx_th_row"></th>
+<td class="ltx_td ltx_align_center">24</td>
+<td class="ltx_td ltx_align_center">131</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b">42</td>
+<td class="ltx_td ltx_align_center ltx_border_b">42</td>
+<th class="ltx_td ltx_th ltx_th_row ltx_border_b"></th>
+<td class="ltx_td ltx_align_center ltx_border_b">8</td>
+<td class="ltx_td ltx_align_center ltx_border_b">79</td></tr>
+</tbody>
+</table></div>
+</figure></div><div class="ltx_flex_cell ltx_flex_size_2">
+<figure class="ltx_table ltx_figure_panel ltx_align_center" id="S112.T10.st2">
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_table"><span class="ltx_text" style="font-size:90%;">(b)</span> </span><span class="ltx_text" style="font-size:90%;"> <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib145" title="">Hirano et al., (2000)</a></cite>’s study</span></figcaption>
+<div class="overflow"><table class="ltx_tabular ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t" colspan="2"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_th ltx_th_column ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t" colspan="2"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row"></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=1" class="m" src="m/dfb4dd499b8e.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=0" class="m" src="m/5bdffade6d87.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<th class="ltx_td ltx_th ltx_th_row"></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=1" class="m" src="m/dfb4dd499b8e.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=0" class="m" src="m/5bdffade6d87.png" style="width:2.91em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center">31</td>
+<td class="ltx_td ltx_align_center">85</td>
+<th class="ltx_td ltx_th ltx_th_row"></th>
+<td class="ltx_td ltx_align_center">30</td>
+<td class="ltx_td ltx_align_center">99</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b">424</td>
+<td class="ltx_td ltx_align_center ltx_border_b">944</td>
+<th class="ltx_td ltx_th ltx_th_row ltx_border_b"></th>
+<td class="ltx_td ltx_align_center ltx_border_b">237</td>
+<td class="ltx_td ltx_align_center ltx_border_b">1041</td></tr>
+</tbody>
+</table></div>
+</figure></div></div>
+</figure>
+</section>
+<section class="ltx_section" id="S113">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">113 </span>Homework problems</h4>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.1 </span>More detailed data analysis</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P1.p1.1">Examples <a class="ltx_ref" href="#Thmexample1k" title="Example 22.1 ‣ 112 Examples ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.1</span></a> and <a class="ltx_ref" href="#Thmexample2i" title="Example 22.2 ‣ 112 Examples ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.2</span></a> ignored the uncertainty in the estimates. Calculate the confidence intervals for the true parameters.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.2 </span>Risk ratio for compliers</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P2.p1.1">With a binary outcome, we can define the risk ratio for compliers as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{\textup{c}}=\frac{\textup{pr}\{Y(1)=1\mid U=\textup{c}\}}{\textup{pr}\{Y(0)=1\mid U=\textup{c}\}}." class="m" src="m/b30ffed02c31.png" style="width:12.96em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P2.p2.1">Show that under Assumptions <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a>–<a class="ltx_ref" href="24.html#Thmassumption3a" title="Assumption 21.3 (exclusion restriction) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.3</span></a>, we can identify it by</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textsc{rr}_{\textup{c}}=\frac{E(DY\mid Z=1)-E(DY\mid Z=0)}{E\{(D-1)Y\mid Z=1\}-E\{(D-1)Y\mid Z=0\}}." class="m" src="m/cc34f2775566.png" style="width:23.66em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P2.p3.1">Remark: Using Theorem <a class="ltx_ref" href="#Thmtheorem1l" title="Theorem 22.1 ‣ 110 Disentangle Mixture Distributions ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.1</span></a>, we can identify any comparisons between <img alt="E\{Y(1)\mid U=\textup{c}\}" class="m" src="m/b59fa54c4531.png" style="width:7.52em;vertical-align:-0.36em"/> and <img alt="E\{Y(0)\mid U=\textup{c}\}" class="m" src="m/0a8ad6c60ad5.png" style="width:7.52em;vertical-align:-0.36em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.3 </span>Disentangle the mixtures: distributional results</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P3.p1.1">This problem extends Theorem <a class="ltx_ref" href="#Thmtheorem1l" title="Theorem 22.1 ‣ 110 Disentangle Mixture Distributions ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.1</span></a>. Define</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="f_{zu}(y)=\textup{pr}\{Y(z)=y\mid U=u\},\quad(z=0,1;u=\textup{a},\textup{n},\textup{c})" class="m" src="m/4fc30de60f7a.png" style="width:23.97em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S113.SS0.SSS0.P3.p1.2">as the density of <img alt="Y(z)" class="m" src="m/1bab9ed6c8f2.png" style="width:2.31em;vertical-align:-0.36em"/> for latent stratum <img alt="U=u" class="m" src="m/9545b3a804a1.png" style="width:2.94em;vertical-align:-0.12em"/>, and define</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="g_{zd}(y)=\textup{pr}(Y=y\mid Z=z,D=d)" class="m" src="m/7e775ebb4871.png" style="width:15.20em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S113.SS0.SSS0.P3.p1.3">as the density of the outcome within the observed group <img alt="(Z=z,D=d)" class="m" src="m/cfb7c8c0853f.png" style="width:6.77em;vertical-align:-0.36em"/>.
+Exclusion restriction implies that <img alt="f_{1\textup{n}}(y)=f_{0\textup{n}}(y)" class="m" src="m/697fc2d15f27.png" style="width:6.94em;vertical-align:-0.36em"/> and <img alt="f_{1\textup{a}}(y)=f_{0\textup{a}}(y)" class="m" src="m/ccd0fc9a93f4.png" style="width:6.84em;vertical-align:-0.36em"/>. Let <img alt="f_{\textup{n}}(y)" class="m" src="m/1f19d352424a.png" style="width:2.53em;vertical-align:-0.36em"/> and <img alt="f_{\textup{a}}(y)" class="m" src="m/be61b557c4e4.png" style="width:2.48em;vertical-align:-0.36em"/> denote them, respectively.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P3.p2.1">Prove Theorem <a class="ltx_ref" href="#Thmtheorem3g" title="Theorem 22.3 ‣ 22.3 Disentangle the mixtures: distributional results ‣ 113 Homework problems ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.3</span></a> below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem3g">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 22.3</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem3g.p1.1"><span class="ltx_text ltx_font_italic">Under Assumptions <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a>–<a class="ltx_ref" href="24.html#Thmassumption3a" title="Assumption 21.3 (exclusion restriction) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.3</span></a>, we can identify the type-specific densities of the potential outcomes by</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle f_{\textup{n}}(y)" class="m" src="m/6802fa614027.png" style="width:2.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle g_{10}(y)," class="m" src="m/e69721c1bd85.png" style="width:3.13em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle f_{\textup{a}}(y)" class="m" src="m/90abc9754e7a.png" style="width:2.48em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle g_{01}(y)," class="m" src="m/d34a2f0bed9d.png" style="width:3.13em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle f_{1\textup{c}}(y)" class="m" src="m/e7b180c5330f.png" style="width:2.82em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}^{-1}\{\textup{pr}(D=1\mid Z=1)g_{11}(y)-\textup{pr}(D=1\mid Z=0)g_{01}(y)\}," class="m" src="m/ea9983688e0f.png" style="width:25.34em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle f_{0\textup{c}}(y)" class="m" src="m/2ba2f10a8bb2.png" style="width:2.82em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\pi_{\textup{c}}^{-1}\{\textup{pr}(D=0\mid Z=0)g_{00}(y)-\textup{pr}(D=0\mid Z=1)g_{10}(y)\}." class="m" src="m/3a7cba2a608c.png" style="width:25.34em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+</div>
+</div>
+</section>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.4 </span>Alternative form of Theorem <a class="ltx_ref" href="#Thmtheorem2i" title="Theorem 22.2 (Instrumental Variable Inequalities) ‣ 111 Testable implications: Instrumental Variable Inequalities ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.2</span></a></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P4.p1.1">The inequalities in (<a class="ltx_ref" href="#S111.E104" title="In Theorem 22.2 (Instrumental Variable Inequalities) ‣ 111 Testable implications: Instrumental Variable Inequalities ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">104</span></a>) can be re-written as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=1,Y=y\mid Z=1)" class="m" src="m/0b75bf854395.png" style="width:11.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\geq" class="m" src="m/f80c5d70afe0.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=1,Y=y\mid Z=0)," class="m" src="m/d0864ccb178c.png" style="width:11.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=0,Y=y\mid Z=0)" class="m" src="m/47e09421b262.png" style="width:11.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\geq" class="m" src="m/f80c5d70afe0.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=0,Y=y\mid Z=1)" class="m" src="m/af563309e3b7.png" style="width:11.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S113.SS0.SSS0.P4.p1.2">for both <img alt="y=0,1" class="m" src="m/590833142b34.png" style="width:3.54em;vertical-align:-0.31em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.5 </span>IV inequalities for a general outcome</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P5.p1.1">For a general outcome <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>, show that Assumptions <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a>–<a class="ltx_ref" href="24.html#Thmassumption3a" title="Assumption 21.3 (exclusion restriction) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.3</span></a> imply</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=1,Y\geq y\mid Z=1)" class="m" src="m/3427118905dc.png" style="width:11.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\geq" class="m" src="m/f80c5d70afe0.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=1,Y\geq y\mid Z=0)," class="m" src="m/e77c6da50b27.png" style="width:11.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=1,Y&lt;y\mid Z=1)" class="m" src="m/8cfd151314b2.png" style="width:11.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\geq" class="m" src="m/f80c5d70afe0.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=1,Y&lt;y\mid Z=0)," class="m" src="m/a3105e408844.png" style="width:11.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=0,Y\geq y\mid Z=0)" class="m" src="m/a5b457146ac5.png" style="width:11.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\geq" class="m" src="m/f80c5d70afe0.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=0,Y\geq y\mid Z=1)," class="m" src="m/87528c6ea9b0.png" style="width:11.44em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=0,Y&lt;y\mid Z=0)" class="m" src="m/c57b81ce8bef.png" style="width:11.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle\geq" class="m" src="m/f80c5d70afe0.png" style="width:1.01em;vertical-align:-0.24em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(D=0,Y&lt;y\mid Z=1)" class="m" src="m/f007c0bf3572.png" style="width:11.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S113.SS0.SSS0.P5.p1.2">for all <img alt="y" class="m" src="m/64c8a7cf95e9.png" style="width:0.75em;vertical-align:-0.31em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P5.p2.1">Remark: <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib169" title="">Imbens and Rubin, (1997)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib186" title="">Kitagawa, (2015)</a></cite> discussed similar results. We can test the first inequality based on an analog of the Kolmogorov–Smirnov statistic:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\text{KS}_{1}=\max_{y}\Big|\frac{\sum_{i=1}^{n}Z_{i}D_{i}1(Y_{i}\leq y)}{\sum_{i=1}^{n}Z_{i}D_{i}}-\frac{\sum_{i=1}^{n}(1-Z_{i})D_{i}1(Y_{i}\leq y)}{\sum_{i=1}^{n}(1-Z_{i})D_{i}}\Big|." class="m" src="m/9fe175b67108.png" style="width:27.94em;vertical-align:-1.11em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</section>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.6 </span>Example for the IV inequalities</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P6.p1.1">Give an example in which all the IV inequalities hold and another example in which not all the IV inequalities hold. You need to specify the joint distribution of <img alt="(Z,D,Y)" class="m" src="m/8f57b1559335.png" style="width:4.26em;vertical-align:-0.36em"/> with binary variables.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P7">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.7 </span>Violations of the key assumptions</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P7.p1.1">Theorem <a class="ltx_ref" href="24.html#Thmtheorem1k" title="Theorem 21.1 ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a> relies on randomization, monotonicity, and exclusion restriction. The latter two are not testable even in randomized experiments. When they are violated, the IV estimator no longer identifies the CACE. This problem gives two cases below, which are restatements of Propositions 2 and 3 in <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib16" title="">Angrist et al., (1996)</a></cite>. Recall <img alt="\pi_{u}=\textup{pr}(U=u)" class="m" src="m/3e0d871f7261.png" style="width:7.08em;vertical-align:-0.36em"/> and <img alt="\tau_{u}=E\{Y(1)-Y(0)\mid U=u\}" class="m" src="m/4729403011d0.png" style="width:13.23em;vertical-align:-0.36em"/> for <img alt="u=\textup{a},\textup{n},\textup{c},\textup{d}" class="m" src="m/f941f3c2fdf5.png" style="width:5.52em;vertical-align:-0.31em"/>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem4b">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 22.4</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem4b.p1.1"><span class="ltx_text ltx_font_italic">(a)
+Under Assumptions <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a> and <a class="ltx_ref" href="24.html#Thmassumption2c" title="Assumption 21.2 (monotonicity) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.2</span></a> without the exclusion restriction, we have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{E(Y\mid Z=1)-E(Y\mid Z=0)}{E(D\mid Z=1)-E(D\mid Z=0)}-\tau_{\textup{c}}=\frac{\pi_{\textup{a}}\tau_{\textup{a}}+\pi_{\textup{n}}\tau_{\textup{n}}}{\pi_{\textup{c}}}." class="m" src="m/a3967b706519.png" style="width:22.43em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem4b.p2.1"><span class="ltx_text ltx_font_italic">(b)
+Under Assumptions <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a> and <a class="ltx_ref" href="24.html#Thmassumption3a" title="Assumption 21.3 (exclusion restriction) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.3</span></a> without the monotonicity, we have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{E(Y\mid Z=1)-E(Y\mid Z=0)}{E(D\mid Z=1)-E(D\mid Z=0)}-\tau_{\textup{c}}=\frac{\pi_{\textup{d}}(\tau_{\textup{c}}+\tau_{\textup{d}})}{\pi_{\textup{c}}-\pi_{\textup{d}}}." class="m" src="m/26adcdcf9c7c.png" style="width:22.14em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P7.p2.1">Prove Theorem <a class="ltx_ref" href="#Thmtheorem4b" title="Theorem 22.4 ‣ 22.7 Violations of the key assumptions ‣ 113 Homework problems ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.4</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P8">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.8 </span>Problems of other analyses</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P8.p1.1">In the process of deriving the IV inequalities in Section <a class="ltx_ref" href="#S110" title="110 Disentangle Mixture Distributions ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">110</span></a>, we disentangled the mixture distributions by identifying the proportions of the latent strata as well as the conditional means of their potential outcomes. These results help to understand the drawbacks of other seemingly reasonable analyses. I review three estimators below and suppose Assumptions <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a>–<a class="ltx_ref" href="24.html#Thmassumption3a" title="Assumption 21.3 (exclusion restriction) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.3</span></a> hold.</p>
+</div>
+<div class="ltx_para">
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.I1.i1.p1.1">The <span class="ltx_text ltx_font_italic">as-treated analysis</span> compares the means of the outcomes among units receiving the treatment and control, yielding</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{at}}=E(Y\mid D=1)-E(Y\mid D=0)." class="m" src="m/c96bb6ccaaa7.png" style="width:16.14em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S113.I1.i1.p1.2">Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{at}}=\frac{\pi_{\textup{a}}\mu_{\textup{a}}+\textup{pr}(Z=1)\pi_{\textup{c}}\mu_{1\textup{c}}}{\textup{pr}(D=1)}-\frac{\pi_{\textup{n}}\mu_{\textup{n}}+\textup{pr}(Z=0)\pi_{\textup{c}}\mu_{0\textup{c}}}{\textup{pr}(D=0)}." class="m" src="m/a59da4039ab7.png" style="width:24.88em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.I1.i2.p1.1">The <span class="ltx_text ltx_font_italic">per-protocol analysis</span> compares the units that comply with the treatment assigned in treatment and control groups, yielding</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{pp}}=E(Y\mid Z=1,D=1)-E(Y\mid Z=0,D=0)." class="m" src="m/b07494856737.png" style="width:22.19em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S113.I1.i2.p1.2">Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{pp}}=\frac{\pi_{\textup{a}}\mu_{\textup{a}}+\pi_{\textup{c}}\mu_{1\textup{c}}}{\pi_{\textup{a}}+\pi_{\textup{c}}}-\frac{\pi_{\textup{n}}\mu_{\textup{n}}+\pi_{\textup{c}}\mu_{0\textup{c}}}{\pi_{\textup{n}}+\pi_{\textup{c}}}." class="m" src="m/25312f0b1afa.png" style="width:16.24em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.I1.i3.p1.1">We may also want to compare the outcomes among units receiving the treatment and control, conditioning on their treatment assignment, yielding</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{Z=1}" class="m" src="m/ad7288e40aa0.png" style="width:2.34em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1,D=1)-E(Y\mid Z=1,D=0)," class="m" src="m/9169a2138556.png" style="width:19.59em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{Z=0}" class="m" src="m/f5f4f58a3a1b.png" style="width:2.34em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=0,D=1)-E(Y\mid Z=0,D=0)." class="m" src="m/1b4eb0e6ec14.png" style="width:19.59em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S113.I1.i3.p1.2">Show that they reduce to</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{Z=1}=\frac{\pi_{\textup{a}}\mu_{\textup{a}}+\pi_{\textup{c}}\mu_{1\textup{c}}}{\pi_{\textup{a}}+\pi_{\textup{c}}}-\mu_{\textup{n}},\quad\tau_{Z=0}=\mu_{\textup{a}}-\frac{\pi_{\textup{n}}\mu_{\textup{n}}+\pi_{\textup{c}}\mu_{0\textup{c}}}{\pi_{\textup{n}}+\pi_{\textup{c}}}." class="m" src="m/fe6759c5b138.png" style="width:25.32em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div></li>
+</ol>
+</div>
+</section>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P9">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.9 </span>Bounds on the average causal effect on the whole population</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P9.p1.1">Extend the discussion in Section <a class="ltx_ref" href="#S110" title="110 Disentangle Mixture Distributions ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">110</span></a> based on the notation in Section <a class="ltx_ref" href="24.html#S108" title="108 Interpreting the CACE ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">108</span></a>. With the potential outcome <img alt="Y(d)" class="m" src="m/e41b72a6da33.png" style="width:2.34em;vertical-align:-0.36em"/>, define the average causal effect of the treatment received on the outcome as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\delta=E\{Y(d=1)-Y(d=0)\}," class="m" src="m/51ad8efed165.png" style="width:13.20em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S113.SS0.SSS0.P9.p1.2">and modify the definition of <img alt="\mu_{zu}" class="m" src="m/29347f15a634.png" style="width:1.76em;vertical-align:-0.31em"/> as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="m_{du}=E\{Y(d)\mid U=u\},\quad(z=0,1;u=\textup{a},\textup{n},\textup{c})" class="m" src="m/0e3251a881d1.png" style="width:21.05em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S113.SS0.SSS0.P9.p1.3">due to the change of the notation.
+They satisfy</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\delta=\sum_{u=\textup{a},\textup{n},\textup{c}}\pi_{u}(m_{1u}-m_{0u})." class="m" src="m/ab39a1fe4346.png" style="width:11.95em;vertical-align:-1.49em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P9.p2.1">Section <a class="ltx_ref" href="#S110" title="110 Disentangle Mixture Distributions ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">110</span></a> identifies <img alt="\pi_{\textup{a}}" class="m" src="m/d033179837a6.png" style="width:1.25em;vertical-align:-0.26em"/>, <img alt="\pi_{\textup{n}}" class="m" src="m/29bb993a8702.png" style="width:1.30em;vertical-align:-0.26em"/>, <img alt="\pi_{\textup{c}}" class="m" src="m/2414b07b8589.png" style="width:1.20em;vertical-align:-0.26em"/>, <img alt="m_{1\textup{a}}=\mu_{1\textup{a}}" class="m" src="m/c67110e404a5.png" style="width:4.75em;vertical-align:-0.31em"/>, <img alt="m_{0\textup{n}}=\mu_{0\textup{n}}" class="m" src="m/3908d36ada05.png" style="width:4.82em;vertical-align:-0.31em"/>, <img alt="m_{1\textup{c}}=\mu_{1\textup{c}}" class="m" src="m/0fc41c0c9c2d.png" style="width:4.65em;vertical-align:-0.31em"/> and <img alt="m_{0\textup{c}}=\mu_{0\textup{c}}" class="m" src="m/ab52ca0d2c47.png" style="width:4.65em;vertical-align:-0.31em"/>. But the data do not contain any information about <img alt="m_{0\textup{a}}" class="m" src="m/bfc14225f206.png" style="width:1.95em;vertical-align:-0.26em"/> and <img alt="m_{1\textup{n}}" class="m" src="m/b11e3bdafab3.png" style="width:2.00em;vertical-align:-0.26em"/>. Therefore, we cannot identify <img alt="\delta" class="m" src="m/8de607292a67.png" style="width:0.72em;vertical-align:-0.12em"/>. With a bounded outcome, we can bound <img alt="\delta" class="m" src="m/8de607292a67.png" style="width:0.72em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem5a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 22.5</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem5a.p1.1"><span class="ltx_text ltx_font_italic">Under Assumptions <a class="ltx_ref" href="24.html#Thmassumption2c" title="Assumption 21.2 (monotonicity) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.2</span></a>–<a class="ltx_ref" href="24.html#Thmassumption4" title="Assumption 21.4 (exclusion restriction) ‣ 108 Interpreting the CACE ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.4</span></a> with a bounded outcome in <img alt="[\underline{y},\overline{y}]" class="m" src="m/bf46bce6cf02.png" style="width:2.29em;vertical-align:-0.51em"/>, we have <img alt="\underline{\delta}\leq\delta\leq\overline{\delta}" class="m" src="m/d2c34b57cc2f.png" style="width:4.34em;vertical-align:-0.31em"/>, where</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\underline{\delta}=\delta^{\prime}-\overline{y}\textup{pr}(D=1\mid Z=0)+\underline{y}\textup{pr}(D=0\mid Z=1)" class="m" src="m/09b7a173173d.png" style="width:21.97em;vertical-align:-0.51em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem5a.p1.2"><span class="ltx_text ltx_font_italic">and</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\overline{\delta}=\delta^{\prime}-\underline{y}\textup{pr}(D=1\mid Z=0)+\overline{y}\textup{pr}(D=0\mid Z=1)" class="m" src="m/d093900a3852.png" style="width:21.97em;vertical-align:-0.51em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem5a.p1.3"><span class="ltx_text ltx_font_italic">with <img alt="\delta^{\prime}=E(DY\mid Z=1)-E(Y-DY\mid Z=0)." class="m" src="m/e8d973eeb6d2.png" style="width:19.15em;vertical-align:-0.36em"/></span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P9.p3.1">Prove Theorem <a class="ltx_ref" href="#Thmtheorem5a" title="Theorem 22.5 ‣ 22.9 Bounds on the average causal effect on the whole population ‣ 113 Homework problems ‣ Chapter 22 Disentangle Mixture Distributions and Instrumental Variable Inequalities ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">22.5</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P9.p4.1">Remark: In the special case with a binary outcome, the bounds simplify to</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\underline{\delta}=E(DY\mid Z=1)-E(D+Y-DY\mid Z=0)" class="m" src="m/6d8c28219b93.png" style="width:20.67em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S113.SS0.SSS0.P9.p4.2">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\overline{\delta}=E(DY+1-D\mid Z=1)-E(Y-DY\mid Z=0)." class="m" src="m/93c0c424e85d.png" style="width:22.67em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</section>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P10">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.10 </span>One-sided noncompliance and statistical inference</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P10.p1.1">Consider a randomized encouragement design where the units assigned to the control have no access to the treatment. For unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>, let <img alt="Z_{i}" class="m" src="m/3f41fc0a142d.png" style="width:1.25em;vertical-align:-0.26em"/> be the binary treatment assigned, <img alt="D_{i}" class="m" src="m/ab9e3c591c89.png" style="width:1.40em;vertical-align:-0.26em"/> be the binary treatment received, and <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> be the outcome of interest. One-sided noncompliance happens when</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Z_{i}=0\Longrightarrow D_{i}=0\quad(i=1,\ldots,n)." class="m" src="m/eb8168a29ff5.png" style="width:15.30em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S113.SS0.SSS0.P10.p1.2">Suppose that Assumption <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a> holds.</p>
+</div>
+<div class="ltx_para">
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item"></span>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.I2.p1.1">[(1)]</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.I2.i1.p1.1">Does monotonicity Assumption <a class="ltx_ref" href="24.html#Thmassumption2c" title="Assumption 21.2 (monotonicity) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.2</span></a> hold in this case?
+How many latent strata defined by <img alt="\{D_{i}(1),D_{i}(0)\}" class="m" src="m/7ba4764fb6a7.png" style="width:6.55em;vertical-align:-0.36em"/> are there in this problem? How do we identify their proportions by the observed data distribution?</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.I2.i2.p1.1">State the assumption of exclusion restriction. Under exclusion restriction, show that <img alt="E\{Y(z)\mid U=u\}" class="m" src="m/d459e444694c.png" style="width:7.66em;vertical-align:-0.36em"/> can be identified by the observed data distributions.
+Give the formulas for all possible values of <img alt="z" class="m" src="m/6d5b04a8c974.png" style="width:0.75em;vertical-align:-0.12em"/> and <img alt="u" class="m" src="m/e82ed0978d40.png" style="width:0.79em;vertical-align:-0.12em"/>. How do we identify the CACE in this case?</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.I2.i3.p1.1">If we observe pretreatment covariates <img alt="X_{i}" class="m" src="m/ef1a4b7b3d5c.png" style="width:1.40em;vertical-align:-0.26em"/> for all units <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>, how do we use the covariate information to improve the estimation efficiency of the CACE?</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">4.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.I2.i4.p1.1">Under Assumption <a class="ltx_ref" href="24.html#Thmassumption1e" title="Assumption 21.1 (randomization) ‣ 103 Encouragement Design and Noncompliance ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.1</span></a>, the exclusion restriction Assumption <a class="ltx_ref" href="24.html#Thmassumption3a" title="Assumption 21.3 (exclusion restriction) ‣ 104.1 Nonparametric identification ‣ 104 Latent Compliance Status and Effects ‣ Chapter 21 An Experimental Perspective of the Instrumental Variable ‣ Part V Instrumental variables ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">21.3</span></a> has testable implications, which are the IV inequalities for one-sided noncompliance. State the IV inequalities.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">5.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.I2.i5.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib307" title="">Sommer and Zeger, (1991)</a></cite> provided the following dataset:</p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t" colspan="2"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_th ltx_th_column ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t" colspan="2"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row"></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=1" class="m" src="m/dfb4dd499b8e.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=0" class="m" src="m/5bdffade6d87.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<th class="ltx_td ltx_th ltx_th_row"></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=1" class="m" src="m/dfb4dd499b8e.png" style="width:2.91em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="D=0" class="m" src="m/5bdffade6d87.png" style="width:2.91em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center">9663</td>
+<td class="ltx_td ltx_align_center">2385</td>
+<th class="ltx_td ltx_th ltx_th_row"></th>
+<td class="ltx_td ltx_align_center">0</td>
+<td class="ltx_td ltx_align_center">11514</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b">12</td>
+<td class="ltx_td ltx_align_center ltx_border_b">34</td>
+<th class="ltx_td ltx_th ltx_th_row ltx_border_b"></th>
+<td class="ltx_td ltx_align_center ltx_border_b">0</td>
+<td class="ltx_td ltx_align_center ltx_border_b">74</td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.I2.i5.p3.1">The treatment assigned <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> is whether or not the child was assigned to the vitamin A supplement, the treatment received indicator <img alt="D" class="m" src="m/b718adec73e0.png" style="width:1.08em;vertical-align:-0.12em"/> is whether or not the child received the vitamin A supplement, and the binary outcome <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> is the survival indicator. The original RCT was conducted in Indonesia.
+Re-analyze the data.</p>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P10.p3.1">Remark: <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib37" title="">Bloom, (1984)</a></cite> first discussed one-sided noncompliance and proposed the estimator <img alt="\hat{\tau}_{\textup{c}}=\hat{\tau}_{Y}/\hat{\tau}_{D}" class="m" src="m/34142eae3f7d.png" style="width:5.20em;vertical-align:-0.36em"/>, which is sometimes called the Bloom estimator. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib37" title="">Bloom, (1984)</a></cite>’s notation is different from this chapter.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P11">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.11 </span>One-sided noncompliance with partial adherence</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P11.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib295" title="">Sanders and Karim, (2021, Table 3)</a></cite> reported the following data from an RCT aiming to estimate the efficacy of smoking cessation interventions among individuals with psychotic disorders.</p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_th_row ltx_border_t">group assigned</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_th_row ltx_border_t">treatment received</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">group size</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"># positive outcomes</th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t">Control</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t">None</th>
+<td class="ltx_td ltx_align_center ltx_border_t">151</td>
+<td class="ltx_td ltx_align_center ltx_border_t">25</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row">Treatment</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row">None</th>
+<td class="ltx_td ltx_align_center">35</td>
+<td class="ltx_td ltx_align_center">7</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row">Treatment</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row">Partial</th>
+<td class="ltx_td ltx_align_center">42</td>
+<td class="ltx_td ltx_align_center">17</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b">Treatment</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b">Full</th>
+<td class="ltx_td ltx_align_center ltx_border_b">70</td>
+<td class="ltx_td ltx_align_center ltx_border_b">40</td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P11.p3.1">Three tiers of treatment received are defined as follows: “full” treatment corresponds to attending all <img alt="8" class="m" src="m/5aef4e3ea379.png" style="width:0.72em;vertical-align:-0.12em"/> treatment sessions, “partial” corresponds to attending <img alt="5" class="m" src="m/7f704496b354.png" style="width:0.72em;vertical-align:-0.12em"/> to <img alt="7" class="m" src="m/1ba3b416ad54.png" style="width:0.72em;vertical-align:-0.12em"/> sessions, and “none” corresponds to <img alt="&lt;5" class="m" src="m/b932290c40d2.png" style="width:1.78em;vertical-align:-0.14em"/> sessions. The outcome is
+defined as the binary indicator of smoking reduction of <img alt="50\%" class="m" src="m/bf4a18264af6.png" style="width:2.07em;vertical-align:-0.17em"/> or greater relative to baseline, measured at three months.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P11.p4.1">In this problem, the treatment assignment <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> is binary but the treatment received <img alt="D" class="m" src="m/b718adec73e0.png" style="width:1.08em;vertical-align:-0.12em"/> takes three values <img alt="0,0.5,1" class="m" src="m/f14b5efe65e6.png" style="width:3.40em;vertical-align:-0.31em"/> for “none”, “partial”, and “full.” The three-leveled <img alt="D" class="m" src="m/b718adec73e0.png" style="width:1.08em;vertical-align:-0.12em"/> causes complications, but it can only be 0 under the control assignment. How many latent strata <img alt="U=\{D(1),D(0)\}" class="m" src="m/50cb1c431f8a.png" style="width:8.07em;vertical-align:-0.36em"/> do we have in this problem? Can we identify their proportions?</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P11.p5.1">How do we extend the exclusion restriction to this problem? What can be the causal effects of interest? Can we identify them?</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P11.p6.1">Analyze the data based on the questions above.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S113.SS0.SSS0.P12">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">22.12 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S113.SS0.SSS0.P12.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib23" title="">Balke and Pearl, (1997)</a></cite> derived more general IV inequalities.</p>
+</div>
+</section>
+</section>
+</section><p class="nav bottom"><a href="index.html">目录</a><a href="24.html">← 上一章</a><a href="26.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

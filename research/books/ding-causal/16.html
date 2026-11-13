@@ -1,0 +1,891 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="15.html">← 上一章</a><a href="17.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter13">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 13 </span>The Average Causal Effect on the Treated Units and Other Estimands</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter13.p1.1">Chapters <a class="ltx_ref" href="13.html#chapter10" title="Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10</span></a>–<a class="ltx_ref" href="15.html#chapter12" title="Chapter 12 The Doubly Robust or the Augmented Inverse Propensity Score Weighting Estimator for the Average Causal Effect ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">12</span></a> focused on the identification and estimation of the average causal effect <img alt="\tau=E\{Y(1)-Y(0)\}" class="m" src="m/1f7ced1088b6.png" style="width:9.30em;vertical-align:-0.36em"/> under the ignorability and overlap assumptions. Conceptually, it is straightforward to extend the discussion to the average causal effects on the treated and control units:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{T}}" class="m" src="m/d20343d63f6d.png" style="width:1.28em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)-Y(0)\mid Z=1\}," class="m" src="m/b3dbc50f11c1.png" style="width:11.11em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{C}}" class="m" src="m/325b2393e8b6.png" style="width:1.28em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{Y(1)-Y(0)\mid Z=0\}." class="m" src="m/de5b43c77cb6.png" style="width:11.11em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="chapter13.p1.2">If <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/> and <img alt="\tau_{\textsc{C}}" class="m" src="m/a391a7b1b360.png" style="width:1.28em;vertical-align:-0.26em"/> differ from <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>, then the average causal effects are heterogeneous across the treatment and control groups. Whether we should estimate <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>, <img alt="\tau_{\textsc{C}}" class="m" src="m/a391a7b1b360.png" style="width:1.28em;vertical-align:-0.26em"/> or <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> depends on the practical question of interest.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter13.p2.1">Because of the symmetry, this chapter focuses on <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>. Chapter <a class="ltx_ref" href="#S70" title="70 Other estimands ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">70</span></a> also discusses extensions to other estimands.</p>
+</div>
+<section class="ltx_section" id="S67">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">67 </span>Nonparametric identification of <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/> </h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S67.p1.1">The average causal effect on the treated units equals</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{T}}=E(Y\mid Z=1)-E\{Y(0)\mid Z=1\}," class="m" src="m/d1c118cc554d.png" style="width:17.20em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S67.p1.2">where the first term <img alt="E(Y\mid Z=1)" class="m" src="m/28d9c04da49f.png" style="width:6.02em;vertical-align:-0.36em"/> is directly identifiable from the data and the second term <img alt="E\{Y(0)\mid Z=1\}" class="m" src="m/e6d75a34b0e9.png" style="width:7.54em;vertical-align:-0.36em"/> is counterfactual. The key assumption to identify the second term is the following ignorability and overlap assumptions.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_assumption" id="Thmassumption1b">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Assumption 13.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmassumption1b.p1.1"><img alt="Z\ind Y(0)\mid X" class="m" src="m/0e88a7fa14ea.png" style="width:5.71em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> and <img alt="e(X)&lt;1" class="m" src="m/fa25ceecf531.png" style="width:4.22em;vertical-align:-0.36em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S67.p2.1">Because the key is to identify <img alt="E\{Y(0)\mid Z=1\}" class="m" src="m/e6d75a34b0e9.png" style="width:7.54em;vertical-align:-0.36em"/>, we only need the “one-sided” ignorability and overlap assumptions. Under Assumption <a class="ltx_ref" href="#Thmassumption1b" title='Assumption 13.1 ‣ 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.1</span></a>, we have the following identification result for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1f">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 13.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1f.p1.1"><span class="ltx_text ltx_font_italic">Under Assumption <a class="ltx_ref" href="#Thmassumption1b" title='Assumption 13.1 ‣ 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.1</span></a>, we have</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid Z=1\}" class="m" src="m/2d5210500cff.png" style="width:7.54em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left\{E(Y\mid Z=0,X)\mid Z=1\right\}" class="m" src="m/61c90a47d3f0.png" style="width:12.77em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\int E(Y\mid Z=0,X=x)f(x\mid Z=1)\textup{d}x." class="m" src="m/a0d9cb9cd6cf.png" style="width:17.22em;vertical-align:-0.96em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S67.p3.1">By Theorem <a class="ltx_ref" href="#Thmtheorem1f" title='Theorem 13.1 ‣ 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.1</span></a> the counterfactual mean <img alt="E\{Y(0)\mid Z=1\}" class="m" src="m/e6d75a34b0e9.png" style="width:7.54em;vertical-align:-0.36em"/> equals the conditional mean of the observed outcomes under the control, averaged over the distribution of the covariates under the treatment.
+It implies that <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/> is nonparametrically identified by</p>
+<table class="ltx_equation ltx_eqn_table" id="S67.E70">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{T}}=E(Y\mid Z=1)-E\left\{E(Y\mid Z=0,X)\mid Z=1\right\}" class="m" src="m/a25e1e73c924.png" style="width:22.16em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(70)</span></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para ltx_noindent">
+<p class="ltx_p" id="S67.p4.1"><span class="ltx_text ltx_font_bold">Proof of Theorem <a class="ltx_ref" href="#Thmtheorem1f" title='Theorem 13.1 ‣ 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.1</span></a>:</span>
+We have</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid Z=1\}" class="m" src="m/2d5210500cff.png" style="width:7.54em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\big[E\{Y(0)\mid Z=1,X\}\mid Z=1\big]" class="m" src="m/fc78c04aaf7d.png" style="width:13.92em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\big[E\{Y(0)\mid Z=0,X\}\mid Z=1\big]" class="m" src="m/1c239b18bd4d.png" style="width:13.92em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left\{E(Y\mid Z=0,X)\mid Z=1\right\}" class="m" src="m/61c90a47d3f0.png" style="width:12.77em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\int E(Y\mid Z=0,X=x)f(x\mid Z=1)\textup{d}x." class="m" src="m/a0d9cb9cd6cf.png" style="width:17.22em;vertical-align:-0.96em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S67.p4.2"><img alt="\square" class="m" src="m/57d1afee0594.png" style="width:1.01em;vertical-align:-0.12em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S67.p5.1">With a discrete <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, the identification formula in Theorem <a class="ltx_ref" href="#Thmtheorem1f" title='Theorem 13.1 ‣ 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.1</span></a> reduces to</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{Y(0)\mid Z=1\}=\sum_{k=1}^{K}E(Y\mid Z=0,X=k)\textup{pr}(X=k\mid Z=1)," class="m" src="m/9d9778929429.png" style="width:27.73em;vertical-align:-1.42em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S67.p5.2">motivating the following stratified estimator for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{T}}=\hat{\bar{Y}}(1)-\sum_{k=1}^{K}\hat{\pi}_{[k]\mid 1}\hat{\bar{Y}}_{[k]}(0)," class="m" src="m/9be6594241e0.png" style="width:12.77em;vertical-align:-1.42em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S67.p5.3">where <img alt="\hat{\pi}_{[k]\mid 1}=n_{[k]1}/n_{1}" class="m" src="m/45e5191c3a7f.png" style="width:7.20em;vertical-align:-0.46em"/> is the proportion of category <img alt="k" class="m" src="m/56c30979d847.png" style="width:0.79em;vertical-align:-0.12em"/> of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> among the treated units.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S67.p6.1">For continuous <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, we need to fit an outcome model for <img alt="E(Y\mid Z=0,X)" class="m" src="m/cb4b0a7b5b98.png" style="width:7.37em;vertical-align:-0.36em"/> using the control units. If the fitted values for the control potential outcomes are <img alt="\hat{\mu}_{0}(X_{i})" class="m" src="m/75ccc1b07871.png" style="width:3.23em;vertical-align:-0.36em"/>, then the outcome regression estimator is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{T}}^{\text{reg}}=\hat{\bar{Y}}(1)-n_{1}^{-1}\sum_{i=1}^{n}Z_{i}\hat{\mu}_{0}(X_{i})=n_{1}^{-1}\sum_{i=1}^{n}Z_{i}\{Y_{i}-\hat{\mu}_{0}(X_{i})\}." class="m" src="m/c4e1c568e68d.png" style="width:26.19em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample1f">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 13.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1f.p1.1"><span class="ltx_text ltx_font_italic">If we specify a linear model for all units</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z,X)=\beta_{0}+\beta_{z}Z+\beta_{x}^{\mkern-1.5mu\mathsf{T}}X," class="m" src="m/2fcbb6f797dd.png" style="width:14.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample1f.p1.2"><span class="ltx_text ltx_font_italic">then</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{T}}" class="m" src="m/d20343d63f6d.png" style="width:1.28em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{E(Y\mid Z=1,X)-E(Y\mid Z=0,X)\mid Z=1\}" class="m" src="m/bc9bea7b7107.png" style="width:20.96em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\beta_{z}." class="m" src="m/56c6a23d5839.png" style="width:1.54em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="Thmexample1f.p1.3"><span class="ltx_text ltx_font_italic">If we run OLS to obtain <img alt="(\hat{\beta}_{0},\hat{\beta}_{z},\hat{\beta}_{x})" class="m" src="m/dd519a603e25.png" style="width:5.01em;vertical-align:-0.36em"/>, then we can use <img alt="\hat{\beta}_{z}" class="m" src="m/5f49124c2788.png" style="width:1.25em;vertical-align:-0.31em"/> to estimate <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>.
+Section <a class="ltx_ref" href="13.html#S56.SS2" title="56.2 Outcome regression ‣ 56 Two simple estimation strategies and their limitations ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">56.2</span></a> shows that <img alt="\hat{\beta}_{z}" class="m" src="m/5f49124c2788.png" style="width:1.25em;vertical-align:-0.31em"/> is an estimator for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>, and this example further shows that <img alt="\hat{\beta}_{z}" class="m" src="m/5f49124c2788.png" style="width:1.25em;vertical-align:-0.31em"/> is an estimator for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>. This is not surprising because the linear model assumes constant causal effects across units.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample2e">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 13.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2e.p1.1"><span class="ltx_text ltx_font_italic">The identification formula depends only on <img alt="E(Y\mid Z=0,X)" class="m" src="m/cb4b0a7b5b98.png" style="width:7.37em;vertical-align:-0.36em"/>, so we need only to specify a model for the control units. When this model is linear,</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(Y\mid Z=0,X)=\beta_{0\mid 0}+\beta_{x\mid 0}^{\mkern-1.5mu\mathsf{T}}X," class="m" src="m/84f1fb1dd0a0.png" style="width:14.43em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample2e.p1.2"><span class="ltx_text ltx_font_italic">we have</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{T}}" class="m" src="m/d20343d63f6d.png" style="width:1.28em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1)-E(\beta_{0\mid 0}+\beta_{x\mid 0}^{\mkern-1.5mu\mathsf{T}}X\mid Z=1)" class="m" src="m/fe353ee62921.png" style="width:17.73em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E(Y\mid Z=1)-\beta_{0\mid 0}-\beta_{x\mid 0}^{\mkern-1.5mu\mathsf{T}}E(X\mid Z=1)." class="m" src="m/9daaa9422649.png" style="width:18.02em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="Thmexample2e.p1.3"><span class="ltx_text ltx_font_italic">If we run OLS with only the control units to obtain <img alt="(\hat{\beta}_{0\mid 0},\hat{\beta}_{x\mid 0})" class="m" src="m/4ac1b8b16baa.png" style="width:4.82em;vertical-align:-0.46em"/>, then the estimator is</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{T}}=\hat{\bar{Y}}(1)-\hat{\beta}_{0\mid 0}-\hat{\beta}_{x\mid 0}^{\mkern-1.5mu\mathsf{T}}\hat{\bar{X}}(1)." class="m" src="m/c9a75382b423.png" style="width:12.94em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample2e.p1.4"><span class="ltx_text ltx_font_italic">Using the property of the OLS (see <a class="ltx_ref" href="34.html#chapter31.A7.E162" title="In AE.1 Sample WLS with the intercept ‣ Appendix 31.G Homework problems ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">162</span></a>), we have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\bar{Y}}(0)=\hat{\beta}_{0\mid 0}+\hat{\beta}_{x\mid 0}^{\mkern-1.5mu\mathsf{T}}\hat{\bar{X}}(0)." class="m" src="m/677acf7b4595.png" style="width:10.70em;vertical-align:-0.55em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample2e.p1.5"><span class="ltx_text ltx_font_italic">Therefore, the above estimator reduces to</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{T}}=\left\{\hat{\bar{Y}}(1)-\hat{\bar{Y}}(0)\right\}-\hat{\beta}_{x\mid 0}^{\mkern-1.5mu\mathsf{T}}\left\{\hat{\bar{X}}(1)-\hat{\bar{X}}(0)\right\}," class="m" src="m/68df6d1fb714.png" style="width:19.78em;vertical-align:-0.77em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample2e.p1.6"><span class="ltx_text ltx_font_italic">which is similar to (<span class="ltx_ref ltx_missing_label ltx_ref_self"></span>) with a different coefficient for the difference in means of the covariates.</span></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2e.p2.1"><span class="ltx_text ltx_font_italic">As an algebraic fact, we can show that this estimator equals the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> in the OLS fit of the outcome on the treatment, covariates, and their interactions, with the covariates centered as <img alt="X_{i}-\hat{\bar{X}}(1)" class="m" src="m/d17bffd44864.png" style="width:4.79em;vertical-align:-0.36em"/>. See Problem <a class="ltx_ref" href="#S71.SS0.SSS0.P2" title='13.2 An algebraic fact about a regression estimator for 𝜏_"T" ‣ 71 Homework Problems ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.2</span></a> for more details.</span></p>
+</div>
+</div>
+</section>
+<section class="ltx_section" id="S68">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">68 </span>Inverse propensity score weighting and doubly robust estimation of <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/></h4>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem2c">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 13.2</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem2c.p1.1"><span class="ltx_text ltx_font_italic">Under Assumption <a class="ltx_ref" href="#Thmassumption1b" title='Assumption 13.1 ‣ 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.1</span></a>, we have</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S68.E71"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid Z=1\}=E\left\{\frac{e(X)}{e}\frac{1-Z}{1-e(X)}Y\right\}" class="m" src="m/91295d2049d4.png" style="width:18.62em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(71)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="Thmtheorem2c.p1.2"><span class="ltx_text ltx_font_italic">and</span></p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S68.E72"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tau_{\textsc{T}}=E(Y\mid Z=1)-E\left\{\frac{e(X)}{e}\frac{1-Z}{1-e(X)}Y\right\}," class="m" src="m/b2ec7cf1a49d.png" style="width:19.83em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(72)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="Thmtheorem2c.p1.3"><span class="ltx_text ltx_font_italic">where <img alt="e=\textup{pr}(Z=1)" class="m" src="m/f4144f4e7c3c.png" style="width:6.34em;vertical-align:-0.36em"/> is the marginal probability of the treatment.</span></p>
+</div>
+</div>
+<div class="ltx_para ltx_noindent">
+<p class="ltx_p" id="S68.p1.1"><span class="ltx_text ltx_font_bold">Proof of Theorem <a class="ltx_ref" href="#Thmtheorem2c" title='Theorem 13.2 ‣ 68 Inverse propensity score weighting and doubly robust estimation of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.2</span></a>:</span>
+The left-hand side of (<a class="ltx_ref" href="#S68.E71" title='In Theorem 13.2 ‣ 68 Inverse propensity score weighting and doubly robust estimation of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">71</span></a>) equals</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\{Y(0)\mid Z=1\}" class="m" src="m/2d5210500cff.png" style="width:7.54em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\{ZY(0)\}/e" class="m" src="m/0e2beeb2e496.png" style="width:5.83em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\big[E(Z\mid X)E\{Y(0)\mid X\}\big]/e" class="m" src="m/c0178e726076.png" style="width:12.50em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\big[e(X)E\{Y(0)\mid X\}\big]/e." class="m" src="m/99e329142797.png" style="width:10.86em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S68.p1.2">The right-hand side of (<a class="ltx_ref" href="#S68.E71" title='In Theorem 13.2 ‣ 68 Inverse propensity score weighting and doubly robust estimation of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">71</span></a>) equals</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle E\left\{\frac{e(X)}{e}\frac{1-Z}{1-e(X)}Y\right\}" class="m" src="m/9daf2ad87720.png" style="width:10.00em;vertical-align:-1.06em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[E\left\{\frac{e(X)}{e}\frac{1-Z}{1-e(X)}Y(0)\mid X\right\}\right]" class="m" src="m/8fb92f8b46a6.png" style="width:15.03em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[\frac{e(X)}{e\{1-e(X)\}}E\left\{(1-Z)Y(0)\mid X\right\}\right]" class="m" src="m/8aebfac4301e.png" style="width:16.86em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[\frac{e(X)}{e\{1-e(X)\}}E(1-Z\mid X)E\left\{Y(0)\mid X\right\}\right]" class="m" src="m/86ebac1f232c.png" style="width:19.39em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\big[e(X)E\{Y(0)\mid X\}\big]/e." class="m" src="m/99e329142797.png" style="width:10.86em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S68.p1.3">So (<a class="ltx_ref" href="#S68.E71" title='In Theorem 13.2 ‣ 68 Inverse propensity score weighting and doubly robust estimation of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">71</span></a>) holds.
+ <img alt="\square" class="m" src="m/57d1afee0594.png" style="width:1.01em;vertical-align:-0.12em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S68.p2.1">We have two IPW estimators</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{T}}^{\text{ht}}=\hat{\bar{Y}}(1)-n_{1}^{-1}\sum_{i=1}^{n}\hat{o}(X_{i})(1-Z_{i})Y_{i}" class="m" src="m/18f0e2c20fb2.png" style="width:16.50em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S68.p2.2">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}_{\textsc{T}}^{\text{hajek}}=\hat{\bar{Y}}(1)-\frac{\sum_{i=1}^{n}\hat{o}(X_{i})(1-Z_{i})Y_{i}}{\sum_{i=1}^{n}\hat{o}(X_{i})(1-Z_{i})}," class="m" src="m/097fdfee6b2d.png" style="width:17.32em;vertical-align:-1.11em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S68.p2.3">where <img alt="\hat{o}(X_{i})=\hat{e}(X_{i})/\{1-\hat{e}(X_{i})\}" class="m" src="m/b47756caf6cc.png" style="width:12.02em;vertical-align:-0.36em"/> is the fitted odds of the treatment given covariates.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S68.p3.1">We also have a doubly robust estimator for <img alt="E\{Y(0)\mid Z=1\}" class="m" src="m/e6d75a34b0e9.png" style="width:7.54em;vertical-align:-0.36em"/> which combines the propensity score and the outcome models. Define</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="S68.E73"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tilde{\mu}_{0\textsc{T}}^{\textup{dr}}=E\left[o(X,\alpha)(1-Z)\{Y-\mu_{0}(X,\beta_{0})\}+Z\mu_{0}(X,\beta_{0})\right]/e," class="m" src="m/140c22930587.png" style="width:25.82em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(73)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S68.p3.2">where <img alt="o(X,\alpha)=e(X,\alpha)/\{1-e(X,\alpha)\}." class="m" src="m/94d3476603d9.png" style="width:14.62em;vertical-align:-0.36em"/></p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem3b">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 13.3</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem3b.p1.1"><span class="ltx_text ltx_font_italic">Under Assumption <a class="ltx_ref" href="#Thmassumption1b" title='Assumption 13.1 ‣ 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.1</span></a>, if either <img alt="e(X,\alpha)=e(X)" class="m" src="m/16affec8d0ac.png" style="width:6.89em;vertical-align:-0.36em"/> or <img alt="\mu_{0}(X,\beta_{0})=\mu_{0}(X)" class="m" src="m/638628fadd22.png" style="width:8.43em;vertical-align:-0.36em"/>, then <img alt="\mu_{0\textsc{T}}^{\text{dr}}=E\{Y(0)\mid Z=1\}." class="m" src="m/c21836e4dfeb.png" style="width:10.74em;vertical-align:-0.39em"/></span></p>
+</div>
+</div>
+<div class="ltx_para ltx_noindent">
+<p class="ltx_p" id="S68.p4.1"><span class="ltx_text ltx_font_bold">Proof of Theorem <a class="ltx_ref" href="#Thmtheorem3b" title='Theorem 13.3 ‣ 68 Inverse propensity score weighting and doubly robust estimation of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.3</span></a>:</span>
+We have the decomposition</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle e\left[\tilde{\mu}_{0\textsc{T}}^{\text{dr}}-E\{Y(0)\mid Z=1\}\right]" class="m" src="m/96fe7ed7392c.png" style="width:11.83em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[o(X,\alpha)(1-Z)\{Y(0)-\mu_{0}(X,\beta_{0})\}+Z\mu_{0}(X,\beta_{0})\right]-E\{ZY(0)\}" class="m" src="m/b4d9aaf645d4.png" style="width:28.62em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[o(X,\alpha)(1-Z)\{Y(0)-\mu_{0}(X,\beta_{0})\}-Z\{Y(0)-\mu_{0}(X,\beta_{0})\}\right]" class="m" src="m/9f838e119f6a.png" style="width:27.08em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[\left\{o(X,\alpha)(1-Z)-Z\right\}\{Y(0)-\mu_{0}(X,\beta_{0})\}\right]" class="m" src="m/e67f8d935da8.png" style="width:19.80em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[\frac{e(X,\alpha)-Z}{1-e(X,\alpha)}\{Y(0)-\mu_{0}(X,\beta_{0})\}\right]" class="m" src="m/78b9bae514e3.png" style="width:16.09em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[E\left\{\frac{e(X,\alpha)-Z}{1-e(X,\alpha)}\mid X\right\}\times E\{Y(0)-\mu_{0}(X,\beta_{0})\mid X\}\right]" class="m" src="m/f2a901cc29cf.png" style="width:24.04em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[\frac{e(X,\alpha)-e(X)}{1-e(X,\alpha)}\times\{\mu_{0}(X)-\mu_{0}(X,\beta_{0})\}\right]." class="m" src="m/5f0a9d0eb2cc.png" style="width:19.80em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S68.p4.2">Therefore, <img alt="\tilde{\mu}_{0\textsc{T}}^{\text{dr}}-E\{Y(0)\mid Z=1\}=0" class="m" src="m/e0344ef2a04d.png" style="width:12.19em;vertical-align:-0.39em"/>
+if either <img alt="e(X,\alpha)=e(X)" class="m" src="m/16affec8d0ac.png" style="width:6.89em;vertical-align:-0.36em"/> or <img alt="\mu_{0}(X,\beta_{0})=\mu_{0}(X)" class="m" src="m/638628fadd22.png" style="width:8.43em;vertical-align:-0.36em"/>.
+ <img alt="\square" class="m" src="m/57d1afee0594.png" style="width:1.01em;vertical-align:-0.12em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S68.p5.1">Based on the population versions of <img alt="\tilde{\mu}_{0\textsc{T}}^{\text{dr}}" class="m" src="m/4633e42107fd.png" style="width:1.83em;vertical-align:-0.39em"/> in (<a class="ltx_ref" href="#S68.E73" title='In 68 Inverse propensity score weighting and doubly robust estimation of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">73</span></a>), we can obtain its sample version to construct a doubly robust estimator for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition1i">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 13.1</span></span><span class="ltx_text ltx_font_bold"> (doubly robust estimator for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition1i.p1.1"><span class="ltx_text ltx_font_italic">Based on the data <img alt="(X_{i},Z_{i},Y_{i})_{i=1}^{n}" class="m" src="m/4736adc4e823.png" style="width:6.34em;vertical-align:-0.36em"/>, we can obtain a doubly robust estimator for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/> by the following steps:</span></p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item"></span>
+<div class="ltx_para">
+<p class="ltx_p" id="S68.I1.p1.1"><span class="ltx_text ltx_font_italic">[(1)]</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S68.I1.i1.p1.1"><span class="ltx_text ltx_font_italic">obtain the fitted values of the propensity scores </span><img alt="e(X_{i},\hat{\alpha})" class="m" src="m/bc78eca2278b.png" style="width:3.73em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic"> and then obtain the fitted values of the odds </span><img alt="o(X_{i},\hat{\alpha})=e(X_{i},\hat{\alpha})/(1-e(X_{i},\hat{\alpha}))" class="m" src="m/62e2fae241fd.png" style="width:15.06em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic">;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S68.I1.i2.p1.1"><span class="ltx_text ltx_font_italic">obtain the fitted values of the outcome mean under control </span><img alt="\mu_{0}(X_{i},\hat{\beta}_{0})" class="m" src="m/91b1e339c37c.png" style="width:4.67em;vertical-align:-0.36em"/><span class="ltx_text ltx_font_italic">;</span></p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S68.I1.i3.p1.1"><span class="ltx_text ltx_font_italic">construct the doubly robust estimator: </span><img alt="\hat{\tau}_{\textsc{T}}^{\textup{dr}}=\hat{\bar{Y}}(1)-\hat{\mu}_{0\textsc{T}}^{\textup{dr}}" class="m" src="m/bca2bcbe376d.png" style="width:7.83em;vertical-align:-0.39em"/><span class="ltx_text ltx_font_italic">, where</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\mu}_{0\textsc{T}}^{\textup{dr}}=\frac{1}{n_{1}}\sum_{i=1}^{n}\left[o(X_{i},\hat{\alpha})(1-Z_{i})\{Y_{i}-\mu_{0}(X_{i},\hat{\beta}_{0})\}+Z_{i}\mu_{0}(X_{i},\hat{\beta}_{0})\right]." class="m" src="m/a70c456ed6cf.png" style="width:28.93em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div></li>
+</ol>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S68.p6.1">By Definition <a class="ltx_ref" href="#Thmdefinition1i" title='Definition 13.1 (doubly robust estimator for 𝜏_"T") ‣ 68 Inverse propensity score weighting and doubly robust estimation of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.1</span></a>, we can rewrite <img alt="\hat{\tau}_{\textsc{T}}^{\textup{dr}}" class="m" src="m/3a8539bd0af4.png" style="width:1.59em;vertical-align:-0.39em"/> as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="e(X_{i},\hat{\alpha})=\hat{\tau}_{\textsc{T}}^{\textup{reg}}-\frac{1}{n_{1}}\sum_{i=1}^{n}o(X_{i},\hat{\alpha})(1-Z_{i})\{Y_{i}-\mu_{0}(X_{i},\hat{\beta}_{0})\}" class="m" src="m/54791247bc3e.png" style="width:25.63em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S68.p6.2">or</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="e(X_{i},\hat{\alpha})=\hat{\tau}_{\textsc{T}}^{\textup{ht}}-\frac{1}{n_{1}}\sum_{i=1}^{n}\{o(X_{i},\hat{\alpha})(1-Z_{i})+Z_{i}\}\mu_{0}(X_{i},\hat{\beta}_{0})." class="m" src="m/8285465adb9b.png" style="width:25.51em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S68.p6.3">Similar to the discussion of <img alt="\hat{\tau}^{\textup{dr}}" class="m" src="m/4b96376d0b51.png" style="width:1.59em;vertical-align:-0.12em"/>, we can estimate the variance of <img alt="\hat{\tau}_{\textsc{T}}^{\textup{dr}}" class="m" src="m/3a8539bd0af4.png" style="width:1.59em;vertical-align:-0.39em"/> via the bootstrap by resampling from <img alt="(Z_{i},X_{i},Y_{i})_{i=1}^{n}" class="m" src="m/798f664faef8.png" style="width:6.34em;vertical-align:-0.36em"/>.
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib126" title="">Hahn, (1998)</a></cite>, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib227" title="">Mercatanti and Li, (2014)</a></cite>, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib303" title="">Shinozaki and Matsuyama, (2015)</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib344" title="">Yang and Ding, 2018b ()</a></cite> are references on the estimation of <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>.</p>
+</div>
+</section>
+<section class="ltx_section" id="S69">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">69 </span>An example</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S69.p1.1">The following <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> function implements two outcome regression estimators, two IPW estimators, and the doubly robust estimator for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>. To avoid extreme estimated propensity scores, we can also truncate them from the above.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ATT</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">function</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">out</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">gaussian</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Utruncps</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>sample<span class="ltx_text ltx_lst_space"> </span>size</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nn</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">length</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nn1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sum</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>fitted<span class="ltx_text ltx_lst_space"> </span>propensity<span class="ltx_text ltx_lst_space"> </span>score</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">glm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">binomial</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">fitted</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">values</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">pmin</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Utruncps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">odds</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pscore</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>fitted<span class="ltx_text ltx_lst_space"> </span>potential<span class="ltx_text ltx_lst_space"> </span>outcomes</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">outcome0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">glm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">weights</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">),</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">out</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">fitted</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">values</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>outcome<span class="ltx_text ltx_lst_space"> </span>regression<span class="ltx_text ltx_lst_space"> </span>estimator</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">reg0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2]</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">reg</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1])</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">outcome0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>propensity<span class="ltx_text ltx_lst_space"> </span>score<span class="ltx_text ltx_lst_space"> </span>weighting<span class="ltx_text ltx_lst_space"> </span>estimator</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ipw0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1])</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">odds</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nn</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nn1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ipw</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==1])</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">odds</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)/</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">odds</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>doubly<span class="ltx_text ltx_lst_space"> </span>robust<span class="ltx_text ltx_lst_space"> </span>estimator</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">outcome0</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dr</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">reg</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">odds</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*(1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)*</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nn</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nn1</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">return</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">reg0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">reg</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ipw0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ipw</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ace</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dr</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">}</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S69.p3.1">The following <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> function further implements the bootstrap variance estimators.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">OS</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">_</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ATT</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">function</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">10^2,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">out</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">gaussian</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Utruncps</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">point</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ATT</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">out</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Utruncps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>nonparametric<span class="ltx_text ltx_lst_space"> </span>bootstrap</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">length</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">as</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">matrix</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">replicate</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">id</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sample</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1:</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">replace</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">TRUE</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ATT</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">id</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">],</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">id</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">],</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">x</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">id</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">],</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">out</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Utruncps</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">})</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">apply</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sd</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rbind</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">point</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rownames</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"est"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"se"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">colnames</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"reg0"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"reg"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"HT"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"Hajek"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"DR"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">return</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">res</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">}</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S69.p5.1">Now we re-analyze the data in Example <a class="ltx_ref" href="13.html#Thmexample3d" title="Example 10.3 (school meal program and body mass index) ‣ 53 Motivating Examples ‣ Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10.3</span></a> to estimate <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>.
+We obtain</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">reg0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">reg</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">HT</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Hajek</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">DR</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.061</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.351</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1.992</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.351</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.187</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.227</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.258</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.705</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.328</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.287</span>
+</div>
+</div>
+<p class="ltx_p" id="S69.p5.3">without truncating the estimated propensity scores, and</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">reg0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">reg</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">HT</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Hajek</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">DR</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">est</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.061</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.351</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.597</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.192</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.230</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">se</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.223</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.255</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.579</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.302</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.276</span>
+</div>
+</div>
+<p class="ltx_p" id="S69.p5.5">by truncating the estimated propensity scores from the above at <img alt="0.9" class="m" src="m/31686d36843f.png" style="width:1.52em;vertical-align:-0.12em"/>. The HT estimator is sensitive to the truncation as expected. The regression estimator in Example <a class="ltx_ref" href="#Thmexample1f" title='Example 13.1 ‣ 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.1</span></a> is quite different from other estimators. It imposes an unnecessary assumption that the regression functions in the treatment and control group share the same coefficient of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. The regression estimator in Example <a class="ltx_ref" href="#Thmexample2e" title='Example 13.2 ‣ 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.2</span></a> is much closer to the Hajek and doubly robust estimators. The estimates above are slightly different from those in Section <a class="ltx_ref" href="15.html#S64.SS3" title="64.3 Applications ‣ 64 Examples ‣ Chapter 12 The Doubly Robust or the Augmented Inverse Propensity Score Weighting Estimator for the Average Causal Effect ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">64.3</span></a>, suggesting the existence of treatment effect heterogeneity across <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/> and <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>.</p>
+</div>
+</section>
+<section class="ltx_section" id="S70">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">70 </span>Other estimands</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S70.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib202" title="">Li et al., 2018a ()</a></cite> gave a unified discussion of the causal estimands in observational studies. Starting from the conditional average causal effect <img alt="\tau(X)" class="m" src="m/315d0cd0edbf.png" style="width:2.46em;vertical-align:-0.36em"/>, they proposed a general class of estimands</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau^{h}=\frac{E\{h(X)\tau(X)\}}{E\{h(X)\}}" class="m" src="m/94dcdca49262.png" style="width:9.15em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S70.p1.2">indexed by a weighting function <img alt="h(X)" class="m" src="m/83b159bbb976.png" style="width:2.51em;vertical-align:-0.36em"/> with <img alt="E\{h(X)\}\neq 0" class="m" src="m/83584f28f015.png" style="width:6.12em;vertical-align:-0.36em"/>. The normalization in the denominator is to ensure that a constant causal effect <img alt="\tau(X)=\tau" class="m" src="m/a87b8dbd2a1b.png" style="width:4.36em;vertical-align:-0.36em"/> averages to the same <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S70.p2.1">Under ignorability,</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau^{h}=\frac{E[h(X)\{\mu_{1}(X)-\mu_{0}(X)\}]}{E\{h(X)\}}" class="m" src="m/6109dbe9104a.png" style="width:14.19em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S70.p2.2">which
+motivates the outcome regression estimator</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\tau}^{h}=\frac{\sum_{i=1}^{n}h(X_{i})\{\hat{\mu}_{1}(X_{i})-\hat{\mu}_{0}(X_{i})\}}{\sum_{i=1}^{n}h(X_{i})}." class="m" src="m/8d46312f6e81.png" style="width:16.43em;vertical-align:-1.11em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S70.p2.3">Moreover, we can show that <img alt="\tau^{h}" class="m" src="m/126acad4d309.png" style="width:1.30em;vertical-align:-0.12em"/> has the following weighting form:</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem4a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 13.4</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem4a.p1.1"><span class="ltx_text ltx_font_italic">Under the ignorability and overlap assumption, we have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau^{h}=E\left\{\frac{ZYh(X)}{e(X)}-\frac{(1-Z)Yh(X)}{1-e(X)}\right\}/E\{h(X)\}." class="m" src="m/d5760e55da99.png" style="width:21.95em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S70.p3.1">The proof of Theorem <a class="ltx_ref" href="#Thmtheorem4a" title="Theorem 13.4 ‣ 70 Other estimands ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13.4</span></a> is similar to those of Theorems <a class="ltx_ref" href="14.html#Thmtheorem2b" title="Theorem 11.2 ‣ 59.1 Theory ‣ 59 Propensity score weighting ‣ Chapter 11 The Central Role of the Propensity Score in Observational Studies for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">11.2</span></a> and <a class="ltx_ref" href="#Thmtheorem2c" title='Theorem 13.2 ‣ 68 Inverse propensity score weighting and doubly robust estimation of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.2</span></a> which is relegated to Problem <a class="ltx_ref" href="#S71.SS0.SSS0.P9" title="13.9 IPW for the general estimand ‣ 71 Homework Problems ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13.9</span></a>. Based on Theorem <a class="ltx_ref" href="#Thmtheorem4a" title="Theorem 13.4 ‣ 70 Other estimands ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13.4</span></a>, we can construct the corresponding IPW estimator for <img alt="\tau^{h}" class="m" src="m/126acad4d309.png" style="width:1.30em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S70.p4.1">By Theorem <a class="ltx_ref" href="#Thmtheorem4a" title="Theorem 13.4 ‣ 70 Other estimands ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13.4</span></a>, each unit is associated with the weight due to the definition of the estimand as well as the weight due to the inverse of the propensity score. Finally, the treated units are weighted by <img alt="h(X)/e(X)" class="m" src="m/97553bb8e2d1.png" style="width:5.16em;vertical-align:-0.36em"/> and the control units are weighted by <img alt="h(X)/\{1-e(X)\}." class="m" src="m/5669dd892dba.png" style="width:8.14em;vertical-align:-0.36em"/> <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib202" title="">Li et al., 2018a (, Table 1)</a></cite> summarized several estimands, and I present a part of it below:</p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_th_row ltx_border_t">population</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="h(X)" class="m" src="m/83b159bbb976.png" style="width:2.51em;vertical-align:-0.36em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">estimand</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">weights</th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t">combined</th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="1/e(X)" class="m" src="m/9dbf4b7672ba.png" style="width:3.37em;vertical-align:-0.36em"/> and <img alt="1/\{1-e(X)\}" class="m" src="m/dc7862dc9be9.png" style="width:6.09em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row">treated</th>
+<td class="ltx_td ltx_align_center"><img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center">1 and <img alt="e(X)/\{1-e(X)\}" class="m" src="m/709c1b3ba5af.png" style="width:7.76em;vertical-align:-0.36em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row">control</th>
+<td class="ltx_td ltx_align_center"><img alt="1-e(X)" class="m" src="m/37d2b790845e.png" style="width:4.10em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\tau_{\textsc{C}}" class="m" src="m/a391a7b1b360.png" style="width:1.28em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="\{1-e(X)\}/e(X)" class="m" src="m/2bf8651b55d7.png" style="width:7.76em;vertical-align:-0.36em"/> and 1</td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_b">overlap</th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="e(X)\{1-e(X)\}" class="m" src="m/de610fbe59b1.png" style="width:7.25em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="1-e(X)" class="m" src="m/37d2b790845e.png" style="width:4.10em;vertical-align:-0.36em"/> and <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S70.p6.1">The overlap population and the corresponding estimand</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{O}}=\frac{E\left[e(X)\{1-e(X)\}\tau(X)\right]}{E\left[e(X)\{1-e(X)\}\right]}" class="m" src="m/6b46ff7be842.png" style="width:13.66em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S70.p6.2">is new to us. This estimand has the largest weight for units with <img alt="e(X)=1/2" class="m" src="m/96eddf60f058.png" style="width:5.23em;vertical-align:-0.36em"/> and down weights the units with extreme propensity scores.
+A nice feature of this estimand is that its IPW estimator is stable without the possibly extremely small values of <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/> and <img alt="1-e(X)" class="m" src="m/37d2b790845e.png" style="width:4.10em;vertical-align:-0.36em"/> in the denominator. If <img alt="e(X)\ind \tau(X)" class="m" src="m/15e3720bf7db.png" style="width:5.52em;vertical-align:-0.36em"/> including the special case of <img alt="\tau(X)=\tau" class="m" src="m/a87b8dbd2a1b.png" style="width:4.36em;vertical-align:-0.36em"/>, the parameter <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/> reduces to <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>. In general, however, the estimand <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/> may cause controversy because it changes the initial population and depends on the propensity score which may be misspecified in practice. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib202" title="">Li et al., 2018a ()</a></cite> and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib203" title="">Li et al., (2019)</a></cite> gave some justifications and numerical evidence.
+This estimand will appear again in Chapter <a class="ltx_ref" href="17.html#chapter14" title="Chapter 14 Using the Propensity Score in Regressions for Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">14</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S70.p7.1">We can also construct the doubly robust estimator for <img alt="\tau^{h}" class="m" src="m/126acad4d309.png" style="width:1.30em;vertical-align:-0.12em"/>. I relegate the details to Problem <a class="ltx_ref" href="#S71.SS0.SSS0.P10" title="13.10 Doubly robust estimation for general estimand ‣ 71 Homework Problems ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13.10</span></a>.</p>
+</div>
+</section>
+<section class="ltx_section" id="S71">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">71 </span>Homework Problems</h4>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.1 </span>Comparing <img alt="\tau_{\textsc{T}},\tau_{\textsc{C}}," class="m" src="m/d618bffe52f5.png" style="width:3.04em;vertical-align:-0.31em"/> and <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P1.p1.1">Assume <img alt="Z\ind \{Y(1),Y(0)\}\mid X" class="m" src="m/94d90f50061c.png" style="width:9.23em;vertical-align:-0.36em"/>. Recall <img alt="e(X)=\textup{pr}(Z=1\mid X)" class="m" src="m/d7c623616eee.png" style="width:9.78em;vertical-align:-0.36em"/> is the propensity score, <img alt="e=\textup{pr}(Z=1)" class="m" src="m/f4144f4e7c3c.png" style="width:6.34em;vertical-align:-0.36em"/> is the marginal probability of the treatment, and <img alt="\tau(X)=E\{Y(1)-Y(0)\mid X\}" class="m" src="m/f8d4450b24f7.png" style="width:12.72em;vertical-align:-0.36em"/> is the CATE.
+Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{T}}-\tau=\frac{\textup{cov}\{e(X),\tau(X)\}}{e},\quad\tau_{\textsc{C}}-\tau=-\frac{\textup{cov}\{e(X),\tau(X)\}}{1-e}." class="m" src="m/f1050d438195.png" style="width:26.04em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P1.p2.1">Remark: The results above also imply that <img alt="\tau_{\textsc{T}}-\tau_{\textsc{C}}=\textup{cov}\{e(X),\tau(X)\}/\{e(1-e)\}" class="m" src="m/8d89d9c5d2e1.png" style="width:17.08em;vertical-align:-0.36em"/>. So the differences among <img alt="\tau_{\textsc{T}},\tau_{\textsc{C}},\tau" class="m" src="m/5b4b61b9770c.png" style="width:3.76em;vertical-align:-0.31em"/> depend on the covariance between the propensity score and CATE.
+When <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/> and <img alt="\tau(X)" class="m" src="m/315d0cd0edbf.png" style="width:2.46em;vertical-align:-0.36em"/> are uncorrelated, their differences are 0.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.2 </span>An algebraic fact about a regression estimator for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P2.p1.1">This problem provides more details for Example <a class="ltx_ref" href="#Thmexample2e" title='Example 13.2 ‣ 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.2</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P2.p2.1">Show that if we center the covariates by <img alt="X_{i}-\hat{\bar{X}}(1)" class="m" src="m/d17bffd44864.png" style="width:4.79em;vertical-align:-0.36em"/> for all units, then <img alt="\hat{\tau}_{\textsc{T}}" class="m" src="m/9197b33f3278.png" style="width:1.28em;vertical-align:-0.26em"/> equals the coefficient of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> in the OLS fit of the outcome on the intercept, the treatment, covariates, and their interactions.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.3 </span>Simulation for the average causal effect on the treated units</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P3.p1.1">Chapter <a class="ltx_ref" href="15.html#chapter12" title="Chapter 12 The Doubly Robust or the Augmented Inverse Propensity Score Weighting Estimator for the Average Causal Effect ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">12</span></a> ran some simulation studies for <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/>. Run similar simulation studies for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/> with either correct or incorrect propensity score or outcome models.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P3.p2.1">You can choose different model parameters, a larger number of simulation settings, and a larger number of bootstrap replicates. Report your findings, including at least the bias, variance, and variance estimator via the bootstrap. You can also report other properties of the estimators, for example, the asymptotic Normality and the coverage rates of the confidence intervals.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.4 </span>An alternative form of the doubly robust estimator for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P4.p1.1">Motivated by (<a class="ltx_ref" href="#S68.E73" title='In 68 Inverse propensity score weighting and doubly robust estimation of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">73</span></a>), we have an alternative form of doubly robust estimator for <img alt="E\{Y(0)\mid Z=1\}" class="m" src="m/e6d75a34b0e9.png" style="width:7.54em;vertical-align:-0.36em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tilde{\mu}_{0\textsc{T}}^{\text{dr2}}=\frac{E\left[o(X,\alpha)(1-Z)\{Y-\mu_{0}(X,\beta_{0})\}\right]}{E\left[o(X,\alpha)(1-Z)\right]}+E\{Z\mu_{0}(X,\beta_{0})\}/e." class="m" src="m/bf0e2b1d4dc7.png" style="width:27.90em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P4.p2.1">Show that under Assumption <a class="ltx_ref" href="#Thmassumption1b" title='Assumption 13.1 ‣ 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">13.1</span></a>, <img alt="\tilde{\mu}_{0\textsc{T}}^{\text{dr2}}=E\{Y(0)\mid Z=1\}" class="m" src="m/2693cc9c867f.png" style="width:10.67em;vertical-align:-0.39em"/> if either <img alt="e(X,\alpha)=e(X)" class="m" src="m/16affec8d0ac.png" style="width:6.89em;vertical-align:-0.36em"/> or <img alt="\mu_{0}(X,\beta_{0})=\mu_{0}(X)" class="m" src="m/638628fadd22.png" style="width:8.43em;vertical-align:-0.36em"/>. Give the sample analog of the doubly robust estimator for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.5 </span>Average causal effect on the control units</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P5.p1.1">Prove the identification formulas for <img alt="\tau_{\textsc{C}}" class="m" src="m/a391a7b1b360.png" style="width:1.28em;vertical-align:-0.26em"/>, analogous to (<a class="ltx_ref" href="#S67.E70" title='In 67 Nonparametric identification of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">70</span></a>) and (<a class="ltx_ref" href="#S68.E72" title='In Theorem 13.2 ‣ 68 Inverse propensity score weighting and doubly robust estimation of 𝜏_"T" ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference'><span class="ltx_text ltx_ref_tag">72</span></a>). Propose the doubly robust estimator for <img alt="\tau_{\textsc{C}}" class="m" src="m/a391a7b1b360.png" style="width:1.28em;vertical-align:-0.26em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.6 </span>Estimating individual effect and conditional average causal effect</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P6.p1.1">Assume that <img alt="\{Z_{i},X_{i},Y_{i}(1),Y_{i}(0)\}_{i=1}^{n}\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}\{Z,X,Y(1),Y(0)\}" class="m" src="m/1753c8e09fe7.png" style="width:20.26em;vertical-align:-0.36em"/>. The individual effect is <img alt="\tau_{i}=Y_{i}(1)-Y_{i}(0)" class="m" src="m/354f697e3f18.png" style="width:7.95em;vertical-align:-0.36em"/> and the conditional average causal effect is <img alt="\tau(X_{i})=E\{Y_{i}(1)-Y_{i}(0)\mid X_{i}\}" class="m" src="m/294bd14958e9.png" style="width:13.44em;vertical-align:-0.36em"/>. Since we will discuss the individual effect, we do not drop the subscript <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/> since <img alt="\tau" class="m" src="m/bd9857969240.png" style="width:0.77em;vertical-align:-0.12em"/> means the average causal effect, not the population version of <img alt="Y(1)-Y(0)" class="m" src="m/ead1482605a1.png" style="width:5.61em;vertical-align:-0.36em"/>.</p>
+</div>
+<div class="ltx_para">
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.I1.i1.p1.1">Under randomization with <img alt="Z_{i}\ind \{Y_{i}(1),Y_{i}(0)\}" class="m" src="m/45ccda0e8d6a.png" style="width:7.97em;vertical-align:-0.36em"/> and <img alt="e=\textup{pr}(Z_{i}=1)" class="m" src="m/a65b32afcaf5.png" style="width:6.60em;vertical-align:-0.36em"/>, show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\delta_{i}=\frac{Z_{i}Y_{i}}{e}-\frac{(1-Z_{i})Y_{i}}{1-e}" class="m" src="m/731ecfbd9cd5.png" style="width:10.41em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S71.I1.i1.p1.2">is an unbiased predictor of the individual effect in the sense that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(\delta_{i}-\tau_{i})=0\quad(i=1,\ldots,n)." class="m" src="m/8549a11066e5.png" style="width:13.47em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S71.I1.i1.p1.3">Further show that <img alt="E(\delta_{i})=\tau" class="m" src="m/44021cf519e8.png" style="width:4.46em;vertical-align:-0.36em"/> for all <img alt="i=1,\ldots,n" class="m" src="m/4f9df9a48055.png" style="width:5.23em;vertical-align:-0.31em"/>.</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.I1.i2.p1.1">Under ignorability with <img alt="Z_{i}\ind \{Y_{i}(1),Y_{i}(0)\}\mid X_{i}" class="m" src="m/aebe3ebfc496.png" style="width:9.97em;vertical-align:-0.36em"/> and <img alt="e(X_{i})=\textup{pr}(Z_{i}=1\mid X_{i})" class="m" src="m/0d3e7a4828c2.png" style="width:10.53em;vertical-align:-0.36em"/>, show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\delta_{i}=\frac{Z_{i}Y_{i}}{e(X_{i})}-\frac{(1-Z_{i})Y_{i}}{1-e(X_{i})}" class="m" src="m/1366e283b494.png" style="width:10.89em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S71.I1.i2.p1.2">is an unbiased predictor of the individual effect and the conditional average causal effect in the sense that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(\delta_{i}-\tau_{i})=0,\quad E\{\delta_{i}-\tau(X_{i})\}=0,\quad(i=1,\ldots,n)." class="m" src="m/d60385aa9d79.png" style="width:23.46em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S71.I1.i2.p1.3">Further show that <img alt="E(\delta_{i})=\tau" class="m" src="m/44021cf519e8.png" style="width:4.46em;vertical-align:-0.36em"/> for all <img alt="i=1,\ldots,n" class="m" src="m/4f9df9a48055.png" style="width:5.23em;vertical-align:-0.31em"/>.</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P7">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.7 </span>General estimand and <img alt="(\tau_{\textsc{T}},\tau_{\textsc{C}})" class="m" src="m/0baaa55fb3fe.png" style="width:3.54em;vertical-align:-0.36em"/></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P7.p1.1">Assume unconfoundedness.
+Show that <img alt="\tau^{h}=\tau_{\textsc{T}}" class="m" src="m/66675c7984fb.png" style="width:3.66em;vertical-align:-0.26em"/> if <img alt="h(X)=e(X)" class="m" src="m/cea7392d9d4f.png" style="width:5.97em;vertical-align:-0.36em"/>, and <img alt="\tau^{h}=\tau_{\textsc{C}}" class="m" src="m/e9baf2643028.png" style="width:3.66em;vertical-align:-0.26em"/> if <img alt="h(X)=1-e(X)" class="m" src="m/bd1dfcd657bc.png" style="width:7.71em;vertical-align:-0.36em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P8">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.8 </span>More on <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P8.p1.1">Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\tau_{\textsc{O}}=\frac{E[\{1-e(X)\}\tau(X)\mid Z=1]}{E\{1-e(X)\mid Z=1\}}=\frac{E\{e(X)\tau(X)\mid Z=0\}}{E\{e(X)\mid Z=0\}}." class="m" src="m/d662e90f0d7a.png" style="width:26.21em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</section>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P9">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.9 </span>IPW for the general estimand</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P9.p1.1">Prove Theorem <a class="ltx_ref" href="#Thmtheorem4a" title="Theorem 13.4 ‣ 70 Other estimands ‣ Chapter 13 The Average Causal Effect on the Treated Units and Other Estimands ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">13.4</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P10">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.10 </span>Doubly robust estimation for general estimand</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P10.p1.1">For a given <img alt="h(X)" class="m" src="m/83b159bbb976.png" style="width:2.51em;vertical-align:-0.36em"/>, we have the following formulas for constructing the doubly robust estimator for <img alt="\tau^{h}" class="m" src="m/126acad4d309.png" style="width:1.30em;vertical-align:-0.12em"/>:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tilde{\mu}_{1}^{h,\textup{dr}}" class="m" src="m/0e810328c6ee.png" style="width:2.34em;vertical-align:-0.39em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[\frac{Zh(X)\{Y-\mu_{1}(X,\beta_{1})\}}{e(X,\alpha)}+h(X)\mu_{1}(X,\beta_{1})\right]," class="m" src="m/96a116e8a744.png" style="width:20.74em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\tilde{\mu}_{0}^{h,\textup{dr}}" class="m" src="m/1cd54d1a4d78.png" style="width:2.34em;vertical-align:-0.39em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle E\left[\frac{(1-Z)h(X)\{Y-\mu_{0}(X,\beta_{0})\}}{1-e(X,\alpha)}+h(X)\mu_{0}(X,\beta_{0})\right]." class="m" src="m/c92d8a69cff5.png" style="width:23.25em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S71.SS0.SSS0.P10.p1.2">Show that under ignorability and overlap,</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.I2.i1.p1.1">if either <img alt="e(X,\alpha)=e(X)" class="m" src="m/16affec8d0ac.png" style="width:6.89em;vertical-align:-0.36em"/> or <img alt="\mu_{1}(X,\beta_{1})=\mu_{1}(X)" class="m" src="m/02d7879f91b4.png" style="width:8.43em;vertical-align:-0.36em"/>, then <img alt="\tilde{\mu}_{1}^{h,\textup{dr}}=E\{h(X)Y(1)\}" class="m" src="m/943bcb1a7d70.png" style="width:9.80em;vertical-align:-0.39em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.I2.i2.p1.1">if either <img alt="e(X,\alpha)=e(X)" class="m" src="m/16affec8d0ac.png" style="width:6.89em;vertical-align:-0.36em"/> or <img alt="\mu_{0}(X,\beta_{0})=\mu_{0}(X)" class="m" src="m/638628fadd22.png" style="width:8.43em;vertical-align:-0.36em"/>, then <img alt="\tilde{\mu}_{0}^{h,\textup{dr}}=E\{h(X)Y(0)\}" class="m" src="m/b5fb19e35a11.png" style="width:9.80em;vertical-align:-0.39em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.I2.i3.p1.1">if either <img alt="e(X,\alpha)=e(X)" class="m" src="m/16affec8d0ac.png" style="width:6.89em;vertical-align:-0.36em"/> or <img alt="\{\mu_{1}(X,\beta_{1})=\mu_{1}(X),\mu_{0}(X,\beta_{0})=\mu_{0}(X)\}" class="m" src="m/dd1b91d581c6.png" style="width:18.09em;vertical-align:-0.36em"/>, then</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{\tilde{\mu}_{1}^{h,\textup{dr}}-\tilde{\mu}_{0}^{h,\textup{dr}}}{E\{h(X)\}}=\tau^{h}." class="m" src="m/37c882320156.png" style="width:8.60em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P10.p2.1">Remark:
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib311" title="">Tao and Fu, (2019)</a></cite> proved the above results. However, they hold only for a given <img alt="h(X)" class="m" src="m/83b159bbb976.png" style="width:2.51em;vertical-align:-0.36em"/>. The most interesting cases of <img alt="\tau_{\textsc{T}},\tau_{\textsc{C}}" class="m" src="m/943d3cc1a649.png" style="width:2.75em;vertical-align:-0.31em"/> and <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/> all have weight depending on the propensity score <img alt="e(X)" class="m" src="m/0c8fb9b3c1d7.png" style="width:2.38em;vertical-align:-0.36em"/>, which must be estimated in the first place. The above formulas do not apply to constructing the doubly robust estimators for <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/> and <img alt="\tau_{\textsc{C}}" class="m" src="m/a391a7b1b360.png" style="width:1.28em;vertical-align:-0.26em"/>; there does not exist a doubly robust estimator for <img alt="\tau_{\textsc{O}}" class="m" src="m/47c18b233ba1.png" style="width:1.30em;vertical-align:-0.26em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P11">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.11 </span>Analyzing a dataset from the Karolinska Institute</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P11.p1.1">Revisit Problem <a class="ltx_ref" href="15.html#S66.SS0.SSS0.P5" title="12.5 Analyzing a dataset from the Karolinska Institute ‣ 66 Homework problems ‣ Chapter 12 The Doubly Robust or the Augmented Inverse Propensity Score Weighting Estimator for the Average Causal Effect ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">12.5</span></a>. Estimate <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/> based on the methods introduced in this Chapter.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S71.SS0.SSS0.P12">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">13.12 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S71.SS0.SSS0.P12.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib303" title="">Shinozaki and Matsuyama, (2015)</a></cite> focused on <img alt="\tau_{\textsc{T}}" class="m" src="m/94f3878c5cdb.png" style="width:1.28em;vertical-align:-0.26em"/>, and <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib202" title="">Li et al., 2018a ()</a></cite> discussed general <img alt="\tau^{h}" class="m" src="m/126acad4d309.png" style="width:1.30em;vertical-align:-0.12em"/>.</p>
+</div>
+</section>
+</section>
+</section><p class="nav bottom"><a href="index.html">目录</a><a href="15.html">← 上一章</a><a href="17.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

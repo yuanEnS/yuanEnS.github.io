@@ -1,0 +1,853 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 31 Linear and Logistic Regressions · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="33.html">← 上一章</a><a href="35.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter31">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 31 </span>Linear and Logistic Regressions</h3>
+<section class="ltx_appendix" id="chapter31.A1">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 31.A </span>Population ordinary least squares</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A1.p1.1">Assume that <img alt="(x_{i},y_{i})_{i=1}^{n}\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}(x,y)" class="m" src="m/d6bffa97aef0.png" style="width:8.60em;vertical-align:-0.36em"/>, where <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/> is a <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-dimensional random scalar or vector and <img alt="y" class="m" src="m/64c8a7cf95e9.png" style="width:0.75em;vertical-align:-0.31em"/> is a random scalar.
+Below I will use <img alt="(x,y)" class="m" src="m/e35601499a18.png" style="width:2.55em;vertical-align:-0.36em"/> to denote a general observation, dropping the subscript <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/> for simplicity.
+Define the population ordinary least squares (OLS) coefficient as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\beta=\arg\min_{b}E\left\{(y-x^{\mkern-1.5mu\mathsf{T}}b)^{2}\right\}." class="m" src="m/218657a6266b.png" style="width:12.62em;vertical-align:-0.87em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A1.p1.2">The objective function is quadratic in <img alt="b" class="m" src="m/666e2518da9d.png" style="width:0.65em;vertical-align:-0.12em"/>, so we can show that the minimizer is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\beta=\left\{E\left(xx^{\mkern-1.5mu\mathsf{T}}\right)\right\}^{-1}E\left(xy\right)" class="m" src="m/97a70d7247a6.png" style="width:10.94em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A1.p1.3">if the moments exist and <img alt="E(xx^{\mkern-1.5mu\mathsf{T}})" class="m" src="m/ac656668c919.png" style="width:3.44em;vertical-align:-0.36em"/> is invertible.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A1.p2.1">With <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/>, we can define <img alt="x^{\mkern-1.5mu\mathsf{T}}\beta" class="m" src="m/9dbb2335b8d3.png" style="width:1.90em;vertical-align:-0.31em"/> as the <span class="ltx_text ltx_font_italic">linear projection</span> of <img alt="y" class="m" src="m/64c8a7cf95e9.png" style="width:0.75em;vertical-align:-0.31em"/> on <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/>, and define</p>
+<table class="ltx_equation ltx_eqn_table" id="chapter31.A1.E158">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\varepsilon=y-x^{\mkern-1.5mu\mathsf{T}}\beta" class="m" src="m/187e6ddc1d36.png" style="width:5.47em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(158)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A1.p2.2">as the <span class="ltx_text ltx_font_italic">population residual</span>.
+By the definition of <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/>, we can verify that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(x\varepsilon)=E\left\{x(y-x^{\mkern-1.5mu\mathsf{T}}\beta)\right\}=E(xy)-E(xx^{\mkern-1.5mu\mathsf{T}})\beta=0." class="m" src="m/d4dd265b63ef.png" style="width:22.24em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 31.1</span></span><span class="ltx_text ltx_font_bold"> (population OLS with the intercept)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1t.p1.1"><span class="ltx_text ltx_font_italic">If we include <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/> as a component of <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/>, then</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(\varepsilon)=E(y-x^{\mkern-1.5mu\mathsf{T}}\beta)=0" class="m" src="m/f5b626d6762c.png" style="width:10.43em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample1t.p1.2"><span class="ltx_text ltx_font_italic">which further implies that <img alt="\textup{cov}(x,\varepsilon)=0" class="m" src="m/b5894f441f09.png" style="width:5.78em;vertical-align:-0.36em"/>.
+So with an intercept in <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/>, the mean of the population residual
+must be zero, and it is uncorrelated with other covariates by construction.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample2q">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 31.2</span></span><span class="ltx_text ltx_font_bold"> (univariate population OLS with the intercept)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2q.p1.1"><span class="ltx_text ltx_font_italic">An important special case is that for scalars <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/> and <img alt="y" class="m" src="m/64c8a7cf95e9.png" style="width:0.75em;vertical-align:-0.31em"/>, we can define</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\alpha,\beta)=\arg\min_{a,b}E\{(y-a-bx)^{2}\}" class="m" src="m/e244fd75e848.png" style="width:14.98em;vertical-align:-1.01em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample2q.p1.2"><span class="ltx_text ltx_font_italic">which have explicit formulas</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\beta=\frac{\textup{cov}(x,y)}{\textup{var}(x)},\quad\alpha=E(y)-\beta E(x)." class="m" src="m/f50887f8ce99.png" style="width:15.97em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_example">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 31.3</span></span><span class="ltx_text ltx_font_bold"> (univariate population OLS without an intercept)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample3m.p1.1"><span class="ltx_text ltx_font_italic">Without intercept, we can define</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\gamma=\arg\min_{c}E\{(y-cx)^{2}\}" class="m" src="m/3e6b61cd4100.png" style="width:11.32em;vertical-align:-0.82em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample3m.p1.2"><span class="ltx_text ltx_font_italic">which equals</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\gamma=\frac{E(xy)}{E(x^{2})}." class="m" src="m/4b4fc64c9b4f.png" style="width:5.32em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample3m.p1.3"><span class="ltx_text ltx_font_italic">When <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/> has mean zero, <img alt="\gamma" class="m" src="m/68923f208210.png" style="width:0.79em;vertical-align:-0.31em"/> equals the <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/> in Example <a class="ltx_ref" href="#Thmexample2q" title="Example 31.2 (univariate population OLS with the intercept) ‣ Appendix 31.A Population ordinary least squares ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31.2</span></a>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A1.p3.1">We can also rewrite (<a class="ltx_ref" href="#chapter31.A1.E158" title="In Appendix 31.A Population ordinary least squares ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">158</span></a>) as</p>
+<table class="ltx_equation ltx_eqn_table" id="chapter31.A1.E159">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="y=x^{\mkern-1.5mu\mathsf{T}}\beta+\varepsilon," class="m" src="m/45a7bce15547.png" style="width:5.73em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(159)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A1.p3.2">which holds by the definition of the population OLS coefficient and residual without any modeling
+assumption. We call (<a class="ltx_ref" href="#chapter31.A1.E159" title="In Appendix 31.A Population ordinary least squares ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">159</span></a>) the population
+OLS decomposition.</p>
+</div>
+</section>
+<section class="ltx_appendix" id="chapter31.A2">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 31.B </span>Sample ordinary least squares</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A2.p1.1">Based on data <img alt="(x_{i},y_{i})_{i=1}^{n}\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}(x,y)" class="m" src="m/d6bffa97aef0.png" style="width:8.60em;vertical-align:-0.36em"/>, we can easily
+obtain the moment estimator for the population OLS coefficient</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\beta}=\left(n^{-1}\sum_{i=1}^{n}x_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}\right)^{-1}\left(n^{-1}\sum_{i=1}^{n}x_{i}y_{i}\right)," class="m" src="m/f75b9846d75f.png" style="width:17.63em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A2.p1.2">and the residuals <img alt="\hat{\varepsilon}_{i}=y_{i}-x_{i}^{\mkern-1.5mu\mathsf{T}}\hat{\beta}." class="m" src="m/96bfb6cfe4e2.png" style="width:6.36em;vertical-align:-0.36em"/>
+This is called the sample OLS or simply the OLS. The OLS coefficient
+<img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> minimizes the residual sum of squares</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\beta}=\arg\min_{b}n^{-1}\sum_{i=1}^{n}(y_{i}-x_{i}^{\mkern-1.5mu\mathsf{T}}b)^{2}," class="m" src="m/3eed2d818bd7.png" style="width:13.92em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A2.p1.3">so it must satisfy</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sum_{i=1}^{n}x_{i}(y_{i}-x_{i}^{\mkern-1.5mu\mathsf{T}}\hat{\beta})=0," class="m" src="m/4fab2200103d.png" style="width:9.37em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A2.p1.4">which is sometimes called the <span class="ltx_text ltx_font_italic">Normal equation.</span>
+The fitted values, also called the <span class="ltx_text ltx_font_italic">linear projections</span> of <img alt="y_{i}" class="m" src="m/c4042bdaba7e.png" style="width:1.06em;vertical-align:-0.31em"/> on <img alt="x_{i}" class="m" src="m/3d91e1378913.png" style="width:1.13em;vertical-align:-0.26em"/>, equal</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{y}_{i}=x_{i}^{\mkern-1.5mu\mathsf{T}}\hat{\beta}\quad(i=1,\ldots,n)." class="m" src="m/6fb8c62e5f27.png" style="width:11.13em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A2.p2.1">Using the matrix notation</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="X=\begin{pmatrix}x_{1}^{\mkern-1.5mu\mathsf{T}}\\
+\vdots\\
+x_{n}^{\mkern-1.5mu\mathsf{T}}\end{pmatrix},\quad Y=\begin{pmatrix}y_{1}\\
+\vdots\\
+y_{n}\end{pmatrix}," class="m" src="m/3d28b5790c40.png" style="width:12.31em;vertical-align:-2.00em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A2.p2.2">we can write the OLS coefficient as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\beta}=(X^{\mkern-1.5mu\mathsf{T}}X)^{-1}X^{\mkern-1.5mu\mathsf{T}}Y" class="m" src="m/c112bbe042f8.png" style="width:8.53em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A2.p2.3">and the fitted vector as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{Y}=X\hat{\beta}=X(X^{\mkern-1.5mu\mathsf{T}}X)^{-1}X^{\mkern-1.5mu\mathsf{T}}Y." class="m" src="m/a3297721e47b.png" style="width:12.60em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A2.p2.4">Define the hat matrix as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="H=X(X^{\mkern-1.5mu\mathsf{T}}X)^{-1}X^{\mkern-1.5mu\mathsf{T}}." class="m" src="m/e6cf90983ec6.png" style="width:9.23em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A2.p2.5">Then we also have <img alt="\hat{Y}=HY" class="m" src="m/9e2dfee9c799.png" style="width:4.10em;vertical-align:-0.12em"/>, justifying the name “hat matrix.” The diagonal elements of <img alt="H" class="m" src="m/9c519a087c0b.png" style="width:1.16em;vertical-align:-0.12em"/>, <img alt="h_{ii}" class="m" src="m/0be57fb1f49f.png" style="width:1.42em;vertical-align:-0.26em"/>’s, are often called the <span class="ltx_text ltx_font_italic">leverage scores</span>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A2.p3.1">Assuming finite fourth moments of <img alt="(x,y)" class="m" src="m/e35601499a18.png" style="width:2.55em;vertical-align:-0.36em"/>, we can use the law of large numbers and the CLT to show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sqrt{n}(\hat{\beta}-\beta)\rightarrow\text{N}(0,V)" class="m" src="m/a838a72ddc50.png" style="width:9.73em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A2.p3.2">in distribution with <img alt="V=B^{-1}MB^{-1}" class="m" src="m/1a0ef646b02b.png" style="width:7.23em;vertical-align:-0.12em"/>, where <img alt="B=E(xx^{\mkern-1.5mu\mathsf{T}})" class="m" src="m/4c3e1269c83d.png" style="width:5.59em;vertical-align:-0.36em"/> and <img alt="M=E(\varepsilon^{2}xx^{\mkern-1.5mu\mathsf{T}})" class="m" src="m/c9d6154a9fb7.png" style="width:6.77em;vertical-align:-0.36em"/>.
+So a moment estimator for the asymptotic variance of <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> is</p>
+<table class="ltx_equation ltx_eqn_table" id="chapter31.A2.E160">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{V}_{\textsc{ehw}}=n^{-1}\left(n^{-1}\sum_{i=1}^{n}x_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}\right)^{-1}\left(n^{-1}\sum_{i=1}^{n}\hat{\varepsilon}_{i}^{2}x_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}\right)\left(n^{-1}\sum_{i=1}^{n}x_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}\right)^{-1}," class="m" src="m/3832c484bbdf.png" style="width:30.28em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(160)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A2.p3.3">which is called the Eicker–Huber–White (EHW) robust covariance
+estimator <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib100" title="">Eicker,, 1967</a>; <a class="ltx_ref" href="35.html#bib.bib153" title="">Huber,, 1967</a>; <a class="ltx_ref" href="35.html#bib.bib338" title="">White,, 1980</a>)</cite>. We can show that <img alt="n\hat{V}_{\textsc{ehw}}\rightarrow V" class="m" src="m/9cf96b0368d9.png" style="width:5.23em;vertical-align:-0.26em"/> in probability. Based on <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> and <img alt="\hat{V}_{\textsc{ehw}}" class="m" src="m/f13d406c558b.png" style="width:2.26em;vertical-align:-0.26em"/>, we can make inference about the population OLS coefficient <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A2.p4.1">There are many variants of the EHW robust covariance estimator based on the leverage scores <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib214" title="">Long and Ervin,, 2000</a>)</cite>. In particular, the HC1 variant modifies <img alt="\hat{\varepsilon}_{i}^{2}" class="m" src="m/4d732b42b426.png" style="width:1.16em;vertical-align:-0.36em"/> to <img alt="\hat{\varepsilon}_{i}^{2}/(n-p)" class="m" src="m/7cb715e085b0.png" style="width:4.75em;vertical-align:-0.36em"/>,
+the HC2 variant modifies <img alt="\hat{\varepsilon}_{i}^{2}" class="m" src="m/4d732b42b426.png" style="width:1.16em;vertical-align:-0.36em"/> to <img alt="\hat{\varepsilon}_{i}^{2}/(1-h_{ii})" class="m" src="m/807900d35a88.png" style="width:5.35em;vertical-align:-0.36em"/>,
+and
+the HC3 variant modifies <img alt="\hat{\varepsilon}_{i}^{2}" class="m" src="m/4d732b42b426.png" style="width:1.16em;vertical-align:-0.36em"/> to <img alt="\hat{\varepsilon}_{i}^{2}/(1-h_{ii})^{2}" class="m" src="m/1b6aa5ca7b9f.png" style="width:5.78em;vertical-align:-0.36em"/>, in the definition of <img alt="\hat{V}_{\textsc{ehw}}" class="m" src="m/f13d406c558b.png" style="width:2.26em;vertical-align:-0.26em"/>.</p>
+</div>
+</section>
+<section class="ltx_appendix" id="chapter31.A3">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 31.C </span>Frisch–Waugh–Lovell Theorem</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A3.p1.1">The Frisch–Waugh–Lovell (FWL) theorem has two versions: one at the population level and the other at the sample level. It reduces multivariate OLS to univariate OLS and therefore facilitates the understanding and calculation of the OLS coefficients. Below I will present special cases of the FWL theorem which are enough for this book.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1t">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 31.1</span></span><span class="ltx_text ltx_font_bold"> (population FWL)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1t.p1.1"><span class="ltx_text ltx_font_italic">The coefficient of <img alt="x_{1}" class="m" src="m/4010ea1e6b36.png" style="width:1.25em;vertical-align:-0.26em"/> in the OLS fit of <img alt="y" class="m" src="m/64c8a7cf95e9.png" style="width:0.75em;vertical-align:-0.31em"/> on <img alt="(x_{1},x_{2},\ldots,x_{p})" class="m" src="m/464e6a75c252.png" style="width:6.75em;vertical-align:-0.41em"/> equals the coefficient of <img alt="\tilde{x}_{1}" class="m" src="m/0b78ead1bfc8.png" style="width:1.25em;vertical-align:-0.26em"/> in the OLS fit of <img alt="y" class="m" src="m/64c8a7cf95e9.png" style="width:0.75em;vertical-align:-0.31em"/> or <img alt="\tilde{y}" class="m" src="m/8503c47fc9c6.png" style="width:0.75em;vertical-align:-0.31em"/> on <img alt="\tilde{x}_{1}" class="m" src="m/0b78ead1bfc8.png" style="width:1.25em;vertical-align:-0.26em"/>, where <img alt="\tilde{y}" class="m" src="m/8503c47fc9c6.png" style="width:0.75em;vertical-align:-0.31em"/> is the residual from the OLS fit of <img alt="y" class="m" src="m/64c8a7cf95e9.png" style="width:0.75em;vertical-align:-0.31em"/> on <img alt="(x_{2},\ldots,x_{p})" class="m" src="m/989f97251172.png" style="width:5.28em;vertical-align:-0.41em"/> and <img alt="\tilde{x}_{1}" class="m" src="m/0b78ead1bfc8.png" style="width:1.25em;vertical-align:-0.26em"/> is the residual from the OLS fit of <img alt="x_{1}" class="m" src="m/4010ea1e6b36.png" style="width:1.25em;vertical-align:-0.26em"/> on <img alt="(x_{2},\ldots,x_{p})" class="m" src="m/989f97251172.png" style="width:5.28em;vertical-align:-0.41em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A3.p2.1">In Theorem <a class="ltx_ref" href="#Thmtheorem1t" title="Theorem 31.1 (population FWL) ‣ Appendix 31.C Frisch–Waugh–Lovell Theorem ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31.1</span></a>, residualizing <img alt="x_{1}" class="m" src="m/4010ea1e6b36.png" style="width:1.25em;vertical-align:-0.26em"/> is crucial but residualizing <img alt="y" class="m" src="m/64c8a7cf95e9.png" style="width:0.75em;vertical-align:-0.31em"/> is not.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem2o">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 31.2</span></span><span class="ltx_text ltx_font_bold"> (sample FWL)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem2o.p1.1"><span class="ltx_text ltx_font_italic">With data <img alt="(Y,X_{1},X_{2},\ldots,X_{p})" class="m" src="m/54c9aa259823.png" style="width:8.60em;vertical-align:-0.41em"/> containing column vectors, the coefficient of <img alt="X_{1}" class="m" src="m/318fee4a6612.png" style="width:1.52em;vertical-align:-0.26em"/> in the OLS fit of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="(X_{1},X_{2},\ldots,X_{p})" class="m" src="m/759618562dd5.png" style="width:7.52em;vertical-align:-0.41em"/> equals the coefficient of <img alt="\tilde{X}_{1}" class="m" src="m/9292a01460f8.png" style="width:1.52em;vertical-align:-0.26em"/> in the OLS fit of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> or <img alt="\tilde{Y}" class="m" src="m/4298e6e20e68.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="\tilde{X}_{1}" class="m" src="m/9292a01460f8.png" style="width:1.52em;vertical-align:-0.26em"/>, where <img alt="\tilde{Y}" class="m" src="m/4298e6e20e68.png" style="width:1.04em;vertical-align:-0.12em"/> is the residual vector from the OLS fit of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="(X_{2},\ldots,X_{p})" class="m" src="m/a71f8dc190f7.png" style="width:5.81em;vertical-align:-0.41em"/> and <img alt="\tilde{X}_{1}" class="m" src="m/9292a01460f8.png" style="width:1.52em;vertical-align:-0.26em"/> is the residual vector from the OLS fit of <img alt="X_{1}" class="m" src="m/318fee4a6612.png" style="width:1.52em;vertical-align:-0.26em"/> on <img alt="(X_{2},\ldots,X_{p})" class="m" src="m/a71f8dc190f7.png" style="width:5.81em;vertical-align:-0.41em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A3.p3.1">Again, in Theorem <a class="ltx_ref" href="#Thmtheorem2o" title="Theorem 31.2 (sample FWL) ‣ Appendix 31.C Frisch–Waugh–Lovell Theorem ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31.2</span></a>, residualizing <img alt="X_{1}" class="m" src="m/318fee4a6612.png" style="width:1.52em;vertical-align:-0.26em"/> is crucial but residualizing <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> is not.
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib81" title="">Ding, (2021)</a></cite> gives more numerical properties related to the sample FWL theorem.</p>
+</div>
+</section>
+<section class="ltx_appendix" id="chapter31.A4">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 31.D </span>Linear model</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A4.p1.1">Sometimes, we impose a stronger model assumption which requires the conditional mean of <img alt="y" class="m" src="m/64c8a7cf95e9.png" style="width:0.75em;vertical-align:-0.31em"/> given <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/> is linear:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(y\mid x)=x^{\mkern-1.5mu\mathsf{T}}\beta" class="m" src="m/1e5cdad2d373.png" style="width:6.75em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A4.p1.2">or, equivalently,</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="y=x^{\mkern-1.5mu\mathsf{T}}\beta+\varepsilon\qquad\text{with}\qquad E(\varepsilon\mid x)=0," class="m" src="m/7f97be0f7c9d.png" style="width:16.96em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A4.p1.3">which is called the restricted mean model. Under this model, the population OLS coefficient is the true parameter of interest:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_align ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\left\{E(xx^{\mkern-1.5mu\mathsf{T}})\right\}^{-1}E(xy)" class="m" src="m/5b33121d59df.png" style="width:8.53em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle=\left\{E(xx^{\mkern-1.5mu\mathsf{T}})\right\}^{-1}E\left\{xE(y\mid x)\right\}" class="m" src="m/58b531fbfe6f.png" style="width:12.94em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle=\left\{E(xx^{\mkern-1.5mu\mathsf{T}})\right\}^{-1}E(xx^{\mkern-1.5mu\mathsf{T}}\beta)" class="m" src="m/ca1ed89c15a7.png" style="width:10.72em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle=\beta." class="m" src="m/b6e3689b9252.png" style="width:2.19em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="chapter31.A4.p1.4">Moreover, the population OLS coefficient does not depend on the distribution
+of <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/>. The asymptotic inference in Section <a class="ltx_ref" href="#chapter31.A1" title="Appendix 31.A Population ordinary least squares ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31.A</span></a> applies to this model too.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A4.p2.1">In the special case with <img alt="\textup{var}(\varepsilon\mid x)=\sigma^{2}" class="m" src="m/6dc01dd04cd0.png" style="width:6.62em;vertical-align:-0.36em"/>,
+the asymptotic variance of the OLS coefficient reduces to</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="V=\sigma^{2}\{E(xx^{\mkern-1.5mu\mathsf{T}})\}^{-1}" class="m" src="m/3463b8686a6a.png" style="width:8.70em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A4.p2.2">so a simpler moment estimator for the asymptotic variance of <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> is</p>
+<table class="ltx_equation ltx_eqn_table" id="chapter31.A4.E161">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{V}_{\textsc{ols}}=\hat{\sigma}^{2}\left(\sum_{i=1}^{n}x_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}\right)^{-1}" class="m" src="m/30d33606f3a0.png" style="width:10.77em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(161)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A4.p2.3">where <img alt="\hat{\sigma}^{2}=(n-p)^{-1}\sum_{i=1}^{n}\hat{\varepsilon}_{i}^{2}" class="m" src="m/45705ebbb46b.png" style="width:10.46em;vertical-align:-0.41em"/> is an unbiased estimator for <img alt="\sigma^{2}" class="m" src="m/e58684f30853.png" style="width:1.28em;vertical-align:-0.12em"/>, recalling that <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> denotes the sample size and <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/> denotes the dimension of <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/>. This is the standard covariance estimator from the <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span> function.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A4.p3.1">Based on the <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">BostonHousing</span> data, we first obtain the standard output from the <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span> function.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">library</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"mlbench"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">BostonHousing</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">medv</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">BostonHousing</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">summary</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">Call</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">:</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">formula</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">medv</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">BostonHousing</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Residuals</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">:</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Min</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">Q</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Median</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">Q</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Max</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-15.595</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-2.730</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.518</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.777</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">26.199</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Coefficients</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">:</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Estimate</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Std</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Error</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">t</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">value</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Pr</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(&gt;|</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">t</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">|)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Intercept</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.646</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">5.103</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">7.144</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.28</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-12</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">***</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">crim</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1.080</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.286</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-3.287</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.001087</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">**</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">zn</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.642</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.373</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.382</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.000778</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">***</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">indus</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2.056</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">6.150</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.334</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.738288</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">chas1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2.687</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">8.616</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.118</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.001925</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">**</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nox</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1.777</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.820</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-4.651</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.25</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-06</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">***</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rm</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.810</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.179</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">9.116</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&lt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-16</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">***</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">age</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">6.922</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-04</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.321</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.052</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.958229</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dis</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1.476</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.995</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-7.398</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">6.01</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-13</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">***</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rad</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.060</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">6.635</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.613</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">5.07</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-06</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">***</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tax</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1.233</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.760</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-03</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-3.280</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.001112</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">**</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ptratio</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-9.527</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.308</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-7.283</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.31</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-12</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">***</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">b</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">9.312</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-03</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2.686</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-03</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.467</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.000573</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">***</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lstat</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-5.248</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">5.072</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-10.347</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&lt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-16</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">***</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A4.p5.1">In <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span>, the <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span> function can compute <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/>, and the <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">hccm</span> function in the package <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">car</span> can compute <img alt="\hat{V}_{\textsc{ehw}}" class="m" src="m/f13d406c558b.png" style="width:2.26em;vertical-align:-0.26em"/> as well as its variants. Below we compare the <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/>-statistics based on different choices of the standard errors. In this example, the EHW standard errors differ a lot for some regression coefficients.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">library</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"car"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">diag</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hccm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">type</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc0"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">diag</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hccm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">type</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc1"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc2</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">diag</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hccm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">type</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc2"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc3</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sqrt</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">diag</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hccm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">type</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc3"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tvalues</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">summary</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[,1]/</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">cbind</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">summary</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[,2],</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc0</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc1</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc3</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">colnames</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tvalues</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"ols"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc0"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc1"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc2"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"hc3"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">round</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tvalues</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ols</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc2</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hc3</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Intercept</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">7.14</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.62</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.56</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.48</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.33</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">crim</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-3.29</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-3.78</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-3.73</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-3.48</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-3.17</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">zn</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.38</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.42</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.37</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.35</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.27</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">indus</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.33</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.41</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.41</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.41</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.40</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">chas1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.12</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2.11</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2.08</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2.05</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2.00</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nox</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-4.65</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-4.76</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-4.69</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-4.64</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-4.53</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rm</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">9.12</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.57</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.51</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.43</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.28</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">age</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.05</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.04</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.04</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.04</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.04</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dis</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-7.40</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-6.97</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-6.87</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-6.81</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-6.66</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">rad</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.61</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">5.05</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.98</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.91</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.76</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tax</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-3.28</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-4.65</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-4.58</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-4.54</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-4.43</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">ptratio</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-7.28</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-8.23</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-8.11</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-8.06</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-7.89</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">b</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.47</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.53</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.48</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.44</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.34</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lstat</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-10.35</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-5.34</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-5.27</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-5.18</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-5.01</span>
+</div>
+</div>
+</div>
+</section>
+<section class="ltx_appendix" id="chapter31.A5">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 31.E </span>Weighted least squares</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A5.p1.1">Assuming that <img alt="(w_{i},x_{i},y_{i})\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}(w,x,y)" class="m" src="m/d417796ba0fc.png" style="width:9.95em;vertical-align:-0.36em"/> with <img alt="w\neq 0" class="m" src="m/af9a523fdbbc.png" style="width:2.82em;vertical-align:-0.31em"/>. At the population level, we can define the weighted least squares (WLS) coefficient as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\beta_{w}=\arg\min_{b}E\{w(y-x^{\mkern-1.5mu\mathsf{T}}b)^{2}\}," class="m" src="m/1b3cacca8242.png" style="width:13.47em;vertical-align:-0.87em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A5.p1.2">which satisfies</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E\{wx(y-x^{\mkern-1.5mu\mathsf{T}}\beta_{w})\}=0" class="m" src="m/5f71e245f895.png" style="width:9.97em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A5.p1.3">and thus equals</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\beta_{w}=\{E(wxx^{\mkern-1.5mu\mathsf{T}})\}^{-1}E(wxy)" class="m" src="m/dde5644c21a4.png" style="width:12.21em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A5.p1.4">if <img alt="E(wxx^{\mkern-1.5mu\mathsf{T}})" class="m" src="m/5b56b64d9ea0.png" style="width:4.19em;vertical-align:-0.36em"/> is invertible.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A5.p2.1">At the sample level, we can define the WLS coefficient as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\beta}_{w}=\arg\min_{b}\sum_{i=1}^{n}w_{i}(y_{i}-x_{i}^{\mkern-1.5mu\mathsf{T}}b)^{2}," class="m" src="m/54df29de51dc.png" style="width:13.88em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A5.p2.2">which satisfies</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sum_{i=1}^{n}w_{i}x_{i}(y_{i}-x_{i}^{\mkern-1.5mu\mathsf{T}}\hat{\beta}_{w})=0" class="m" src="m/80a56d0347c2.png" style="width:10.72em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A5.p2.3">and thus equals</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\beta}_{w}=\left(n^{-1}\sum_{i=1}^{n}w_{i}x_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}\right)^{-1}\left(n^{-1}\sum_{i=1}^{n}w_{i}x_{i}y_{i}\right)" class="m" src="m/a487de061c44.png" style="width:19.87em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A5.p2.4">if <img alt="\sum_{i=1}^{n}w_{i}x_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}" class="m" src="m/19aa5cbb228f.png" style="width:5.81em;vertical-align:-0.41em"/> is invertible.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A5.p3.1">In <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span>, we can specify <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">weights</span> in the <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span> function to implement WLS.</p>
+</div>
+</section>
+<section class="ltx_appendix" id="chapter31.A6">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 31.F </span>Logistic regression</h3>
+<section class="ltx_subsection" id="chapter31.A6.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">31.F.1 </span>Model</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A6.SS1.p1.1">Technically, we can apply the OLS procedure even if the outcome <img alt="y" class="m" src="m/64c8a7cf95e9.png" style="width:0.75em;vertical-align:-0.31em"/> is binary. However, it is a little awkward to have predicted probabilities outside the range of <img alt="[0,1]" class="m" src="m/62f719e60b27.png" style="width:2.24em;vertical-align:-0.36em"/>. This motivates us to consider the
+following model:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(y_{i}=1\mid x_{i})=g(x_{i}^{\mkern-1.5mu\mathsf{T}}\beta)," class="m" src="m/81f8082192df.png" style="width:10.94em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A6.SS1.p1.2">where <img alt="g(\cdot):\mathbb{R}\rightarrow[0,1]" class="m" src="m/d2f59fd5e90a.png" style="width:6.91em;vertical-align:-0.36em"/> is a monotone function,
+and its inverse is often called the <span class="ltx_text ltx_font_italic">link function</span>. The <img alt="g(\cdot)" class="m" src="m/adde2de9120e.png" style="width:1.81em;vertical-align:-0.36em"/> function can be any distribution function of a random variable, but we will focus on the logistic form:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="g(z)=\frac{e^{z}}{1+e^{z}}=(1+e^{-z})^{-1}." class="m" src="m/e762bd84b464.png" style="width:12.98em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A6.SS1.p1.3">We can also write the logistic model
+as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(y_{i}=1\mid x_{i})=\frac{e^{x_{i}^{\mkern-1.5mu\mathsf{T}}\beta}}{1+e^{x_{i}^{\mkern-1.5mu\mathsf{T}}\beta}}," class="m" src="m/71c8a0a6d701.png" style="width:11.73em;vertical-align:-1.01em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A6.SS1.p1.4">or, equivalently, with the definition <img alt="\text{logit}(z)=\log\frac{z}{1-z}" class="m" src="m/90120d4c4272.png" style="width:7.93em;vertical-align:-0.53em"/>, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\text{logit}\left\{\textup{pr}(y_{i}=1\mid x_{i})\right\}=x_{i}^{\mkern-1.5mu\mathsf{T}}\beta." class="m" src="m/92a21acd50dc.png" style="width:12.74em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A6.SS1.p2.1">Assume that <img alt="x_{i1}" class="m" src="m/80e1b1c2f5c1.png" style="width:1.54em;vertical-align:-0.26em"/> is binary.
+Under the logistic model, we have</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\beta_{1}" class="m" src="m/1525698b0aff.png" style="width:1.25em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\text{logit}\left\{\textup{pr}(y_{i}=1\mid x_{i1}=1,\ldots)\right\}-\text{logit}\left\{\textup{pr}(y_{i}=1\mid x_{i1}=0,\ldots)\right\}" class="m" src="m/b40a3109d67c.png" style="width:27.61em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\log\frac{\textup{pr}(y_{i}=1\mid x_{i1}=1,\ldots)/\textup{pr}(y_{i}=0\mid x_{i1}=1,\ldots)}{\textup{pr}(y_{i}=1\mid x_{i1}=0,\ldots)/\textup{pr}(y_{i}=0\mid x_{i1}=0,\ldots)}," class="m" src="m/056339532d7c.png" style="width:22.64em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="chapter31.A6.SS1.p2.2">where <img alt="\ldots" class="m" src="m/41265641e123.png" style="width:1.40em;vertical-align:-0.12em"/> contains all other regressor <img alt="x_{i2},\ldots,x_{ip}" class="m" src="m/0aa475685ec8.png" style="width:5.08em;vertical-align:-0.41em"/>.
+Therefore, the coefficient <img alt="\beta_{1}" class="m" src="m/dc60979297b1.png" style="width:1.25em;vertical-align:-0.31em"/> equals the log of the odds ratio of <img alt="x_{i1}" class="m" src="m/80e1b1c2f5c1.png" style="width:1.54em;vertical-align:-0.26em"/> on <img alt="y_{i}" class="m" src="m/c4042bdaba7e.png" style="width:1.06em;vertical-align:-0.31em"/> conditional on other regressors.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter31.A6.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">31.F.2 </span>Maximum likelihood estimate</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A6.SS2.p1.1">Let <img alt="\textup{pr}(y_{i}=1\mid x_{i})=\pi(x_{i},\beta)" class="m" src="m/78a488ee40dc.png" style="width:11.03em;vertical-align:-0.36em"/>.
+To estimate the parameter <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/>, we can maximize the following likelihood function:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_align ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle L(\beta)" class="m" src="m/2ab9db089018.png" style="width:2.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle=\prod_{i=1}^{n}\left\{\pi(x_{i},\beta)\right\}^{y_{i}}\left\{1-\pi(x_{i},\beta)\right\}^{1-y_{i}}" class="m" src="m/4558206b1cd1.png" style="width:15.90em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle=\prod_{i=1}^{n}\left\{\frac{\pi(x_{i},\beta)}{1-\pi(x_{i},\beta)}\right\}^{y_{i}}\left\{1-\pi(x_{i},\beta)\right\}" class="m" src="m/4ebcf848d133.png" style="width:16.57em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle=\prod_{i=1}^{n}\left(e^{x_{i}^{\mkern-1.5mu\mathsf{T}}\beta}\right)^{y_{i}}\frac{1}{1+e^{x_{i}^{\mkern-1.5mu\mathsf{T}}\beta}}" class="m" src="m/52eced90d4e9.png" style="width:10.46em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle=\prod_{i=1}^{n}\frac{e^{y_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}\beta}}{1+e^{x_{i}^{\mkern-1.5mu\mathsf{T}}\beta}}." class="m" src="m/094c62af8809.png" style="width:6.79em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="chapter31.A6.SS2.p1.2">Let <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> denote the maximizer, which is called the maximum likelihood estimate (MLE). Taking the log of <img alt="L(\beta)" class="m" src="m/856de79f0f99.png" style="width:2.31em;vertical-align:-0.36em"/> and differentiating it with respect to <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/>, we can show that the MLE must satisfy the first-order condition:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sum_{i=1}^{n}x_{i}\{y_{i}-\pi(x_{i},\hat{\beta})\}=0." class="m" src="m/91d84cbfe95e.png" style="width:11.25em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A6.SS2.p1.3">If <img alt="x_{i}" class="m" src="m/3d91e1378913.png" style="width:1.13em;vertical-align:-0.26em"/> contains the intercept, the MLE must satisfy</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sum_{i=1}^{n}\{y_{i}-\pi(x_{i},\hat{\beta})\}=0," class="m" src="m/01d6982f347b.png" style="width:10.19em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A6.SS2.p1.4">that is, the average of the observed <img alt="y_{i}" class="m" src="m/c4042bdaba7e.png" style="width:1.06em;vertical-align:-0.31em"/>’s must be identical to the average of the fitted probabilities <img alt="\pi(x_{i},\hat{\beta})" class="m" src="m/8aca911acee8.png" style="width:3.59em;vertical-align:-0.36em"/>’s.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A6.SS2.p2.1">Using the general theory for the MLE, we can show that it is consistent for the true parameter <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/> and is asymptotically Normal:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sqrt{n}(\hat{\beta}-\beta)\rightarrow\text{N}(0,V)" class="m" src="m/a838a72ddc50.png" style="width:9.73em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A6.SS2.p2.2">in distribution, where
+<img alt="V=E[\pi(x_{i},\beta)\{1-\pi(x_{i},\beta)\}xx^{\mkern-1.5mu\mathsf{T}}]." class="m" src="m/73a02b81988f.png" style="width:15.06em;vertical-align:-0.36em"/>
+So we can approximate the covariance matrix of <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> by</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="n^{-1}\sum_{i=1}^{n}\pi(x_{i},\hat{\beta})\{1-\pi(x_{i},\hat{\beta})\}x_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}." class="m" src="m/42ccf9cca22d.png" style="width:15.35em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A6.SS2.p2.3">In <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span>, the <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">glm</span> function can find the MLE and report the estimated covariance matrix. We use the <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">lalonde</span> data to illustrate the logistic regression with the binary outcome indicating positive real earnings in 1978.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">library</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Matching</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lalonde</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">logit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">re78</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">glm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">I</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">re78</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;0)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">binomial</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lalonde</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">summary</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">logit</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">re78</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">Call</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">:</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">glm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">formula</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">I</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">re78</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">family</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">binomial</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lalonde</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Deviance</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Residuals</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">:</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Min</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">Q</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Median</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">Q</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Max</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-2.1789</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1.3170</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.7568</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.9413</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.0882</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Coefficients</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">:</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Estimate</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Std</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Error</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">value</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Pr</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(&gt;|</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">z</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">|)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Intercept</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.910</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.241</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.539</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.1238</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">age</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-2.812</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-03</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.533</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.183</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.8545</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">educ</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-2.179</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">7.831</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.278</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.7808</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">black</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1.060</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">5.041</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-2.103</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.0354</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">hisp</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2.741</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">6.967</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.393</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.6940</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">married</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">7.577</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.057</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.248</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.8042</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">nodegr</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-1.984</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.460</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.573</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.5664</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">re74</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">7.857</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-06</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.173</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-05</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.248</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.8044</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">re75</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.016</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-05</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">6.058</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-05</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.663</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.5074</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">u74</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-6.177</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">4.095</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.151</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.8801</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">u75</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.505</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3.518</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.043</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.9659</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">treat</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">5.412</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2.222</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-01</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2.435</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.0149</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">*</span>
+</div>
+</div>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter31.A6.SS3">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">31.F.3 </span>Extension to the case-control study</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A6.SS3.p1.1">In case-control studies, sampling is conditional on the binary outcome, that is, units with outcomes <img alt="y_{i}=1" class="m" src="m/b1ce87388f4c.png" style="width:2.89em;vertical-align:-0.31em"/> and <img alt="y_{i}=0" class="m" src="m/7e168ad3dc9a.png" style="width:2.89em;vertical-align:-0.31em"/> are sampled with different probabilities. Let <img alt="s_{i}" class="m" src="m/0fe4d9aca30b.png" style="width:1.04em;vertical-align:-0.26em"/> be the sampling indicator. In case-control studies, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(s_{i}=1\mid x_{i},y_{i})=\textup{pr}(s_{i}=1\mid y_{i})" class="m" src="m/6387b1f1a0cc.png" style="width:14.94em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A6.SS3.p1.2">as a function of <img alt="y_{i}" class="m" src="m/c4042bdaba7e.png" style="width:1.06em;vertical-align:-0.31em"/>, and we only observe units with <img alt="s_{i}=1" class="m" src="m/13905fc71be5.png" style="width:2.87em;vertical-align:-0.26em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A6.SS3.p2.1">Based on the model and the sampling mechanism of the case-control study, it does not seem obvious whether or not we can still use logistic regression to estimate the coefficients. Nevertheless, <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib257" title="">Prentice and Pyke, (1979)</a></cite> proved a positive results. In case-control studies, logistic regression can still consistently estimate all the coefficients except for the intercept.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter31.A6.SS4">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">31.F.4 </span>Logistic regression with weights</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A6.SS4.p1.1">Sometimes, unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/> has weight <img alt="w_{i}" class="m" src="m/2674970933c4.png" style="width:1.28em;vertical-align:-0.26em"/>. Then we can fit a weighted logistic regression by solving</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sum_{i=1}^{n}w_{i}x_{i}\{y_{i}-\pi(x_{i},\hat{\beta})\}=0." class="m" src="m/69dee8b4abaa.png" style="width:12.31em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A6.SS4.p1.2">In <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span>, we can specify <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">weights</span> in the <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">glm</span> function to implement weighted logistic regression.</p>
+</div>
+</section>
+</section>
+<section class="ltx_appendix" id="chapter31.A7">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 31.G </span>Homework problems</h3>
+<section class="ltx_paragraph" id="chapter31.A7.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AE.1 </span>Sample WLS with the intercept</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P1.p1.1">Assume the regressor <img alt="x_{i}" class="m" src="m/3d91e1378913.png" style="width:1.13em;vertical-align:-0.26em"/> contains the intercept. Show that</p>
+<table class="ltx_equation ltx_eqn_table" id="chapter31.A7.E162">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\bar{y}_{w}=\bar{x}_{w}^{\mkern-1.5mu\mathsf{T}}\hat{\beta}_{w}" class="m" src="m/15452a57ad3f.png" style="width:5.13em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(162)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P1.p1.2">where <img alt="\bar{x}_{w}=\sum_{i=1}^{n}w_{i}x_{i}/\sum_{i=1}^{n}w_{i}" class="m" src="m/cc6a097cb457.png" style="width:11.59em;vertical-align:-0.41em"/> and <img alt="\bar{y}_{w}=\sum_{i=1}^{n}w_{i}y_{i}/\sum_{i=1}^{n}w_{i}" class="m" src="m/e65bf667f957.png" style="width:11.42em;vertical-align:-0.41em"/> are the weighted averages of the <img alt="x_{i}" class="m" src="m/3d91e1378913.png" style="width:1.13em;vertical-align:-0.26em"/>’s and <img alt="y_{i}" class="m" src="m/c4042bdaba7e.png" style="width:1.06em;vertical-align:-0.31em"/>’s.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="chapter31.A7.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AE.2 </span>Population OLS with a binary regressor</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P2.p1.1">Assume <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/> is binary. Define the population OLS:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\alpha,\beta)=\arg\min_{(a,b)}E\{(y-a-bx)^{2}\}." class="m" src="m/e23ca058446e.png" style="width:15.25em;vertical-align:-1.08em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P2.p1.2">Show that <img alt="\beta=E(y\mid x=1)-E(y\mid x=0)" class="m" src="m/382a387b4ae2.png" style="width:14.09em;vertical-align:-0.36em"/> and <img alt="\alpha=E(y\mid x=0)" class="m" src="m/f6974462cf5d.png" style="width:7.54em;vertical-align:-0.36em"/>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="chapter31.A7.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AE.3 </span>Univariate WLS</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P3.p1.1">As a special case of WLS, define</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(\hat{\alpha}_{w},\hat{\beta}_{w})=\arg\min_{(a,b)}\sum_{i=1}^{n}w_{i}(y_{i}-a-bx_{i})^{2}" class="m" src="m/e5b139aff131.png" style="width:17.71em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P3.p1.2">where <img alt="w_{i}\geq 0" class="m" src="m/53d76cc6b392.png" style="width:3.11em;vertical-align:-0.26em"/>. Show that</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\beta}_{w}=\frac{\sum_{i=1}^{n}w_{i}(x_{i}-\bar{x}_{w})(y_{i}-\bar{y}_{w})}{\sum_{i=1}^{n}w_{i}(x_{i}-\bar{x}_{w})^{2}}" class="m" src="m/6ca234f2cfed.png" style="width:14.72em;vertical-align:-1.11em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(163)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P3.p1.3">and</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\alpha}_{w}=\bar{y}_{w}-\hat{\beta}_{w}\bar{x}_{w}," class="m" src="m/b7d6be0c63d8.png" style="width:7.93em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(164)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P3.p1.4">where <img alt="\bar{x}_{w}=\sum_{i=1}^{n}w_{i}x_{i}/\sum_{i=1}^{n}w_{i}" class="m" src="m/cc6a097cb457.png" style="width:11.59em;vertical-align:-0.41em"/> and <img alt="\bar{y}_{w}=\sum_{i=1}^{n}w_{i}y_{i}/\sum_{i=1}^{n}w_{i}" class="m" src="m/e65bf667f957.png" style="width:11.42em;vertical-align:-0.41em"/> are the weighted averages of the <img alt="x_{i}" class="m" src="m/3d91e1378913.png" style="width:1.13em;vertical-align:-0.26em"/>’s and <img alt="y_{i}" class="m" src="m/c4042bdaba7e.png" style="width:1.06em;vertical-align:-0.31em"/>’s.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P3.p2.1">Further assume that the <img alt="x_{i}" class="m" src="m/3d91e1378913.png" style="width:1.13em;vertical-align:-0.26em"/>’s are binary. Show that</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody id="chapter31.A7.E165"><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\beta}_{w}=\frac{\sum_{i=1}^{n}w_{i}x_{i}y_{i}}{\sum_{i=1}^{n}w_{i}x_{i}}-\frac{\sum_{i=1}^{n}w_{i}(1-x_{i})y_{i}}{\sum_{i=1}^{n}w_{i}(1-x_{i})}." class="m" src="m/f940b4d4b7f1.png" style="width:17.95em;vertical-align:-1.11em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(165)</span></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P3.p2.2">That is, if the regressor is binary in the univariate WLS, the coefficient of the regressor equals the difference in the weighted means.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P3.p3.1">Remark: To prove (<a class="ltx_ref" href="#chapter31.A7.E165" title="In AE.3 Univariate WLS ‣ Appendix 31.G Homework problems ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">165</span></a>), use an appropriate reparametrization of the WLS problem. Otherwise, the derivation can be tedious.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="chapter31.A7.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AE.4 </span>OLS with orthogonal regressors</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P4.p1.1">Consider sample OLS fit of an <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/>-vector <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on an <img alt="n\times p" class="m" src="m/9d6fb1623983.png" style="width:2.55em;vertical-align:-0.31em"/> matrix <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, with coefficient <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/>. Partition <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> into <img alt="X=(X_{1},X_{2})" class="m" src="m/4e652a69f36c.png" style="width:6.24em;vertical-align:-0.36em"/>, where <img alt="X_{1}" class="m" src="m/318fee4a6612.png" style="width:1.52em;vertical-align:-0.26em"/> is an <img alt="n\times k" class="m" src="m/cdf15b42a47d.png" style="width:2.60em;vertical-align:-0.19em"/> matrix and <img alt="X_{2}" class="m" src="m/401f2f741f2b.png" style="width:1.52em;vertical-align:-0.26em"/> is an <img alt="n\times l" class="m" src="m/d873944376cb.png" style="width:2.38em;vertical-align:-0.19em"/> matrix, with <img alt="p=k+l" class="m" src="m/e9f33a2b5826.png" style="width:4.17em;vertical-align:-0.31em"/>. Correspondingly, partition <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> into</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\beta}=\begin{pmatrix}\hat{\beta}_{1}\\
+\hat{\beta}_{2}\end{pmatrix}." class="m" src="m/b8953dbc0dad.png" style="width:5.11em;vertical-align:-1.18em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P4.p2.1">Assume <img alt="X_{1}" class="m" src="m/318fee4a6612.png" style="width:1.52em;vertical-align:-0.26em"/> and <img alt="X_{2}" class="m" src="m/401f2f741f2b.png" style="width:1.52em;vertical-align:-0.26em"/> are orthogonal, that is, <img alt="X_{1}^{\mkern-1.5mu\mathsf{T}}X_{2}=0" class="m" src="m/ac4d1d218625.png" style="width:4.75em;vertical-align:-0.36em"/>. Show that <img alt="\hat{\beta}_{1}" class="m" src="m/680e7c7c1261.png" style="width:1.25em;vertical-align:-0.31em"/> equals the coefficient from OLS of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="X_{1}" class="m" src="m/318fee4a6612.png" style="width:1.52em;vertical-align:-0.26em"/> and <img alt="\hat{\beta}_{2}" class="m" src="m/daa1370a9dd0.png" style="width:1.25em;vertical-align:-0.31em"/> equals the coefficient from OLS of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="X_{2}" class="m" src="m/401f2f741f2b.png" style="width:1.52em;vertical-align:-0.26em"/>, respectively.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="chapter31.A7.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AE.5 </span>OLS with a non-degenerate transformation of the regressors</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P5.p1.1">Define <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> as the coefficient from the sample OLS fit of an <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/>-vector <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on an <img alt="n\times p" class="m" src="m/9d6fb1623983.png" style="width:2.55em;vertical-align:-0.31em"/> matrix <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>.
+Let <img alt="\Gamma" class="m" src="m/8f84e38c1bae.png" style="width:0.87em;vertical-align:-0.12em"/> be a <img alt="p\times p" class="m" src="m/a7438d262dcc.png" style="width:2.46em;vertical-align:-0.31em"/> non-degenerate matrix, and define <img alt="X^{\prime}=X\Gamma" class="m" src="m/35476dbbb157.png" style="width:4.29em;vertical-align:-0.12em"/>.
+Define <img alt="\hat{\beta}^{\prime}" class="m" src="m/c61805e46f8c.png" style="width:1.13em;vertical-align:-0.31em"/> as the coefficient from the sample OLS fit of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="X^{\prime}" class="m" src="m/d602086eaa54.png" style="width:1.42em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P5.p2.1">Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\beta}=\Gamma\hat{\beta}^{\prime}." class="m" src="m/2f3a0d98cc6e.png" style="width:3.97em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</section>
+<section class="ltx_paragraph" id="chapter31.A7.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AE.6 </span>Variances of the OLS estimator</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P6.p1.1">Assume <img alt="(x_{i},y_{i})_{i=1}^{n}\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}(x,y)" class="m" src="m/d6bffa97aef0.png" style="width:8.60em;vertical-align:-0.36em"/> and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(y\mid x)=x^{\mkern-1.5mu\mathsf{T}}\beta,\quad\textup{var}(y\mid x)=\sigma^{2}(x)." class="m" src="m/62b714ca32c8.png" style="width:16.28em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P6.p1.2">Show that the OLS estimator <img alt="\hat{\beta}" class="m" src="m/38e1ef139b24.png" style="width:0.84em;vertical-align:-0.31em"/> has conditional mean</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(\hat{\beta}\mid x_{1},\ldots,x_{n})=\beta" class="m" src="m/70c587b7c570.png" style="width:9.56em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P6.p1.3">and conditional variance</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}(\hat{\beta}\mid x_{1},\ldots,x_{n})=\left(\sum_{i=1}^{n}x_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}\right)^{-1}\left(\sum_{i=1}^{n}\sigma^{2}(x_{i})x_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}\right)\left(\sum_{i=1}^{n}x_{i}x_{i}^{\mkern-1.5mu\mathsf{T}}\right)^{-1}." class="m" src="m/51ee1dd565a1.png" style="width:30.67em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter31.A7.SS0.SSS0.P6.p2.1">Remark: This problem may provide some intuition for the variance estimators
+(<a class="ltx_ref" href="#chapter31.A2.E160" title="In Appendix 31.B Sample ordinary least squares ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">160</span></a>) and (<a class="ltx_ref" href="#chapter31.A4.E161" title="In Appendix 31.D Linear model ‣ Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">161</span></a>).</p>
+</div>
+</section>
+</section>
+</section><p class="nav bottom"><a href="index.html">目录</a><a href="33.html">← 上一章</a><a href="35.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

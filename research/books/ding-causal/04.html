@@ -1,0 +1,886 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 1 Correlation, Association, and the Yule–Simpson Paradox · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="03.html">← 上一章</a><a href="05.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter1">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 1 </span>Correlation, Association, and the Yule–Simpson Paradox</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter1.p1.1">Causality is central to human knowledge. Two famous quotes from ancient Greeks are below.</p>
+</div>
+<div class="ltx_para">
+<blockquote class="ltx_quote">
+<p class="ltx_p" id="chapter1.p2.1.1">“I would rather discover one causal law than be King of Persia.”</p>
+<p class="ltx_p" id="chapter1.p2.1.2">— Democritus</p>
+</blockquote>
+</div>
+<div class="ltx_para">
+<blockquote class="ltx_quote">
+<p class="ltx_p" id="chapter1.p3.1.1">“We do not have knowledge of a thing until we grasped its cause.”</p>
+<p class="ltx_p" id="chapter1.p3.1.2">— Aristotle</p>
+</blockquote>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter1.p4.1">However, the major part of classic statistics is about association rather than causation. This chapter will review some basic association measures and point out their fundamental limitations.</p>
+</div>
+<section class="ltx_section" id="S1">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">1 </span>Traditional view of statistics</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S1.p1.1">A traditional view of statistics is to infer correlation or association among variables. Based on this view, there is no role for causal inference in statistics. Two famous aphorisms associated with this view are as follows:</p>
+</div>
+<div class="ltx_para">
+<ul class="ltx_itemize">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S1.I1.i1.p1.1">“Correlation does not imply causation.”</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">•</span>
+<div class="ltx_para">
+<p class="ltx_p" id="S1.I1.i2.p1.1">“You can not prove causality with statistics.”</p>
+</div></li>
+</ul>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S1.p3.1">This book has a very different view: statistics is crucial for understanding causality. The main focus of this book is to introduce the formal language for causal inference and develop statistical methods to estimate causal effects in randomized experiments and observational studies.</p>
+</div>
+</section>
+<section class="ltx_section" id="S2">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">2 </span>Some commonly-used measures of association</h4>
+<section class="ltx_subsection" id="S2.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">2.1 </span>Correlation and regression</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S2.SS1.p1.1">The Pearson correlation coefficient between two random variables <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\rho_{ZY}=\frac{\textup{cov}(Z,Y)}{\sqrt{\textup{var}(Z)\textup{var}(Y)}}," class="m" src="m/40fe45e0f927.png" style="width:10.72em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S2.SS1.p1.2">which measures the linear dependence of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="Y." class="m" src="m/4e6cd3a31a03.png" style="width:1.16em;vertical-align:-0.12em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S2.SS1.p2.1">The linear regression of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> is the model</p>
+<table class="ltx_equation ltx_eqn_table" id="S2.E1">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y=\alpha+\beta Z+\varepsilon," class="m" src="m/6473fd91e1fe.png" style="width:7.56em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(1)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S2.SS1.p2.2">where <img alt="E(\varepsilon)=0" class="m" src="m/7f7ae3534a97.png" style="width:4.10em;vertical-align:-0.36em"/> and <img alt="E(\varepsilon Z)=0" class="m" src="m/0b384dae3e7d.png" style="width:4.87em;vertical-align:-0.36em"/>. We can show that the regression coefficient <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/> equals</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\beta=\frac{\textup{cov}(Z,Y)}{\textup{var}(Z)}=\rho_{ZY}\sqrt{\frac{\textup{var}(Y)}{\textup{var}(Z)}}." class="m" src="m/3d0f5bc69572.png" style="width:14.19em;vertical-align:-1.28em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S2.SS1.p2.3">So <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/> and <img alt="\rho_{ZY}" class="m" src="m/f152f841aa1f.png" style="width:2.05em;vertical-align:-0.31em"/> always have the same sign.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S2.SS1.p3.1">We can also define multiple regression of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>:</p>
+<table class="ltx_equation ltx_eqn_table" id="S2.E2">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y=\alpha+\beta Z+\gamma X+\varepsilon," class="m" src="m/704f972d1a26.png" style="width:10.29em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(2)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S2.SS1.p3.2">where <img alt="E(\varepsilon)=0,E(\varepsilon Z)=0" class="m" src="m/6d8cf30a975b.png" style="width:9.18em;vertical-align:-0.36em"/> and <img alt="E(\varepsilon X)=0" class="m" src="m/738b5b9c2f7e.png" style="width:5.01em;vertical-align:-0.36em"/>.
+We usually interpret <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/> as the “effect” of <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> on <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>, <span class="ltx_text ltx_font_italic">holding <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> constant</span> or <span class="ltx_text ltx_font_italic">conditioning on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/></span> or <span class="ltx_text ltx_font_italic">controlling for <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/></span>. Chapter <a class="ltx_ref" href="34.html#chapter31" title="Chapter 31 Linear and Logistic Regressions ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">31</span></a> reviews the basics of linear regression.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S2.SS1.p4.1">More interestingly, the <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/>’s in the above two regressions (<a class="ltx_ref" href="#S2.E1" title="In 2.1 Correlation and regression ‣ 2 Some commonly-used measures of association ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1</span></a>) and (<a class="ltx_ref" href="#S2.E2" title="In 2.1 Correlation and regression ‣ 2 Some commonly-used measures of association ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2</span></a>) can be different; they can even have different signs. The following <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> code reanalyzed the LaLonde observational data used by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib129" title="">Hainmueller, (2012)</a></cite>. The main question of interest is the “causal effect” of a job training program on earnings. The regression controlling for all covariates gives a coefficient <span class="ltx_text ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">1067.5461</span> for <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">treat</span>, whereas the regression not controlling for any covariates gives a coefficient <span class="ltx_text ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">-8506.4954</span> for <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">treat</span>.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dat</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&lt;-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">read</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">table</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter" style="font-size:90%;">"cps1re74.csv"</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">header</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">TRUE</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dat</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">u74</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&lt;-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">as</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">numeric</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dat</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">re74</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==0)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dat</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">u75</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&lt;-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">as</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">numeric</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dat</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">re75</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">==0)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>linear<span class="ltx_text ltx_lst_space"> </span>regression<span class="ltx_text ltx_lst_space"> </span>on<span class="ltx_text ltx_lst_space"> </span>the<span class="ltx_text ltx_lst_space"> </span>outcome</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>.<span class="ltx_text ltx_lst_space"> </span>means<span class="ltx_text ltx_lst_space"> </span>regression<span class="ltx_text ltx_lst_space"> </span>on<span class="ltx_text ltx_lst_space"> </span>all<span class="ltx_text ltx_lst_space"> </span>other<span class="ltx_text ltx_lst_space"> </span>variable<span class="ltx_text ltx_lst_space"> </span>in<span class="ltx_text ltx_lst_space"> </span>dat</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lmoutcome</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">re78</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dat</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">round</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">summary</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lmoutcome</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">],</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Estimate</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Std</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Error</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">t</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">value</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Pr</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(&gt;|</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">t</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">|)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1067.546</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">554.060</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.927</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.054</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lmoutcome</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">lm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">re78</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">~</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">treat</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">data</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dat</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">round</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">summary</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">lmoutcome</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">coef</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">],</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Estimate</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Std</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Error</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">t</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">value</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Pr</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(&gt;|</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">t</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">|)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-8506.495</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">712.766</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-11.934</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.000</span>
+</div>
+</div>
+</div>
+</section>
+<section class="ltx_subsection" id="S2.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">2.2 </span>Contingency tables</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S2.SS2.p1.1">We can represent the joint distribution of two binary variables <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> by a two-by-two contingency table. With <img alt="p_{zy}=\textup{pr}(Z=z,Y=y)" class="m" src="m/35c5128358d8.png" style="width:10.38em;vertical-align:-0.41em"/>, we can summarize the joint distribution in the following table:</p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="p_{11}" class="m" src="m/823c8f298978.png" style="width:1.59em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="p_{10}" class="m" src="m/152449985493.png" style="width:1.59em;vertical-align:-0.31em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="p_{01}" class="m" src="m/57fc01599601.png" style="width:1.59em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="p_{00}" class="m" src="m/fcf8192fbca6.png" style="width:1.59em;vertical-align:-0.31em"/></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S2.SS2.p3.1">Viewing <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> as the treatment or exposure and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> as the outcome, we can define the risk difference as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><span class="ltx_text ltx_markedasmath ltx_font_smallcaps">rd</span></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\textup{pr}(Y=1\mid Z=1)-\textup{pr}(Y=1\mid Z=0)" class="m" src="m/bee7ad2a4131.png" style="width:17.01em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{p_{11}}{p_{11}+p_{10}}-\frac{p_{01}}{p_{01}+p_{00}}," class="m" src="m/51b16d8303d1.png" style="width:10.07em;vertical-align:-0.99em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S2.SS2.p3.2">the risk ratio as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><span class="ltx_text ltx_markedasmath ltx_font_smallcaps">rr</span></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\textup{pr}(Y=1\mid Z=1)}{\textup{pr}(Y=1\mid Z=0)}" class="m" src="m/4ec30e5f175b.png" style="width:8.26em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{p_{11}}{p_{11}+p_{10}}\Big/\frac{p_{01}}{p_{01}+p_{00}}," class="m" src="m/a4d06d85cced.png" style="width:9.64em;vertical-align:-0.99em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S2.SS2.p3.3">and the odds ratio<sup><a href="#fn-chapter1-1" id="fn-chapter1-1-ref">1</a></sup> as</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><span class="ltx_text ltx_markedasmath ltx_font_smallcaps">or</span></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\textup{pr}(Y=1\mid Z=1)/\textup{pr}(Y=0\mid Z=1)}{\textup{pr}(Y=1\mid Z=0)/\textup{pr}(Y=0\mid Z=0)}" class="m" src="m/281a3b2a01f1.png" style="width:16.53em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\frac{p_{11}}{p_{11}+p_{10}}/\frac{p_{10}}{p_{11}+p_{10}}}{\frac{p_{01}}{p_{01}+p_{00}}/\frac{p_{00}}{p_{01}+p_{00}}}" class="m" src="m/7761a68d7b7d.png" style="width:7.25em;vertical-align:-1.28em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{p_{11}p_{00}}{p_{10}p_{01}}." class="m" src="m/9db4ce06db43.png" style="width:3.44em;vertical-align:-0.99em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S2.SS2.p4.1">The terminology “risk difference”, “risk ratio”, and “odds ratio” comes from epidemiology. Because the outcomes in epidemiology are often diseases, it is natural to use the name “risk” for the probability of having diseases.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S2.SS2.p5.1">We have the following simple facts about these measures.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_proposition" id="Thmproposition1">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Proposition 1.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmproposition1.p1.1"><span class="ltx_text ltx_font_italic">(1) The following statements are all equivalent<sup><a href="#fn-chapter1-2" id="fn-chapter1-2-ref">2</a></sup>: <img alt="Z\ind Y" class="m" src="m/8a7bc7add948.png" style="width:2.70em;vertical-align:-0.12em"/>, <img alt="\textsc{rd}=0" class="m" src="m/4e303a56420a.png" style="width:3.30em;vertical-align:-0.12em"/>, <img alt="\textsc{rr}=1" class="m" src="m/77b6c17654c3.png" style="width:3.28em;vertical-align:-0.12em"/>, and <img alt="\textsc{or}=1" class="m" src="m/56d5245250e0.png" style="width:3.30em;vertical-align:-0.12em"/>.
+(2) If <img alt="p_{zy}" class="m" src="m/5d2d1ae04803.png" style="width:1.64em;vertical-align:-0.41em"/>’s are all positive, then <img alt="\textsc{rd}&gt;0" class="m" src="m/d2fc19ea1f36.png" style="width:3.30em;vertical-align:-0.14em"/> is equivalent to <img alt="\textsc{rr}&gt;1" class="m" src="m/7513c82af93e.png" style="width:3.28em;vertical-align:-0.14em"/> and is also equivalent to <img alt="\textsc{or}&gt;1" class="m" src="m/f13f59651768.png" style="width:3.30em;vertical-align:-0.14em"/>.
+(3)
+<img alt="\textsc{or}\approx\textsc{rr}" class="m" src="m/13b043bf99cf.png" style="width:4.00em;vertical-align:-0.12em"/> if <img alt="\textup{pr}(Y=1\mid Z=1)" class="m" src="m/6ea42678213d.png" style="width:8.02em;vertical-align:-0.36em"/> and <img alt="\textup{pr}(Y=1\mid Z=0)" class="m" src="m/5e9c78480173.png" style="width:8.02em;vertical-align:-0.36em"/> are small.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S2.SS2.p6.1">I leave the proofs of statements (1) and (2) as Problem <a class="ltx_ref" href="#S5.SS0.SSS0.P1" title="1.1 Independence in two-by-two tables ‣ 5 Homework Problems ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1.1</span></a>. Statement (3) is informal. The approximation holds because the odds <img alt="p/(1-p)" class="m" src="m/013e87b69c79.png" style="width:4.24em;vertical-align:-0.36em"/> is close to the probability <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/> for rare diseases with <img alt="p\approx 0" class="m" src="m/76e7b497cf9f.png" style="width:2.58em;vertical-align:-0.31em"/>: by Taylor expansion <img alt="p/(1-p)=p+p^{2}+\cdots\approx p" class="m" src="m/7533bd6bf177.png" style="width:12.48em;vertical-align:-0.36em"/>. In epidemiology, if the outcome represents the occurrence of a rare disease, then it is reasonable to assume that <img alt="\textup{pr}(Y=1\mid X=1)" class="m" src="m/3b445d4fdeb6.png" style="width:8.17em;vertical-align:-0.36em"/> and <img alt="\textup{pr}(Y=1\mid X=0)" class="m" src="m/58347cd24bed.png" style="width:8.17em;vertical-align:-0.36em"/> are small.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S2.SS2.p7.1">We can also define conditional versions of the <span class="ltx_text ltx_font_smallcaps">rd</span>, <span class="ltx_text ltx_font_smallcaps">rr</span>, and <span class="ltx_text ltx_font_smallcaps">or</span> if the probabilities are replaced by the conditional probabilities given another variable <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, i.e., <img alt="\textup{pr}(Y=1\mid Z=1,X=x)" class="m" src="m/a6980280e370.png" style="width:11.27em;vertical-align:-0.36em"/> and <img alt="\textup{pr}(Y=1\mid Z=0,X=x)." class="m" src="m/0960d874a08c.png" style="width:11.54em;vertical-align:-0.36em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S2.SS2.p8.1">With counts <img alt="n_{zy}=\#\{i:Z_{i}=z,Y_{i}=y\}" class="m" src="m/250a84d89d66.png" style="width:12.14em;vertical-align:-0.41em"/>, we can summarize the observed data in the following two-by-two table:</p>
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="n_{11}" class="m" src="m/da20dca27f60.png" style="width:1.69em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="n_{10}" class="m" src="m/6f12a53c5e2a.png" style="width:1.69em;vertical-align:-0.26em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n_{01}" class="m" src="m/1d4cc1360372.png" style="width:1.69em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n_{00}" class="m" src="m/c886bc93a633.png" style="width:1.69em;vertical-align:-0.26em"/></td></tr>
+</tbody>
+</table></div>
+<p class="ltx_p" id="S2.SS2.p8.3">We can estimate <span class="ltx_text ltx_font_smallcaps">rd</span>, <span class="ltx_text ltx_font_smallcaps">rr</span>, and <span class="ltx_text ltx_font_smallcaps">or</span> by replacing the true probabilities by the sample proportions <img alt="\hat{p}_{zy}=n_{zy}/n" class="m" src="m/532729d4b200.png" style="width:5.54em;vertical-align:-0.41em"/>, where <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> is the total sample size (see Chapter <a class="ltx_ref" href="33.html#chapter30.A3.SS2" title="30.C.2 Estimation with two-by-two tables ‣ Appendix 30.C Inference with two-by-two tables ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.C.2</span></a>). In <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span>, functions <span class="ltx_text ltx_lst_language_R ltx_lstlisting"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fisher</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.<span class="ltx_text ltx_lst_identifier">test</span></span></span> performs an exact test and <span class="ltx_text ltx_lst_language_R ltx_lstlisting"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">chisq</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.<span class="ltx_text ltx_lst_identifier">test</span></span></span> performs an asymptotic test for <img alt="Z\ind Y" class="m" src="m/8a7bc7add948.png" style="width:2.70em;vertical-align:-0.12em"/> based on a two-by-two table of observed data.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample1">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 1.1</span></span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib31" title="">Bertrand and Mullainathan, (2004)</a></cite><span class="ltx_text ltx_font_italic"> conducted a randomized experiment on resumes to study the effect of perceived race on callbacks for interviews. They randomly assigned Black-sounding or White-sounding names on fictitious resumes to help-wanted ads in Boston and Chicago newspapers. The following two-by-two table summarizes perceived race and callback:</span></p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">resume</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold ltx_font_italic" style="font-size:90%;">read</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold ltx_font_italic" style="font-size:90%;">csv</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_string ltx_font_typewriter ltx_font_italic" style="font-size:90%;">"resume.csv"</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">Alltable</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold ltx_font_italic" style="font-size:90%;">table</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">resume</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">race</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">resume</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold ltx_font_italic" style="font-size:90%;">call</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">Alltable</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">0</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">black</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">2278</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">157</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">white</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">2200</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">235</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1.p3.1"><span class="ltx_text ltx_font_italic">The two rows have the same total count, so it is apparent that White-sounding names received more callbacks. Fisher’s exact test below shows that this difference is statistically significant.</span></p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">fisher</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">test</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">Alltable</span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter ltx_font_italic" style="font-size:90%;">Fisher</span><span class="ltx_text ltx_lst_string ltx_font_typewriter ltx_font_italic" style="font-size:90%;">’s<span class="ltx_text ltx_lst_space"> </span>Exact<span class="ltx_text ltx_lst_space"> </span>Test<span class="ltx_text ltx_lst_space"> </span>for<span class="ltx_text ltx_lst_space"> </span>Count<span class="ltx_text ltx_lst_space"> </span>Data</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">data:</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">Alltable</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">p-value</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">4.759e-05</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">alternative</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">hypothesis:</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">true</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">odds</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">ratio</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">is</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">not</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">equal</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">to</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">1</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">95</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">percent</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">confidence</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">interval:</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">1.249828</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">1.925573</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">sample</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">estimates:</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">odds</span><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">ratio</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter ltx_font_italic" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter ltx_font_italic" style="font-size:90%;">1.549732’</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section class="ltx_section" id="S3">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">3 </span>An example of the Yule–Simpson Paradox</h4>
+<section class="ltx_subsection" id="S3.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">3.1 </span>Data</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS1.p1.1">The classic kidney stone example is from <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib54" title="">Charig et al., (1986)</a></cite>, where <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> is the treatment with <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/> for an open surgical procedure and <img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/> for a small puncture procedure, and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> is the outcome with <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/> for success and <img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/> for failure. The treatment and outcome data can be summarized in the following two-by-two table:</p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="273" class="m" src="m/9805207ceda6.png" style="width:1.73em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="77" class="m" src="m/c4f65e02a27c.png" style="width:1.23em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="289" class="m" src="m/937972b5a8a8.png" style="width:1.73em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="61" class="m" src="m/27d7ea9a3c07.png" style="width:1.23em;vertical-align:-0.12em"/></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS1.p3.1">The estimated <span class="ltx_text ltx_font_smallcaps">rd</span> is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\widehat{\textsc{rd}}=\frac{273}{273+77}-\frac{289}{289+61}=78\%-83\%=-5\%&lt;0." class="m" src="m/d021950584b9.png" style="width:23.70em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S3.SS1.p3.2">Treatment 0 seems better, that is, the small puncture leads to a higher success rate compared to the open surgical procedure.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS1.p4.1">However, the data were not from a randomized controlled trial (RCT)<sup><a href="#fn-chapter1-3" id="fn-chapter1-3-ref">3</a></sup>. Patients receiving treatment <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/> can be very different from patients receiving treatment <img alt="0" class="m" src="m/f83ba497477f.png" style="width:0.72em;vertical-align:-0.12em"/>. A “lurking variable” in this study is the severity of the case: some patients have smaller stones and some patients have larger stones. We can split the data according to the size of the stones.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS1.p5.1">For patients with smaller stones, the treatment and outcome data can be summarized in the following two-by-two table:</p>
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="81" class="m" src="m/71a3e651b6a5.png" style="width:1.23em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="6" class="m" src="m/d6ff1ddccaf9.png" style="width:0.72em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="234" class="m" src="m/d834a5b021c8.png" style="width:1.73em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="36" class="m" src="m/b18f1326a9f1.png" style="width:1.23em;vertical-align:-0.12em"/></td></tr>
+</tbody>
+</table></div>
+<p class="ltx_p" id="S3.SS1.p5.3">For patients with larger stones, the treatment and outcome data can be summarized in the following two-by-two table:</p>
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_th ltx_th_row ltx_border_t"></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="192" class="m" src="m/eeed9811b0f3.png" style="width:1.73em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="71" class="m" src="m/d08a48a23c12.png" style="width:1.23em;vertical-align:-0.12em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="55" class="m" src="m/4222641ce3a6.png" style="width:1.23em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="25" class="m" src="m/1aaff13c1259.png" style="width:1.23em;vertical-align:-0.12em"/></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS1.p6.1">The latter two tables must add up to the first table:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="81+192=273,\quad 6+71=77,\quad 234+55=289,\quad 36+25=61." class="m" src="m/5e91e9773d62.png" style="width:28.57em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S3.SS1.p6.2">From the table for patients with smaller stones, the estimated <span class="ltx_text ltx_font_smallcaps">rd</span> is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\widehat{\textsc{rd}}_{\text{smaller}}=\frac{81}{81+6}-\frac{234}{234+36}=93\%-87\%=6\%&gt;0," class="m" src="m/903bd4fa02de.png" style="width:24.48em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S3.SS1.p6.3">suggesting that treatment 1 is better. From the table for patients with larger stones, the estimated <span class="ltx_text ltx_font_smallcaps">rd</span> is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\widehat{\textsc{rd}}_{\text{larger}}=\frac{192}{192+71}-\frac{55}{55+25}=73\%-69\%=4\%&gt;0," class="m" src="m/a93edce2af0f.png" style="width:24.50em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S3.SS1.p6.4">also suggesting that treatment 1 is better.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS1.p7.1">The above data analysis leads to</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\widehat{\textsc{rd}}&lt;0,\quad\widehat{\textsc{rd}}_{\text{smaller}}&gt;0,\quad\widehat{\textsc{rd}}_{\text{larger}}&gt;0." class="m" src="m/b684989e5aa0.png" style="width:17.18em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S3.SS1.p7.2">Informally, treatment 1 is better for both patients with smaller and larger stones, but treatment 1 is worse for the whole population. This interpretation is quite confusing if the goal is to infer the treatment effect. In statistics, this is called the Yule–Simpson Paradox or Simpson’s Paradox in which the marginal association has the opposite sign to the conditional associations at all levels.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S3.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">3.2 </span>Explanation</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS2.p1.1">Let <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> be the binary indicator with <img alt="X=1" class="m" src="m/83b271bd5e61.png" style="width:2.96em;vertical-align:-0.12em"/> for smaller stones and <img alt="X=0" class="m" src="m/d23ac894d86c.png" style="width:2.96em;vertical-align:-0.12em"/> for larger stones.
+Let us first take a look at the <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>–<img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> relationship by comparing the probabilities of receiving treatment 1 among patients with smaller and larger stones:</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\widehat{\textup{pr}}(Z=1\mid X=1)-\widehat{\textup{pr}}(Z=1\mid X=0)" class="m" src="m/d2b30e9a032c.png" style="width:17.22em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{81+6}{81+6+234+36}-\frac{192+71}{192+71+55+25}" class="m" src="m/389170c8c498.png" style="width:17.78em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 24\%-77\%" class="m" src="m/cf26d0d821d2.png" style="width:5.13em;vertical-align:-0.19em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle-53\%&lt;0." class="m" src="m/88e1dc52cdc2.png" style="width:4.96em;vertical-align:-0.19em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S3.SS2.p1.2">So patients with larger stones tend to take treatment 1 more frequently. Statistically, <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> and <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> have negative association.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS2.p2.1">Let us then take a look at the <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>–<img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> relationship by comparing the probabilities of success among patients with smaller and larger stones: under treatment 1,</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\widehat{\textup{pr}}(Y=1\mid Z=1,X=1)-\widehat{\textup{pr}}(Y=1\mid Z=1,X=0)" class="m" src="m/c93b0c3d7c5f.png" style="width:23.39em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{81}{81+6}-\frac{192}{192+71}" class="m" src="m/0b8d66c9cf13.png" style="width:8.38em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 93\%-73\%" class="m" src="m/8c91568a8cc1.png" style="width:5.13em;vertical-align:-0.19em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 20\%&gt;0;" class="m" src="m/b27e28abb5b2.png" style="width:4.17em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S3.SS2.p2.2">under treatment 0,</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\widehat{\textup{pr}}(Y=1\mid Z=0,X=1)-\widehat{\textup{pr}}(Y=1\mid Z=0,X=0)" class="m" src="m/820a4973dc35.png" style="width:23.39em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{234}{234+36}-\frac{55}{55+25}" class="m" src="m/fe94938e2570.png" style="width:8.89em;vertical-align:-0.89em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 87\%-69\%" class="m" src="m/b84c3930241e.png" style="width:5.13em;vertical-align:-0.19em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle 18\%&gt;0." class="m" src="m/000adf26acfb.png" style="width:4.17em;vertical-align:-0.17em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="S3.SS2.p2.3">So under both treatment levels, patients with smaller stones have higher success probabilities. Statistically, <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> have positive association conditional on both treatment levels.</p>
+</div>
+<figure class="ltx_figure" id="S3.F1">
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><span class="ltx_inline-block"><svg class="ltx_picture ltx_markedasmath" height="68.95" overflow="visible" style="vertical-align:-58.807250588072506px" version="1.1" viewbox="9.37 58.81 125.42 68.95" width="125.42"><g transform="matrix(1 0 0 -1 9.368795139159143 68.95435587142832) translate(0,3.46) translate(9.37,0)"><g transform="translate(42.58,0) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.91em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="12.55"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{X\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces\ignorespaces}" class="m" src="m/3c92af8a8d6a.png" style="width:1.13em;vertical-align:-0.12em"/></span></span></foreignobject></g><path d="M 43.69853689938771 -7.610350076103501 L 43.69853689938771 -7.610350076103501" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(15.56,0) translate(0,-15.44) translate(4.15,0) translate(0,-2.09)"><foreignobject height="4.17" overflow="visible" style="--ltx-fo-width:0.27em;--ltx-fo-height:0.3em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 4.17)" width="3.73"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\scriptstyle{-}" class="m" src="m/0942c59e6e35.png" style="width:0.87em;vertical-align:-0.19em"/></span></span></foreignobject></g><g transform="translate(9.37,0) translate(0,-35.69)"><path d="M 0 0 A 13.84 13.84 45 0 0 7.11 2.24" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 3.6 6.52" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 43.69853689938771 -7.610350076103501 L 9.36881625274578 -35.6888655592202" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 9.36881625274578 -35.6888655592202 L 9.36881625274578 -35.6888655592202" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 62.360244947332916 -7.610350076103501 L 62.39419559464508 -7.6628173388962395" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(78.1,0) translate(0,-13.95) translate(4.15,0) translate(0,-2.42)"><foreignobject height="7.15" overflow="visible" style="--ltx-fo-width:0.61em;--ltx-fo-height:0.43em;--ltx-fo-depth:0.08em;font-size:10pt;" transform="matrix(1 0 0 -1 0 6)" width="8.49"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\scriptstyle{+}" class="m" src="m/e4af67e17222.png" style="width:0.84em;vertical-align:-0.19em"/></span></span></foreignobject></g><g transform="translate(96.64,0) translate(0,-35.48)"><path d="M 0 0 A 13.84 13.84 45 0 0 -3.62 6.51" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 -7.11 2.21" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 62.360244947332916 -7.610350076103501 L 96.63796283008813 -35.479988846621175" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 96.62573806342535 -35.410482919412445 L 96.63796283008813 -35.479988846621175" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(-9.37,0) translate(0,-43.36) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.75em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="10.44"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{Z\ignorespaces\ignorespaces\ignorespaces\ignorespaces}" class="m" src="m/1648e02d1b5b.png" style="width:0.99em;vertical-align:-0.12em"/></span></span></foreignobject></g><path d="M 9.36881625274578 -43.63264139549389 L 9.36881625274578 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(44.77,0) translate(0,-51.08) translate(4.15,0) translate(0,-2.42)"><foreignobject height="7.15" overflow="visible" style="--ltx-fo-width:0.61em;--ltx-fo-height:0.43em;--ltx-fo-depth:0.08em;font-size:10pt;" transform="matrix(1 0 0 -1 0 6)" width="8.49"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\scriptstyle{+}" class="m" src="m/e4af67e17222.png" style="width:0.84em;vertical-align:-0.19em"/></span></span></foreignobject></g><g transform="translate(96.64,0) translate(0,-43.36)"><path d="M 0 0 A 13.84 13.84 45 0 0 -6.92 2.77" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 0 0 A 13.84 13.84 45 0 1 -6.92 -2.77" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path></g><path d="M 9.36881625274578 -43.63264139549389 L 96.63796283008813 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><path d="M 96.63796283008813 -43.63264139549389 L 96.63796283008813 -43.07916983539375" fill="none" stroke="#000000" style="--ltx-stroke-color:#000000;"></path><g transform="translate(96.64,0) translate(0,-43.36) translate(4.15,0) translate(0,-3.46)"><foreignobject height="9.46" overflow="visible" style="--ltx-fo-width:0.8em;--ltx-fo-height:0.68em;--ltx-fo-depth:0em;font-size:10pt;" transform="matrix(1 0 0 -1 0 9.46)" width="11.11"><span class="ltx_foreignobject_container"><span class="ltx_foreignobject_content"><img alt="\textstyle{Y}" class="m" src="m/9017f04aa8cb.png" style="width:1.04em;vertical-align:-0.12em"/></span></span></foreignobject></g></g></svg></span></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 1</span>: </span><span class="ltx_text" style="font-size:90%;">A diagram for the kidney stone example. The signs indicate the associations of two variables, conditioning on other variables pointing to the downstream variable.</span></figcaption>
+</figure>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS2.p3.1">We can summarize the qualitative associations in the diagram in Figure <a class="ltx_ref" href="#S3.F1" title="Figure 1 ‣ 3.2 Explanation ‣ 3 An example of the Yule–Simpson Paradox ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1</span></a>. In technical terms, the treatment has a positive path <img alt="(Z\rightarrow Y)" class="m" src="m/6e516b73feb9.png" style="width:4.12em;vertical-align:-0.36em"/> and a more negative path <img alt="(Z\leftarrow X\rightarrow Y)" class="m" src="m/d6d5f0dfa8b2.png" style="width:6.58em;vertical-align:-0.36em"/> to the outcome, so the overall association is negative between the treatment and outcome.
+In plain English, when less effective treatment 0 is applied more frequently to the less severe cases, it can appear to be a more effective treatment.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS2.p4.1">In general, the association between <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> can differ qualitatively from the conditional association between <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> given <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> due to the association between <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> and <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and the association between <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>. When the Yule–Simpson Paradox happens, we say that <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> is a <span class="ltx_text ltx_font_italic">confounding variable</span> or <span class="ltx_text ltx_font_italic">confounder</span> for the relationship between <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/>, or <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> are <span class="ltx_text ltx_font_italic">confounded</span> by <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. See Chapters <a class="ltx_ref" href="13.html#chapter10" title="Chapter 10 Observational Studies, Selection Bias, and Nonparametric Identification of Causal Effects ‣ Part III Observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">10</span></a> and <a class="ltx_ref" href="20.html#chapter17" title="Chapter 17 E-Value: Evidence for Causation in Observational Studies with Unmeasured Confounding ‣ Part IV Difficulties and challenges of observational studies ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">17</span></a> for more in-depth discussion.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="S3.SS3">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">3.3 </span>Geometry of the Yule–Simpson Paradox</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS3.p1.1">Assume that the two-by-two table based on the aggregated data has counts</p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_th_row ltx_border_t">whole population</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="n_{11}" class="m" src="m/da20dca27f60.png" style="width:1.69em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="n_{10}" class="m" src="m/6f12a53c5e2a.png" style="width:1.69em;vertical-align:-0.26em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n_{01}" class="m" src="m/1d4cc1360372.png" style="width:1.69em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n_{00}" class="m" src="m/c886bc93a633.png" style="width:1.69em;vertical-align:-0.26em"/></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS3.p3.1">The two two-by-two tables based on subgroups have counts</p>
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_th_row ltx_border_t">subpopulation <img alt="X=1" class="m" src="m/83b271bd5e61.png" style="width:2.96em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="n_{11|1}" class="m" src="m/a6ea144068c3.png" style="width:2.31em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="n_{10|1}" class="m" src="m/f772fab93909.png" style="width:2.31em;vertical-align:-0.46em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n_{01|1}" class="m" src="m/ad679d0432e2.png" style="width:2.31em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n_{00|1}" class="m" src="m/b9909976523b.png" style="width:2.31em;vertical-align:-0.46em"/></td></tr>
+</tbody>
+</table></div>
+<p class="ltx_p" id="S3.SS3.p3.3">for the subgroup with <img alt="X=1" class="m" src="m/83b271bd5e61.png" style="width:2.96em;vertical-align:-0.12em"/> and</p>
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_th_row ltx_border_t">subpopulation <img alt="X=0" class="m" src="m/d23ac894d86c.png" style="width:2.96em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/></th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t"><img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/></th></tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t"><img alt="Z=1" class="m" src="m/b2da4eb3846c.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="n_{11|0}" class="m" src="m/ec7138fab239.png" style="width:2.31em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="n_{10|0}" class="m" src="m/43c303a4d158.png" style="width:2.31em;vertical-align:-0.46em"/></td></tr>
+<tr class="ltx_tr">
+<th class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_b"><img alt="Z=0" class="m" src="m/71304cd79d0d.png" style="width:2.82em;vertical-align:-0.12em"/></th>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n_{01|0}" class="m" src="m/b64ef195188b.png" style="width:2.31em;vertical-align:-0.46em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n_{00|0}" class="m" src="m/13dae6e32281.png" style="width:2.31em;vertical-align:-0.46em"/></td></tr>
+</tbody>
+</table></div>
+<p class="ltx_p" id="S3.SS3.p3.5">for the subgroup with <img alt="X=0." class="m" src="m/f1cb6db78603.png" style="width:3.25em;vertical-align:-0.12em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S3.SS3.p4.1">Figure <a class="ltx_ref" href="#S3.F2" title="Figure 2 ‣ 3.3 Geometry of the Yule–Simpson Paradox ‣ 3 An example of the Yule–Simpson Paradox ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2</span></a> shows the geometry of the Yule–Simpson Paradox. The y-axis shows the count of successes with <img alt="Y=1" class="m" src="m/5f76dd95d47c.png" style="width:2.87em;vertical-align:-0.12em"/> and the x-axis shows the count of failures with <img alt="Y=0" class="m" src="m/b78793311641.png" style="width:2.87em;vertical-align:-0.12em"/>. The two parallelograms correspond to aggregating the counts of successes and failures under two treatment levels. The slope of <img alt="OA_{1}" class="m" src="m/31abb4b104fd.png" style="width:2.22em;vertical-align:-0.26em"/> is larger than that of <img alt="OB_{1}" class="m" src="m/532ce8cc60bc.png" style="width:2.24em;vertical-align:-0.26em"/>, and the slope of <img alt="OA_{0}" class="m" src="m/7bf1323fd7fb.png" style="width:2.22em;vertical-align:-0.26em"/> is larger than that of <img alt="OB_{0}" class="m" src="m/ebc3d5ec037f.png" style="width:2.24em;vertical-align:-0.26em"/>. So the treatment seems beneficial to the outcome within both levels of <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. However, the slope of <img alt="OA" class="m" src="m/5453a88cafac.png" style="width:1.78em;vertical-align:-0.12em"/> is smaller than that of <img alt="OB" class="m" src="m/c753e1b7fe58.png" style="width:1.83em;vertical-align:-0.12em"/>. So the treatment seems harmful to the outcome for the whole population. The Yule–Simpson Paradox arises.</p>
+</div>
+<figure class="ltx_figure" id="S3.F2"><img alt="Refer to caption" src="img/simpson_geometry2.png"/>
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_figure"><span class="ltx_text" style="font-size:90%;">Figure 2</span>: </span><span class="ltx_text" style="font-size:90%;">Geometry of the Yule–Simpson Paradox</span></figcaption>
+</figure>
+</section>
+</section>
+<section class="ltx_section" id="S4">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">4 </span>The Berkeley graduate school admission data</h4>
+<div class="ltx_para">
+<p class="ltx_p" id="S4.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib32" title="">Bickel et al., (1975)</a></cite> investigated the admission rates of male and female students into the graduate school of Berkeley. The <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span> package <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">datasets</span> contains the original data <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">UCBAdmissions</span>. The raw data by the six largest departments are shown below:</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">library</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">datasets</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">UCBAdmissions</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">aperm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">UCBAdmissions</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">3))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">UCBAdmissions</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Dept</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">A</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admit</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Gender</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admitted</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Rejected</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Male</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">512</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">313</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Female</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">89</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">19</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Dept</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">B</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admit</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Gender</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admitted</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Rejected</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Male</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">353</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">207</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Female</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">17</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">8</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Dept</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">C</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admit</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Gender</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admitted</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Rejected</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Male</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">120</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">205</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Female</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">202</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">391</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Dept</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">D</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admit</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Gender</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admitted</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Rejected</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Male</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">138</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">279</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Female</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">131</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">244</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Dept</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">E</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admit</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Gender</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admitted</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Rejected</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Male</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">53</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">138</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Female</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">94</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">299</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Dept</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">F</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admit</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Gender</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admitted</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Rejected</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Male</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">22</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">351</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Female</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">24</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">317</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S4.p2.1">Aggregating the data over departments, we have a simple two-by-two table:</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">UCBAdmissions</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sum</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">apply</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">UCBAdmissions</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2),</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sum</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">UCBAdmissions</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sum</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admit</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Gender</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Admitted</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Rejected</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Male</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1198</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1493</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Female</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">557</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1278</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S4.p3.1">The following function, building upon <span class="ltx_text ltx_lst_language_R ltx_lstlisting"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">chisq</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.<span class="ltx_text ltx_lst_identifier">test</span></span></span>, have a two-by-two table as the input and the estimated <span class="ltx_text ltx_font_smallcaps">rd</span> and <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-value as output:</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">risk</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">difference</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">function</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tb2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tb2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1]/(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tb2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tb2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p2</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tb2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1]/(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tb2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tb2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[2,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">testp</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">chisq</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">test</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">tb2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">return</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">list</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">diff</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p1</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p2</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pv</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">testp</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">value</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">}</span>
+</div>
+</div>
+<p class="ltx_p" id="S4.p3.3">With this function, we find a large, significant difference between the admission rates of male and female students:</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">risk</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">difference</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">UCBAdmissions</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sum</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">diff</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.1416454</span>
+</div>
+<div class="ltx_listingline">
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pv</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1.055797</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">e</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-21</span>
+</div>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S4.p4.1">Stratifying on the departments, we find smaller and insignificant differences between the admission rates of male and female students. In department A, the difference is significant but negative.</p>
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">P</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">diff</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rep</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(0,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">6)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">PV</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rep</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(0,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">6)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">for</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dd</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">in</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1:6)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">department</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">risk</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">difference</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">UCBAdmissions</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dd</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">P</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">diff</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dd</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">department</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">p</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">diff</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">PV</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">dd</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">department</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">$</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">pv</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">}</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">round</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">P</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">diff</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.20</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.05</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.03</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.02</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.04</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">-0.01</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">round</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">PV</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">2)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.00</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.77</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.43</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.64</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.37</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.64</span>
+</div>
+</div>
+</div>
+</section>
+<section class="ltx_section" id="S5">
+<h4 class="ltx_title ltx_title_section"><span class="ltx_tag ltx_tag_section">5 </span>Homework Problems</h4>
+<section class="ltx_paragraph" id="S5.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">1.1 </span>Independence in two-by-two tables</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S5.SS0.SSS0.P1.p1.1">Prove (1) and (2) in Proposition <a class="ltx_ref" href="#Thmproposition1" title="Proposition 1.1 ‣ 2.2 Contingency tables ‣ 2 Some commonly-used measures of association ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">1.1</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S5.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">1.2 </span>More examples of the Yule–Simpson Paradox</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S5.SS0.SSS0.P2.p1.1">Give a numeric example of a two-by-two-by-two table in which the Yule–Simpson Paradox arises.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S5.SS0.SSS0.P2.p2.1">Find a real-life example in which the Yule–Simpson Paradox arises.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S5.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">1.3 </span>Correlation and partial correlation</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S5.SS0.SSS0.P3.p1.1">Consider a three-dimensional Normal random vector:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\begin{pmatrix}X\\
+Y\\
+Z\end{pmatrix}\sim\textsc{N}\left(\begin{pmatrix}0\\
+0\\
+0\end{pmatrix},\begin{pmatrix}1&amp;\rho_{XY}&amp;\rho_{XZ}\\
+\rho_{XY}&amp;1&amp;\rho_{YZ}\\
+\rho_{XZ}&amp;\rho_{YZ}&amp;1\end{pmatrix}\right)." class="m" src="m/ea2e732b86ab.png" style="width:19.73em;vertical-align:-1.66em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="S5.SS0.SSS0.P3.p1.2">The correlation coefficient between <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> and <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> is <img alt="\rho_{YZ}" class="m" src="m/0c5615ab62fd.png" style="width:2.05em;vertical-align:-0.31em"/>.
+There are many equivalent definitions of the partial correlation coefficient.
+For a multivariate Normal vector, let <img alt="\rho_{YZ|X}" class="m" src="m/625bd7974793.png" style="width:2.99em;vertical-align:-0.46em"/> denote the partial correlation coefficient between <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> and <img alt="Z" class="m" src="m/e07866ebf4f2.png" style="width:0.99em;vertical-align:-0.12em"/> given <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, which is defined as their correlation coefficient in the conditional distribution <img alt="(Y,Z)\mid X" class="m" src="m/f950eb01ad54.png" style="width:4.58em;vertical-align:-0.36em"/>. Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\rho_{YZ\mid X}=\frac{\rho_{YZ}-\rho_{YX}\rho_{ZX}}{\sqrt{1-\rho_{YX}^{2}}\sqrt{1-\rho_{ZX}^{2}}}." class="m" src="m/469ed2782257.png" style="width:14.07em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S5.SS0.SSS0.P3.p2.1">Give a numerical example with <img alt="\rho_{YZ}&gt;0" class="m" src="m/4052c7f2c28f.png" style="width:3.88em;vertical-align:-0.31em"/> and <img alt="\rho_{YZ|X}&lt;0" class="m" src="m/be4cdc3320ee.png" style="width:4.82em;vertical-align:-0.46em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="S5.SS0.SSS0.P3.p3.1">Remark: This is the Yule–Simpson Paradox for a Normal random vector.
+You can use the results in Chapter <a class="ltx_ref" href="33.html#chapter30.A1.SS2" title="30.A.2 Multivariate Normal random vector ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.A.2</span></a> to prove the formula for the partial correlation coefficient.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S5.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">1.4 </span>Specification searches</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S5.SS0.SSS0.P4.p1.1">Section <a class="ltx_ref" href="#S2.SS1" title="2.1 Correlation and regression ‣ 2 Some commonly-used measures of association ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.1</span></a> re-analyzes the data used by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib129" title="">Hainmueller, (2012)</a></cite>. We used the outcome named <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">re78</span> and the treatment named <span class="ltx_text ltx_lst_identifier ltx_lst_language_R ltx_lstlisting ltx_font_typewriter" style="font-size:90%;">treat</span> in the analysis. Moreover, the data also contain <img alt="10" class="m" src="m/744515d9964b.png" style="width:1.23em;vertical-align:-0.12em"/> covariates and therefore <img alt="2^{10}=1024" class="m" src="m/379a2088efe6.png" style="width:4.91em;vertical-align:-0.12em"/> possible subsets of covariates in the linear regression. Run <img alt="1024" class="m" src="m/58b1ef5d8f91.png" style="width:2.24em;vertical-align:-0.12em"/> linear regressions with all possible subsets of covariates, and report the regression coefficients of the treatment. How many coefficients of the treatment are positively significant, how many are negatively significant, and how many are not significant? You can also report other interesting findings from these regressions.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S5.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">1.5 </span>More on racial discrimination</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S5.SS0.SSS0.P5.p1.1">Section <a class="ltx_ref" href="#S2.SS2" title="2.2 Contingency tables ‣ 2 Some commonly-used measures of association ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">2.2</span></a> re-analyzes the data collected by <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib31" title="">Bertrand and Mullainathan, (2004)</a></cite>. Conduct analyses separately for males and females. What do you find from these subgroup analyses?</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="S5.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">1.6 </span>Recommended reading</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="S5.SS0.SSS0.P6.p1.1"><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib32" title="">Bickel et al., (1975)</a></cite> is the original paper for the paradox reported in Section <a class="ltx_ref" href="#S4" title="4 The Berkeley graduate school admission data ‣ Chapter 1 Correlation, Association, and the Yule–Simpson Paradox ‣ Part I Introduction ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">4</span></a>.
+<cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib250" title="">Pearl and Mackenzie, (2018)</a></cite> recently revisited the study from the causal inference perspective.</p>
+</div>
+</section>
+</section>
+<section class="footnotes"><h4>脚注</h4><p id="fn-chapter1-1"><a href="#fn-chapter1-1-ref">1</a>. In probability theory, the odds of an event is defined as the ratio of the probability that the event happens over the probability that the event does not happen.</p><p id="fn-chapter1-2"><a href="#fn-chapter1-2-ref">2</a>. <span class="ltx_text ltx_font_upright">This book uses the notation </span><span class="ltx_picture ltx_markedasmath" style="width:9.0pt;height:8.0pt;"><svg height="10.63" overflow="visible" version="1.1" width="11.96" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0,10.63) scale(1,-1)"><g transform="translate(0,0)"><line stroke="#000000" stroke-width="0.4" x1="0" x2="12.45" y1="0" y2="0"></line></g><g transform="translate(4.15,0)"><line stroke="#000000" stroke-width="0.4" x1="0" x2="0" y1="0" y2="11.07"></line></g><g transform="translate(8.3,0)"><line stroke="#000000" stroke-width="0.4" x1="0" x2="0" y1="0" y2="11.07"></line></g></g></svg></span><span class="ltx_text ltx_font_upright"> to denote independence or conditional independence of random variables. The notation is due to </span><cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib77" title="">Dawid, (1979)</a></cite><span class="ltx_text ltx_font_upright">.</span></p><p id="fn-chapter1-3"><a href="#fn-chapter1-3-ref">3</a>. In an RCT, patients are randomly assigned to the treatment arms. Part <a class="ltx_ref" href="#Pt2" title="Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">II</span></a> of this book will focus on RCTs.</p></section></section><p class="nav bottom"><a href="index.html">目录</a><a href="03.html">← 上一章</a><a href="05.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>

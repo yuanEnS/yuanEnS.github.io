@@ -1,0 +1,956 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chapter 30 Probability and Statistics · A First Course in Causal Inference</title><link rel="canonical" href="https://arxiv.org/abs/2305.18793v2"><style>
+body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
+  font: 19px/1.65 Georgia, "Times New Roman", "Songti SC", serif; }
+a { color: #000; }
+.nav { font-size: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
+.nav a { margin-right: 12px; }
+.nav.bottom { border-top: 1px solid #000; border-bottom: 0; padding-top: 8px; margin-top: 32px; }
+h1 { font-size: 28px; line-height: 1.3; } h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 22px; line-height: 1.35; } h4, h5, h6 { font-size: 19px; }
+img.m { max-width: 100%; height: auto; }
+table.ltx_equation, table.ltx_eqn_table, table.ltx_equationgroup { width: 100%; margin: 10px 0; border-collapse: collapse; }
+table.ltx_equation { table-layout: fixed; }
+.ltx_eqn_center_padleft, .ltx_eqn_center_padright { width: 0; padding: 0 !important; }
+.ltx_eqn_cell { padding: 2px 0; }
+.ltx_align_center { text-align: center; } .ltx_align_right { text-align: right; } .ltx_align_left { text-align: left; }
+.ltx_eqn_eqno { text-align: right; width: 2.8em; white-space: nowrap; font-size: 16px; }
+.ltx_theorem, .ltx_proof { margin: 14px 0; padding: 4px 0 4px 10px; border-left: 3px solid #000; }
+.ltx_listing, pre { font: 14px/1.45 Menlo, Consolas, monospace; white-space: normal; overflow-wrap: anywhere;
+  background: #f2f2f2; padding: 8px; margin: 12px 0; }
+.ltx_listingline { display: block; white-space: pre-wrap; }
+/* 多行对齐的公式组不缩小（缩了看不清），太宽时可以横着拖 */
+table.ltx_equationgroup img.m { max-width: none; }
+figure { margin: 18px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 16px; }
+table.ltx_tabular { margin: 10px auto; border-collapse: collapse; font-size: 16px; }
+.ltx_tabular td, .ltx_tabular th { padding: 2px 6px; }
+.ltx_border_t { border-top: 1px solid #000; } .ltx_border_b { border-bottom: 1px solid #000; }
+.ltx_border_tt { border-top: 2px solid #000; } .ltx_border_bb { border-bottom: 2px solid #000; }
+.ltx_border_l { border-left: 1px solid #000; } .ltx_border_r { border-right: 1px solid #000; }
+.overflow { overflow-x: auto; }
+code.tex { font-size: 15px; }
+ol.toc, ol.toc ol { padding-left: 1.2em; } ol.toc li { margin: 4px 0; }
+.credit { margin-top: 28px; font-size: 14px; line-height: 1.6; color: #333; }
+.ltx_bibitem { margin: 6px 0; }
+.footnotes { margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 16px; }
+.footnotes h4 { margin: 0 0 6px; }
+</style></head><body><p class="nav"><a href="index.html">目录</a><a href="32.html">← 上一章</a><a href="34.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><section class="ltx_chapter" id="chapter30">
+<h3 class="ltx_title ltx_title_chapter"><span class="ltx_tag ltx_tag_chapter">Chapter 30 </span>Probability and Statistics</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.p1.1">This book assumes that the readers have basic knowledge of probability theory and statistical inference. Therefore, this chapter is not a comprehensive review of probability and statistics. For easy reference, I review the key concepts that are crucial for the main text.</p>
+</div>
+<section class="ltx_appendix" id="chapter30.A1">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 30.A </span>Probability</h3>
+<section class="ltx_subsection" id="chapter30.A1.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.A.1 </span>Pearson correlation coefficient and squared multiple correlation coefficient</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS1.p1.1">For two random variables <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> and <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, define the Pearson correlation coefficient as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\rho_{YX}=\frac{\textup{cov}(Y,X)}{\sqrt{\textup{var}(Y)\textup{var}(X)}}" class="m" src="m/0f3409c80d05.png" style="width:10.72em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS1.p1.2">which measures the linear dependence of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. The definition is symmetric in <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> and <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> in that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\rho_{YX}=\rho_{XY}." class="m" src="m/010e7630c07b.png" style="width:5.69em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS1.p2.1">With a random variable <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> and a random vector <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>, define the squared multiple correlation coefficient as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="R^{2}_{YX}=\textup{corr}^{2}(Y,X)=\frac{\textup{cov}(Y,X)\textup{cov}(X)^{-1}\textup{cov}(X,Y)}{\textup{var}(Y)}" class="m" src="m/fc5115305469.png" style="width:22.98em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS1.p2.2">where <img alt="\textup{cov}(Y,X)" class="m" src="m/ed57c664a656.png" style="width:4.43em;vertical-align:-0.36em"/> is a row vector and <img alt="\textup{cov}(X,Y)" class="m" src="m/76ee19611044.png" style="width:4.55em;vertical-align:-0.36em"/> is a column vector. It also measures the linear dependence of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> on <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>. But this definition is not symmetric in <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> and <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/>.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A1.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.A.2 </span>Multivariate Normal random vector</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS2.p1.1">A multivariate Normal random vector <img alt="\textsc{N}(\mu,\Sigma)" class="m" src="m/86b7afc9cfad.png" style="width:3.59em;vertical-align:-0.36em"/> is determined by its mean vector <img alt="\mu" class="m" src="m/de29996a4697.png" style="width:0.84em;vertical-align:-0.31em"/> and covariance matrix <img alt="\Sigma" class="m" src="m/89f4c39a614c.png" style="width:0.96em;vertical-align:-0.12em"/>. Partition it into two parts:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\left(\begin{array}[]{c}Y_{1}\\
+Y_{2}\end{array}\right)\sim\textsc{N}\left(\left(\begin{array}[]{c}\mu_{1}\\
+\mu_{2}\end{array}\right),\left(\begin{array}[]{cc}\Sigma_{11}&amp;\Sigma_{12}\\
+\Sigma_{21}&amp;\Sigma_{22}\end{array}\right)\right)." class="m" src="m/e50694e33f3b.png" style="width:18.72em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS2.p2.1">First, the marginal distributions are Normal:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y_{1}\sim\textsc{N}\left(\mu_{1},\Sigma_{11}\right),\quad Y_{2}\sim\textsc{N}\left(\mu_{2},\Sigma_{22}\right)." class="m" src="m/82b012ebd724.png" style="width:16.67em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS2.p2.2">Second, if <img alt="\Sigma_{22}" class="m" src="m/fc8dfe3e926f.png" style="width:1.81em;vertical-align:-0.26em"/> is positive definite, then the conditional distribution is also Normal:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y_{1}\mid Y_{2}=y_{2}\sim\textsc{N}\left(\mu_{1}+\Sigma_{12}\Sigma_{22}^{-1}(y_{2}-\mu_{2}),\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}\right)." class="m" src="m/00c4121f2843.png" style="width:26.86em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A1.SS3">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.A.3 </span><img alt="\chi^{2}" class="m" src="m/0b9a7a0d4e19.png" style="width:1.30em;vertical-align:-0.31em"/> and <img alt="t" class="m" src="m/6e57d6c47d23.png" style="width:0.60em;vertical-align:-0.12em"/> distributions</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS3.p1.1">Assume <img alt="X_{1},\ldots,X_{n}" class="m" src="m/d37947777df1.png" style="width:5.11em;vertical-align:-0.31em"/> are IID <img alt="\textsc{N}(0,1)" class="m" src="m/2fef3e922101.png" style="width:3.28em;vertical-align:-0.36em"/>. Then</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sum_{i=1}^{n}X_{i}^{2}" class="m" src="m/82a7226ed839.png" style="width:3.20em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS3.p1.2">follows a <img alt="\chi^{2}_{n}" class="m" src="m/3d856ba555c6.png" style="width:1.40em;vertical-align:-0.36em"/> distribution with degrees of freedom <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/>. The <img alt="\chi^{2}_{n}" class="m" src="m/3d856ba555c6.png" style="width:1.40em;vertical-align:-0.36em"/> distribution has mean <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> and variance <img alt="2n" class="m" src="m/ab99eea6cbbb.png" style="width:1.32em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS3.p2.1">Assume <img alt="X\sim\textsc{N}(0,1),Q_{n}\sim\chi^{2}_{n}" class="m" src="m/e52b8592fdba.png" style="width:9.78em;vertical-align:-0.36em"/> and <img alt="X\ind Q_{n}" class="m" src="m/8012ac64aae1.png" style="width:3.37em;vertical-align:-0.31em"/>. Then</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{X}{\sqrt{Q_{n}/n}}" class="m" src="m/eee5c75019dd.png" style="width:3.90em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS3.p2.2">follows a <img alt="t_{n}" class="m" src="m/30e326acf5f7.png" style="width:1.13em;vertical-align:-0.26em"/> distribution with degrees of freedom <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/>. The <img alt="t_{n}" class="m" src="m/30e326acf5f7.png" style="width:1.13em;vertical-align:-0.26em"/> distribution has mean 0 if <img alt="n&gt;1" class="m" src="m/d0de54b78f3d.png" style="width:2.67em;vertical-align:-0.14em"/>. When <img alt="n=1" class="m" src="m/d50f37006f09.png" style="width:2.67em;vertical-align:-0.12em"/>, the <img alt="t_{1}" class="m" src="m/0177e15dc9b7.png" style="width:1.04em;vertical-align:-0.26em"/> distribution is also called the Cauchy distribution, which does not have a finite mean.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A1.SS4">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.A.4 </span>Cauchy–Schwarz inequality</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS4.p1.1">The Cauchy–Schwarz inequality has many forms. With two random variables <img alt="A" class="m" src="m/b97267fa7855.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="B" class="m" src="m/fa2452c388ed.png" style="width:1.04em;vertical-align:-0.12em"/>, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="|E(AB)|\leq\sqrt{E(A^{2})E(B^{2})}" class="m" src="m/824fab0682c9.png" style="width:11.85em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS4.p1.2">with equality holding when <img alt="B=\beta A" class="m" src="m/011a02f10aba.png" style="width:3.73em;vertical-align:-0.31em"/> for some <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/>. Centering <img alt="A" class="m" src="m/b97267fa7855.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="B" class="m" src="m/fa2452c388ed.png" style="width:1.04em;vertical-align:-0.12em"/> to have mean 0, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="|\textup{cov}(A,B)|\leq\sqrt{\textup{var}(A)\textup{var}(B)}" class="m" src="m/ebd7c8470f21.png" style="width:13.18em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS4.p1.3">with equality holding when <img alt="B=\alpha+\beta A" class="m" src="m/8f731f614162.png" style="width:5.61em;vertical-align:-0.31em"/> for some <img alt="\alpha" class="m" src="m/6d3fab0dfb57.png" style="width:0.87em;vertical-align:-0.12em"/> and <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS4.p2.1">When <img alt="A" class="m" src="m/b97267fa7855.png" style="width:0.99em;vertical-align:-0.12em"/> and <img alt="B" class="m" src="m/fa2452c388ed.png" style="width:1.04em;vertical-align:-0.12em"/> are uniform random variables over finite sets <img alt="\{a_{1},\ldots,a_{n}\}" class="m" src="m/0a9965a9c4c1.png" style="width:5.52em;vertical-align:-0.36em"/> and <img alt="\{b_{1},\ldots,b_{n}\}" class="m" src="m/946cf2f93ba4.png" style="width:5.30em;vertical-align:-0.36em"/> respectively, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\left|\sum_{i=1}^{n}a_{i}b_{i}\right|\leq\sqrt{\sum_{i=1}^{n}a_{i}^{2}\sum_{i=1}^{n}b_{i}^{2}}" class="m" src="m/b5f4b8e037ff.png" style="width:11.76em;vertical-align:-1.64em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS4.p2.2">with equality holding if there exists <img alt="\beta" class="m" src="m/5ed80e3e4d7b.png" style="width:0.84em;vertical-align:-0.31em"/> such that <img alt="b_{i}=\beta a_{i}" class="m" src="m/acf0b8c53ebd.png" style="width:3.81em;vertical-align:-0.31em"/> for all <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>’s.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A1.SS5">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.A.5 </span>Tower property and variance decomposition</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS5.p1.1">Given random variables or vectors <img alt="A,B,C" class="m" src="m/1e16d03bad8a.png" style="width:3.47em;vertical-align:-0.31em"/>, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(A)=E\{E(A\mid B)\}" class="m" src="m/6589dcb54f6b.png" style="width:9.66em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS5.p1.2">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(A\mid C)=E\{E(A\mid B,C)\mid C\}." class="m" src="m/3b3815512512.png" style="width:14.41em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS5.p2.1">Given a random variable <img alt="A" class="m" src="m/b97267fa7855.png" style="width:0.99em;vertical-align:-0.12em"/> and random variables or vectors <img alt="B,C" class="m" src="m/e8717699e591.png" style="width:2.26em;vertical-align:-0.31em"/>, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}(A)=E\{\textup{var}(A\mid B)\}+\textup{var}\{E(A\mid B)\}" class="m" src="m/861fef120529.png" style="width:18.33em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS5.p2.2">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}(A\mid C)=E\{\textup{var}(A\mid B,C)\mid C\}+\textup{var}\{E(A\mid B,C)\mid C\}." class="m" src="m/52d77f0c5e50.png" style="width:25.94em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS5.p2.3">When I was in graduate school, my professors Carl Morris and Joe Blitzstein called this formula the <span class="ltx_text ltx_font_italic">Eve’s Law</span> due to the “EVVE” form of the formula. They then went back to call the first tower property the <span class="ltx_text ltx_font_italic">Adam’s Law.</span></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS5.p3.1">Similarly, we can decompose the covariance as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{cov}(A_{1},A_{2})=E\left\{\textup{cov}(A_{1},A_{2}\mid B)\right\}+\textup{cov}\{E(A_{1}\mid B),E(A_{2}\mid B)\}" class="m" src="m/832359c60196.png" style="width:28.23em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS5.p3.2">and</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{cov}(A_{1},A_{2}\mid C)=E\left\{\textup{cov}(A_{1},A_{2}\mid B,C)\mid C\right\}+\textup{cov}\{E(A_{1}\mid B,C),E(A_{2}\mid B,C)\mid C\}." class="m" src="m/1c9396d9b44b.png" style="width:34.74em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A1.SS6">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.A.6 </span>Limiting theorems</h5>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition1r">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 30.1</span></span><span class="ltx_text ltx_font_bold"> (convergence in probability)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition1r.p1.1"><span class="ltx_text ltx_font_italic">A sequence of random variables <img alt="(X_{n})_{n\geq 1}" class="m" src="m/6e265fba7799.png" style="width:3.95em;vertical-align:-0.39em"/> converges to <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> in probability, if for every <img alt="\varepsilon&gt;0" class="m" src="m/254509ca2c0a.png" style="width:2.53em;vertical-align:-0.14em"/>, we have</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(|X_{n}-X|&gt;\varepsilon)\rightarrow 0" class="m" src="m/136b1b77ec11.png" style="width:9.88em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmdefinition1r.p1.2"><span class="ltx_text ltx_font_italic">as <img alt="n\rightarrow\infty" class="m" src="m/dfe52984916e.png" style="width:3.40em;vertical-align:-0.12em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition2g">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 30.2</span></span><span class="ltx_text ltx_font_bold"> (convergence in distribution)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition2g.p1.1"><span class="ltx_text ltx_font_italic">A sequence of random variables <img alt="(X_{n})_{n\geq 1}" class="m" src="m/6e265fba7799.png" style="width:3.95em;vertical-align:-0.39em"/> converges to <img alt="X" class="m" src="m/37e1bc32ce56.png" style="width:1.13em;vertical-align:-0.12em"/> in distribution, if</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(X_{n}\leq x)\rightarrow\textup{pr}(X\leq x)" class="m" src="m/a345b9eeba92.png" style="width:11.32em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmdefinition2g.p1.2"><span class="ltx_text ltx_font_italic">for all continuity point <img alt="x" class="m" src="m/8f4ce4432b8c.png" style="width:0.79em;vertical-align:-0.12em"/> of <img alt="\textup{pr}(X\leq x)" class="m" src="m/0a0450ca87b8.png" style="width:4.77em;vertical-align:-0.36em"/>, as <img alt="n\rightarrow\infty" class="m" src="m/dfe52984916e.png" style="width:3.40em;vertical-align:-0.12em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS6.p1.1">Convergence in probability is stronger than convergence in distribution. Definitions <a class="ltx_ref" href="#Thmdefinition1r" title="Definition 30.1 (convergence in probability) ‣ 30.A.6 Limiting theorems ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.1</span></a> and <a class="ltx_ref" href="#Thmdefinition2g" title="Definition 30.2 (convergence in distribution) ‣ 30.A.6 Limiting theorems ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.2</span></a> are useful for stating the following two fundamental theorems on the sample average of independent and identically distributed (IID) random variables.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem1s">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 30.1</span></span><span class="ltx_text ltx_font_bold"> (law of large numbers)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem1s.p1.1"><span class="ltx_text ltx_font_italic">If <img alt="X_{1},\ldots,X_{n}\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}X" class="m" src="m/03c9fa49aa00.png" style="width:7.76em;vertical-align:-0.31em"/> with <img alt="E|X|&lt;\infty" class="m" src="m/bb8e3445e3ef.png" style="width:4.82em;vertical-align:-0.36em"/>, then <img alt="\bar{X}=n^{-1}\sum_{i=1}^{n}X_{i}\rightarrow E(X)" class="m" src="m/32298570b5b3.png" style="width:12.07em;vertical-align:-0.41em"/> in probability.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS6.p2.1">The law of large numbers in Theorem <a class="ltx_ref" href="#Thmtheorem1s" title="Theorem 30.1 (law of large numbers) ‣ 30.A.6 Limiting theorems ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.1</span></a> states that the sample average is close to the population mean in the limit.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem2n">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 30.2</span></span><span class="ltx_text ltx_font_bold"> (central limit theorem (CLT))</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem2n.p1.1"><span class="ltx_text ltx_font_italic">If <img alt="X_{1},\ldots,X_{n}\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}X" class="m" src="m/03c9fa49aa00.png" style="width:7.76em;vertical-align:-0.31em"/> with <img alt="\textup{var}(X)&lt;\infty" class="m" src="m/a5c59356cf4b.png" style="width:5.61em;vertical-align:-0.36em"/>, then</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{\bar{X}-E(X)}{\sqrt{\textup{var}(X)/n}}\rightarrow\textsc{N}(0,1)" class="m" src="m/a118a2c909cb.png" style="width:10.21em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem2n.p1.2"><span class="ltx_text ltx_font_italic">in distribution.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS6.p3.1">The CLT in Theorem <a class="ltx_ref" href="#Thmtheorem2n" title="Theorem 30.2 (central limit theorem (CLT)) ‣ 30.A.6 Limiting theorems ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.2</span></a> states that the standardized sample average is close to a standard Normal random variable in the limit.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS6.p4.1">Theorems <a class="ltx_ref" href="#Thmtheorem1s" title="Theorem 30.1 (law of large numbers) ‣ 30.A.6 Limiting theorems ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.1</span></a> and <a class="ltx_ref" href="#Thmtheorem2n" title="Theorem 30.2 (central limit theorem (CLT)) ‣ 30.A.6 Limiting theorems ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.2</span></a> assume IID random variables for convenience.
+There are also many laws of large numbers and CLTs for the sample mean of independent or weakly dependent random variable <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib97" title="">Durrett,, 2019</a>, e.g.,)</cite>.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A1.SS7">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.A.7 </span>Delta method</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS7.p1.1">The delta method is a power tool to derive the asymptotic Normality of nonlinear functions of an asymptotically Normal random vector. I review a special case of the delta method below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_theorem" id="Thmtheorem3j">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Theorem 30.3</span></span><span class="ltx_text ltx_font_bold"> (delta method)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmtheorem3j.p1.1"><span class="ltx_text ltx_font_italic">Assume <img alt="\sqrt{n}(X_{n}-\mu)\rightarrow\textsc{N}(0,\Sigma)" class="m" src="m/8a68dc857627.png" style="width:10.46em;vertical-align:-0.36em"/> in distribution and the function <img alt="g(x)" class="m" src="m/1c7f7a4c04ed.png" style="width:2.10em;vertical-align:-0.36em"/> has non-zero derivative <img alt="\nabla g(\mu)" class="m" src="m/f9d6a517852c.png" style="width:2.96em;vertical-align:-0.36em"/> at <img alt="\mu" class="m" src="m/de29996a4697.png" style="width:0.84em;vertical-align:-0.31em"/>. Then</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sqrt{n}\{g(X_{n})-g(\mu)\}\rightarrow\textsc{N}(0,(\nabla g(\mu))^{\mkern-1.5mu\mathsf{T}}\Sigma\nabla g(\mu))" class="m" src="m/d8b6c742137b.png" style="width:19.97em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmtheorem3j.p1.2"><span class="ltx_text ltx_font_italic">in distribution.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS7.p2.1">I will omit the proof of Theorem <a class="ltx_ref" href="#Thmtheorem3j" title="Theorem 30.3 (delta method) ‣ 30.A.7 Delta method ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.3</span></a>. It is intuitive based on the first-order Taylor expansion:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="g(X_{n})-g(\mu)\approx(\nabla g(\mu))^{\mkern-1.5mu\mathsf{T}}(X_{n}-\mu)." class="m" src="m/080025ab37bc.png" style="width:15.59em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS7.p2.2">So <img alt="\sqrt{n}\{g(X_{n})-g(\mu)\}" class="m" src="m/2dc4ad6b9d49.png" style="width:8.46em;vertical-align:-0.36em"/> is close to the linear transformation of <img alt="\textsc{N}(0,\Sigma)" class="m" src="m/d84258e99388.png" style="width:3.49em;vertical-align:-0.36em"/>, which is <img alt="\textsc{N}(0,(\nabla g(\mu))^{\mkern-1.5mu\mathsf{T}}\Sigma\nabla g(\mu))" class="m" src="m/5a4d6d4b5a91.png" style="width:10.21em;vertical-align:-0.36em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS7.p3.1">As illustrations, we can use the delta method to obtain the asymptotic Normality of the ratio and product.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample1s">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 30.1</span></span><span class="ltx_text ltx_font_bold"> (asymptotic Normality for the ratio)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample1s.p1.1"><span class="ltx_text ltx_font_italic">Assume</span></p>
+<table class="ltx_equation ltx_eqn_table" id="chapter30.A1.E154">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sqrt{n}\begin{pmatrix}Y_{n}-\mu_{Y}\\
+X_{n}-\mu_{X}\end{pmatrix}\rightarrow\textsc{N}\left(\begin{pmatrix}0\\
+0\end{pmatrix},\begin{pmatrix}\sigma_{Y}^{2}&amp;\sigma_{YX}\\
+\sigma_{YX}&amp;\sigma_{X}^{2}\end{pmatrix}\right)" class="m" src="m/1e9fe8427af4.png" style="width:20.28em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(154)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample1s.p1.2"><span class="ltx_text ltx_font_italic">in distribution with <img alt="\mu_{X}\neq 0." class="m" src="m/e9aea8f54bed.png" style="width:3.71em;vertical-align:-0.31em"/> Apply Theorem <a class="ltx_ref" href="#Thmtheorem3j" title="Theorem 30.3 (delta method) ‣ 30.A.7 Delta method ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.3</span></a> to obtain that</span></p>
+<table class="ltx_equation ltx_eqn_table" id="chapter30.A1.E155">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sqrt{n}\left(\frac{Y_{n}}{X_{n}}-\frac{\mu_{Y}}{\mu_{X}}\right)\rightarrow\textsc{N}\left(0,\frac{\sigma_{Y}^{2}}{\mu_{X}^{2}}+\frac{\mu_{Y}^{2}\sigma_{X}^{2}}{\mu_{X}^{4}}-\frac{2\mu_{Y}\sigma_{YX}}{\mu_{X}^{3}}\right)" class="m" src="m/353dfa0bb655.png" style="width:23.61em;vertical-align:-1.08em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(155)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample1s.p1.3"><span class="ltx_text ltx_font_italic">in distribution.
+In the special case that <img alt="X_{n}" class="m" src="m/2f2e136dc3a5.png" style="width:1.61em;vertical-align:-0.26em"/> and <img alt="Y_{n}" class="m" src="m/76ba3e6b30ac.png" style="width:1.35em;vertical-align:-0.26em"/> are asymptotically independent with <img alt="\sigma_{YX}=0" class="m" src="m/aa75feb2460f.png" style="width:4.05em;vertical-align:-0.26em"/>, the asymptotic variance of <img alt="Y_{n}/X_{n}" class="m" src="m/2a2636f527f9.png" style="width:3.23em;vertical-align:-0.36em"/> simplifies to <img alt="\sigma_{Y}^{2}/\mu_{X}^{2}+\mu_{Y}^{2}\sigma_{X}^{2}/\mu_{X}^{4}" class="m" src="m/d8d49b9c3c5b.png" style="width:9.08em;vertical-align:-0.39em"/>.
+I leave the details to Problem <a class="ltx_ref" href="#chapter30.A7.SS0.SSS0.P2" title="AD.2 Asymptotic Normality of ratio ‣ Appendix 30.G Homework problems ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">AD.2</span></a>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A1.SS7.p4.1">The asymptotic variance in Example <a class="ltx_ref" href="#Thmexample1s" title="Example 30.1 (asymptotic Normality for the ratio) ‣ 30.A.7 Delta method ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.1</span></a> is a little cumbersome. An easier way to memorize it is based on the following approximation:</p>
+<table class="ltx_equation ltx_eqn_table" id="chapter30.A1.E156">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{Y_{n}}{X_{n}}-\frac{\mu_{Y}}{\mu_{X}}=\frac{Y_{n}-\mu_{Y}/\mu_{X}\cdot X_{n}}{X_{n}}\approx\frac{Y_{n}-\mu_{Y}/\mu_{X}\cdot X_{n}}{\mu_{X}}," class="m" src="m/47d73a3d9d3d.png" style="width:23.30em;vertical-align:-0.99em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(156)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS7.p4.2">so the asymptotic variance of the ratio equals the asymptotic variance of</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{Y_{n}-\mu_{Y}/\mu_{X}\cdot X_{n}}{\mu_{X}}," class="m" src="m/3abf13409b32.png" style="width:8.36em;vertical-align:-0.99em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A1.SS7.p4.3">which is a linear combination of <img alt="Y_{n}" class="m" src="m/76ba3e6b30ac.png" style="width:1.35em;vertical-align:-0.26em"/> and <img alt="X_{n}" class="m" src="m/2f2e136dc3a5.png" style="width:1.61em;vertical-align:-0.26em"/>. Slutsky’s theorem can make the approximation in (<a class="ltx_ref" href="#chapter30.A1.E156" title="In 30.A.7 Delta method ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">156</span></a>) rigorous but it is beyond this book.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_example" id="Thmexample2p">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Example 30.2</span></span><span class="ltx_text ltx_font_bold"> (asymptotic Normality for the product)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmexample2p.p1.1"><span class="ltx_text ltx_font_italic">Assume (<a class="ltx_ref" href="#chapter30.A1.E154" title="In Example 30.1 (asymptotic Normality for the ratio) ‣ 30.A.7 Delta method ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">154</span></a>). Apply Theorem <a class="ltx_ref" href="#Thmtheorem3j" title="Theorem 30.3 (delta method) ‣ 30.A.7 Delta method ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.3</span></a> to obtain that</span></p>
+<table class="ltx_equation ltx_eqn_table" id="chapter30.A1.E157">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\sqrt{n}\left(X_{n}Y_{n}-\mu_{X}\mu_{Y}\right)\rightarrow\textsc{N}\left(0,\mu_{Y}^{2}\sigma_{X}^{2}+\mu_{X}^{2}\sigma_{Y}^{2}+2\mu_{X}\mu_{Y}\sigma_{XY}\right)" class="m" src="m/84207b659d0e.png" style="width:26.21em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+<td class="ltx_eqn_cell ltx_eqn_eqno ltx_align_middle ltx_align_right" rowspan="1"><span class="ltx_tag ltx_tag_equation ltx_align_right">(157)</span></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmexample2p.p1.2"><span class="ltx_text ltx_font_italic">in distribution. In the special case that <img alt="X_{n}" class="m" src="m/2f2e136dc3a5.png" style="width:1.61em;vertical-align:-0.26em"/> and <img alt="Y_{n}" class="m" src="m/76ba3e6b30ac.png" style="width:1.35em;vertical-align:-0.26em"/> are asymptotically independent with <img alt="\sigma_{YX}=0" class="m" src="m/aa75feb2460f.png" style="width:4.05em;vertical-align:-0.26em"/>, the asymptotic variance of <img alt="X_{n}Y_{n}" class="m" src="m/556b0a68ed29.png" style="width:2.72em;vertical-align:-0.26em"/> simplifies to <img alt="\mu_{Y}^{2}\sigma_{X}^{2}+\mu_{X}^{2}\sigma_{Y}^{2}" class="m" src="m/726b871e0add.png" style="width:6.70em;vertical-align:-0.39em"/>.
+I leave the details to Problem <a class="ltx_ref" href="#chapter30.A7.SS0.SSS0.P3" title="AD.3 Asymptotic Normality of product ‣ Appendix 30.G Homework problems ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">AD.3</span></a>.</span></p>
+</div>
+</div>
+</section>
+</section>
+<section class="ltx_appendix" id="chapter30.A2">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 30.B </span>Statistical inference</h3>
+<section class="ltx_subsection" id="chapter30.A2.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.B.1 </span>Point estimation</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A2.SS1.p1.1">Assume that <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> is the parameter of interest. Oftentimes, the problem also contains other parameters not of interest, denoted by <img alt="\eta" class="m" src="m/2f74432f198f.png" style="width:0.77em;vertical-align:-0.31em"/>. Statisticians call <img alt="\eta" class="m" src="m/2f74432f198f.png" style="width:0.77em;vertical-align:-0.31em"/> the <span class="ltx_text ltx_font_italic">nuisance parameter</span>. Based on the data, we can compute an estimator <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/>. Throughout this book, we take the frequentist’s perspective by assuming that <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> is a fixed number and <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> is random due to the randomness of data. Two basic requirements for an estimator are below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 30.3</span></span><span class="ltx_text ltx_font_bold"> (unbiasedness)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition3d.p1.1"><span class="ltx_text ltx_font_italic">The estimator <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> is unbiased for <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> if</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(\hat{\theta})=\theta" class="m" src="m/f69cd257fe14.png" style="width:4.14em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmdefinition3d.p1.2"><span class="ltx_text ltx_font_italic">for all possible values of <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> and <img alt="\eta" class="m" src="m/2f74432f198f.png" style="width:0.77em;vertical-align:-0.31em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition4c">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 30.4</span></span><span class="ltx_text ltx_font_bold"> (consistency)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition4c.p1.1"><span class="ltx_text ltx_font_italic">The estimator <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> is consistent for <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> if</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\theta}\rightarrow\theta" class="m" src="m/8045995dc150.png" style="width:2.79em;vertical-align:-0.12em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmdefinition4c.p1.2"><span class="ltx_text ltx_font_italic">in probability as the sample size approaches to infinity, for all possible values of <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> and <img alt="\eta" class="m" src="m/2f74432f198f.png" style="width:0.77em;vertical-align:-0.31em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A2.SS1.p2.1">Unbiasedness requires that the mean of the estimator is identical to the parameter of interest. Consistency requires that the estimator is close to the true parameter in the limit. Unbiasedness does not imply consistency, and consistency does not imply unbiasedness either. Unbiasedness can be restrictive because it is impossible even in some simple statistics problems. Consistency is often the basic requirement in most statistics problems.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A2.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.B.2 </span>Confidence interval</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A2.SS2.p1.1">A point estimator <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> is a random variable that differs from the true parameter <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/>. Statisticians are often interested in finding an interval that covers the true parameter with a certain given probability. This interval is computed based on the data, and it is random.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition5b">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 30.5</span></span><span class="ltx_text ltx_font_bold"> (confidence interval)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition5b.p1.1"><span class="ltx_text ltx_font_italic">A data-dependent interval <img alt="[\hat{\theta}_{\textsc{l}},\hat{\theta}_{\textsc{u}}]" class="m" src="m/b88e79d1c5f8.png" style="width:3.06em;vertical-align:-0.36em"/> is a confidence interval for <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> with coverage probability at least <img alt="1-\alpha" class="m" src="m/39f63ed96c4c.png" style="width:2.60em;vertical-align:-0.19em"/> if</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(\hat{\theta}_{\textsc{l}}\leq\theta\leq\hat{\theta}_{\textsc{u}})\geq 1-\alpha" class="m" src="m/3166e3ba69fb.png" style="width:10.65em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmdefinition5b.p1.2"><span class="ltx_text ltx_font_italic">for all possible values of <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> and <img alt="\eta" class="m" src="m/2f74432f198f.png" style="width:0.77em;vertical-align:-0.31em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_theorem ltx_theorem_definition" id="Thmdefinition6a">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 30.6</span></span><span class="ltx_text ltx_font_bold"> (asymptotic confidence interval)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition6a.p1.1"><span class="ltx_text ltx_font_italic">A data-dependent interval <img alt="[\hat{\theta}_{\textsc{l}},\hat{\theta}_{\textsc{u}}]" class="m" src="m/b88e79d1c5f8.png" style="width:3.06em;vertical-align:-0.36em"/> is an asymptotic confidence interval for <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> with coverage probability at least <img alt="1-\alpha" class="m" src="m/39f63ed96c4c.png" style="width:2.60em;vertical-align:-0.19em"/> if</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(\hat{\theta}_{\textsc{l}}\leq\theta\leq\hat{\theta}_{\textsc{u}})\rightarrow 1-\alpha^{\prime},\qquad\text{ as }n\rightarrow\infty" class="m" src="m/eebba329728d.png" style="width:18.31em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmdefinition6a.p1.2"><span class="ltx_text ltx_font_italic">with <img alt="\alpha^{\prime}\leq\alpha" class="m" src="m/7025b16102b0.png" style="width:3.13em;vertical-align:-0.24em"/>, for all possible values of <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> and <img alt="\eta" class="m" src="m/2f74432f198f.png" style="width:0.77em;vertical-align:-0.31em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A2.SS2.p2.1">A standard choice is <img alt="\alpha=0.05" class="m" src="m/5b6d66e51744.png" style="width:4.00em;vertical-align:-0.12em"/>.
+In Definitions <a class="ltx_ref" href="#Thmdefinition5b" title="Definition 30.5 (confidence interval) ‣ 30.B.2 Confidence interval ‣ Appendix 30.B Statistical inference ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.5</span></a> and <a class="ltx_ref" href="#Thmdefinition6a" title="Definition 30.6 (asymptotic confidence interval) ‣ 30.B.2 Confidence interval ‣ Appendix 30.B Statistical inference ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.6</span></a>, the coverage probabilities can be larger than the nominal level <img alt="1-\alpha" class="m" src="m/39f63ed96c4c.png" style="width:2.60em;vertical-align:-0.19em"/>. That is, the definitions allow for over-coverage but do not allow for under-coverage. With over-coverage, we say that the confidence interval is conservative. Of course, we hope the confidence interval to be as narrow as possible. Otherwise, the definition of the confidence interval can be arbitrary.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A2.SS3">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.B.3 </span>Hypothesis testing</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A2.SS3.p1.1">Many applied problems can be formulated as testing a hypothesis:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="H_{0}:\theta=0." class="m" src="m/bac1a22fef08.png" style="width:4.96em;vertical-align:-0.26em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A2.SS3.p1.2">The decision rule <img alt="\phi" class="m" src="m/e93c93e66295.png" style="width:0.82em;vertical-align:-0.31em"/> is a binary function of the data: <img alt="\phi=1" class="m" src="m/abe859aced2e.png" style="width:2.65em;vertical-align:-0.31em"/> if we reject <img alt="H_{0}" class="m" src="m/206d1773898c.png" style="width:1.52em;vertical-align:-0.26em"/>; <img alt="\phi=0" class="m" src="m/da6d6ff6aa24.png" style="width:2.65em;vertical-align:-0.31em"/> if we fail to reject <img alt="H_{0}" class="m" src="m/206d1773898c.png" style="width:1.52em;vertical-align:-0.26em"/>. The type one error rate of the test is the probability of rejection if the null hypothesis holds. I review the definition below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 30.7</span></span><span class="ltx_text ltx_font_bold"> (type one error rate)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition7.p1.1"><span class="ltx_text ltx_font_italic">When <img alt="H_{0}" class="m" src="m/206d1773898c.png" style="width:1.52em;vertical-align:-0.26em"/> holds, define the type one error rate of the test <img alt="\phi" class="m" src="m/e93c93e66295.png" style="width:0.82em;vertical-align:-0.31em"/> as the maximum value of the probability</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(\phi=1)" class="m" src="m/c5467742dba0.png" style="width:4.38em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmdefinition7.p1.2"><span class="ltx_text ltx_font_italic">over all possible values of <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> and <img alt="\eta" class="m" src="m/2f74432f198f.png" style="width:0.77em;vertical-align:-0.31em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A2.SS3.p2.1">A standard choice is to make sure that the type one error rate is below <img alt="\alpha=0.05" class="m" src="m/5b6d66e51744.png" style="width:4.00em;vertical-align:-0.12em"/>. The type two error rate of the test is the probability of no rejection if the null hypothesis does not hold. I review the definition below.</p>
+</div>
+<div class="ltx_theorem ltx_theorem_definition">
+<h6 class="ltx_title ltx_runin ltx_title_theorem"><span class="ltx_tag ltx_tag_theorem"><span class="ltx_text ltx_font_bold">Definition 30.8</span></span><span class="ltx_text ltx_font_bold"> (type two error rate)</span></h6>
+<div class="ltx_para">
+<p class="ltx_p" id="Thmdefinition8.p1.1"><span class="ltx_text ltx_font_italic">When <img alt="H_{0}" class="m" src="m/206d1773898c.png" style="width:1.52em;vertical-align:-0.26em"/> does not hold, define the type two error rate of the test <img alt="\phi" class="m" src="m/e93c93e66295.png" style="width:0.82em;vertical-align:-0.31em"/> as the maximum value of the probability</span></p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(\phi=0)" class="m" src="m/237df41e4e6b.png" style="width:4.38em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="Thmdefinition8.p1.2"><span class="ltx_text ltx_font_italic">over all possible values of <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> and <img alt="\eta" class="m" src="m/2f74432f198f.png" style="width:0.77em;vertical-align:-0.31em"/>.</span></p>
+</div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A2.SS3.p3.1">Given the control of the type one error rate under <img alt="H_{0}" class="m" src="m/206d1773898c.png" style="width:1.52em;vertical-align:-0.26em"/>, we hope the type two error rate is as low as possible when <img alt="H_{0}" class="m" src="m/206d1773898c.png" style="width:1.52em;vertical-align:-0.26em"/> does not hold.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A2.SS4">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.B.4 </span>Wald-type confidence interval and test</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A2.SS4.p1.1">Many statistics problems have the following structure. The parameter of interest is <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/>. We first find a consistent estimator <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> that converges in probability to <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/>, and show that it is asymptotically Normal with mean <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> and variance <img alt="v" class="m" src="m/d54c5463680e.png" style="width:0.75em;vertical-align:-0.12em"/> which may depend on <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> as well as the nuisance parameter <img alt="\eta" class="m" src="m/2f74432f198f.png" style="width:0.77em;vertical-align:-0.31em"/>. We then find a consistent estimator <img alt="\hat{v}" class="m" src="m/dfc506c664b9.png" style="width:0.75em;vertical-align:-0.12em"/> for <img alt="v" class="m" src="m/d54c5463680e.png" style="width:0.75em;vertical-align:-0.12em"/>, based on analytic formulas or the bootstrap reviewed in Chapter <a class="ltx_ref" href="#chapter30.A6" title="Appendix 30.F Bootstrap ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.F</span></a> later.
+The square root of <img alt="\hat{v}" class="m" src="m/dfc506c664b9.png" style="width:0.75em;vertical-align:-0.12em"/> is called the <span class="ltx_text ltx_font_italic">standard error</span>.
+We finally construct the Wald-type confidence interval for <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> as</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\theta}\pm z_{1-\alpha/2}\sqrt{\hat{v}}" class="m" src="m/96c7240cf109.png" style="width:6.17em;vertical-align:-0.46em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A2.SS4.p1.2">where <img alt="z_{1-\alpha/2}" class="m" src="m/73557caf7691.png" style="width:3.11em;vertical-align:-0.46em"/> is the <img alt="1-\alpha/2" class="m" src="m/db1c5719a875.png" style="width:3.59em;vertical-align:-0.36em"/> upper quantile of the standard Normal random variable.
+It covers <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> with probability approximately <img alt="1-\alpha" class="m" src="m/39f63ed96c4c.png" style="width:2.60em;vertical-align:-0.19em"/>. When this interval excludes a particular <img alt="c" class="m" src="m/a43f4bea8ee8.png" style="width:0.67em;vertical-align:-0.12em"/>, for example, <img alt="c=0" class="m" src="m/b5f2046c8b2a.png" style="width:2.51em;vertical-align:-0.12em"/>, we reject the null hypothesis <img alt="H_{0}(c):\theta=c" class="m" src="m/4a3fbe3d0074.png" style="width:5.83em;vertical-align:-0.36em"/>, which is called the Wald test.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A2.SS5">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.B.5 </span>Duality between constructing confidence sets and testing null hypotheses</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A2.SS5.p1.1">Consider the statistical inference problem for a scalar parameter <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/>. A fundamental result in statistics is that constructing confidence sets for <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> is equivalent to testing null hypotheses about <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/>. This is often called the duality between constructing confidence sets and testing null hypotheses.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A2.SS5.p2.1">Section <a class="ltx_ref" href="#chapter30.A2.SS4" title="30.B.4 Wald-type confidence interval and test ‣ Appendix 30.B Statistical inference ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.B.4</span></a> has reviewed the duality based on the Wald-type confidence interval and test. The duality also holds in general. Assume that <img alt="\hat{\Theta}" class="m" src="m/86298e864c09.png" style="width:1.01em;vertical-align:-0.12em"/> is a <img alt="(1-\alpha)" class="m" src="m/8a350f5c8df8.png" style="width:3.37em;vertical-align:-0.36em"/>-level confidence set for <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(\theta\in\hat{\Theta})\geq 1-\alpha." class="m" src="m/d38691ce69af.png" style="width:8.43em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A2.SS5.p2.2">Then we can reject the null hypothesis <img alt="H_{0}(c):\theta=c" class="m" src="m/4a3fbe3d0074.png" style="width:5.83em;vertical-align:-0.36em"/> if <img alt="c" class="m" src="m/a43f4bea8ee8.png" style="width:0.67em;vertical-align:-0.12em"/> is not in the set <img alt="\hat{\Theta}" class="m" src="m/86298e864c09.png" style="width:1.01em;vertical-align:-0.12em"/>. This is a valid test because when <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> indeed equals <img alt="c" class="m" src="m/a43f4bea8ee8.png" style="width:0.67em;vertical-align:-0.12em"/>, we have the correct type one error rate <img alt="\textup{pr}(\theta\not\in\hat{\Theta})\leq\alpha" class="m" src="m/210b246d3f78.png" style="width:6.43em;vertical-align:-0.36em"/>.
+Conversely, if we test a sequence of null hypotheses <img alt="H_{0}(c):\theta=c" class="m" src="m/4a3fbe3d0074.png" style="width:5.83em;vertical-align:-0.36em"/>, we can obtain the corresponding <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/>-values, <img alt="p(c)" class="m" src="m/0f58dc58a2b4.png" style="width:1.95em;vertical-align:-0.36em"/>, as a function of <img alt="c" class="m" src="m/a43f4bea8ee8.png" style="width:0.67em;vertical-align:-0.12em"/>. Then the values of <img alt="c" class="m" src="m/a43f4bea8ee8.png" style="width:0.67em;vertical-align:-0.12em"/> that we fail to reject at level <img alt="\alpha" class="m" src="m/6d3fab0dfb57.png" style="width:0.87em;vertical-align:-0.12em"/> form a confidence set for <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\Theta}=\{c:p(c)\geq\alpha\}=\{c:\text{ fail to reject }H_{0}(c)\text{ at level }\alpha\}." class="m" src="m/597e12881f61.png" style="width:25.15em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A2.SS5.p2.3">It is a valid confidence set because</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(\theta\in\hat{\Theta})=\textup{pr}\{\text{fail to reject }H_{0}(\theta)\text{ at level }\alpha\}\geq 1-\alpha." class="m" src="m/d4ccbbe2b29f.png" style="width:24.40em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A2.SS5.p3.1">Here I use “confidence set” instead of “confidence interval” because <img alt="\hat{\Theta}" class="m" src="m/86298e864c09.png" style="width:1.01em;vertical-align:-0.12em"/> based on inverting tests may not be an interval.
+See the use of the duality in Chapters <a class="ltx_ref" href="#chapter30.A4.SS2" title="30.D.2 Fieller–Creasy problem ‣ Appendix 30.D Two famous problems in statistics ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.D.2</span></a> and <a class="ltx_ref" href="06.html#S15.SS1" title="15.1 Other sharp null hypotheses and confidence intervals ‣ 15 Discussion ‣ Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">15.1</span></a>.</p>
+</div>
+</section>
+</section>
+<section class="ltx_appendix" id="chapter30.A3">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 30.C </span>Inference with two-by-two tables</h3>
+<section class="ltx_subsection" id="chapter30.A3.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.C.1 </span>Fisher’s exact test</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A3.SS1.p1.1">Fisher proposed an exact test for <img alt="H_{0}:p_{1}=p_{0}" class="m" src="m/6dc60768aafe.png" style="width:5.59em;vertical-align:-0.31em"/> under the statistical model:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="n_{11}\sim\text{Binomial}(n_{1},p_{1}),\quad n_{01}\sim\text{Binomial}(n_{0},p_{0}),\quad n_{11}\ind n_{01}." class="m" src="m/0a665017c93e.png" style="width:27.05em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A3.SS1.p1.2">The table below summarizes the data.</p>
+</div>
+<div class="ltx_para">
+<div class="overflow"><table class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<tbody class="ltx_tbody">
+<tr class="ltx_tr">
+<td class="ltx_td ltx_border_t"></td>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">1</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">0</th>
+<th class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_t">row sum</th></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_t">sample 1</td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="n_{11}" class="m" src="m/da20dca27f60.png" style="width:1.69em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="n_{10}" class="m" src="m/6f12a53c5e2a.png" style="width:1.69em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_t"><img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center">sample 0</td>
+<td class="ltx_td ltx_align_center"><img alt="n_{01}" class="m" src="m/1d4cc1360372.png" style="width:1.69em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="n_{00}" class="m" src="m/c886bc93a633.png" style="width:1.69em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center"><img alt="n_{0}" class="m" src="m/45626a2aa980.png" style="width:1.28em;vertical-align:-0.26em"/></td></tr>
+<tr class="ltx_tr">
+<td class="ltx_td ltx_align_center ltx_border_b">column sum</td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n_{\cdot 1}" class="m" src="m/e8365fc9cedb.png" style="width:1.52em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n_{\cdot 0}" class="m" src="m/cbc4cebfc4af.png" style="width:1.52em;vertical-align:-0.26em"/></td>
+<td class="ltx_td ltx_align_center ltx_border_b"><img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A3.SS1.p3.1">He argued that the sums <img alt="n_{11}+n_{01}=n_{\cdot 1}" class="m" src="m/88e61f3a0d98.png" style="width:6.96em;vertical-align:-0.26em"/> and <img alt="n_{10}+n_{00}=n_{\cdot 0}" class="m" src="m/20c0eb109f79.png" style="width:6.96em;vertical-align:-0.26em"/> contain little information about the difference between <img alt="p_{1}" class="m" src="m/640f69111290.png" style="width:1.18em;vertical-align:-0.31em"/> and <img alt="p_{0}" class="m" src="m/c88e5e2d6a61.png" style="width:1.18em;vertical-align:-0.31em"/>, and conditional on them, <img alt="n_{11}" class="m" src="m/da20dca27f60.png" style="width:1.69em;vertical-align:-0.26em"/> follows a Hypergeometric distribution that does not depend on the unknown parameter <img alt="p_{1}=p_{0}" class="m" src="m/22ff33d6b034.png" style="width:3.47em;vertical-align:-0.31em"/> under <img alt="H_{0}" class="m" src="m/206d1773898c.png" style="width:1.52em;vertical-align:-0.26em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{pr}(n_{11}=k)=\frac{\binom{n_{\cdot 1}}{k}\binom{n-n_{\cdot 1}}{n_{1}-k}}{\binom{n}{n_{1}}}." class="m" src="m/599519a7cb0f.png" style="width:12.31em;vertical-align:-1.30em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A3.SS1.p3.2">In <span class="ltx_text ltx_lst_keyword ltx_lst_language_R ltx_lstlisting ltx_font_typewriter ltx_font_bold" style="font-size:90%;">R</span>, the function <span class="ltx_text ltx_lst_language_R ltx_lstlisting"><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">fisher</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.<span class="ltx_text ltx_lst_identifier">test</span></span></span> implements this test.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A3.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.C.2 </span>Estimation with two-by-two tables</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A3.SS2.p1.1">Based on the model in Section <a class="ltx_ref" href="#chapter30.A3.SS1" title="30.C.1 Fisher’s exact test ‣ Appendix 30.C Inference with two-by-two tables ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.C.1</span></a>, we can estimate the parameters <img alt="p_{1}" class="m" src="m/640f69111290.png" style="width:1.18em;vertical-align:-0.31em"/> and <img alt="p_{0}" class="m" src="m/c88e5e2d6a61.png" style="width:1.18em;vertical-align:-0.31em"/> by sample frequencies:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{p}_{1}=\frac{n_{11}}{n_{1}},\quad\hat{p}_{0}=\frac{n_{01}}{n_{0}}." class="m" src="m/6775adf892c9.png" style="width:9.90em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A3.SS2.p1.2">Therefore, we can estimate the risk difference, log risk ratio, and log odds ratio</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><span class="ltx_text ltx_markedasmath ltx_font_smallcaps">rd</span></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle p_{1}-p_{0}," class="m" src="m/202bd694abd7.png" style="width:3.64em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\log\textsc{rr}" class="m" src="m/44d05841d18b.png" style="width:2.89em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\log\frac{p_{1}}{p_{0}}," class="m" src="m/75d2dce1c012.png" style="width:3.16em;vertical-align:-0.99em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\log\textsc{or}" class="m" src="m/546ccbe5ffbb.png" style="width:2.94em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\log\frac{p_{1}/(1-p_{1})}{p_{0}/(1-p_{0})}" class="m" src="m/ddd55b091bcb.png" style="width:6.84em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="chapter30.A3.SS2.p1.3">by the sample analogs</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\hat{\textsc{rd}}" class="m" src="m/b31df0d94fd4.png" style="width:1.47em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\hat{p}_{1}-\hat{p}_{0}," class="m" src="m/e200376df273.png" style="width:3.64em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\log\hat{\textsc{rr}}" class="m" src="m/aa89fc98bf99.png" style="width:2.89em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\log\frac{\hat{p}_{1}}{\hat{p}_{0}}," class="m" src="m/3965f039c2ef.png" style="width:3.16em;vertical-align:-0.99em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><img alt="\displaystyle\log\hat{\textsc{or}}" class="m" src="m/2f241d6e3066.png" style="width:2.94em;vertical-align:-0.31em"/></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><img alt="\displaystyle=" class="m" src="m/d498ab4a3b9a.png" style="width:1.01em;vertical-align:-0.12em"/></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\log\frac{\hat{p}_{1}/(1-\hat{p}_{1})}{\hat{p}_{0}/(1-\hat{p}_{0})}=\log\frac{n_{11}n_{00}}{n_{10}n_{01}}." class="m" src="m/d1f16521c278.png" style="width:13.03em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="chapter30.A3.SS2.p1.4">Based on the asymptotic approximation (see Problem <a class="ltx_ref" href="#chapter30.A7.SS0.SSS0.P5" title="AD.5 Variance estimators in two-by-two tables ‣ Appendix 30.G Homework problems ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">AD.5</span></a>), the estimated variance for the above parameters are</p>
+<div class="overflow"><table class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{\hat{p}_{1}(1-\hat{p}_{1})}{n_{1}}+\frac{\hat{p}_{0}(1-\hat{p}_{0})}{n_{0}}," class="m" src="m/740581952048.png" style="width:11.01em;vertical-align:-0.94em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{1-\hat{p}_{1}}{n_{1}\hat{p}_{1}}+\frac{1-\hat{p}_{0}}{n_{0}\hat{p}_{0}}," class="m" src="m/5744323d307c.png" style="width:7.56em;vertical-align:-0.99em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><img alt="\displaystyle\frac{1}{n_{1}\hat{p}_{1}(1-\hat{p}_{1})}+\frac{1}{n_{0}\hat{p}_{0}(1-\hat{p}_{0})}," class="m" src="m/c2551dd07915.png" style="width:13.10em;vertical-align:-1.06em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table></div>
+<p class="ltx_p" id="chapter30.A3.SS2.p1.5">respectively.
+The log transformation above yields better Normal approximations because the risk ratio and odds ratio are always positive.</p>
+</div>
+</section>
+</section>
+<section class="ltx_appendix" id="chapter30.A4">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 30.D </span>Two famous problems in statistics</h3>
+<section class="ltx_subsection" id="chapter30.A4.SS1">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.D.1 </span>Behrens–Fisher problem</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A4.SS1.p1.1">Consider the two-sample problem with <img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/> units under the treatment and <img alt="n_{0}" class="m" src="m/45626a2aa980.png" style="width:1.28em;vertical-align:-0.26em"/> units under the control, respectively. Assume the outcomes under the treatment <img alt="\{Y_{i}:Z_{i}=1\}" class="m" src="m/6839a7f4477a.png" style="width:5.83em;vertical-align:-0.36em"/> are IID from <img alt="\textsc{N}(\mu_{1},\sigma_{1}^{2})" class="m" src="m/32a736adbd2d.png" style="width:4.38em;vertical-align:-0.36em"/> and the outcomes under the control <img alt="\{Y_{i}:Z_{i}=0\}" class="m" src="m/31c9e4a0a114.png" style="width:5.83em;vertical-align:-0.36em"/> are IID from <img alt="\textsc{N}(\mu_{0},\sigma_{0}^{2})" class="m" src="m/bda4e233e7d0.png" style="width:4.38em;vertical-align:-0.36em"/>, respectively. The goal is to test <img alt="H_{0}:\mu_{1}=\mu_{0}" class="m" src="m/d839310ee62f.png" style="width:5.78em;vertical-align:-0.31em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A4.SS1.p2.1">Start with the easier case with <img alt="\sigma_{1}^{2}=\sigma_{0}^{2}." class="m" src="m/41204c585796.png" style="width:3.95em;vertical-align:-0.36em"/> Coherent with Chapter <a class="ltx_ref" href="06.html#chapter3" title="Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a>, let</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\bar{Y}}(1)=n_{1}^{-1}\sum_{Z_{i}=1}Y_{i},\quad\hat{\bar{Y}}(0)=n_{0}^{-1}\sum_{Z_{i}=0}Y_{i}" class="m" src="m/3bbc357113de.png" style="width:18.09em;vertical-align:-1.52em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A4.SS1.p2.2">denote the sample means of the outcomes under the treatment and control, respectively.
+A standard result is that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="t_{\textup{equal}}=\frac{\hat{\bar{Y}}(1)-\hat{\bar{Y}}(0)}{\sqrt{\frac{n}{n_{1}n_{0}(n-2)}\left[\sum_{Z_{i}=1}\{Y_{i}-\hat{\bar{Y}}(1)\}^{2}+\sum_{Z_{i}=0}\{Y_{i}-\hat{\bar{Y}}(0)\}^{2}\right]}}\sim t_{n-2}." class="m" src="m/d3c18b648f6b.png" style="width:32.38em;vertical-align:-2.43em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A4.SS1.p2.3">Based on <img alt="t_{\textup{equal}}" class="m" src="m/84101cfd146c.png" style="width:2.48em;vertical-align:-0.41em"/>, we can construct a test for <img alt="H_{0}." class="m" src="m/7545b7da79f1.png" style="width:1.78em;vertical-align:-0.26em"/></p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A4.SS1.p3.1">Now consider the more difficult case with possibly different <img alt="\sigma_{1}^{2}" class="m" src="m/7f7bbb8c7e26.png" style="width:1.28em;vertical-align:-0.36em"/> and <img alt="\sigma_{0}^{2}." class="m" src="m/e2d546a939da.png" style="width:1.57em;vertical-align:-0.36em"/> The distribution of <img alt="t_{\textup{equal}}" class="m" src="m/84101cfd146c.png" style="width:2.48em;vertical-align:-0.41em"/> is no longer <img alt="t_{n-2}." class="m" src="m/23140189d481.png" style="width:2.43em;vertical-align:-0.34em"/> Estimating the variances separately, we can also define</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="t_{\textup{unequal}}=\frac{\hat{\bar{Y}}(1)-\hat{\bar{Y}}(0)}{\sqrt{\frac{\hat{S}^{2}(1)}{n_{1}}+\frac{\hat{S}^{2}(0)}{n_{0}}}}," class="m" src="m/cd585bc54741.png" style="width:11.80em;vertical-align:-1.83em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A4.SS1.p3.2">where</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{S}^{2}(1)=(n_{1}-1)^{-1}\sum_{Z_{i}=1}\{Y_{i}-\hat{\bar{Y}}(1)\}^{2},\quad\hat{S}^{2}(0)=(n_{0}-1)^{-1}\sum_{Z_{i}=0}\{Y_{i}-\hat{\bar{Y}}(0)\}^{2}" class="m" src="m/d094ed96efb7.png" style="width:33.80em;vertical-align:-1.52em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A4.SS1.p3.3">are the sample variances of the outcomes under the treatment and control, respectively. Unfortunately, the exact distribution of <img alt="t_{\textup{unequal}}" class="m" src="m/4c48108d3595.png" style="width:3.37em;vertical-align:-0.41em"/> depends on the known variances. Testing <img alt="H_{0}" class="m" src="m/206d1773898c.png" style="width:1.52em;vertical-align:-0.26em"/> without assuming equal variances is the famous Behrens–Fisher problem. With large sample sizes <img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/> and <img alt="n_{0}" class="m" src="m/45626a2aa980.png" style="width:1.28em;vertical-align:-0.26em"/>, the CLT ensures that <img alt="t_{\textup{unequal}}" class="m" src="m/4c48108d3595.png" style="width:3.37em;vertical-align:-0.41em"/> is approximately <img alt="\textsc{N}(0,1)" class="m" src="m/2fef3e922101.png" style="width:3.28em;vertical-align:-0.36em"/>. So we can construct an approximate test for <img alt="H_{0}." class="m" src="m/7545b7da79f1.png" style="width:1.78em;vertical-align:-0.26em"/> By duality, a large-sample Wald-type confidence interval for <img alt="\mu_{1}-\mu_{0}" class="m" src="m/a83d24d4d932.png" style="width:3.57em;vertical-align:-0.31em"/> is</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\bar{Y}}(1)-\hat{\bar{Y}}(0)\pm z_{1-\alpha/2}\sqrt{\frac{\hat{S}^{2}(1)}{n_{1}}+\frac{\hat{S}^{2}(0)}{n_{0}}}" class="m" src="m/eb57e302dc8b.png" style="width:17.20em;vertical-align:-1.13em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A4.SS1.p3.4">where <img alt="z_{1-\alpha/2}" class="m" src="m/73557caf7691.png" style="width:3.11em;vertical-align:-0.46em"/> is the <img alt="1-\alpha/2" class="m" src="m/db1c5719a875.png" style="width:3.59em;vertical-align:-0.36em"/> upper quantile of the standard Normal random variable.</p>
+</div>
+</section>
+<section class="ltx_subsection" id="chapter30.A4.SS2">
+<h5 class="ltx_title ltx_title_subsection"><span class="ltx_tag ltx_tag_subsection">30.D.2 </span>Fieller–Creasy problem</h5>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A4.SS2.p1.1">Consider the two-sample problem with <img alt="n_{1}" class="m" src="m/63dfab35cd28.png" style="width:1.28em;vertical-align:-0.26em"/> units under the treatment and <img alt="n_{0}" class="m" src="m/45626a2aa980.png" style="width:1.28em;vertical-align:-0.26em"/> units under the control, respectively. Assume the outcomes under the treatment <img alt="\{Y_{i}:Z_{i}=1\}" class="m" src="m/6839a7f4477a.png" style="width:5.83em;vertical-align:-0.36em"/> are IID from <img alt="\textsc{N}(\mu_{1},1)" class="m" src="m/415bf9374098.png" style="width:3.83em;vertical-align:-0.36em"/> and the outcomes under the control <img alt="\{Y_{i}:Z_{i}=0\}" class="m" src="m/31c9e4a0a114.png" style="width:5.83em;vertical-align:-0.36em"/> are IID from <img alt="\textsc{N}(\mu_{0},1)" class="m" src="m/03cf550d729e.png" style="width:3.83em;vertical-align:-0.36em"/>, respectively. The goal is to estimate <img alt="\gamma=\mu_{1}/\mu_{0}" class="m" src="m/a04148036a8f.png" style="width:4.75em;vertical-align:-0.36em"/>. We can use <img alt="\hat{\gamma}=\hat{\bar{Y}}(1)/\hat{\bar{Y}}(0)" class="m" src="m/31043804c1e7.png" style="width:6.79em;vertical-align:-0.36em"/> to estimate <img alt="\gamma" class="m" src="m/68923f208210.png" style="width:0.79em;vertical-align:-0.31em"/>. However, the point estimator has a complicated distribution, which does not yield a simple procedure to construct the confidence interval for <img alt="\gamma" class="m" src="m/68923f208210.png" style="width:0.79em;vertical-align:-0.31em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A4.SS2.p2.1">Fieller’s confidence interval can be formulated as inverting tests for a sequence of null hypotheses: <img alt="H_{0}(c):\gamma=c" class="m" src="m/31ade27d94c8.png" style="width:5.90em;vertical-align:-0.36em"/>. Under <img alt="H_{0}(c)" class="m" src="m/52f5731a9457.png" style="width:2.72em;vertical-align:-0.36em"/>, we have</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\frac{\hat{\bar{Y}}(1)-c\hat{\bar{Y}}(0)}{\sqrt{1/n_{1}+c^{2}/n_{0}}}\sim\textsc{N}(0,1)" class="m" src="m/71f71c27fa9c.png" style="width:11.54em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A4.SS2.p2.2">which motivates the confidence interval</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\left\{c:\Big|\frac{\hat{\bar{Y}}(1)-c\hat{\bar{Y}}(0)}{\sqrt{1/n_{1}+c^{2}/n_{0}}}\Big|\leq z_{1-\alpha/2}\right\}" class="m" src="m/ad2af84c747c.png" style="width:14.91em;vertical-align:-1.37em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A4.SS2.p2.3">where <img alt="z_{1-\alpha/2}" class="m" src="m/73557caf7691.png" style="width:3.11em;vertical-align:-0.46em"/> is the <img alt="1-\alpha/2" class="m" src="m/db1c5719a875.png" style="width:3.59em;vertical-align:-0.36em"/> upper quantile of the standard Normal random variable.</p>
+</div>
+</section>
+</section>
+<section class="ltx_appendix" id="chapter30.A5">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 30.E </span>Monte Carlo method in statistics</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A5.p1.1">The Monte Carlo method is a powerful tool in statistics. I will review its basic use in approximating expectations or averages, which is fundamental in understanding the idea of FRT introduced in Chapter <a class="ltx_ref" href="06.html#chapter3" title="Chapter 3 The Completely Randomized Experiment and the Fisher Randomization Test ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">3</span></a>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A5.p2.1">If our goal is to calculate <img alt="\theta=E\{g(Y)\}" class="m" src="m/d0d9c0203675.png" style="width:5.95em;vertical-align:-0.36em"/> with <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> being a random variable, we can simply draw IID samples <img alt="Y_{1},\ldots,Y_{n}" class="m" src="m/c7dc111b8fb0.png" style="width:4.60em;vertical-align:-0.31em"/> from the distribution of <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> and obtain the moment estimator for <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\theta}=n^{-1}\sum_{i=1}^{n}g(Y_{i})." class="m" src="m/bcc4e4f04e79.png" style="width:8.00em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A5.p3.1">As a special case, <img alt="Y" class="m" src="m/45261a8036c1.png" style="width:1.04em;vertical-align:-0.12em"/> is a uniform distribution over <img alt="\{y_{1},\ldots,y_{N}\}" class="m" src="m/2335215bd5a4.png" style="width:5.64em;vertical-align:-0.36em"/> and <img alt="\theta=N^{-1}\sum_{i=1}^{N}g(y_{i})" class="m" src="m/1ac176911310.png" style="width:8.89em;vertical-align:-0.41em"/>. We can draw <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> IID samples <img alt="\{Y_{1},\ldots,Y_{n}\}" class="m" src="m/842f59440ef7.png" style="width:5.61em;vertical-align:-0.36em"/> from <img alt="\{y_{1},\ldots,y_{N}\}" class="m" src="m/2335215bd5a4.png" style="width:5.64em;vertical-align:-0.36em"/> to obtain the moment estimator <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> defined above. This is called <span class="ltx_text ltx_font_italic">sampling with replacement</span>, which is different from <span class="ltx_text ltx_font_italic">sampling without replacement</span> reviewed in Chapter <a class="ltx_ref" href="35.html#chapter32" title="Chapter 32 Some Useful Lemmas for Simple Random Sampling From a Finite Population ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">32</span></a>.</p>
+</div>
+</section>
+<section class="ltx_appendix" id="chapter30.A6">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 30.F </span>Bootstrap</h3>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A6.p1.1">It is often very tedious to derive the variance formulas for complex estimators. <cite class="ltx_cite ltx_citemacro_citet"><a class="ltx_ref" href="35.html#bib.bib98" title="">Efron, (1979)</a></cite> proposed the bootstrap as a general tool for variance estimation. There are many versions of the bootstrap <cite class="ltx_cite ltx_citemacro_citep">(<a class="ltx_ref" href="35.html#bib.bib76" title="">Davison and Hinkley,, 1997</a>)</cite>. In this book, we only need the most basic one: the nonparametric bootstrap, which will be simply called the bootstrap.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A6.p2.1">Consider the generic setting with</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="Y_{1},\ldots,Y_{n}\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}Y," class="m" src="m/b30f9c996555.png" style="width:7.28em;vertical-align:-0.31em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A6.p2.2">where <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/> can be a general random element denoting the observed data for unit <img alt="i" class="m" src="m/e42f92a6b253.png" style="width:0.58em;vertical-align:-0.12em"/>. An estimator <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> is a function of the observed data: <img alt="\hat{\theta}=T(Y_{1},\ldots,Y_{n})" class="m" src="m/5d2b6f5cc51b.png" style="width:7.95em;vertical-align:-0.36em"/>. When <img alt="T" class="m" src="m/cd32106bcb6d.png" style="width:0.96em;vertical-align:-0.12em"/> is a complex function, it may not be easy to obtain the variance or asymptotic variance of <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A6.p3.1">The uncertainty of <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> is driven by the IID sampling of <img alt="Y_{1},\ldots,Y_{n}" class="m" src="m/c7dc111b8fb0.png" style="width:4.60em;vertical-align:-0.31em"/> from the true distribution. Although the true distribution is unknown, it can be well approximated by its empirical version</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{F}_{n}(y)=n^{-1}\sum_{i=1}^{n}I(Y_{i}\leq y)," class="m" src="m/ac502c923cfa.png" style="width:11.85em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A6.p3.2">when the sample size <img alt="n" class="m" src="m/efeb369cccbd.png" style="width:0.84em;vertical-align:-0.12em"/> is large. If we believe this approximation, we can simulate <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> by sampling</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="(Y_{1}^{*},\ldots,Y_{n}^{*})\stackrel{{\scriptstyle\textup{IID}}}{{\sim}}\hat{F}_{n}(y)." class="m" src="m/c6ff578241d5.png" style="width:10.29em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A6.p3.3">Because <img alt="\hat{F}_{n}(y)" class="m" src="m/7e0ecd74adef.png" style="width:2.72em;vertical-align:-0.36em"/> is a discrete distribution with mass <img alt="1/n" class="m" src="m/62ecf7549cb4.png" style="width:1.83em;vertical-align:-0.36em"/> on each observed data point, the simulation of <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> reduces to the following procedure:</p>
+<ol class="ltx_enumerate">
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">1.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A6.I1.i1.p1.1">sample <img alt="(Y_{1}^{*},\ldots,Y_{n}^{*})" class="m" src="m/e961ac557039.png" style="width:5.76em;vertical-align:-0.36em"/> from <img alt="\{Y_{1},\ldots,Y_{n}\}" class="m" src="m/842f59440ef7.png" style="width:5.61em;vertical-align:-0.36em"/> with replacement;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">2.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A6.I1.i2.p1.1">compute <img alt="\hat{\theta}^{*}=T(Y_{1}^{*},\ldots,Y_{n}^{*})" class="m" src="m/21633258b360.png" style="width:8.77em;vertical-align:-0.36em"/>;</p>
+</div></li>
+<li class="ltx_item" style="list-style-type:none;"><span class="ltx_tag ltx_tag_item">3.</span>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A6.I1.i3.p1.1">repeat the above two steps <img alt="B" class="m" src="m/fa2452c388ed.png" style="width:1.04em;vertical-align:-0.12em"/> times to obtain the bootstrap replicates <img alt="\{\hat{\theta}^{*}_{1},\ldots,\hat{\theta}^{*}_{B}\}" class="m" src="m/06a3d20966bf.png" style="width:5.56em;vertical-align:-0.39em"/>.</p>
+</div></li>
+</ol>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A6.p4.1">We can then approximate the (asymptotic) variance of <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> by the sample variance of the bootstrap replicates:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{V}_{\text{boot}}=(B-1)^{-1}\sum_{b=1}^{B}(\hat{\theta}^{*}_{b}-\bar{\theta}^{*})^{2}," class="m" src="m/db38325c90c6.png" style="width:14.43em;vertical-align:-1.42em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A6.p4.2">where <img alt="\bar{\theta}^{*}=B^{-1}\sum_{b=1}^{B}\hat{\theta}^{*}_{b}" class="m" src="m/46a697ecc52b.png" style="width:8.17em;vertical-align:-0.41em"/>. The bootstrap confidence interval based on the Normal approximation is then</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\theta}\pm z_{1-\alpha/2}\sqrt{\hat{V}_{\text{boot}}}," class="m" src="m/a71a50eb5034.png" style="width:8.34em;vertical-align:-0.53em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A6.p4.3">where <img alt="z_{1-\alpha/2}" class="m" src="m/73557caf7691.png" style="width:3.11em;vertical-align:-0.46em"/> is the <img alt="1-\alpha/2" class="m" src="m/db1c5719a875.png" style="width:3.59em;vertical-align:-0.36em"/> upper quantile of the standard Normal random variable.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A6.p5.1">I use the following simple example to illustrate the idea of the bootstrap. With <img alt="n=100" class="m" src="m/b10ab45224d8.png" style="width:3.66em;vertical-align:-0.12em"/> IID observations <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/>’s from <img alt="\textsc{N}(1,1)" class="m" src="m/5e9dec2175ed.png" style="width:3.28em;vertical-align:-0.36em"/>, the sample mean should be close to <img alt="1" class="m" src="m/a18c217c4f2a.png" style="width:0.72em;vertical-align:-0.12em"/> with variance <img alt="1/100=0.01" class="m" src="m/dd746b99cb04.png" style="width:5.85em;vertical-align:-0.36em"/>. Over <img alt="500" class="m" src="m/40671152824c.png" style="width:1.73em;vertical-align:-0.12em"/> simulations, the classic variance estimator and the bootstrap variance estimator with <img alt="B=200" class="m" src="m/ac27d9a03f6f.png" style="width:3.88em;vertical-align:-0.12em"/> both have average values close to <img alt="0.01" class="m" src="m/3788052446fb.png" style="width:2.00em;vertical-align:-0.12em"/>.</p>
+</div>
+<div class="ltx_para">
+<div class="ltx_listing ltx_lst_language_R ltx_lstlisting ltx_listing"><div class="ltx_listing_data"></div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>sample<span class="ltx_text ltx_lst_space"> </span>size</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">100</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>number<span class="ltx_text ltx_lst_space"> </span>of<span class="ltx_text ltx_lst_space"> </span>Monte<span class="ltx_text ltx_lst_space"> </span>Carlo<span class="ltx_text ltx_lst_space"> </span>simulations</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">MC</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">500</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>number<span class="ltx_text ltx_lst_space"> </span>of<span class="ltx_text ltx_lst_space"> </span>bootstrap<span class="ltx_text ltx_lst_space"> </span>replicates<span class="ltx_text ltx_lst_space"> </span>B</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">200</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">simulation</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">replicate</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">MC</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">rnorm</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">hat</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">replicate</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">{</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">index</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">sample</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(1:</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">replace</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">=</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">TRUE</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">index</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">])</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">})</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">c</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">),</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">var</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">Y</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)/</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">n</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">var</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">boot</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">mu</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">.</span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">hat</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">))</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">+</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">})</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_comment ltx_font_typewriter" style="font-size:90%;--ltx-fg-color:#999999;">##<span class="ltx_text ltx_lst_space"> </span>summarize<span class="ltx_text ltx_lst_space"> </span>the<span class="ltx_text ltx_lst_space"> </span>results</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">&gt;</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">apply</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">(</span><span class="ltx_text ltx_lst_identifier ltx_font_typewriter" style="font-size:90%;">simulation</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">1,</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_lst_keyword ltx_font_typewriter ltx_font_bold" style="font-size:90%;">mean</span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">)</span>
+</div>
+<div class="ltx_listingline"><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">[1]</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.997602961</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.010006303</span><span class="ltx_text ltx_lst_space ltx_font_typewriter" style="font-size:90%;"> </span><span class="ltx_text ltx_font_typewriter" style="font-size:90%;">0.009921895</span>
+</div>
+</div>
+</div>
+</section>
+<section class="ltx_appendix" id="chapter30.A7">
+<h3 class="ltx_title ltx_title_appendix"><span class="ltx_tag ltx_tag_appendix">Appendix 30.G </span>Homework problems</h3>
+<section class="ltx_paragraph" id="chapter30.A7.SS0.SSS0.P1">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AD.1 </span>Independent but not IID data</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P1.p1.1">Assume that the <img alt="Y_{i}" class="m" src="m/b4e44ee63a62.png" style="width:1.16em;vertical-align:-0.26em"/>’s are independent with mean <img alt="\mu_{i}" class="m" src="m/38b4177264bf.png" style="width:1.16em;vertical-align:-0.31em"/> and variances <img alt="\sigma_{i}^{2}" class="m" src="m/7b46743688cd.png" style="width:1.28em;vertical-align:-0.36em"/> for <img alt="i=1,\ldots,n" class="m" src="m/4f9df9a48055.png" style="width:5.23em;vertical-align:-0.31em"/>. The parameter of interest is
+<img alt="\mu=n^{-1}\sum_{i=1}^{n}\mu_{i}." class="m" src="m/9d47c88f7839.png" style="width:7.78em;vertical-align:-0.41em"/>
+Show that
+<img alt="\hat{\mu}=n^{-1}\sum_{i=1}^{n}Y_{i}" class="m" src="m/7c4be544fad1.png" style="width:7.49em;vertical-align:-0.41em"/>
+is unbiased for <img alt="\mu" class="m" src="m/de29996a4697.png" style="width:0.84em;vertical-align:-0.31em"/> and find its variance. Show that the usual variance estimator for IID data</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{v}=\{n(n-1)\}^{-1}\sum_{i=1}^{n}(Y_{i}-\hat{\mu})^{2}" class="m" src="m/bcb2d2a65431.png" style="width:13.44em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P1.p1.2">is a conservative estimator for the variance of <img alt="\hat{\mu}" class="m" src="m/428e3671e2a6.png" style="width:0.84em;vertical-align:-0.31em"/> in the sense that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(\hat{v})-\textup{var}(\hat{\mu})=\{n(n-1)\}^{-1}\sum_{i=1}^{n}(\mu_{i}-\mu)^{2}\geq 0." class="m" src="m/632853430e0c.png" style="width:21.10em;vertical-align:-1.40em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P1.p2.1">Remark: Consider a simpler case with <img alt="\mu_{i}=\mu" class="m" src="m/11849288703a.png" style="width:3.11em;vertical-align:-0.31em"/> and <img alt="\sigma_{i}^{2}=\sigma^{2}" class="m" src="m/0153188e3fdd.png" style="width:3.69em;vertical-align:-0.36em"/> for all <img alt="i=1,\ldots,n" class="m" src="m/4f9df9a48055.png" style="width:5.23em;vertical-align:-0.31em"/>. The sample mean is unbiased for <img alt="\mu" class="m" src="m/de29996a4697.png" style="width:0.84em;vertical-align:-0.31em"/> with variance <img alt="\sigma^{2}/n" class="m" src="m/c154e460823a.png" style="width:2.38em;vertical-align:-0.36em"/>. Moreover, an unbiased estimator for the variance <img alt="\sigma^{2}/n" class="m" src="m/c154e460823a.png" style="width:2.38em;vertical-align:-0.36em"/> is <img alt="\hat{\sigma}^{2}/n=\hat{v}" class="m" src="m/2a0cc7de0154.png" style="width:4.24em;vertical-align:-0.36em"/>, where <img alt="\hat{\sigma}^{2}=(n-1)^{-1}\sum_{i=1}^{n}(Y_{i}-\hat{\mu})^{2}" class="m" src="m/34111fa9b319.png" style="width:13.32em;vertical-align:-0.41em"/>.
+This problem states a more general result for the case with independent but not identically distributed observations. The result has an important implication for Theorem <a class="ltx_ref" href="10.html#Thmtheorem1b" title="Theorem 7.1 ‣ 37 Neymanian inference ‣ Chapter 7 Matched-Pairs Experiment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7.1</span></a> for the matched-pairs experiment discussed in Chapter <a class="ltx_ref" href="10.html#chapter7" title="Chapter 7 Matched-Pairs Experiment ‣ Part II Randomized experiments ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">7</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="chapter30.A7.SS0.SSS0.P2">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AD.2 </span>Asymptotic Normality of ratio</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P2.p1.1">Prove (<a class="ltx_ref" href="#chapter30.A1.E155" title="In Example 30.1 (asymptotic Normality for the ratio) ‣ 30.A.7 Delta method ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">155</span></a>).</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="chapter30.A7.SS0.SSS0.P3">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AD.3 </span>Asymptotic Normality of product</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P3.p1.1">Prove (<a class="ltx_ref" href="#chapter30.A1.E157" title="In Example 30.2 (asymptotic Normality for the product) ‣ 30.A.7 Delta method ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">157</span></a>).</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="chapter30.A7.SS0.SSS0.P4">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AD.4 </span>Product of two independent Normals</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P4.p1.1">Assume <img alt="X\sim\textsc{N}(\mu_{X},\sigma_{X}^{2}),Y\sim\textsc{N}(\mu_{Y},\sigma_{Y}^{2})" class="m" src="m/d060e34ffa86.png" style="width:14.38em;vertical-align:-0.39em"/> and <img alt="X\ind Y" class="m" src="m/027a31059e5a.png" style="width:2.84em;vertical-align:-0.12em"/>. Show that</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}(XY)=\sigma_{X}^{2}\sigma_{Y}^{2}+\mu_{X}^{2}\sigma_{Y}^{2}+\mu_{Y}^{2}\sigma_{X}^{2}." class="m" src="m/f90beded2169.png" style="width:16.00em;vertical-align:-0.36em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P4.p2.1">Remark: This problem gives a non-asymptotic form of Example <a class="ltx_ref" href="#Thmexample2p" title="Example 30.2 (asymptotic Normality for the product) ‣ 30.A.7 Delta method ‣ Appendix 30.A Probability ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.2</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="chapter30.A7.SS0.SSS0.P5">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AD.5 </span>Variance estimators in two-by-two tables</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P5.p1.1">Use the delta method to show the variance estimators in Section <a class="ltx_ref" href="#chapter30.A3.SS2" title="30.C.2 Estimation with two-by-two tables ‣ Appendix 30.C Inference with two-by-two tables ‣ Chapter 30 Probability and Statistics ‣ Part VII Appendices ‣ A First Course in Causal Inference"><span class="ltx_text ltx_ref_tag">30.C.2</span></a>.</p>
+</div>
+</section>
+<section class="ltx_paragraph" id="chapter30.A7.SS0.SSS0.P6">
+<h6 class="ltx_title ltx_title_paragraph"><span class="ltx_tag ltx_tag_paragraph">AD.6 </span>Fisher weighting</h6>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P6.p1.1">Assume that we have <img alt="p" class="m" src="m/f396ae69aa22.png" style="width:0.75em;vertical-align:-0.31em"/> independent unbiased estimators <img alt="\hat{\theta}_{1},\ldots,\hat{\theta}_{p}" class="m" src="m/0cc51158f8fd.png" style="width:4.31em;vertical-align:-0.41em"/> for a common parameter <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/>:</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="E(\hat{\theta}_{j})=\theta,\quad(j=1,\ldots,p)." class="m" src="m/6e25e807df31.png" style="width:12.04em;vertical-align:-0.41em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P6.p1.2">The estimator <img alt="\hat{\theta}_{j}" class="m" src="m/790619acec88.png" style="width:1.13em;vertical-align:-0.41em"/> has variance <img alt="v_{j}" class="m" src="m/31e7354cb395.png" style="width:1.13em;vertical-align:-0.41em"/> <img alt="(j=1,\ldots,p)" class="m" src="m/7e25af8f5830.png" style="width:6.05em;vertical-align:-0.36em"/>.</p>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P6.p2.1">Construct a new estimator</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\hat{\theta}=\sum_{j=1}^{p}w_{j}\hat{\theta}_{j}" class="m" src="m/d569a0a615ff.png" style="width:5.71em;vertical-align:-1.52em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P6.p2.2">with nonrandom constants <img alt="w_{j}" class="m" src="m/dc8c4c83e5bc.png" style="width:1.37em;vertical-align:-0.41em"/>’s.
+Show that <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> is unbiased for estimating <img alt="\theta" class="m" src="m/2d3198fcda5e.png" style="width:0.72em;vertical-align:-0.12em"/> if <img alt="\sum_{j=1}^{p}w_{j}=1" class="m" src="m/b6a259f75c59.png" style="width:5.85em;vertical-align:-0.55em"/>. Show that the optimal <img alt="w_{j}" class="m" src="m/dc8c4c83e5bc.png" style="width:1.37em;vertical-align:-0.41em"/>’s such that <img alt="\hat{\theta}" class="m" src="m/1b3927b537d6.png" style="width:0.72em;vertical-align:-0.12em"/> has the smallest variance under the constraint <img alt="\sum_{j=1}^{p}w_{j}=1" class="m" src="m/b6a259f75c59.png" style="width:5.85em;vertical-align:-0.55em"/> are</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="w_{j}^{*}=\frac{1/v_{j}}{\sum_{j^{\prime}=1}^{p}1/v_{j^{\prime}}},\quad(j=1,\ldots,p)." class="m" src="m/7e55414981e5.png" style="width:15.63em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P6.p2.3">Show that the resulting estimator <img alt="\hat{\theta}^{*}=\sum_{j=1}^{p}w_{j}^{*}\hat{\theta}_{j}" class="m" src="m/e99824d3faf5.png" style="width:7.28em;vertical-align:-0.55em"/> has variance</p>
+<table class="ltx_equation ltx_eqn_table">
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><img alt="\textup{var}(\hat{\theta}^{*})=\frac{1}{\sum_{j=1}^{p}1/v_{j}}." class="m" src="m/e98227d5cf76.png" style="width:9.73em;vertical-align:-1.25em"/></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td></tr></tbody>
+</table>
+</div>
+<div class="ltx_para">
+<p class="ltx_p" id="chapter30.A7.SS0.SSS0.P6.p3.1">Remark: This is called Fisher weighting. The optimal weights are proportional to the inverses of the variances.</p>
+</div>
+</section>
+</section>
+</section><p class="nav bottom"><a href="index.html">目录</a><a href="32.html">← 上一章</a><a href="34.html">下一章 →</a><a href="/research/?view=books">研究园</a></p><p class="credit">本书：A First Course in Causal Inference，作者 Peng Ding。原文：<a href="https://arxiv.org/abs/2305.18793v2">arXiv:2305.18793v2</a>，按 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 许可发布。本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p></body></html>
