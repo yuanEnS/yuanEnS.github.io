@@ -39,7 +39,9 @@ SE = 'https://standardebooks.org/ebooks/'
 SKIP = re.compile(r'(^|/)(titlepage|imprint|colophon|uncopyright|halftitlepage|loi|toc)\.xhtml$')
 WORDS_PER_MINUTE = 200  # 母语读者的速度；读英文书可以按一半估
 LEVELS = ['入门', '进阶', '挑战']
-GENRE_ORDER = ['科幻', '爱情', '推理', '奇幻', '冒险', '成长', '哥特', '社会', '家庭', '童话', '动物', '短篇']
+GENRE_ORDER = ['小说', '历史', '思想', '诗词', '散文', '科幻', '爱情', '推理', '奇幻', '冒险', '侠义', '成长', '哥特',
+               '志怪', '笔记', '传记', '寓言', '讽刺', '社会', '家庭', '童话', '动物', '短篇']
+LANGS = [('zh', '中文'), ('en', '英文')]
 
 STYLE = """<style>
 body { margin: 0 auto; max-width: 720px; padding: 12px 18px 40px; background: #fff; color: #000;
@@ -73,12 +75,12 @@ def download(book, cache):
     path = os.path.join(cache, f'{book["id"]}.epub')
     if os.path.exists(path) and zipfile.is_zipfile(path):
         return path
-    page = urllib.request.urlopen(urllib.request.Request(SE + book['se'], headers={'User-Agent': 'gamesyuan-reading'}), timeout=60).read().decode('utf-8')
+    page = urllib.request.urlopen(urllib.request.Request(SE + book['se'], headers={'User-Agent': 'static-reading-builder/1.0'}), timeout=60).read().decode('utf-8')
     found = re.search(r'href="([^"]*downloads/[^"]*_advanced\.epub)"', page)
     if not found:
         raise SystemExit(f'找不到 {book["se"]} 的下载链接')
     url = 'https://standardebooks.org' + found.group(1) + '?source=download'
-    data = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'gamesyuan-reading'}), timeout=120).read()
+    data = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'static-reading-builder/1.0'}), timeout=120).read()
     with open(path, 'wb') as handle:
         handle.write(data)
     time.sleep(1)  # 别太快
@@ -276,33 +278,55 @@ def write_index(books, stats):
             if genre not in genres:
                 genres.append(genre)
     cards = []
-    for book in books:
+    # 中文书在前
+    for book in sorted(books, key=lambda b: b.get('lang', 'en') != 'zh'):
         stat = stats[book['id']]
-        hours = stat['words'] / WORDS_PER_MINUTE / 60
+        lang = book.get('lang', 'en')
         tags = ''.join(f'<span class="label">{esc(g)}</span>' for g in book['genres'])
+        if lang == 'zh':
+            by = f'{esc(book["author"])} · {esc(book["era"])}'
+            size = f'约 {stat["chars"] / 10000:.1f} 万字 · {stat["chapters"]} 章'
+        else:
+            hours = stat['words'] / WORDS_PER_MINUTE / 60
+            by = f'{esc(book["zh"])} · {esc(book["author"])} · {book["year"]}'
+            size = f'约 {stat["words"] / 10000:.1f} 万词 · {stat["chapters"]} 章 · 母语读者约 {hours:.0f} 小时读完'
         cards.append(
-            f'<article class="book" data-genres="{esc(" ".join(book["genres"]))}" data-level="{esc(book["level"])}">'
-            f'<p class="book-tags">{tags}<span class="label kind">{esc(book["level"])}</span></p>'
+            f'<article class="book" data-lang="{lang}" data-genres="{esc(" ".join(book["genres"]))}" data-level="{esc(book["level"])}">'
+            f'<p class="book-tags"><span class="label lang">{dict(LANGS)[lang]}</span>{tags}<span class="label kind">{esc(book["level"])}</span></p>'
             f'<h2><a href="books/{book["id"]}/">{esc(book["title"])}</a></h2>'
-            f'<p class="book-by">{esc(book["zh"])} · {esc(book["author"])} · {book["year"]}</p>'
+            f'<p class="book-by">{by}</p>'
             f'<p class="book-intro">{esc(book["intro"])}</p>'
-            f'<p class="book-size">约 {stat["words"] / 10000:.1f} 万词 · {stat["chapters"]} 章 · 母语读者约 {hours:.0f} 小时读完</p>'
+            f'<p class="book-size">{size}</p>'
             f'<p class="book-links"><a href="books/{book["id"]}/">开始读 →</a></p></article>')
     chips = lambda name, values: ''.join(  # noqa: E731
         f'<button type="button" class="chip" data-{name}="{esc(v)}" aria-pressed="false">{esc(v)}</button>' for v in values)
     levels = [level for level in LEVELS if any(b['level'] == level for b in books)]
     template = open(os.path.join(OUT, 'tools', 'index.template.html'), encoding='utf-8').read()
-    result = (template.replace('{{GENRES}}', chips('genre', genres)).replace('{{LEVELS}}', chips('level', levels))
+    langs = [name for code, name in LANGS if any(b.get('lang', 'en') == code for b in books)]
+    result = (template.replace('{{LANGS}}', ''.join(
+        f'<button type="button" class="chip" data-lang="{code}" aria-pressed="false">{name}</button>'
+        for code, name in LANGS if name in langs)).replace('{{GENRES}}', chips('genre', genres)).replace('{{LEVELS}}', chips('level', levels))
               .replace('{{BOOKS}}', '\n'.join(cards)).replace('{{COUNT}}', str(len(books))))
     with open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8') as handle:
         handle.write(result)
 
 
 def main():
-    cache = sys.argv[1] if len(sys.argv) > 1 else os.path.join(tempfile.gettempdir(), 'gamesyuan-reading')
+    cache = sys.argv[1] if len(sys.argv) > 1 else os.path.join(tempfile.gettempdir(), 'reading-cache')
     os.makedirs(cache, exist_ok=True)
     books = json.load(open(os.path.join(OUT, 'books.json'), encoding='utf-8'))['books']
-    stats = {book['id']: convert_book(book, cache) for book in books}
+    stats = {}
+    for book in books:
+        if book.get('source') == 'wikisource':
+            # 中文书由 wikisource.py 转换，这里只读它写的统计
+            path = os.path.join(OUT, 'books', book['id'], 'stats.json')
+            if not os.path.exists(path):
+                print(f'{book["id"]}: 还没转换，先运行 reading/tools/wikisource.py，这次书目页里不放它')
+                continue
+            stats[book['id']] = json.load(open(path))
+        else:
+            stats[book['id']] = convert_book(book, cache)
+    books = [b for b in books if b['id'] in stats]
     write_index(books, stats)
     print(f'书目页 reading/index.html：{len(books)} 本')
 

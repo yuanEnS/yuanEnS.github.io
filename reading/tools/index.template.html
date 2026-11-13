@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- 这个文件由 reading/tools/build.py 从 reading/tools/index.template.html 生成，改模板，别直接改它 -->
-<title>阅读园 · 英文经典名著在线读 | gamesyuan</title>
-<meta name="description" content="阅读园：福尔摩斯、傲慢与偏见、了不起的盖茨比等英文经典名著，按科幻、爱情等类别挑选，一章一页在线读，手机和 Kindle 都能看。">
+<title>阅读园 · 中英文经典名著在线读 | gamesyuan</title>
+<meta name="description" content="阅读园：红楼梦、西游记、史记、论语、唐诗三百首等中文古典名著，以及福尔摩斯、傲慢与偏见、了不起的盖茨比等英文经典名著，按科幻、爱情等类别挑选，一章一页在线读，手机和 Kindle 都能看。">
 <link rel="canonical" href="https://gamesyuan.com/reading/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="gamesyuan">
@@ -40,6 +40,7 @@
   .book-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
   .label { display: inline-block; padding: 0 8px; border: 1px solid var(--rule); border-radius: 4px; color: var(--soft); font-size: 14px; line-height: 22px; }
   .label.kind { border-style: dashed; }
+  .label.lang { border-color: var(--text); background: var(--text); color: var(--bg); }
   .book-by { margin: 0; color: var(--muted); font-size: 16px; }
   .book-intro { margin: 10px 0 0; color: var(--soft); font-size: 17px; line-height: 1.85; }
   .book-size { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
@@ -54,10 +55,11 @@
 <header class="masthead">
   <span class="seal" aria-hidden="true">读</span>
   <h1>阅读园</h1>
-  <p>英文经典名著，一章一页在线读。手机、电脑、Kindle 都能看。</p>
+  <p>中英文经典名著，一章一页在线读。手机、电脑、Kindle 都能看。</p>
 </header>
 
 <section aria-label="筛选">
+  <fieldset class="facet"><legend>语言</legend><div class="chips">{{LANGS}}</div></fieldset>
   <fieldset class="facet"><legend>类别</legend><div class="chips">{{GENRES}}</div></fieldset>
   <fieldset class="facet"><legend>难度</legend><div class="chips">{{LEVELS}}</div></fieldset>
 </section>
@@ -67,7 +69,7 @@
 {{BOOKS}}
 </main>
 
-<p class="about">这些书都已进入公有领域，文本来自 <a href="https://standardebooks.org/">Standard Ebooks</a> 的精校版（CC0）。难度是按中国读者大致估的：入门的句子短、故事抓人；进阶的是长篇，语言更讲究。读完的时间按母语读者每分钟 200 词估算，读外语可以按两倍算。</p>
+<p class="about">这些书都已进入公有领域。中文书的文本来自<a href="https://zh.wikisource.org/">维基文库</a>（整理部分按 CC BY-SA 4.0），由繁体自动转成简体；英文书来自 <a href="https://standardebooks.org/">Standard Ebooks</a> 的精校版（CC0）。难度是按中国读者大致估的：入门的句子短、故事抓人；进阶的是长篇，语言更讲究。读完的时间按母语读者每分钟 200 词估算，读外语可以按两倍算。</p>
 <footer class="foot"><a href="/">首页</a> · <a href="/research/">研究园</a> · <a href="/life/">生活园</a> · <a href="/games/">游戏园</a></footer>
 </div>
 <script>
@@ -83,15 +85,17 @@
       return out;
     }
     function update() {
-      var genres = picked('genre'), levels = picked('level'), shown = 0;
+      var langs = picked('lang'), genres = picked('genre'), levels = picked('level'), shown = 0;
       for (var i = 0; i < books.length; i++) {
         var mine = books[i].getAttribute('data-genres').split(' ');
         var okGenre = !genres.length || genres.some(function (g) { return mine.indexOf(g) >= 0; });
         var okLevel = !levels.length || levels.indexOf(books[i].getAttribute('data-level')) >= 0;
-        books[i].style.display = okGenre && okLevel ? '' : 'none';
-        if (okGenre && okLevel) shown++;
+        var okLang = !langs.length || langs.indexOf(books[i].getAttribute('data-lang')) >= 0;
+        var ok = okGenre && okLevel && okLang;
+        books[i].style.display = ok ? '' : 'none';
+        if (ok) shown++;
       }
-      document.getElementById('count').textContent = genres.length || levels.length
+      document.getElementById('count').textContent = langs.length || genres.length || levels.length
         ? '找到 ' + shown + ' 本（共 ' + books.length + ' 本）' : '共 ' + books.length + ' 本';
     }
     for (var i = 0; i < chips.length; i++) {

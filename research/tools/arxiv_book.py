@@ -138,7 +138,7 @@ def fetch(url, path):
     if os.path.exists(path):
         return True
     try:
-        request = urllib.request.Request(url, headers={'User-Agent': 'gamesyuan-book-converter'})
+        request = urllib.request.Request(url, headers={'User-Agent': 'static-reading-builder/1.0'})
         with urllib.request.urlopen(request, timeout=60) as res, open(path, 'wb') as handle:
             handle.write(res.read())
         return True
