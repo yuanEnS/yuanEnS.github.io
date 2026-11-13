@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 这个文件由 reading/tools/build.py 从 reading/tools/index.template.html 生成，改模板，别直接改它 -->
+<title>阅读园 · 英文经典名著在线读 | gamesyuan</title>
+<meta name="description" content="阅读园：福尔摩斯、傲慢与偏见、了不起的盖茨比等英文经典名著，按科幻、爱情等类别挑选，一章一页在线读，手机和 Kindle 都能看。">
+<link rel="canonical" href="https://gamesyuan.com/reading/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="gamesyuan">
+<meta property="og:title" content="阅读园 · 英文经典名著在线读">
+<meta property="og:description" content="英文经典名著，按类别挑选，一章一页在线读，Kindle 也能看。">
+<meta property="og:url" content="https://gamesyuan.com/reading/">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/life/life.css">
+<style>
+  .facet { margin: 0 0 14px; padding: 0; border: 0; }
+  .facet legend { margin-bottom: 8px; padding: 0; color: var(--muted); font-size: 15px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .page .chip {
+    padding: 4px 14px; border: 1px solid var(--rule); border-radius: 999px; background: var(--card);
+    color: var(--soft); font: 16px/1.6 var(--kai); cursor: pointer;
+  }
+  .page .chip[aria-pressed="true"] { border-color: var(--primary); background: var(--primary); color: #FFF4E6; }
+  .count { margin: 18px 0 0; padding-bottom: 10px; border-bottom: 1px solid var(--rule); color: var(--muted); font-size: 15px; }
+  .book { margin-top: 16px; padding: 18px 20px; border: 1px solid var(--rule); border-radius: 12px; background: var(--card); }
+  .book h2 { margin: 6px 0 2px; font: 24px/1.35 "Iowan Old Style", "Palatino Linotype", Georgia, var(--kai); font-weight: 400; }
+  .book h2 a { color: var(--text); text-decoration: none; }
+  .book h2 a:hover { color: var(--primary); text-decoration: underline; }
+  .book-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+  .label { display: inline-block; padding: 0 8px; border: 1px solid var(--rule); border-radius: 4px; color: var(--soft); font-size: 14px; line-height: 22px; }
+  .label.kind { border-style: dashed; }
+  .book-by { margin: 0; color: var(--muted); font-size: 16px; }
+  .book-intro { margin: 10px 0 0; color: var(--soft); font-size: 17px; line-height: 1.85; }
+  .book-size { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+  .book-links { margin: 8px 0 0; font-size: 16px; }
+  .book-links a { color: var(--primary); }
+  .about { margin-top: 36px; color: var(--muted); font-size: 14px; line-height: 1.8; }
+</style>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a href="/">← 首页</a><a href="/research/">研究园</a></nav>
+<header class="masthead">
+  <span class="seal" aria-hidden="true">读</span>
+  <h1>阅读园</h1>
+  <p>英文经典名著，一章一页在线读。手机、电脑、Kindle 都能看。</p>
+</header>
+
+<section aria-label="筛选">
+  <fieldset class="facet"><legend>类别</legend><div class="chips"><button type="button" class="chip" data-genre="科幻" aria-pressed="false">科幻</button><button type="button" class="chip" data-genre="爱情" aria-pressed="false">爱情</button><button type="button" class="chip" data-genre="推理" aria-pressed="false">推理</button><button type="button" class="chip" data-genre="奇幻" aria-pressed="false">奇幻</button><button type="button" class="chip" data-genre="冒险" aria-pressed="false">冒险</button><button type="button" class="chip" data-genre="成长" aria-pressed="false">成长</button><button type="button" class="chip" data-genre="哥特" aria-pressed="false">哥特</button><button type="button" class="chip" data-genre="社会" aria-pressed="false">社会</button><button type="button" class="chip" data-genre="家庭" aria-pressed="false">家庭</button><button type="button" class="chip" data-genre="童话" aria-pressed="false">童话</button><button type="button" class="chip" data-genre="动物" aria-pressed="false">动物</button><button type="button" class="chip" data-genre="短篇" aria-pressed="false">短篇</button></div></fieldset>
+  <fieldset class="facet"><legend>难度</legend><div class="chips"><button type="button" class="chip" data-level="入门" aria-pressed="false">入门</button><button type="button" class="chip" data-level="进阶" aria-pressed="false">进阶</button></div></fieldset>
+</section>
+<p class="count" id="count" role="status" aria-live="polite">共 10 本</p>
+
+<main id="books">
+<article class="book" data-genres="推理 短篇" data-level="入门"><p class="book-tags"><span class="label">推理</span><span class="label">短篇</span><span class="label kind">入门</span></p><h2><a href="books/sherlock-holmes/">The Adventures of Sherlock Holmes</a></h2><p class="book-by">福尔摩斯探案集 · Arthur Conan Doyle · 1892</p><p class="book-intro">十二个独立的短篇案子，由华生医生讲述福尔摩斯怎样从细节里推出真相。一篇一个故事，读完一篇就有收获，很适合当英文小说的第一本书。</p><p class="book-size">约 10.6 万词 · 12 章 · 母语读者约 9 小时读完</p><p class="book-links"><a href="books/sherlock-holmes/">开始读 →</a></p></article>
+<article class="book" data-genres="奇幻 童话" data-level="入门"><p class="book-tags"><span class="label">奇幻</span><span class="label">童话</span><span class="label kind">入门</span></p><h2><a href="books/alice/">Alice&#x27;s Adventures in Wonderland</a></h2><p class="book-by">爱丽丝漫游奇境 · Lewis Carroll · 1865</p><p class="book-intro">爱丽丝追着一只揣怀表的兔子掉进洞里，遇到一连串古怪的人和事。篇幅短，充满文字游戏和荒诞的对话，附有 John Tenniel 的原版插图。</p><p class="book-size">约 2.8 万词 · 14 章 · 母语读者约 2 小时读完</p><p class="book-links"><a href="books/alice/">开始读 →</a></p></article>
+<article class="book" data-genres="奇幻 童话 冒险" data-level="入门"><p class="book-tags"><span class="label">奇幻</span><span class="label">童话</span><span class="label">冒险</span><span class="label kind">入门</span></p><h2><a href="books/wizard-of-oz/">The Wonderful Wizard of Oz</a></h2><p class="book-by">绿野仙踪 · L. Frank Baum · 1900</p><p class="book-intro">堪萨斯的小女孩多萝西被龙卷风卷到奥兹国，和稻草人、铁皮人、胆小的狮子一起去找魔法师。用词简单，故事一路往前走，读起来很轻松。</p><p class="book-size">约 4.0 万词 · 25 章 · 母语读者约 3 小时读完</p><p class="book-links"><a href="books/wizard-of-oz/">开始读 →</a></p></article>
+<article class="book" data-genres="冒险 动物" data-level="入门"><p class="book-tags"><span class="label">冒险</span><span class="label">动物</span><span class="label kind">入门</span></p><h2><a href="books/call-of-the-wild/">The Call of the Wild</a></h2><p class="book-by">野性的呼唤 · Jack London · 1903</p><p class="book-intro">家养的大狗巴克被拐卖到北方的克朗代克淘金地拉雪橇，在严酷的荒野里一步步找回野性。中篇，七章，情节紧凑。</p><p class="book-size">约 3.2 万词 · 7 章 · 母语读者约 3 小时读完</p><p class="book-links"><a href="books/call-of-the-wild/">开始读 →</a></p></article>
+<article class="book" data-genres="爱情 社会" data-level="进阶"><p class="book-tags"><span class="label">爱情</span><span class="label">社会</span><span class="label kind">进阶</span></p><h2><a href="books/pride-and-prejudice/">Pride and Prejudice</a></h2><p class="book-by">傲慢与偏见 · Jane Austen · 1813</p><p class="book-intro">伊丽莎白和达西先生从互相看不顺眼到彼此理解的故事。对话机智，讽刺精准，是读英文名著最常被推荐的起点。</p><p class="book-size">约 12.3 万词 · 61 章 · 母语读者约 10 小时读完</p><p class="book-links"><a href="books/pride-and-prejudice/">开始读 →</a></p></article>
+<article class="book" data-genres="爱情 成长 哥特" data-level="进阶"><p class="book-tags"><span class="label">爱情</span><span class="label">成长</span><span class="label">哥特</span><span class="label kind">进阶</span></p><h2><a href="books/jane-eyre/">Jane Eyre</a></h2><p class="book-by">简·爱 · Charlotte Brontë · 1847</p><p class="book-intro">孤女简·爱从寄人篱下的童年，到在桑菲尔德庄园当家庭教师，一直坚持自尊和独立。第一人称讲述，情感真挚，也有几分神秘气氛。</p><p class="book-size">约 18.9 万词 · 41 章 · 母语读者约 16 小时读完</p><p class="book-links"><a href="books/jane-eyre/">开始读 →</a></p></article>
+<article class="book" data-genres="爱情 社会" data-level="进阶"><p class="book-tags"><span class="label">爱情</span><span class="label">社会</span><span class="label kind">进阶</span></p><h2><a href="books/great-gatsby/">The Great Gatsby</a></h2><p class="book-by">了不起的盖茨比 · F. Scott Fitzgerald · 1925</p><p class="book-intro">1920 年代的纽约长岛，神秘富豪盖茨比夜夜举办盛大派对，只为了一个人。篇幅短，文字极美，写尽了「美国梦」的光彩与幻灭。</p><p class="book-size">约 5.0 万词 · 10 章 · 母语读者约 4 小时读完</p><p class="book-links"><a href="books/great-gatsby/">开始读 →</a></p></article>
+<article class="book" data-genres="科幻 哥特" data-level="进阶"><p class="book-tags"><span class="label">科幻</span><span class="label">哥特</span><span class="label kind">进阶</span></p><h2><a href="books/frankenstein/">Frankenstein</a></h2><p class="book-by">弗兰肯斯坦 · Mary Shelley · 1818</p><p class="book-intro">年轻的科学家弗兰肯斯坦造出了一个生命，又因为恐惧抛弃了它。被视为科幻小说的开山之作，追问创造者的责任和「人」的含义。</p><p class="book-size">约 7.8 万词 · 33 章 · 母语读者约 7 小时读完</p><p class="book-links"><a href="books/frankenstein/">开始读 →</a></p></article>
+<article class="book" data-genres="科幻" data-level="进阶"><p class="book-tags"><span class="label">科幻</span><span class="label kind">进阶</span></p><h2><a href="books/time-machine/">The Time Machine</a></h2><p class="book-by">时间机器 · H. G. Wells · 1895</p><p class="book-intro">一位发明家坐着自己造的机器去到八十万年后的未来，发现人类分成了两个截然不同的种族。很短的一部书，「时间旅行」这个题材从这里开始流行。</p><p class="book-size">约 3.3 万词 · 14 章 · 母语读者约 3 小时读完</p><p class="book-links"><a href="books/time-machine/">开始读 →</a></p></article>
+<article class="book" data-genres="成长 家庭" data-level="进阶"><p class="book-tags"><span class="label">成长</span><span class="label">家庭</span><span class="label kind">进阶</span></p><h2><a href="books/little-women/">Little Women</a></h2><p class="book-by">小妇人 · Louisa May Alcott · 1868</p><p class="book-intro">美国内战时期，马奇家四姐妹在清贫中长大，各有各的梦想和烦恼。温暖的家庭故事，生活词汇丰富，篇幅较长，分上下两部。</p><p class="book-size">约 19.2 万词 · 48 章 · 母语读者约 16 小时读完</p><p class="book-links"><a href="books/little-women/">开始读 →</a></p></article>
+</main>
+
+<p class="about">这些书都已进入公有领域，文本来自 <a href="https://standardebooks.org/">Standard Ebooks</a> 的精校版（CC0）。难度是按中国读者大致估的：入门的句子短、故事抓人；进阶的是长篇，语言更讲究。读完的时间按母语读者每分钟 200 词估算，读外语可以按两倍算。</p>
+<footer class="foot"><a href="/">首页</a> · <a href="/research/">研究园</a> · <a href="/life/">生活园</a> · <a href="/games/">游戏园</a></footer>
+</div>
+<script>
+  // 按类别、难度筛选。同一组里选多个是「或」，两组之间是「且」。没有 JavaScript 时显示全部
+  (function () {
+    var chips = document.querySelectorAll('.chip');
+    var books = document.querySelectorAll('.book');
+    function picked(name) {
+      var out = [];
+      for (var i = 0; i < chips.length; i++) {
+        if (chips[i].getAttribute('data-' + name) && chips[i].getAttribute('aria-pressed') === 'true') out.push(chips[i].getAttribute('data-' + name));
+      }
+      return out;
+    }
+    function update() {
+      var genres = picked('genre'), levels = picked('level'), shown = 0;
+      for (var i = 0; i < books.length; i++) {
+        var mine = books[i].getAttribute('data-genres').split(' ');
+        var okGenre = !genres.length || genres.some(function (g) { return mine.indexOf(g) >= 0; });
+        var okLevel = !levels.length || levels.indexOf(books[i].getAttribute('data-level')) >= 0;
+        books[i].style.display = okGenre && okLevel ? '' : 'none';
+        if (okGenre && okLevel) shown++;
+      }
+      document.getElementById('count').textContent = genres.length || levels.length
+        ? '找到 ' + shown + ' 本（共 ' + books.length + ' 本）' : '共 ' + books.length + ' 本';
+    }
+    for (var i = 0; i < chips.length; i++) {
+      chips[i].addEventListener('click', function () {
+        this.setAttribute('aria-pressed', this.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+        update();
+      });
+    }
+  })();
+</script>
+</body>
+</html>

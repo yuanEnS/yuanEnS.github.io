@@ -1,0 +1,115 @@
+{
+  "_note": "阅读园的书目。手工维护：加一本书就加一项（se 是 Standard Ebooks 上的路径），然后运行 python3 reading/tools/build.py。genres 用中文标签，level 是 入门 / 进阶 / 挑战。intro 是本站自己写的简介。",
+  "books": [
+    {
+      "id": "sherlock-holmes",
+      "se": "arthur-conan-doyle/the-adventures-of-sherlock-holmes",
+      "title": "The Adventures of Sherlock Holmes",
+      "zh": "福尔摩斯探案集",
+      "author": "Arthur Conan Doyle",
+      "year": 1892,
+      "genres": ["推理", "短篇"],
+      "level": "入门",
+      "intro": "十二个独立的短篇案子，由华生医生讲述福尔摩斯怎样从细节里推出真相。一篇一个故事，读完一篇就有收获，很适合当英文小说的第一本书。"
+    },
+    {
+      "id": "alice",
+      "se": "lewis-carroll/alices-adventures-in-wonderland/john-tenniel",
+      "title": "Alice's Adventures in Wonderland",
+      "zh": "爱丽丝漫游奇境",
+      "author": "Lewis Carroll",
+      "year": 1865,
+      "genres": ["奇幻", "童话"],
+      "level": "入门",
+      "intro": "爱丽丝追着一只揣怀表的兔子掉进洞里，遇到一连串古怪的人和事。篇幅短，充满文字游戏和荒诞的对话，附有 John Tenniel 的原版插图。"
+    },
+    {
+      "id": "wizard-of-oz",
+      "se": "l-frank-baum/the-wonderful-wizard-of-oz",
+      "title": "The Wonderful Wizard of Oz",
+      "zh": "绿野仙踪",
+      "author": "L. Frank Baum",
+      "year": 1900,
+      "genres": ["奇幻", "童话", "冒险"],
+      "level": "入门",
+      "intro": "堪萨斯的小女孩多萝西被龙卷风卷到奥兹国，和稻草人、铁皮人、胆小的狮子一起去找魔法师。用词简单，故事一路往前走，读起来很轻松。"
+    },
+    {
+      "id": "call-of-the-wild",
+      "se": "jack-london/the-call-of-the-wild",
+      "title": "The Call of the Wild",
+      "zh": "野性的呼唤",
+      "author": "Jack London",
+      "year": 1903,
+      "genres": ["冒险", "动物"],
+      "level": "入门",
+      "intro": "家养的大狗巴克被拐卖到北方的克朗代克淘金地拉雪橇，在严酷的荒野里一步步找回野性。中篇，七章，情节紧凑。"
+    },
+    {
+      "id": "pride-and-prejudice",
+      "se": "jane-austen/pride-and-prejudice",
+      "title": "Pride and Prejudice",
+      "zh": "傲慢与偏见",
+      "author": "Jane Austen",
+      "year": 1813,
+      "genres": ["爱情", "社会"],
+      "level": "进阶",
+      "intro": "伊丽莎白和达西先生从互相看不顺眼到彼此理解的故事。对话机智，讽刺精准，是读英文名著最常被推荐的起点。"
+    },
+    {
+      "id": "jane-eyre",
+      "se": "charlotte-bronte/jane-eyre",
+      "title": "Jane Eyre",
+      "zh": "简·爱",
+      "author": "Charlotte Brontë",
+      "year": 1847,
+      "genres": ["爱情", "成长", "哥特"],
+      "level": "进阶",
+      "intro": "孤女简·爱从寄人篱下的童年，到在桑菲尔德庄园当家庭教师，一直坚持自尊和独立。第一人称讲述，情感真挚，也有几分神秘气氛。"
+    },
+    {
+      "id": "great-gatsby",
+      "se": "f-scott-fitzgerald/the-great-gatsby",
+      "title": "The Great Gatsby",
+      "zh": "了不起的盖茨比",
+      "author": "F. Scott Fitzgerald",
+      "year": 1925,
+      "genres": ["爱情", "社会"],
+      "level": "进阶",
+      "intro": "1920 年代的纽约长岛，神秘富豪盖茨比夜夜举办盛大派对，只为了一个人。篇幅短，文字极美，写尽了「美国梦」的光彩与幻灭。"
+    },
+    {
+      "id": "frankenstein",
+      "se": "mary-shelley/frankenstein",
+      "title": "Frankenstein",
+      "zh": "弗兰肯斯坦",
+      "author": "Mary Shelley",
+      "year": 1818,
+      "genres": ["科幻", "哥特"],
+      "level": "进阶",
+      "intro": "年轻的科学家弗兰肯斯坦造出了一个生命，又因为恐惧抛弃了它。被视为科幻小说的开山之作，追问创造者的责任和「人」的含义。"
+    },
+    {
+      "id": "time-machine",
+      "se": "h-g-wells/the-time-machine",
+      "title": "The Time Machine",
+      "zh": "时间机器",
+      "author": "H. G. Wells",
+      "year": 1895,
+      "genres": ["科幻"],
+      "level": "进阶",
+      "intro": "一位发明家坐着自己造的机器去到八十万年后的未来，发现人类分成了两个截然不同的种族。很短的一部书，「时间旅行」这个题材从这里开始流行。"
+    },
+    {
+      "id": "little-women",
+      "se": "louisa-may-alcott/little-women",
+      "title": "Little Women",
+      "zh": "小妇人",
+      "author": "Louisa May Alcott",
+      "year": 1868,
+      "genres": ["成长", "家庭"],
+      "level": "进阶",
+      "intro": "美国内战时期，马奇家四姐妹在清贫中长大，各有各的梦想和烦恼。温暖的家庭故事，生活词汇丰富，篇幅较长，分上下两部。"
+    }
+  ]
+}

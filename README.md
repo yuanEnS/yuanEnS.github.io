@@ -21,6 +21,7 @@
 - `wuziqi/`：五子棋网页（自动生成）
 - `life/`：生活园入口。下面有世界园 `world/`（地图和气泡，`map.js`；国界和中国省界在 `geo.js`，画法在 `geo-draw.js`，由 xiangqi 仓库的 `tools/geo/` 生成）和私人园 `personal/`（自己或某位作者的文章和园地，`?author=昵称`）。园地是心愿单、旅行地图、纪念日，页面在 `life/garden/?id=N`，旅行地图用 `garden-map.js`。文章在 Cloudflare D1 里，正式账号都能在 `/life/write/` 写，每人每天发布一篇
 - `research/`：研究园。统计学期刊每周新文章，按主题和期刊筛选。数据在 `research/papers.json`，由 `python3 research/tools/build.py ../journal` 从 journal 文件夹的周报生成（每次从头生成，可以反复跑）。经典书籍在 `research/books.json`；以开放许可发布在 arXiv 上的书可以用 `research/tools/arxiv_book.py` 转成分章纯 HTML（公式渲染成图片，Kindle 能看），放在 `research/books/<id>/`。
+- `reading/`：阅读园。英文经典名著（Standard Ebooks 的 CC0 精校版）分章在线读。书目在 `reading/books.json`，运行 `python3 reading/tools/build.py` 下载、转换并生成书目页（书目页模板是 `reading/tools/index.template.html`）。
 - `resume/`：作者简历（不从站内链接，直接用网址访问）
 - `CNAME`：自定义域名 gamesyuan.com
 - `sitemap.xml` / `robots.txt`：给搜索引擎
