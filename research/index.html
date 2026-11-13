@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>研究园 · 统计学期刊新文章 | gamesyuan</title>
+<meta name="description" content="研究园：每周整理 JASA、Annals of Statistics、JRSSB、Biometrika、Biometrics、Statistics in Medicine 等统计学期刊的新文章，按因果推断、生存分析等主题和期刊筛选。">
+<link rel="canonical" href="https://gamesyuan.com/research/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="gamesyuan">
+<meta property="og:title" content="研究园 · 统计学期刊新文章">
+<meta property="og:description" content="每周整理统计学期刊的新文章，按主题和期刊筛选。">
+<meta property="og:url" content="https://gamesyuan.com/research/">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/life/life.css">
+<style>
+  .filters { position: relative; margin-top: 8px; }
+  .search { width: 100%; }
+  .facet { margin: 18px 0 0; padding: 0; border: 0; }
+  .facet legend { margin-bottom: 8px; padding: 0; color: var(--muted); font-size: 15px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: baseline; gap: 6px; padding: 4px 12px !important; border: 1px solid var(--rule) !important;
+    border-radius: 999px !important; background: var(--card) !important; color: var(--soft) !important; font: 15px/1.6 var(--kai) !important;
+    cursor: pointer;
+  }
+  .chip small { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .chip[aria-pressed="true"] { border-color: var(--primary) !important; background: var(--primary) !important; color: #FFF4E6 !important; }
+  .chip[aria-pressed="true"] small { color: #FFF4E6; opacity: 0.8; }
+  .chip:disabled { opacity: 0.4; cursor: default; }
+  .chip.more { border-style: dashed !important; }
+  .toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; margin: 22px 0 0; padding-bottom: 10px; border-bottom: 1px solid var(--rule); color: var(--muted); font-size: 15px; }
+  .toolbar label { display: inline-flex; gap: 6px; align-items: baseline; }
+  .toolbar .link-button { margin-left: 8px; }
+  .paper { padding: 20px 0; border-bottom: 1px solid var(--rule); }
+  .paper-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; margin: 0 0 6px; }
+  .page .label { display: inline-block; padding: 0 8px; border: 1px solid var(--rule); border-radius: 4px; background: transparent; color: var(--soft); font: 13px/21px system-ui, -apple-system, sans-serif; cursor: pointer; }
+  .page .label:hover { border-color: var(--primary); color: var(--primary); }
+  .page .label.journal { border-color: var(--text); background: var(--text); color: var(--bg); font-weight: 600; letter-spacing: 0.02em; }
+  .page .label.journal:hover { background: var(--primary); border-color: var(--primary); color: #FFF4E6; }
+  .page .label.kind { border-style: dashed; cursor: default; }
+  .page .label.kind:hover { border-color: var(--rule); color: var(--soft); }
+  .week { margin-left: auto; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .paper h2 { margin: 0; font: 20px/1.5 "Iowan Old Style", "Palatino Linotype", Georgia, var(--kai); font-weight: 400; overflow-wrap: anywhere; }
+  .paper h2 a { color: var(--text); text-decoration: none; }
+  .paper h2 a:hover { color: var(--primary); text-decoration: underline; }
+  .authors { margin: 4px 0 0; color: var(--muted); font: 15px/1.6 Georgia, var(--kai); overflow-wrap: anywhere; }
+  .paper details { margin-top: 8px; }
+  .paper summary { color: var(--primary); font-size: 15px; cursor: pointer; width: fit-content; }
+  .abstract { margin: 8px 0 0; font: 16px/1.75 Georgia, "Iowan Old Style", var(--kai); color: var(--soft); text-align: justify; hyphens: auto; overflow-wrap: anywhere; }
+  .abstract-note { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+  .no-abstract { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+  mark { background: rgba(179, 38, 30, 0.14); color: inherit; border-radius: 2px; }
+  .load-more { display: block; margin: 24px auto 0; }
+  .about { margin-top: 40px; color: var(--muted); font-size: 14px; line-height: 1.8; }
+  @media (max-width: 560px) {
+    .week { margin-left: 0; width: 100%; }
+    .paper h2 { font-size: 18px; }
+    .abstract { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a href="/">← 首页</a><a href="/life/">生活园</a></nav>
+<header class="masthead">
+  <span class="seal" aria-hidden="true">研</span>
+  <h1>研究园</h1>
+  <p>统计学期刊每周的新文章。按主题、按期刊挑着看。</p>
+</header>
+
+<section class="filters" aria-label="筛选">
+  <input class="field search" id="q" type="search" placeholder="搜标题、作者、摘要" aria-label="搜索文章">
+  <fieldset class="facet">
+    <legend>主题</legend>
+    <div class="chips" id="topics"></div>
+  </fieldset>
+  <fieldset class="facet">
+    <legend>期刊</legend>
+    <div class="chips" id="journals"></div>
+  </fieldset>
+</section>
+
+<div class="toolbar">
+  <span id="count" role="status" aria-live="polite">正在打开…</span>
+  <span>
+    <label><input type="checkbox" id="hide-discussion"> 不看讨论和评论</label>
+    <button type="button" class="link-button" id="clear" hidden>清除筛选</button>
+  </span>
+</div>
+<main id="list"></main>
+<button type="button" class="load-more" id="more" hidden>再看 30 篇</button>
+
+<p class="about" id="about"></p>
+<footer class="foot"><a href="/">首页</a> · <a href="/life/">生活园</a> · <a href="/games/">游戏园</a></footer>
+</div>
+<script>
+  const $ = id => document.getElementById(id);
+  const PAGE = 30;
+  const TOPICS_SHOWN = 8; // 主题多，先显示文章最多的几个
+  const state = { topics: new Set(), journals: new Set(), q: '', hideDiscussion: false, shown: PAGE, allTopics: false };
+  let data = null;
+  let zhOf = {};
+
+  function make(tag, props = {}, ...children) {
+    const node = Object.assign(document.createElement(tag), props);
+    node.append(...children.filter(child => child !== null && child !== undefined && child !== false && child !== ''));
+    return node;
+  }
+
+  // ---------- 地址栏：筛选条件可以分享 ----------
+  function readUrl() {
+    const params = new URLSearchParams(location.search);
+    for (const t of params.getAll('topic')) state.topics.add(t);
+    for (const j of params.getAll('journal')) state.journals.add(j);
+    state.q = params.get('q') || '';
+    state.hideDiscussion = params.get('discussion') === 'hide';
+  }
+
+  function writeUrl() {
+    const params = new URLSearchParams();
+    for (const t of state.topics) params.append('topic', t);
+    for (const j of state.journals) params.append('journal', j);
+    if (state.q) params.set('q', state.q);
+    if (state.hideDiscussion) params.set('discussion', 'hide');
+    const query = params.toString();
+    history.replaceState(null, '', query ? `?${query}` : location.pathname);
+  }
+
+  // ---------- 筛选 ----------
+  function words() {
+    return state.q.toLowerCase().split(/\s+/).filter(Boolean);
+  }
+
+  function matches(paper, { skip } = {}) {
+    if (state.hideDiscussion && paper.discussion) return false;
+    if (skip !== 'topic' && state.topics.size && !paper.topics.some(t => state.topics.has(t))) return false;
+    if (skip !== 'journal' && state.journals.size && !state.journals.has(paper.journal)) return false;
+    const terms = words();
+    if (terms.length) {
+      const text = paper._text || (paper._text = `${paper.title} ${paper.authors} ${paper.abstract}`.toLowerCase());
+      if (!terms.every(term => text.includes(term))) return false;
+    }
+    return true;
+  }
+
+  // 每个选项旁边的数字：在其他条件不变时，选上它能看到多少篇
+  function counts(skip, key) {
+    const result = new Map();
+    for (const paper of data.papers) {
+      if (!matches(paper, { skip })) continue;
+      for (const value of key(paper)) result.set(value, (result.get(value) || 0) + 1);
+    }
+    return result;
+  }
+
+  function chip(label, value, set, count, title) {
+    const pressed = set.has(value);
+    const button = make('button', { type: 'button', className: 'chip', title: title || '' }, label, make('small', {}, String(count || 0)));
+    button.setAttribute('aria-pressed', String(pressed));
+    button.disabled = !count && !pressed;
+    button.addEventListener('click', () => {
+      if (set.has(value)) set.delete(value);
+      else set.add(value);
+      state.shown = PAGE;
+      update();
+    });
+    return button;
+  }
+
+  function drawFacets() {
+    const topicCounts = counts('topic', p => p.topics);
+    // 文章多的主题在前，「Other」总在最后
+    const ordered = [...data.topics].sort((a, b) => (a.code === 'Other') - (b.code === 'Other')
+      || (topicCounts.get(b.code) || 0) - (topicCounts.get(a.code) || 0));
+    const visible = state.allTopics ? ordered
+      : ordered.filter((t, i) => i < TOPICS_SHOWN || state.topics.has(t.code));
+    const topicChips = visible.map(t => chip(t.code, t.code, state.topics, topicCounts.get(t.code), t.zh));
+    if (ordered.length > visible.length || state.allTopics) {
+      const more = make('button', { type: 'button', className: 'chip more' }, state.allTopics ? '收起' : `更多主题（${ordered.length - visible.length}）`);
+      more.addEventListener('click', () => {
+        state.allTopics = !state.allTopics;
+        drawFacets();
+      });
+      topicChips.push(more);
+    }
+    $('topics').replaceChildren(...topicChips);
+
+    const journalCounts = counts('journal', p => [p.journal]);
+    const journals = data.journals.filter(j => data.papers.some(p => p.journal === j.code));
+    $('journals').replaceChildren(...journals.map(j => chip(j.code, j.code, state.journals, journalCounts.get(j.code), j.name)));
+  }
+
+  // ---------- 列表 ----------
+  function highlight(text) {
+    const terms = words().filter(term => term.length > 1);
+    if (!terms.length) return [text];
+    const pattern = new RegExp(`(${terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
+    return text.split(pattern).map((part, i) => (i % 2 ? make('mark', {}, part) : part));
+  }
+
+  function shortAuthors(authors) {
+    const list = authors.split(/\s*[,;，]\s*|\s+and\s+/).filter(Boolean);
+    return list.length > 8 ? `${list.slice(0, 6).join(', ')} 等 ${list.length} 人` : list.join(', ');
+  }
+
+  function label(text, className, onClick, title) {
+    const node = make('button', { type: 'button', className: `label ${className}`, title: title || '' }, text);
+    if (onClick) node.addEventListener('click', onClick);
+    return node;
+  }
+
+  function only(set, value) {
+    return () => {
+      set.clear();
+      set.add(value);
+      state.shown = PAGE;
+      update();
+      $('count').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+  }
+
+  function paperNode(paper) {
+    const journalName = (data.journals.find(j => j.code === paper.journal) || {}).name || paper.journal;
+    const meta = make('p', { className: 'paper-meta' },
+      label(paper.journal, 'journal', only(state.journals, paper.journal), `只看 ${journalName}`),
+      ...paper.topics.map(t => label(t, 'topic', only(state.topics, t), `只看「${zhOf[t] || t}」`)),
+      paper.discussion ? make('span', { className: 'label kind' }, '讨论 / 评论') : null,
+      make('span', { className: 'week' }, `收录于 ${paper.week || '—'}`));
+    const title = make('h2', {}, make('a', { href: paper.link, target: '_blank', rel: 'noopener' }, ...highlight(paper.title)));
+    const node = make('article', { className: 'paper' }, meta, title);
+    if (paper.authors) node.append(make('p', { className: 'authors' }, ...highlight(shortAuthors(paper.authors))));
+    if (paper.abstract) {
+      const details = make('details', {}, make('summary', {}, paper.abstractZh ? '中文概述' : '摘要'));
+      details.addEventListener('toggle', () => {
+        if (!details.open || details.dataset.filled) return;
+        details.dataset.filled = '1';
+        details.append(make('p', { className: 'abstract', lang: paper.abstractZh ? 'zh-CN' : 'en' }, ...highlight(paper.abstract)));
+        if (paper.abstractZh) details.append(make('p', { className: 'abstract-note' }, '周报整理时没拿到原文摘要，这是中文概述。原文请点标题。'));
+      });
+      // 搜到的词在摘要里时，直接展开
+      const terms = words();
+      if (terms.length && terms.some(term => paper.abstract.toLowerCase().includes(term))) {
+        details.open = true;
+        details.dispatchEvent(new Event('toggle'));
+      }
+      node.append(details);
+    } else {
+      node.append(make('p', { className: 'no-abstract' }, '摘要没有收录，点标题看原文。'));
+    }
+    return node;
+  }
+
+  function update() {
+    writeUrl();
+    drawFacets();
+    const list = data.papers.filter(p => matches(p));
+    const filtered = state.topics.size || state.journals.size || state.q || state.hideDiscussion;
+    $('count').textContent = filtered ? `找到 ${list.length} 篇（共 ${data.papers.length} 篇）` : `共 ${data.papers.length} 篇，新的在前`;
+    $('clear').hidden = !filtered;
+    $('list').replaceChildren(...list.slice(0, state.shown).map(paperNode));
+    if (!list.length) $('list').append(make('p', { className: 'empty' }, '没有符合条件的文章，换个条件试试。'));
+    $('more').hidden = list.length <= state.shown;
+    $('more').textContent = `再看 ${Math.min(PAGE, list.length - state.shown)} 篇（还有 ${list.length - state.shown} 篇）`;
+  }
+
+  // ---------- 开始 ----------
+  readUrl();
+  $('q').value = state.q;
+  $('hide-discussion').checked = state.hideDiscussion;
+  let typing;
+  $('q').addEventListener('input', () => {
+    clearTimeout(typing);
+    typing = setTimeout(() => {
+      state.q = $('q').value.trim();
+      state.shown = PAGE;
+      update();
+    }, 200);
+  });
+  $('hide-discussion').addEventListener('change', () => {
+    state.hideDiscussion = $('hide-discussion').checked;
+    state.shown = PAGE;
+    update();
+  });
+  $('clear').addEventListener('click', () => {
+    state.topics.clear();
+    state.journals.clear();
+    state.q = '';
+    $('q').value = '';
+    state.hideDiscussion = false;
+    $('hide-discussion').checked = false;
+    state.shown = PAGE;
+    update();
+  });
+  $('more').addEventListener('click', () => {
+    state.shown += PAGE;
+    update();
+  });
+
+  fetch('/research/papers.json').then(res => {
+    if (!res.ok) throw new Error(res.status);
+    return res.json();
+  }).then(json => {
+    data = json;
+    zhOf = Object.fromEntries(data.topics.map(t => [t.code, t.zh]));
+    const names = data.journals.filter(j => data.papers.some(p => p.journal === j.code)).map(j => j.code).join('、');
+    $('about').textContent = `更新到 ${data.updated} 的周报。收录的期刊：${names}。主题标签按标题和摘要里的词自动归类，一篇最多三个，难免有不准的地方。点文章上的标签，可以只看这一类。`;
+    update();
+  }).catch(() => {
+    $('count').textContent = '文章列表暂时打不开，请稍后再试。';
+  });
+</script>
+</body>
+</html>
