@@ -57,6 +57,9 @@
   <h1>阅读园</h1>
   <p>中英文经典名著，一章一页在线读。手机、电脑、Kindle 都能看。</p>
 </header>
+<form class="site-search" action="https://api.gamesyuan.com/search" method="get" role="search"><input type="search" name="q" placeholder="搜书名、作者、正文里的词" aria-label="搜索"><input type="hidden" name="in" value="reading"><button type="submit">搜索</button></form>
+<script>/* 本地预览时搜索走本地服务器 */ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { var fs = document.querySelectorAll('.site-search'); for (var i = 0; i < fs.length; i++) fs[i].action = 'http://127.0.0.1:8787/search'; }</script>
+
 
 <section aria-label="筛选">
   <fieldset class="facet"><legend>语言</legend><div class="chips">{{LANGS}}</div></fieldset>

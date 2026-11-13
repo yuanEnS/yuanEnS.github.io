@@ -40,6 +40,8 @@
   <h1>gamesyuan</h1>
   <p>写写生活，下下棋。</p>
 </header>
+<form class="site-search" action="https://api.gamesyuan.com/search" method="get" role="search"><input type="search" name="q" placeholder="搜书名、作者、正文、论文" aria-label="搜索"><input type="hidden" name="in" value="all"><button type="submit">搜索</button></form>
+<script>/* 本地预览时搜索走本地服务器 */ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { var fs = document.querySelectorAll('.site-search'); for (var i = 0; i < fs.length; i++) fs[i].action = 'http://127.0.0.1:8787/search'; }</script>
 <main class="doors">
   <a class="door" href="/life/">
     <span class="seal" aria-hidden="true">生</span>

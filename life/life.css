@@ -389,3 +389,9 @@ a.garden-card:hover { border-color: var(--primary); }
 @media (max-width: 560px) {
   .replies { margin-left: 4px; padding-left: 12px; }
 }
+
+/* 搜索框（首页、阅读园、研究园）：普通表单，不用 JavaScript，Kindle 也能用 */
+.site-search { display: flex; gap: 8px; margin: 0 0 28px; }
+.site-search input[type=search] { flex: 1; min-width: 0; padding: 9px 12px; border: 1px solid var(--rule); border-radius: 8px;
+  background: var(--card); color: var(--text); font: 17px/1.5 var(--kai); }
+.page .site-search button { flex: none; padding: 8px 18px; border-color: var(--primary); background: var(--primary); color: #FFF4E6; }

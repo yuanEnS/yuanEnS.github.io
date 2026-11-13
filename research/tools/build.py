@@ -378,7 +378,10 @@ def lite_page(title, body, canonical=None):
             f'{LITE_STYLE}</head><body>')
     nav = ('<p class="nav"><a href="/research/lite/">研究园简易版</a> · <a href="books.html">经典书籍</a> · <a href="papers.html">期刊文章</a> · '
            '<a href="/research/?full=1">完整版（可多选筛选、搜索）</a> · <a href="/">首页</a></p>')
-    return head + nav + body + '</body></html>\n'
+    search = ('<form action="https://api.gamesyuan.com/search" method="get"><input type="search" name="q" '
+              'placeholder="搜论文、作者、书里的内容" aria-label="搜索" style="font-size:18px;padding:4px;width:60%">'
+              '<input type="hidden" name="in" value="research"> <button type="submit" style="font-size:18px">搜索</button></form>')
+    return head + nav + search + body + '</body></html>\n'
 
 
 def lite_item(paper, zh_of):

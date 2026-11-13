@@ -114,6 +114,9 @@
   <p>统计学的经典书籍，和期刊每周的新文章。</p>
   <p class="lite-link">Kindle、电子书阅读器或老浏览器打不开？用<a href="/research/lite/">简易版</a>。</p>
 </header>
+<form class="site-search" action="https://api.gamesyuan.com/search" method="get" role="search"><input type="search" name="q" placeholder="搜论文、作者、书里的内容" aria-label="搜索"><input type="hidden" name="in" value="research"><button type="submit">搜索</button></form>
+<script>/* 本地预览时搜索走本地服务器 */ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { var fs = document.querySelectorAll('.site-search'); for (var i = 0; i < fs.length; i++) fs[i].action = 'http://127.0.0.1:8787/search'; }</script>
+
 
 <nav class="choose" aria-label="看什么">
   <button type="button" class="choice" data-view="books" aria-pressed="false">
