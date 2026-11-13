@@ -297,7 +297,8 @@ def write_index(books, stats):
             f'<p class="book-by">{by}</p>'
             f'<p class="book-intro">{esc(book["intro"])}</p>'
             f'<p class="book-size">{size}</p>'
-            f'<p class="book-links"><a href="books/{book["id"]}/">开始读 →</a></p></article>')
+            f'<p class="book-links"><a href="books/{book["id"]}/">开始读 →</a>'
+            + (f'　<a href="books/{book["id"]}/fan/">繁體版</a>' if stat.get('fan') else '') + '</p></article>')
     chips = lambda name, values: ''.join(  # noqa: E731
         f'<button type="button" class="chip" data-{name}="{esc(v)}" aria-pressed="false">{esc(v)}</button>' for v in values)
     levels = [level for level in LEVELS if any(b['level'] == level for b in books)]

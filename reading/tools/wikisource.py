@@ -8,7 +8,8 @@
 因为维基文库上每部书的组织方式都不一样。做的事：
   1. 用维基文库的 API 批量取原文（一次 50 页，取过的缓存起来，不重复取），
   2. 去掉页眉、导航等，交给维基文库的 API 排版成 HTML（一次几十页），
-  3. 用 OpenCC 把繁体转成简体，一章一页写到 reading/books/<id>/，并写 stats.json 给书目页用。
+  3. 一章一页写两个版本：简体（用 OpenCC 从繁体转）在 reading/books/<id>/，繁体（维基文库原文用字）在
+     reading/books/<id>/fan/，每页都能切换；并写 stats.json 给书目页用。
 之后运行 reading/tools/build.py 生成书目页。
 需要：pip install opencc-python-reimplemented beautifulsoup4
 维基文库的文字：原作是公有领域，维基文库整理的部分（标点、注释）按 CC BY-SA 4.0，所以本站的这些页面也按 CC BY-SA 4.0 发布。
@@ -33,6 +34,7 @@ API = 'https://zh.wikisource.org/w/api.php'
 WIKI = 'https://zh.wikisource.org/wiki/'
 UA = {'User-Agent': 'static-reading-builder/1.0'}
 T2S = OpenCC('t2s')
+S2T = OpenCC('s2t')
 CHARS_PER_MINUTE = 400  # 读白话文的速度；文言文慢得多
 
 
@@ -286,8 +288,6 @@ def tidy(fragment):
         first = p.find(string=True)
         if first and first.startswith(('　', ' ')):
             first.replace_with(first.lstrip('　 '))
-    for text in soup.find_all(string=True):
-        text.replace_with(T2S.convert(str(text)))
     body = str(soup)
     return re.sub(r'\n{3,}', '\n\n', body).strip()
 
@@ -324,55 +324,81 @@ def esc(text):
     return html.escape(str(text or ''))
 
 
-def credit(book):
+# 两个版本：简体（转出来的）和繁体（维基文库原文用字）。简体在 books/<id>/，繁体在 books/<id>/fan/，文件名一一对应
+VARIANTS = {
+    'jian': {'dir': '', 'lang': 'zh-CN', 'other': ('fan/', '繁體版'), 'ui': lambda t: t},
+    'fan': {'dir': 'fan', 'lang': 'zh-Hant', 'other': ('../', '简体版'), 'ui': lambda t: S2T.convert(t)},
+}
+
+
+def credit(book, variant):
     url = WIKI + urllib.parse.quote(WORKS[book['id']]['main'])
-    return (f'<p class="credit">{esc(book["title"])}，{esc(book["author"])}。原作已进入公有领域。'
+    note = ('并用 OpenCC 自动把繁体转成简体（个别字可能转得不准，以原文为准）' if variant == 'jian'
+            else '繁体版保留维基文库原文用字，站内的说明文字由 OpenCC 转成繁体')
+    text = (f'{book["title"]}，{book["author"]}。原作已进入公有领域。'
             f'文本来自<a href="{url}">维基文库</a>，维基文库整理的标点、注释等按 '
             '<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hans">CC BY-SA 4.0</a> 许可使用；'
-            '本站把它改成分章网页，并用 OpenCC 自动转成简体（个别字可能转得不准，以原文为准），本页同样按 CC BY-SA 4.0 发布。'
-            '本站与维基文库无关。</p>')
+            f'本站把它改成分章网页，{note}，本页同样按 CC BY-SA 4.0 发布。本站与维基文库无关。')
+    return f'<p class="credit">{VARIANTS[variant]["ui"](text)}</p>'
 
 
-def page(book, title, body, nav):
+def page(book, title, body, nav, variant):
+    ui = VARIANTS[variant]['ui']
     bottom = nav.replace('class="nav"', 'class="nav bottom"')
-    return ('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">'
+    return (f'<!doctype html><html lang="{VARIANTS[variant]["lang"]}"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width, initial-scale=1">'
-            f'<title>{esc(title)} · {esc(book["title"])} | 阅读园</title>{STYLE}</head>'
-            f'<body>{nav}{body}{bottom}{credit(book)}</body></html>\n')
+            f'<title>{esc(title)} · {esc(ui(book["title"]))} | {ui("阅读园")}</title>{STYLE}</head>'
+            f'<body>{nav}{body}{bottom}{credit(book, variant)}</body></html>\n')
 
 
-def write_book(book, chapters):
-    """chapters: [(标题, html)]。"""
-    out = os.path.join(OUT, 'books', book['id'])
+def write_variant(book, chapters, variant):
+    """chapters: [(标题, html)]，用维基文库原文的繁体字。"""
+    v = VARIANTS[variant]
+    ui = v['ui']
+    if variant == 'jian':
+        chapters = [(T2S.convert(t), T2S.convert(b)) for t, b in chapters]
+    else:
+        chapters = [(S2T.convert(t), b) for t, b in chapters]  # 标题里有本站写的简体字（比如节选的卷名）
+    out = os.path.join(OUT, 'books', book['id'], v['dir'])
     os.makedirs(out, exist_ok=True)
     for old in os.listdir(out):
         if old.endswith('.html'):
             os.remove(os.path.join(out, old))
+    other_dir, other_name = v['other']
     chars = 0
     for number, (title, body) in enumerate(chapters, start=1):
-        chars += len(re.findall(r'[一-鿿]', BeautifulSoup(body, 'html.parser').get_text()))
-        prev_link = f'<a href="{number - 1:03d}.html">← 上一章</a>' if number > 1 else ''
-        next_link = f'<a href="{number + 1:03d}.html">下一章 →</a>' if number < len(chapters) else ''
-        nav = f'<p class="nav"><a href="index.html">目录</a>{prev_link}{next_link}<a href="/reading/">阅读园</a></p>'
+        chars += len(re.findall(r'[\u4e00-\u9fff]', BeautifulSoup(body, 'html.parser').get_text()))
+        prev_link = f'<a href="{number - 1:03d}.html">{ui("← 上一章")}</a>' if number > 1 else ''
+        next_link = f'<a href="{number + 1:03d}.html">{ui("下一章 →")}</a>' if number < len(chapters) else ''
+        nav = (f'<p class="nav"><a href="index.html">{ui("目录")}</a>{prev_link}{next_link}'
+               f'<a href="{other_dir}{number:03d}.html">{other_name}</a><a href="/reading/">{ui("阅读园")}</a></p>')
         # 正文开头已经有标题（h1、h2，或居中的粗体回目）就不再加
         start = re.sub(r'\s|　', '', BeautifulSoup(body[:1500], 'html.parser').get_text())[:80]
         has_title = re.search(r'<h[12][ >]', body[:400]) or re.sub(r'\s|　', '', title)[:6] in start
         heading = '' if has_title else f'<h2>{esc(title)}</h2>'
         with open(os.path.join(out, f'{number:03d}.html'), 'w', encoding='utf-8') as handle:
-            handle.write(page(book, title, heading + body, nav))
+            handle.write(page(book, title, heading + body, nav, variant))
     items = ''.join(f'<li><a href="{n:03d}.html">{esc(t)}</a></li>' for n, (t, _) in enumerate(chapters, start=1))
-    tags = ''.join(f'<span class="tag">{esc(g)}</span>' for g in book['genres']) + f'<span class="tag">{esc(book["level"])}</span>'
-    body = (f'<div class="about"><h1>{esc(book["title"])}</h1><p class="meta">{esc(book["author"])} · {esc(book["era"])}</p>'
-            f'<p class="meta">{tags}</p><p>{esc(book["intro"])}</p>'
-            f'<p class="meta">约 {chars / 10000:.1f} 万字，{len(chapters)} 章。</p>'
-            f'<p><a href="001.html">从头读 →</a></p></div><ol class="toc">{items}</ol>')
-    nav = '<p class="nav"><a href="/reading/">← 阅读园</a><a href="001.html">从头读 →</a></p>'
+    tags = ''.join(f'<span class="tag">{esc(ui(g))}</span>' for g in book['genres']) + f'<span class="tag">{esc(ui(book["level"]))}</span>'
+    body = (f'<div class="about"><h1>{esc(ui(book["title"]))}</h1><p class="meta">{esc(ui(book["author"]))} · {esc(ui(book["era"]))}</p>'
+            f'<p class="meta">{tags}</p><p>{esc(ui(book["intro"]))}</p>'
+            f'<p class="meta">{ui(f"约 {chars / 10000:.1f} 万字，{len(chapters)} 章。")}</p>'
+            f'<p><a href="001.html">{ui("从头读 →")}</a>　<a href="{other_dir}index.html">{other_name}</a></p></div>'
+            f'<ol class="toc">{items}</ol>')
+    nav = (f'<p class="nav"><a href="/reading/">{ui("← 阅读园")}</a><a href="001.html">{ui("从头读 →")}</a>'
+           f'<a href="{other_dir}index.html">{other_name}</a></p>')
     with open(os.path.join(out, 'index.html'), 'w', encoding='utf-8') as handle:
-        handle.write(page(book, '目录', body, nav))
-    stats = {'chars': chars, 'chapters': len(chapters)}
-    json.dump(stats, open(os.path.join(out, 'stats.json'), 'w'))
-    size = sum(os.path.getsize(os.path.join(out, f)) for f in os.listdir(out))
-    print(f'{book["id"]}: {len(chapters)} 章，{chars} 字，{size // 1024} KB')
+        handle.write(page(book, ui('目录'), body, nav, variant))
+    return chars
+
+
+def write_book(book, chapters):
+    chars = write_variant(book, chapters, 'jian')
+    write_variant(book, chapters, 'fan')
+    out = os.path.join(OUT, 'books', book['id'])
+    json.dump({'chars': chars, 'chapters': len(chapters), 'fan': True}, open(os.path.join(out, 'stats.json'), 'w'))
+    size = sum(os.path.getsize(os.path.join(dp, f)) for dp, _, fs in os.walk(out) for f in fs)
+    print(f'{book["id"]}: {len(chapters)} 章，{chars} 字，简繁两版共 {size // 1024} KB')
 
 
 # ---------- 各种书 ----------
@@ -385,8 +411,8 @@ def title_of(source, text, label):
     candidates = [re.sub(r'[\s　]+', '　', c).strip('　 ') for c in candidates]
     candidates = [c for c in candidates if c]
     if not candidates:
-        return T2S.convert(source.split('/')[-1])
-    return T2S.convert(max(candidates, key=len))
+        return source.split('/')[-1]
+    return max(candidates, key=len)
 
 
 def build(book, cache):
@@ -411,8 +437,8 @@ def build(book, cache):
             body = rendered.get(f'{book["id"]}|{target}')
             if not body:
                 continue
-            name = T2S.convert(re.sub(r'\s*\(.*\)$', '', label))
-            groups.setdefault(T2S.convert(section), []).append(f'<h3>{esc(name)}<small>　{esc(T2S.convert(author))}</small></h3>{tidy(body)}')
+            name = re.sub(r'\s*\(.*\)$', '', label)
+            groups.setdefault(section, []).append(f'<h3>{esc(name)}<small>　{esc(author)}</small></h3>{tidy(body)}')
         write_book(book, [(section, ''.join(poems)) for section, poems in groups.items()])
         return
 
