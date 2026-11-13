@@ -1,0 +1,21 @@
+{
+  "_note": "研究园的经典书籍。手工维护：加一本书就在 books 里加一项，topics 用和文章一样的英文主题名。改完运行 research/tools/build.py，简易版也会跟着更新。",
+  "books": [
+    {
+      "id": "ding-causal",
+      "title": "A First Course in Causal Inference",
+      "authors": ["Peng Ding"],
+      "year": 2024,
+      "publisher": "Chapman & Hall/CRC",
+      "topics": ["Causal Inference"],
+      "level": "入门",
+      "free": true,
+      "intro": "伯克利 Peng Ding 教授在因果推断课上讲了七年的讲义，整理成书。只要有概率、统计推断和线性、logistic 回归的基础就能读，适合入门。从随机化实验讲起，再到观察性研究、敏感性分析、工具变量和中介分析，每章配有习题，R 代码和数据也公开了。",
+      "links": [
+        { "label": "免费 PDF（arXiv）", "url": "https://arxiv.org/pdf/2305.18793" },
+        { "label": "arXiv 页面", "url": "https://arxiv.org/abs/2305.18793" },
+        { "label": "R 代码和数据", "url": "https://doi.org/10.7910/DVN/ZX3VEV" }
+      ]
+    }
+  ]
+}

@@ -68,6 +68,16 @@
   mark { background: rgba(179, 38, 30, 0.14); color: inherit; border-radius: 2px; }
   .load-more { display: block; margin: 24px auto 0; }
   .masthead .lite-link { margin-top: 6px; font-size: 15px; }
+  .books { margin-bottom: 36px; }
+  .book { margin-top: 14px; padding: 18px 20px; border: 1px solid var(--rule); border-radius: 12px; background: var(--card); }
+  .book h3 { margin: 6px 0 2px; font: 22px/1.4 "Iowan Old Style", "Palatino Linotype", Georgia, var(--kai); font-weight: 400; }
+  .book h3 a { color: var(--text); text-decoration: none; }
+  .book h3 a:hover { color: var(--primary); text-decoration: underline; }
+  .book-by { margin: 0; color: var(--muted); font: 15px/1.6 Georgia, var(--kai); }
+  .book-intro { margin: 10px 0 0; color: var(--soft); font-size: 16px; line-height: 1.85; }
+  .book-links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 0; font-size: 15px; }
+  .book-links a { color: var(--primary); }
+  .page .label.free { border-color: var(--primary); color: var(--primary); cursor: default; }
   .about { margin-top: 40px; color: var(--muted); font-size: 14px; line-height: 1.8; }
   @media (max-width: 560px) {
     .week { margin-left: 0; width: 100%; }
@@ -86,6 +96,11 @@
   <p class="lite-link">Kindle、电子书阅读器或老浏览器打不开？用<a href="/research/lite/">简易版</a>。</p>
 </header>
 
+<section class="books" id="books-wrap" hidden aria-labelledby="books-title">
+  <h2 class="section-title" id="books-title">经典书籍</h2>
+  <div id="books"></div>
+</section>
+<h2 class="section-title" id="papers-title">期刊新文章</h2>
 <section class="filters" aria-label="筛选">
   <input class="field search" id="q" type="search" placeholder="搜标题、作者、摘要" aria-label="搜索文章">
   <fieldset class="facet">
@@ -286,6 +301,34 @@
     $('more').hidden = list.length <= state.shown;
     $('more').textContent = `再看 ${Math.min(PAGE, list.length - state.shown)} 篇（还有 ${list.length - state.shown} 篇）`;
   }
+
+  // ---------- 经典书籍 ----------
+  function bookNode(book) {
+    const first = book.links && book.links[0];
+    const tags = make('p', { className: 'paper-meta' },
+      ...book.topics.map(t => {
+        const tag = make('a', { className: 'label', href: `?topic=${encodeURIComponent(t)}`, title: `看「${t}」的期刊文章` }, t);
+        tag.addEventListener('click', e => {
+          e.preventDefault();
+          only(state.topics, t)();
+        });
+        return tag;
+      }),
+      book.level ? make('span', { className: 'label kind' }, book.level) : null,
+      book.free ? make('span', { className: 'label free' }, '可免费阅读') : null);
+    const by = [book.authors.join(', '), book.publisher, book.year].filter(Boolean).join(' · ');
+    return make('article', { className: 'book' }, tags,
+      make('h3', {}, first ? make('a', { href: first.url, target: '_blank', rel: 'noopener' }, book.title) : book.title),
+      make('p', { className: 'book-by' }, by),
+      book.intro ? make('p', { className: 'book-intro' }, book.intro) : null,
+      make('p', { className: 'book-links' }, ...(book.links || []).map(link => make('a', { href: link.url, target: '_blank', rel: 'noopener' }, link.label))));
+  }
+
+  fetch('/research/books.json').then(res => res.json()).then(({ books }) => {
+    if (!books || !books.length) return;
+    fill($('books'), books.map(bookNode));
+    $('books-wrap').hidden = false;
+  }).catch(() => {});
 
   // ---------- 开始 ----------
   readUrl();

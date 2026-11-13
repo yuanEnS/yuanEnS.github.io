@@ -395,7 +395,18 @@ def lite_item(paper, zh_of):
     return html + '</article>'
 
 
-def lite_list(folder, name, heading, papers, zh_of):
+def lite_book(book):
+    first = (book.get('links') or [{}])[0].get('url')
+    title = f'<a href="{esc(first)}">{esc(book["title"])}</a>' if first else esc(book['title'])
+    by = ' · '.join(str(x) for x in [', '.join(book.get('authors', [])), book.get('publisher'), book.get('year')] if x)
+    tags = ' '.join(f'<a class="tag" href="t-{slug(t)}.html">{esc(t)}</a>' for t in book.get('topics', []))
+    extra = ' '.join(f'<span class="tag">{esc(x)}</span>' for x in [book.get('level'), '可免费阅读' if book.get('free') else None] if x)
+    links = ' · '.join(f'<a href="{esc(l["url"])}">{esc(l["label"])}</a>' for l in book.get('links', []))
+    return (f'<article><p class="meta">{tags} {extra}</p><h3>{title}</h3><p class="authors">{esc(by)}</p>'
+            f'<p class="abstract">{esc(book.get("intro", ""))}</p><p class="meta">{links}</p></article>')
+
+
+def lite_list(folder, name, heading, papers, zh_of, books=()):
     pages = max(1, -(-len(papers) // LITE_PER_PAGE))
     for n in range(pages):
         file = f'{name}.html' if n == 0 else f'{name}-{n + 1}.html'
@@ -407,14 +418,17 @@ def lite_list(folder, name, heading, papers, zh_of):
                 target = f'{name}.html' if m == 0 else f'{name}-{m + 1}.html'
                 links.append(f'<b>{m + 1}</b>' if m == n else f'<a href="{target}">{m + 1}</a>')
             pager = '<p class="pager">第 ' + ' '.join(links) + ' 页</p>'
-        body = (f'<h1>{esc(heading)}</h1><p class="note">{len(papers)} 篇，新的在前。'
+        shelf = ''
+        if books and n == 0:
+            shelf = '<h2>经典书籍</h2>' + ''.join(lite_book(b) for b in books) + '<h2>期刊新文章</h2>'
+        body = (f'<h1>{esc(heading)}</h1>' + shelf + f'<p class="note">{len(papers)} 篇，新的在前。'
                 f'{"这是第 " + str(n + 1) + " 页。" if pages > 1 else ""}</p>'
                 + pager + ''.join(lite_item(p, zh_of) for p in chunk) + pager)
         with open(os.path.join(folder, file), 'w', encoding='utf-8') as handle:
             handle.write(lite_page(heading, body))
 
 
-def write_lite(data, folder):
+def write_lite(data, folder, books):
     os.makedirs(folder, exist_ok=True)
     for old in glob.glob(os.path.join(folder, '*.html')):
         os.remove(old)
@@ -425,7 +439,8 @@ def write_lite(data, folder):
         chosen = [p for p in papers if topic['code'] in p['topics']]
         if not chosen:
             continue
-        lite_list(folder, f't-{slug(topic["code"])}', f'{topic["code"]}（{topic["zh"]}）', chosen, zh_of)
+        shelf = [b for b in books if topic['code'] in b.get('topics', [])]
+        lite_list(folder, f't-{slug(topic["code"])}', f'{topic["code"]}（{topic["zh"]}）', chosen, zh_of, shelf)
         topic_rows.append(f'<li><a href="t-{slug(topic["code"])}.html">{esc(topic["code"])}</a> {esc(topic["zh"])} · {len(chosen)} 篇</li>')
     for journal in data['journals']:
         chosen = [p for p in papers if p['journal'] == journal['code']]
@@ -438,7 +453,8 @@ def write_lite(data, folder):
     body = ('<h1>研究园 · 简易版</h1>'
             f'<p class="note">统计学期刊每周的新文章，共 {len(papers)} 篇，更新到 {esc(data["updated"])} 的周报。'
             '这个版本不用 JavaScript，适合 Kindle 和老浏览器；按主题或按期刊点进去看。</p>'
-            '<h2>按主题</h2><ul class="links">' + ''.join(topic_rows) + '</ul>'
+            + ('<h2>经典书籍</h2>' + ''.join(lite_book(b) for b in books) if books else '')
+            + '<h2>按主题</h2><ul class="links">' + ''.join(topic_rows) + '</ul>'
             '<h2>按期刊</h2><ul class="links">' + ''.join(journal_rows) + '</ul>'
             f'<h2>最新 {len(latest)} 篇</h2>' + ''.join(lite_item(p, zh_of) for p in latest)
             + '<p class="pager"><a href="all.html">看全部文章 →</a></p>')
@@ -460,7 +476,10 @@ def main():
     }
     with open(target, 'w', encoding='utf-8') as handle:
         json.dump(data, handle, ensure_ascii=False, separators=(',', ':'))
-    pages = write_lite(data, os.path.join(here, '..', 'lite'))
+    books_file = os.path.join(here, '..', 'books.json')
+    books = json.load(open(books_file, encoding='utf-8')).get('books', []) if os.path.exists(books_file) else []
+    pages = write_lite(data, os.path.join(here, '..', 'lite'), books)
+    print(f'经典书籍 {len(books)} 本')
     print(f'简易版 research/lite/：{pages} 个页面')
     counts = {}
     for p in papers:
