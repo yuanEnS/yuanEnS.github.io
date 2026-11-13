@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
+<script src="/life/kindle.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>世界园 | 生活园</title>
 <meta name="description" content="世界园：世界地图上看作者们在哪里，随机遇见一位作者，读大家最新写的文章。">
@@ -31,6 +32,8 @@
   <h1>世界园</h1>
   <p>世界各地的作者，都在这张地图上。</p>
 </header>
+<form class="site-search" action="https://api.gamesyuan.com/search" method="get" role="search"><input type="search" name="q" placeholder="搜世界园的文章：标题、正文" aria-label="搜索文章"><input type="hidden" name="in" value="life"><button type="submit">搜索</button></form>
+<script>/* 本地预览时搜索走本地服务器 */ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { var fs = document.querySelectorAll('.site-search'); for (var i = 0; i < fs.length; i++) fs[i].action = 'http://127.0.0.1:8787/search'; }</script>
 <section class="globe-wrap" aria-label="作者地图">
   <div class="globe" id="globe">
     <canvas role="img" aria-label="世界地图"></canvas>
@@ -44,7 +47,7 @@
 </section>
 <h2 class="section-title">最新文章</h2>
 <main id="list"><p class="empty" role="status">正在打开…</p></main>
-<footer class="foot"><a href="/life/">生活园</a> · <a href="/">首页</a></footer>
+<footer class="foot"><a href="/life/">生活园</a> · <a href="/">首页</a> · <a href="https://api.gamesyuan.com/life/lite">Kindle 版</a></footer>
 </div>
 <script src="/life/life.js"></script>
 <script src="/life/geo.js"></script>

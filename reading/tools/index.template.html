@@ -24,6 +24,23 @@
 <link rel="stylesheet" href="/life/fonts/kai.css">
 <link rel="stylesheet" href="/life/life.css">
 <style>
+  .search-hero { margin: 0 0 34px; padding: 24px 22px 18px; border: 1px solid var(--rule); border-radius: 18px;
+    background: var(--card); box-shadow: 0 8px 24px rgba(80, 50, 20, .07); }
+  .site-search.big { display: block; margin: 0; }
+  .site-search.big label { display: block; margin: 0 0 12px; font-size: 22px; line-height: 1.4; color: var(--text); }
+  .search-row { display: flex; gap: 10px; }
+  .site-search.big input[type=search] { flex: 1; min-width: 0; height: 58px; padding: 0 18px; border: 2px solid var(--rule);
+    border-radius: 14px; background: var(--bg); color: var(--text); font: 21px/1.4 var(--kai); }
+  .site-search.big input[type=search]:focus { border-color: var(--primary); outline: none; }
+  .page .site-search.big button { height: 58px; padding: 0 28px; border-radius: 14px; font-size: 20px; letter-spacing: .1em; }
+  .search-hints { margin: 12px 0 0; color: var(--muted); font-size: 15px; line-height: 1.9; }
+  .search-hints a { color: var(--soft); }
+  @media (max-width: 560px) {
+    .search-hero { padding: 18px 14px 12px; }
+    .site-search.big label { font-size: 19px; }
+    .site-search.big input[type=search], .page .site-search.big button { height: 52px; font-size: 18px; }
+    .page .site-search.big button { padding: 0 18px; }
+  }
   .facet { margin: 0 0 14px; padding: 0; border: 0; }
   .facet legend { margin-bottom: 8px; padding: 0; color: var(--muted); font-size: 15px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -57,8 +74,18 @@
   <h1>阅读园</h1>
   <p>中英文经典名著，一章一页在线读。手机、电脑、Kindle 都能看。</p>
 </header>
-<form class="site-search" action="https://api.gamesyuan.com/search" method="get" role="search"><input type="search" name="q" placeholder="搜书名、作者、正文里的词" aria-label="搜索"><input type="hidden" name="in" value="reading"><button type="submit">搜索</button></form>
-<script>/* 本地预览时搜索走本地服务器 */ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { var fs = document.querySelectorAll('.site-search'); for (var i = 0; i < fs.length; i++) fs[i].action = 'http://127.0.0.1:8787/search'; }</script>
+<section class="search-hero" aria-label="搜索">
+  <form class="site-search big" action="https://api.gamesyuan.com/search" method="get" role="search">
+    <label for="reading-q">在 {{COUNT}} 本书里找一句话、一个名字</label>
+    <div class="search-row">
+      <input id="reading-q" type="search" name="q" placeholder="人名、书名、一句话" maxlength="40">
+      <input type="hidden" name="in" value="reading">
+      <button type="submit">搜索</button>
+    </div>
+    <p class="search-hints">试试：<a href="https://api.gamesyuan.com/search?in=reading&amp;q=%E8%91%AC%E8%8A%B1">葬花</a> · <a href="https://api.gamesyuan.com/search?in=reading&amp;q=%E6%A1%83%E5%9B%AD">桃园</a> · <a href="https://api.gamesyuan.com/search?in=reading&amp;q=%E8%B5%A4%E5%A3%81">赤壁</a> · <a href="https://api.gamesyuan.com/search?in=reading&amp;q=%E5%AD%99%E6%82%9F%E7%A9%BA">孙悟空</a> · <a href="https://api.gamesyuan.com/search?in=reading&amp;q=Sherlock">Sherlock</a> · <a href="https://api.gamesyuan.com/search?in=reading&amp;q=Mr.%20Darcy">Mr. Darcy</a></p>
+  </form>
+</section>
+<script>/* 本地预览时搜索走本地服务器 */ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { var fs = document.querySelectorAll('.site-search'); for (var i = 0; i < fs.length; i++) fs[i].action = 'http://127.0.0.1:8787/search'; var ls = document.querySelectorAll('.search-hints a'); for (var j = 0; j < ls.length; j++) ls[j].href = ls[j].href.replace('https://api.gamesyuan.com', 'http://127.0.0.1:8787'); }</script>
 
 
 <section aria-label="筛选">
