@@ -20,6 +20,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <script src="/pwa.js" defer></script>
 <meta name="theme-color" content="#FBF6EE">
+<script>
+  // Kindle 和其他电子书阅读器的浏览器太旧，直接去纯 HTML 的简易版（?full=1 可以留在完整版）
+  if (/Kindle|Silk|PocketBook|Kobo|BOOX|Onyx/i.test(navigator.userAgent) && !/[?&]full=1/.test(location.search)) {
+    location.replace('/research/lite/');
+  }
+</script>
 <link rel="stylesheet" href="/life/fonts/kai.css">
 <link rel="stylesheet" href="/life/life.css">
 <style>
@@ -61,6 +67,7 @@
   .no-abstract { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
   mark { background: rgba(179, 38, 30, 0.14); color: inherit; border-radius: 2px; }
   .load-more { display: block; margin: 24px auto 0; }
+  .masthead .lite-link { margin-top: 6px; font-size: 15px; }
   .about { margin-top: 40px; color: var(--muted); font-size: 14px; line-height: 1.8; }
   @media (max-width: 560px) {
     .week { margin-left: 0; width: 100%; }
@@ -76,6 +83,7 @@
   <span class="seal" aria-hidden="true">研</span>
   <h1>研究园</h1>
   <p>统计学期刊每周的新文章。按主题、按期刊挑着看。</p>
+  <p class="lite-link">Kindle、电子书阅读器或老浏览器打不开？用<a href="/research/lite/">简易版</a>。</p>
 </header>
 
 <section class="filters" aria-label="筛选">
@@ -97,7 +105,7 @@
     <button type="button" class="link-button" id="clear" hidden>清除筛选</button>
   </span>
 </div>
-<main id="list"></main>
+<main id="list"><noscript><p class="empty">这个页面要用 JavaScript。请看<a href="/research/lite/">简易版</a>。</p></noscript></main>
 <button type="button" class="load-more" id="more" hidden>再看 30 篇</button>
 
 <p class="about" id="about"></p>
@@ -110,6 +118,12 @@
   const state = { topics: new Set(), journals: new Set(), q: '', hideDiscussion: false, shown: PAGE, allTopics: false };
   let data = null;
   let zhOf = {};
+
+  // 老浏览器（比如 Kindle）没有 replaceChildren
+  function fill(node, children) {
+    while (node.firstChild) node.removeChild(node.firstChild);
+    children.forEach(child => node.append(child));
+  }
 
   function make(tag, props = {}, ...children) {
     const node = Object.assign(document.createElement(tag), props);
@@ -193,11 +207,11 @@
       });
       topicChips.push(more);
     }
-    $('topics').replaceChildren(...topicChips);
+    fill($('topics'), topicChips);
 
     const journalCounts = counts('journal', p => [p.journal]);
     const journals = data.journals.filter(j => data.papers.some(p => p.journal === j.code));
-    $('journals').replaceChildren(...journals.map(j => chip(j.code, j.code, state.journals, journalCounts.get(j.code), j.name)));
+    fill($('journals'), journals.map(j => chip(j.code, j.code, state.journals, journalCounts.get(j.code), j.name)));
   }
 
   // ---------- 列表 ----------
@@ -267,7 +281,7 @@
     const filtered = state.topics.size || state.journals.size || state.q || state.hideDiscussion;
     $('count').textContent = filtered ? `找到 ${list.length} 篇（共 ${data.papers.length} 篇）` : `共 ${data.papers.length} 篇，新的在前`;
     $('clear').hidden = !filtered;
-    $('list').replaceChildren(...list.slice(0, state.shown).map(paperNode));
+    fill($('list'), list.slice(0, state.shown).map(paperNode));
     if (!list.length) $('list').append(make('p', { className: 'empty' }, '没有符合条件的文章，换个条件试试。'));
     $('more').hidden = list.length <= state.shown;
     $('more').textContent = `再看 ${Math.min(PAGE, list.length - state.shown)} 篇（还有 ${list.length - state.shown} 篇）`;
@@ -311,12 +325,14 @@
     return res.json();
   }).then(json => {
     data = json;
-    zhOf = Object.fromEntries(data.topics.map(t => [t.code, t.zh]));
+    zhOf = {};
+    data.topics.forEach(t => { zhOf[t.code] = t.zh; });
     const names = data.journals.filter(j => data.papers.some(p => p.journal === j.code)).map(j => j.code).join('、');
     $('about').textContent = `更新到 ${data.updated} 的周报。收录的期刊：${names}。主题标签按标题和摘要里的词自动归类，一篇最多三个，难免有不准的地方。点文章上的标签，可以只看这一类。`;
     update();
   }).catch(() => {
-    $('count').textContent = '文章列表暂时打不开，请稍后再试。';
+    $('count').textContent = '文章列表打不开。';
+    $('count').append(' 请看', make('a', { href: '/research/lite/' }, '简易版'), '。');
   });
 </script>
 </body>
