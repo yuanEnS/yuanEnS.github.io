@@ -1,0 +1,4 @@
+{
+  "_note": "本站有原文的期刊文章（比如把 arXiv 版解析成网页放在 /research/articles/<id>/）。手工维护：每篇写 title 和 reader（本站的阅读地址），有 doi 或 arxiv 更好。能和期刊目录里的文章对上（按 DOI 或标题）就给那一篇打上「有原文」；对不上的单独加一条，这时最好再写 authors、year、journal、abstract。改完运行 research/tools/build.py。",
+  "articles": []
+}

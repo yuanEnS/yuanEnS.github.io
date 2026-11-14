@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>研究园 · 统计学经典书籍与期刊文章 | gamesyuan</title>
-<meta name="description" content="研究园：统计学经典书籍（可在线分章阅读），以及每周整理 JASA、Annals of Statistics、JRSSB、Biometrika、Biometrics、Statistics in Medicine 等统计学期刊的新文章，按因果推断、生存分析等主题和期刊筛选。">
+<meta name="description" content="研究园：统计学经典书籍（可在线分章阅读），以及 JASA、Annals of Statistics、JRSSB、Biometrika、Biometrics、Statistics in Medicine 等统计学期刊 2016 年以来的文章，按年份、主题和期刊筛选。">
 <link rel="canonical" href="https://gamesyuan.com/research/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="gamesyuan">
 <meta property="og:title" content="研究园 · 统计学经典书籍与期刊文章">
-<meta property="og:description" content="每周整理统计学期刊的新文章，按主题和期刊筛选。">
+<meta property="og:description" content="统计学期刊 2016 年以来的文章，按年份、主题和期刊筛选。">
 <meta property="og:url" content="https://gamesyuan.com/research/">
 <meta property="og:image" content="https://gamesyuan.com/og.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -97,6 +97,7 @@
   .book-links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 0; font-size: 15px; }
   .book-links a { color: var(--primary); }
   .page .label.free { border-color: var(--primary); color: var(--primary); cursor: default; }
+  .page a.label.free { cursor: pointer; text-decoration: none; font-weight: 600; }
   .about { margin-top: 40px; color: var(--muted); font-size: 14px; line-height: 1.8; }
   @media (max-width: 560px) {
     .week { margin-left: 0; width: 100%; }
@@ -111,7 +112,7 @@
 <header class="masthead">
   <span class="seal" aria-hidden="true">研</span>
   <h1>研究园</h1>
-  <p>统计学的经典书籍，和期刊每周的新文章。</p>
+  <p>统计学的经典书籍，和期刊 2016 年以来的文章。</p>
   <p class="lite-link">Kindle、电子书阅读器或老浏览器打不开？用<a href="/research/lite/">简易版</a>。</p>
 </header>
 <form class="site-search" action="https://api.gamesyuan.com/search" method="get" role="search"><input type="search" name="q" placeholder="搜论文、作者、书里的内容" aria-label="搜索"><input type="hidden" name="in" value="research"><button type="submit">搜索</button></form>
@@ -127,7 +128,7 @@
   <button type="button" class="choice" data-view="papers" aria-pressed="false">
     <span class="seal" aria-hidden="true">刊</span>
     <span class="choice-name">期刊文章</span>
-    <span class="choice-text">统计学期刊每周的新文章，按主题、按期刊挑着看。</span>
+    <span class="choice-text">统计学期刊 2016 年以来的文章，按年份、主题、期刊挑着看。</span>
   </button>
 </nav>
 
@@ -140,12 +141,20 @@
 <section class="filters" aria-label="筛选">
   <input class="field search" id="q" type="search" placeholder="搜标题、作者、摘要" aria-label="搜索文章">
   <fieldset class="facet">
+    <legend>年份（可以多选）</legend>
+    <div class="chips" id="years"></div>
+  </fieldset>
+  <fieldset class="facet">
     <legend>主题</legend>
     <div class="chips" id="topics"></div>
   </fieldset>
   <fieldset class="facet">
     <legend>期刊</legend>
     <div class="chips" id="journals"></div>
+  </fieldset>
+  <fieldset class="facet">
+    <legend>原文</legend>
+    <div class="chips" id="extras"></div>
   </fieldset>
 </section>
 
@@ -167,8 +176,12 @@
   const $ = id => document.getElementById(id);
   const PAGE = 30;
   const TOPICS_SHOWN = 8; // 主题多，先显示文章最多的几个
-  const state = { view: '', topics: new Set(), journals: new Set(), q: '', hideDiscussion: false, shown: PAGE, allTopics: false };
-  let data = null;
+  // years 为空表示全部年份
+  const state = { view: '', topics: new Set(), journals: new Set(), years: new Set(), fulltext: false, q: '', hideDiscussion: false, shown: PAGE, allTopics: false };
+  let index = null; // papers/index.json：年份、期刊、主题，和每篇的筛选信息
+  let facts = []; // 每篇一条 { year, journal, topics, discussion, reader }，算各个选项的篇数用
+  const loaded = new Map(); // 年份 -> 这一年的文章（papers/<年>.json）
+  const loading = new Set();
   let zhOf = {};
 
   // 老浏览器（比如 Kindle）没有 replaceChildren
@@ -184,14 +197,19 @@
   }
 
   // ---------- 地址栏：筛选条件可以分享 ----------
+  let yearInUrl = false;
   function readUrl() {
     const params = new URLSearchParams(location.search);
     for (const t of params.getAll('topic')) state.topics.add(t);
     for (const j of params.getAll('journal')) state.journals.add(j);
+    for (const y of params.getAll('year')) if (/^\d{4}$/.test(y)) state.years.add(Number(y));
+    yearInUrl = params.has('year');
+    if (params.get('year') === 'all') state.years.clear();
+    state.fulltext = params.get('fulltext') === '1';
     state.q = params.get('q') || '';
     state.hideDiscussion = params.get('discussion') === 'hide';
     // 带了筛选条件的旧链接，直接进期刊文章
-    const filtered = state.topics.size || state.journals.size || state.q || state.hideDiscussion;
+    const filtered = state.topics.size || state.journals.size || state.q || state.hideDiscussion || state.fulltext || yearInUrl;
     state.view = ['books', 'papers'].includes(params.get('view')) ? params.get('view') : filtered ? 'papers' : '';
   }
 
@@ -202,12 +220,14 @@
       history.replaceState(null, '', state.view ? `?view=${state.view}` : location.pathname);
       return;
     }
+    if (state.years.size) for (const y of [...state.years].sort((a, b) => b - a)) params.append('year', y);
+    else if (index) params.set('year', 'all'); // 数据还没下载时年份还没定，先不写
     for (const t of state.topics) params.append('topic', t);
     for (const j of state.journals) params.append('journal', j);
+    if (state.fulltext) params.set('fulltext', '1');
     if (state.q) params.set('q', state.q);
     if (state.hideDiscussion) params.set('discussion', 'hide');
-    const query = params.toString();
-    history.replaceState(null, '', query ? `?${query}` : location.pathname);
+    history.replaceState(null, '', `?${params}`);
   }
 
   // ---------- 筛选 ----------
@@ -215,22 +235,34 @@
     return state.q.toLowerCase().split(/\s+/).filter(Boolean);
   }
 
+  function yearOf(paper) {
+    return paper.date ? Number(paper.date.slice(0, 4)) : 0;
+  }
+
+  // paper 可以是完整的文章，也可以是 facts 里的一条（没有标题摘要，不看搜索词）
   function matches(paper, { skip } = {}) {
     if (state.hideDiscussion && paper.discussion) return false;
+    if (skip !== 'year' && state.years.size && !state.years.has(paper.year)) return false;
     if (skip !== 'topic' && state.topics.size && !paper.topics.some(t => state.topics.has(t))) return false;
     if (skip !== 'journal' && state.journals.size && !state.journals.has(paper.journal)) return false;
+    if (skip !== 'fulltext' && state.fulltext && !paper.reader) return false;
     const terms = words();
-    if (terms.length) {
+    if (terms.length && paper.title !== undefined) {
       const text = paper._text || (paper._text = `${paper.title} ${paper.authors} ${paper.abstract}`.toLowerCase());
       if (!terms.every(term => text.includes(term))) return false;
     }
     return true;
   }
 
-  // 每个选项旁边的数字：在其他条件不变时，选上它能看到多少篇
+  const wantedYears = () => (state.years.size ? [...state.years] : index.years.map(y => y.year)).sort((a, b) => b - a);
+  const ready = () => wantedYears().every(y => loaded.has(y));
+
+  // 每个选项旁边的数字：在其他条件不变时，选上它能看到多少篇。
+  // 没有搜索词时按 facts 算（全部年份都准）；有搜索词时只能在已经下载的年份里算，没下载的年份显示「·」
   function counts(skip, key) {
     const result = new Map();
-    for (const paper of data.papers) {
+    const pool = words().length ? [...loaded.values()].flat() : facts;
+    for (const paper of pool) {
       if (!matches(paper, { skip })) continue;
       for (const value of key(paper)) result.set(value, (result.get(value) || 0) + 1);
     }
@@ -239,9 +271,10 @@
 
   function chip(label, value, set, count, title) {
     const pressed = set.has(value);
-    const button = make('button', { type: 'button', className: 'chip', title: title || '' }, label, make('small', {}, String(count || 0)));
+    const unknown = count === null;
+    const button = make('button', { type: 'button', className: 'chip', title: title || '' }, label, make('small', {}, unknown ? '·' : String(count || 0)));
     button.setAttribute('aria-pressed', String(pressed));
-    button.disabled = !count && !pressed;
+    button.disabled = !unknown && !count && !pressed;
     button.addEventListener('click', () => {
       if (set.has(value)) set.delete(value);
       else set.add(value);
@@ -252,9 +285,23 @@
   }
 
   function drawFacets() {
+    const searching = words().length > 0;
+    const yearCounts = counts('year', p => [p.year]);
+    const yearChips = index.years.map(({ year }) => chip(String(year), year, state.years,
+      searching && !loaded.has(year) ? null : yearCounts.get(year), `${year} 年发表的文章`));
+    const all = make('button', { type: 'button', className: 'chip more' }, state.years.size ? '全部年份' : '只看最新一年');
+    all.title = state.years.size ? '全部年份的文章要多下载一些，大约 8 MB' : '';
+    all.addEventListener('click', () => {
+      if (state.years.size) state.years.clear();
+      else state.years.add(index.years[0].year);
+      state.shown = PAGE;
+      update();
+    });
+    fill($('years'), [...yearChips, all]);
+
     const topicCounts = counts('topic', p => p.topics);
     // 文章多的主题在前，「Other」总在最后
-    const ordered = [...data.topics].sort((a, b) => (a.code === 'Other') - (b.code === 'Other')
+    const ordered = [...index.topics].sort((a, b) => (a.code === 'Other') - (b.code === 'Other')
       || (topicCounts.get(b.code) || 0) - (topicCounts.get(a.code) || 0));
     const visible = state.allTopics ? ordered
       : ordered.filter((t, i) => i < TOPICS_SHOWN || state.topics.has(t.code));
@@ -270,8 +317,17 @@
     fill($('topics'), topicChips);
 
     const journalCounts = counts('journal', p => [p.journal]);
-    const journals = data.journals.filter(j => data.papers.some(p => p.journal === j.code));
-    fill($('journals'), journals.map(j => chip(j.code, j.code, state.journals, journalCounts.get(j.code), j.name)));
+    fill($('journals'), index.journals.map(j => chip(j.code, j.code, state.journals, journalCounts.get(j.code), j.name)));
+
+    const textCount = counts('fulltext', p => (p.reader ? ['fulltext'] : [])).get('fulltext') || 0;
+    const flag = new Set(state.fulltext ? ['fulltext'] : []);
+    const textChip = chip('有原文', 'fulltext', flag, textCount, '可以在本站直接读全文的文章');
+    textChip.addEventListener('click', () => {
+      state.fulltext = !state.fulltext;
+      state.shown = PAGE;
+      update();
+    });
+    fill($('extras'), [textChip]);
   }
 
   // ---------- 列表 ----------
@@ -299,7 +355,7 @@
       set.add(value);
       state.shown = PAGE;
       // 从书上点的标签：切到期刊文章，数据下载好以后按这个条件显示
-      if (state.view !== 'papers' || !data) {
+      if (state.view !== 'papers' || !index) {
         setView('papers');
         return;
       }
@@ -309,15 +365,18 @@
   }
 
   function paperNode(paper) {
-    const journalName = (data.journals.find(j => j.code === paper.journal) || {}).name || paper.journal;
+    const journalName = (index.journals.find(j => j.code === paper.journal) || {}).name || paper.journal;
+    const when = `${paper.date ? `发表于 ${paper.date}` : ''}${paper.week && paper.week !== paper.date ? ` · 收录于 ${paper.week}` : ''}`;
     const meta = make('p', { className: 'paper-meta' },
       label(paper.journal, 'journal', only(state.journals, paper.journal), `只看 ${journalName}`),
       ...paper.topics.map(t => label(t, 'topic', only(state.topics, t), `只看「${zhOf[t] || t}」`)),
       paper.discussion ? make('span', { className: 'label kind' }, '讨论 / 评论') : null,
-      make('span', { className: 'week' }, `收录于 ${paper.week || '—'}`));
+      paper.reader ? make('a', { className: 'label free', href: paper.reader, title: '在本站读全文' }, '有原文') : null,
+      make('span', { className: 'week' }, when));
     const title = make('h2', {}, make('a', { href: paper.link, target: '_blank', rel: 'noopener' }, ...highlight(paper.title)));
     const node = make('article', { className: 'paper' }, meta, title);
     if (paper.authors) node.append(make('p', { className: 'authors' }, ...highlight(shortAuthors(paper.authors))));
+    if (paper.reader) node.append(make('p', { className: 'book-links' }, make('a', { href: paper.reader }, '在本站读原文 →')));
     if (paper.abstract) {
       const details = make('details', {}, make('summary', {}, paper.abstractZh ? '中文概述' : '摘要'));
       details.addEventListener('toggle', () => {
@@ -339,15 +398,48 @@
     return node;
   }
 
+  // 下载选中的年份里还没下载的
+  function loadYears() {
+    for (const year of wantedYears()) {
+      if (loaded.has(year) || loading.has(year)) continue;
+      loading.add(year);
+      fetch(`/research/papers/${year}.json`).then(res => {
+        if (!res.ok) throw new Error(res.status);
+        return res.json();
+      }).then(json => {
+        json.papers.forEach(p => { p.year = yearOf(p); });
+        loaded.set(year, json.papers);
+      }).catch(() => {
+        $('count').textContent = `${year} 年的文章打不开，请稍后再试。`;
+      }).then(() => {
+        loading.delete(year);
+        if (state.view === 'papers') update();
+      });
+    }
+  }
+
   function update() {
     writeUrl();
+    loadYears();
     drawFacets();
-    const list = data.papers.filter(p => matches(p));
-    const filtered = state.topics.size || state.journals.size || state.q || state.hideDiscussion;
-    $('count').textContent = filtered ? `找到 ${list.length} 篇（共 ${data.papers.length} 篇）` : `共 ${data.papers.length} 篇，新的在前`;
-    $('clear').hidden = !filtered;
+    const filtered = state.topics.size || state.journals.size || state.q || state.hideDiscussion || state.fulltext;
+    const total = facts.filter(p => matches(p)).length; // 不算搜索词时的篇数
+    const yearText = state.years.size ? [...state.years].sort((a, b) => b - a).join('、') + ' 年' : '全部年份';
+    $('clear').hidden = !filtered && state.years.size === 1 && state.years.has(index.years[0].year);
+    if (!ready()) {
+      const left = wantedYears().filter(y => !loaded.has(y)).length;
+      $('count').textContent = `${yearText}共 ${total} 篇，正在下载（还有 ${left} 年）…`;
+      fill($('list'), []);
+      $('more').hidden = true;
+      return;
+    }
+    const list = wantedYears().flatMap(y => loaded.get(y)).filter(p => matches(p));
+    $('count').textContent = state.q ? `${yearText}找到 ${list.length} 篇` : `${yearText}${filtered ? '符合条件的' : '共'} ${list.length} 篇，新的在前`;
     fill($('list'), list.slice(0, state.shown).map(paperNode));
-    if (!list.length) $('list').append(make('p', { className: 'empty' }, '没有符合条件的文章，换个条件试试。'));
+    if (!list.length) {
+      $('list').append(make('p', { className: 'empty' }, state.q && state.years.size
+        ? '这几年里没有找到。可以点「全部年份」，或者用页面上方的全站搜索。' : '没有符合条件的文章，换个条件试试。'));
+    }
     $('more').hidden = list.length <= state.shown;
     $('more').textContent = `再看 ${Math.min(PAGE, list.length - state.shown)} 篇（还有 ${list.length - state.shown} 篇）`;
   }
@@ -370,7 +462,8 @@
         return tag;
       }),
       book.level ? make('span', { className: 'label kind' }, book.level) : null,
-      book.free ? make('span', { className: 'label free' }, '可免费阅读') : null);
+      book.free ? make('span', { className: 'label free' }, '可免费阅读') : null,
+      book.reader ? make('a', { className: 'label free', href: book.reader, title: '在本站分章读全文' }, '有原文') : null);
     const by = [book.authors.join(', '), book.publisher, book.year].filter(Boolean).join(' · ');
     return make('article', { className: 'book' }, tags,
       make('h3', {}, first ? make('a', linkProps(first.url), book.title) : book.title),
@@ -392,17 +485,17 @@
   }
 
   // 先选「经典书籍」或「期刊文章」，选了才显示对应的内容；期刊文章的数据比较大，选了才下载
-  let papersLoaded = false;
+  let indexLoaded = false;
   function setView(view, scroll = true) {
     state.view = view;
     document.querySelectorAll('.choice').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === view)));
     $('books-view').hidden = view !== 'books';
     $('papers-view').hidden = view !== 'papers';
     if (view === 'books') loadBooks();
-    if (view === 'papers' && !papersLoaded) {
-      papersLoaded = true;
-      loadPapers();
-    } else if (view === 'papers' && data) update();
+    if (view === 'papers' && !indexLoaded) {
+      indexLoaded = true;
+      loadIndex();
+    } else if (view === 'papers' && index) update();
     writeUrl();
     if (scroll && view) $(view === 'books' ? 'books-title' : 'papers-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -429,6 +522,9 @@
   $('clear').addEventListener('click', () => {
     state.topics.clear();
     state.journals.clear();
+    state.years.clear();
+    state.years.add(index.years[0].year);
+    state.fulltext = false;
     state.q = '';
     $('q').value = '';
     state.hideDiscussion = false;
@@ -441,22 +537,34 @@
     update();
   });
 
-  function loadPapers() {
-  fetch('/research/papers.json').then(res => {
-    if (!res.ok) throw new Error(res.status);
-    return res.json();
-  }).then(json => {
-    data = json;
-    zhOf = {};
-    data.topics.forEach(t => { zhOf[t.code] = t.zh; });
-    const names = data.journals.filter(j => data.papers.some(p => p.journal === j.code)).map(j => j.code).join('、');
-    $('about').textContent = `更新到 ${data.updated} 的周报。收录的期刊：${names}。主题标签按标题和摘要里的词自动归类，一篇最多三个，难免有不准的地方。点文章上的标签，可以只看这一类。`;
-    update();
-  }).catch(() => {
-    $('count').textContent = '文章列表打不开。';
-    $('count').append(' 请看', make('a', { href: '/research/lite/' }, '简易版'), '。');
-  });
+  function loadIndex() {
+    fetch('/research/papers/index.json').then(res => {
+      if (!res.ok) throw new Error(res.status);
+      return res.json();
+    }).then(json => {
+      index = json;
+      zhOf = {};
+      index.topics.forEach(t => { zhOf[t.code] = t.zh; });
+      facts = index.rows.map(([year, j, mask, flags]) => ({
+        year, journal: index.journals[j].code,
+        topics: index.topics.filter((t, i) => mask & (2 ** i)).map(t => t.code),
+        discussion: !!(flags & 1), reader: !!(flags & 2),
+      }));
+      // 没指定年份时先看最新一年，数据小，打开快
+      if (!yearInUrl) state.years.add(index.years[0].year);
+      const names = index.journals.map(j => j.code).join('、');
+      const first = index.years[index.years.length - 1].year;
+      $('about').textContent = `收录 ${first} 年以来的 ${facts.length} 篇，期刊：${names}。`
+        + `每周的新文章更新到 ${index.updated} 的周报。年份按网上首发的日期算，只知道年份的就只写年份。`
+        + '主题标签按标题和摘要里的词自动归类，一篇最多三个，难免有不准的地方。点文章上的标签，可以只看这一类。'
+        + '页面里的搜索框只搜选中的年份，想跨年份找，用页面上方的全站搜索。';
+      update();
+    }).catch(() => {
+      $('count').textContent = '文章列表打不开。';
+      $('count').append(' 请看', make('a', { href: '/research/lite/' }, '简易版'), '。');
+    });
   }
+
   setView(state.view, false);
 </script>
 </body>
