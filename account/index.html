@@ -156,6 +156,7 @@
       <button type="button" role="tab" data-game="othello" aria-selected="false">黑白棋</button>
       <button type="button" role="tab" data-game="connect4" aria-selected="false">四子连珠</button>
       <button type="button" role="tab" data-game="jungle" aria-selected="false">斗兽棋</button>
+      <button type="button" role="tab" data-game="chengyu" aria-selected="false">成语接龙</button>
     </div>
     <table>
       <thead><tr><th>名次</th><th>棋手</th><th>积分</th><th>胜</th><th>负</th></tr></thead>
@@ -174,7 +175,7 @@
   const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
   const API = LOCAL ? 'http://127.0.0.1:8787/api' : 'https://api.gamesyuan.com/api';
   const TOKEN_KEY = 'xiangqi:token'; // 和游戏共用，见 wx-adapter.js 的存储前缀
-  const GAME_NAMES = { xiangqi: '象棋', gomoku: '五子棋', othello: '黑白棋', connect4: '四子连珠', jungle: '斗兽棋' };
+  const GAME_NAMES = { xiangqi: '象棋', gomoku: '五子棋', othello: '黑白棋', connect4: '四子连珠', jungle: '斗兽棋', chengyu: '成语接龙' };
   const $ = id => document.getElementById(id);
 
   function getToken() {

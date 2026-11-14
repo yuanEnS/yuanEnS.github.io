@@ -15,11 +15,11 @@
 <meta property="og:image" content="https://gamesyuan.com/og.png">
 <link rel="stylesheet" href="/life/fonts/kai.css">
 <link rel="stylesheet" href="/games/kit/kit.css">
-<title>成语接龙 · 和电脑接或者自己接 | 游戏园</title>
-<meta name="description" content="成语接龙：用上一个成语的最后一个字，开头接下一个成语。可以和电脑轮流接（三档难度），也可以自己一个人接，看能接多长。">
+<title>成语接龙 · 和电脑接、自己接、联网对战 | 游戏园</title>
+<meta name="description" content="成语接龙：用上一个成语的最后一个字，开头接下一个成语。可以和电脑轮流接（三档难度），可以自己一个人接，看能接多长，也可以联网和别人对战。">
 <link rel="canonical" href="https://gamesyuan.com/chengyu/">
 <meta property="og:title" content="成语接龙 · 游戏园">
-<meta property="og:description" content="用上一个成语的最后一个字接下一个成语。和电脑比，或者自己挑战最长的龙。">
+<meta property="og:description" content="用上一个成语的最后一个字接下一个成语。和电脑比、自己挑战最长的龙，或者联网对战。">
 <meta property="og:url" content="https://gamesyuan.com/chengyu/">
 <style>
   .need { margin: 10px 0 4px; text-align: center; color: var(--muted); font-size: 15px; }
@@ -35,6 +35,9 @@
   .chain li.me small::before { content: "你"; }
   .chain li.cpu small::before { content: "电脑"; }
   .chain li.start small::before { content: "开头"; }
+  .chain li.opp small::before { content: "对手"; }
+  .clock { margin: 0; text-align: center; font-size: 15px; }
+  .clock.urgent { font-weight: 700; }
   .chain li .unlisted { margin-left: auto; color: var(--muted); font: 12px/1 var(--sans); }
   .chain li.latest { font-size: 26px; }
   .chain li.latest span:first-of-type { border-bottom: 2px solid var(--primary); }
@@ -53,9 +56,23 @@
   </header>
   <div class="panel">
     <div class="row"><span class="label">玩法</span><div class="seg" id="mode"></div></div>
+    <div class="row" id="rule-row"><span class="label">接法</span><div class="seg" id="rule"></div></div>
     <div class="row" id="level-row"><span class="label">电脑</span><div class="seg" id="level"></div></div>
+    <div class="row" id="online-row" hidden>
+      <button type="button" class="btn small primary" id="match">快速匹配</button>
+      <button type="button" class="btn small" id="create">建房间</button>
+      <input class="room-input" id="room" inputmode="numeric" maxlength="4" placeholder="房间号" aria-label="房间号" autocomplete="off">
+      <button type="button" class="btn small" id="join">加入</button>
+    </div>
+    <div class="row" id="online-info" hidden>
+      <p class="sub" id="online-text" role="status"></p>
+      <button type="button" class="btn small" id="copy" hidden>复制邀请链接</button>
+      <button type="button" class="btn small" id="leave">取消</button>
+    </div>
+    <p class="sub" id="online-hint" hidden>每步限时 60 秒，只认词库里的成语。快速匹配只和选了同一种接法的人配对。快速匹配计积分，好友房间不计分。<a href="/account/">账号与排行榜</a></p>
   </div>
   <p class="status" id="status" role="status" aria-live="polite"></p>
+  <p class="clock" id="clock" hidden></p>
   <p class="need" id="need"></p>
   <form class="answer" id="form" autocomplete="off">
     <input id="input" maxlength="4" placeholder="输入四字成语" aria-label="输入成语" enterkeyhint="send">
@@ -77,58 +94,75 @@
     <p>用上一个成语的<strong>最后一个字</strong>，作为下一个成语的<strong>第一个字</strong>。比如「一心一<strong>意</strong>」→「<strong>意</strong>气风发」→「<strong>发</strong>扬光大」……</p>
     <h3>规则</h3>
     <ul>
-      <li>必须是四字成语，第一个字要和上一个成语的最后一个字<strong>完全相同</strong>（同音字不算）。</li>
+      <li>必须是四字成语。第一个字怎么接，看选的「接法」：
+        <ul>
+          <li><strong>同一个字</strong>：要和上一个成语的最后一个字完全相同。</li>
+          <li><strong>同音</strong>：读音相同就行，不管声调。「一心一意」后面可以接「义不容辞」，也可以接「一帆风顺」。</li>
+          <li><strong>同音同调</strong>：读音和声调都要相同。「一心一意」后面可以接「义不容辞」，不能接「一帆风顺」。</li>
+        </ul>
+        多音字按它在这个成语里的读法算，比如「长治久安」的「长」读 cháng。</li>
       <li>同一局里用过的成语不能再用。</li>
       <li>接不上就输了。</li>
     </ul>
-    <h3>两种玩法</h3>
+    <h3>三种玩法</h3>
     <ul>
       <li><strong>和电脑接</strong>：你和电脑轮流接。入门的电脑会给你留好接的字；大师会专挑难接的字来为难你。</li>
       <li><strong>自己接</strong>：一个人一直接下去，看最长能接多少个。</li>
+      <li><strong>联网对战</strong>：和另一个人轮流接，可以快速匹配，也可以建房间把房间号发给朋友。每步限时 60 秒，超时、认输就输；你接完以后，如果词库里已经没有对方能接的成语，你直接赢。联网时只认词库里的成语，也没有提示。快速匹配计积分。</li>
     </ul>
     <h3>提示和词库</h3>
-    <p>每局有 3 次「提示」，会告诉你一个能接的成语。游戏的词库收了一千多个常用成语，难免有漏掉的：如果你输入的成语词库里没有，会问你一句，确认是成语就算数。</p>
+    <p>每局有 3 次「提示」，会告诉你一个能接的成语。游戏的词库收了近三万个成语（来自开源的 chinese-xinhua 数据），电脑和开局只用其中一千多个常用的，不会故意出生僻词；「大师」会在整个词库里挑。和电脑接、自己接的时候，如果你输入的成语词库里没有，会问你一句，确认是成语就算数。</p>
     <div class="close-row"><button type="button" class="btn primary close">知道了</button></div>
   </div>
 </dialog>
 
-<script src="/chengyu/idioms.js"></script>
+<script src="/games/rules/chengyu-words.js"></script>
+<script src="/games/rules/chengyu.js"></script>
 <script src="/games/kit/kit.js"></script>
 <script>
   const { el, store, toast } = Kit;
   const $ = id => document.getElementById(id);
-  const LIST = IDIOMS.trim().split(/\s+/);
-  const SET = new Set(LIST);
-  const BY_FIRST = new Map();
-  for (const word of LIST) {
-    if (!BY_FIRST.has(word[0])) BY_FIRST.set(word[0], []);
-    BY_FIRST.get(word[0]).push(word);
-  }
+  const { SET, RULES } = Chengyu;
   const HINTS = 3;
 
   let mode = store.get('chengyu:mode', 'cpu');
+  if (mode === 'online') mode = 'cpu'; // 联网要自己点，打开页面不自动连
   let level = store.get('chengyu:level', 1);
+  let rule = store.get('chengyu:rule', 'zi');
+  if (!RULES[rule]) rule = 'zi';
   let chain = []; // { word, who: 'start' | 'me' | 'cpu', unlisted }
   let used = new Set();
   let over = null; // null | 'win' | 'lose' | 'end'
   let hintsLeft = HINTS;
-  const best = store.get('chengyu:best', 0);
-  let bestNow = best;
+  let bestNow = store.get('chengyu:best', 0);
 
   const last = () => chain[chain.length - 1].word;
-  const need = () => last()[3];
-  // 接上 word 之后，下一个人还有几个成语可接
-  const options = ch => (BY_FIRST.get(ch) || []).filter(w => !used.has(w));
+  const need = () => Chengyu.need(last(), rule);
+  // 接在 prev 后面、还没用过的成语；common 为真只找常用成语
+  const options = (prev = last(), common = false) => Chengyu.options(prev, used, rule, common);
   const pickRandom = list => list[Math.floor(Math.random() * list.length)];
 
+  // ---------- 联网 ----------
+  // phase：idle 没在联网 / matching 匹配中 / waiting 建好房间等人 / playing 对局中 / over 一局结束 / left 对手离开或断线
+  const net = new Kit.Online(onNet, onNetClose);
+  const online = {
+    phase: 'idle', room: null, matched: false, me: null, opponent: null,
+    game: null, side: null, turnMs: 60000, deadline: 0, timeoutSent: false,
+    pending: false, rematchAsked: false, rematchWanted: false,
+  };
+  const REASONS = {
+    stuck: mine => (mine ? '词库里已经没有对手能接的成语' : '词库里已经没有你能接的成语'),
+    timeout: mine => (mine ? '对手超时' : '你超时了'),
+    resign: mine => (mine ? '对手认输' : '你认输了'),
+    left: mine => (mine ? '对手离开了' : '你离开了'),
+  };
+
   function start() {
-    // 开头挑一个后面好接的
-    const good = LIST.filter(w => options(w[3]).length >= 2);
     chain = [];
     used = new Set();
     over = null;
     hintsLeft = HINTS;
-    const first = pickRandom(good);
+    const first = Chengyu.pickStart(rule); // 常用、后面好接的
     chain.push({ word: first, who: 'start' });
     used.add(first);
     draw();
@@ -136,14 +170,17 @@
   }
 
   function cpuMove() {
-    const list = options(need());
+    const all = options();
+    // 入门、业余只用常用成语（常用的接不上才用整个词库），大师在整个词库里挑
+    const common = all.filter(w => Chengyu.COMMON_SET.has(w));
+    const list = level < 2 && common.length ? common : all;
     if (!list.length) {
       over = 'win';
       toast('电脑接不上了，你赢了！');
       return draw();
     }
     let word;
-    const score = w => options(w[3]).filter(x => x !== w).length;
+    const score = w => options(w).filter(x => x !== w).length;
     if (level === 0) {
       // 入门：给你留好接的
       const easy = list.filter(w => score(w) >= 2);
@@ -161,10 +198,11 @@
   }
 
   function submit(word) {
-    if (over) return;
     word = word.replace(/\s/g, '');
+    if (mode === 'online') return submitOnline(word);
+    if (over) return;
     if ([...word].length !== 4) return toast('要四个字的成语');
-    if (word[0] !== need()) return toast(`要用「${need()}」开头`);
+    if (!Chengyu.linked(last(), word, rule)) return toast(need().text);
     if (used.has(word)) return toast('这个成语这一局用过了');
     let unlisted = false;
     if (!SET.has(word)) {
@@ -183,26 +221,239 @@
     if (mode === 'cpu') setTimeout(cpuMove, 500);
   }
 
+  function submitOnline(word) {
+    const { game } = online;
+    if (online.phase !== 'playing' || !game || game.winner) return;
+    if (game.turn !== online.side) return toast('还没轮到你');
+    if (online.pending) return;
+    const problem = game.problem(word);
+    if (problem) return toast(problem.endsWith('不在词库里') ? `${problem}，联网时只认词库里的成语` : problem);
+    online.pending = true;
+    net.send({ t: 'move', move: word });
+    draw();
+  }
+
+  function onNet(msg) {
+    switch (msg.t) {
+      case 'matching':
+        online.phase = 'matching';
+        online.count = msg.online;
+        break;
+      case 'created':
+        online.phase = 'waiting';
+        online.room = msg.room;
+        break;
+      case 'start':
+        Object.assign(online, {
+          phase: 'playing', room: msg.room, matched: msg.matched, me: msg.me, opponent: msg.opponent,
+          game: new Chengyu.Game(msg.setup), side: msg.color, turnMs: msg.turnMs || 60000,
+          pending: false, rematchAsked: false, rematchWanted: false,
+        });
+        resetClock();
+        $('input').value = '';
+        toast(msg.color === 'a' ? '开始了，你先接' : '开始了，对手先接');
+        break;
+      case 'move': {
+        const mine = online.game.turn === online.side;
+        online.game.move(msg.move);
+        online.pending = false;
+        if (mine) $('input').value = '';
+        resetClock();
+        break;
+      }
+      case 'over':
+        if (!online.game.winner) online.game.end(msg.winner, msg.reason);
+        online.phase = 'over';
+        online.pending = false;
+        break;
+      case 'rating':
+        toast(`积分 ${msg.rating}（${msg.delta >= 0 ? '+' : ''}${msg.delta}）`);
+        return;
+      case 'rematch_request':
+        online.rematchWanted = true;
+        toast('对手想再来一局');
+        break;
+      case 'opponent_left':
+        if (online.game && !online.game.winner && online.phase === 'playing') online.game.end(online.side, 'left');
+        online.phase = 'left';
+        online.pending = false;
+        toast('对手离开了');
+        break;
+      case 'error':
+        online.pending = false;
+        if (online.phase === 'waiting' && !online.side) online.phase = 'idle';
+        toast(msg.msg || '出错了');
+        break;
+      default:
+        return;
+    }
+    draw();
+  }
+
+  function onNetClose() {
+    if (mode !== 'online') return;
+    if (online.phase !== 'idle') toast('连接断开了');
+    if (online.phase === 'playing') online.phase = 'left';
+    else if (online.phase !== 'over' && online.phase !== 'left') online.phase = 'idle';
+    online.pending = false;
+    draw();
+  }
+
+  function goOnline(action, code) {
+    online.side = null;
+    online.game = null;
+    if (action === 'join') {
+      code = String(code || '').trim();
+      if (!/^\d{4}$/.test(code)) return toast('房间号是 4 位数字');
+      online.phase = 'waiting';
+      online.room = code;
+      net.send({ t: 'join', room: code, game: 'chengyu' });
+    } else {
+      online.phase = action === 'match' ? 'matching' : 'waiting';
+      online.room = null;
+      net.send({ t: action, game: 'chengyu', variant: rule });
+    }
+    draw();
+  }
+
+  function leaveOnline(quiet) {
+    const playing = online.phase === 'playing' && online.game && !online.game.winner;
+    if (playing && quiet !== true && !confirm('这一局还没结束，离开算输。确定离开？')) return false;
+    net.send({ t: 'leave' });
+    net.close();
+    Object.assign(online, { phase: 'idle', room: null, side: null, game: null, pending: false });
+    if (quiet !== true) draw();
+    return true;
+  }
+
+  async function copyLink() {
+    const link = `${location.origin}${location.pathname}?room=${online.room}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      toast('邀请链接已复制，发给朋友');
+    } catch (e) {
+      prompt('复制这个链接发给朋友', link);
+    }
+  }
+
+  // 步时：本地倒计时只是显示；时间到了（多等 1.5 秒，照顾网络延迟）就告诉服务器，服务器按自己的时间核对
+  function resetClock() {
+    online.deadline = Date.now() + online.turnMs;
+    online.timeoutSent = false;
+  }
+  setInterval(() => {
+    if (mode !== 'online' || online.phase !== 'playing' || !online.game || online.game.winner) return;
+    const left = online.deadline - Date.now();
+    if (left < -1500 && !online.timeoutSent) {
+      online.timeoutSent = true;
+      net.send({ t: 'timeout' });
+    }
+    drawClock();
+  }, 1000);
+
+  function drawClock() {
+    const clock = $('clock');
+    const show = mode === 'online' && online.phase === 'playing' && online.game && !online.game.winner;
+    clock.hidden = !show;
+    if (!show) return;
+    const seconds = Math.max(0, Math.ceil((online.deadline - Date.now()) / 1000));
+    const mine = online.game.turn === online.side;
+    clock.textContent = `${mine ? '你' : '对手'}还有 ${seconds} 秒`;
+    clock.classList.toggle('urgent', mine && seconds <= 10);
+  }
+
+  function onlineDescription() {
+    switch (online.phase) {
+      case 'matching':
+        return `正在找对手…${online.count ? `（在线 ${online.count} 人）` : ''}`;
+      case 'waiting':
+        return online.room ? `房间号 ${online.room}，发给朋友，对方输入房间号就能加入` : '正在连接…';
+      case 'playing':
+      case 'over':
+      case 'left': {
+        const who = p => (p ? `${p.name}${online.matched && p.rating ? `（${p.rating}）` : ''}` : '游客');
+        const head = `${online.matched ? '快速匹配' : `房间 ${online.room}`} · ${RULES[online.game ? online.game.rule : rule]}`;
+        const extra = online.phase === 'over' && online.rematchWanted && !online.rematchAsked ? ' · 对手想再来一局' : '';
+        return `${head} · 对手 ${who(online.opponent)}${extra}`;
+      }
+      default:
+        return '';
+    }
+  }
+
+  // 联网时的接龙列表从棋局里算出来：a 先接，双方轮流
+  function onlineChain() {
+    const { game } = online;
+    if (!game) return [];
+    return [{ word: game.start, who: 'start' }, ...game.history.map((word, i) => ({
+      word, who: (i % 2 === 0 ? 'a' : 'b') === online.side ? 'me' : 'opp',
+    }))];
+  }
+
+  function onlineStatus() {
+    const { game } = online;
+    if (online.phase === 'matching') return '正在找对手…';
+    if (online.phase === 'waiting') return online.room ? '等朋友加入…' : '正在连接…';
+    if (!game || !['playing', 'over', 'left'].includes(online.phase)) return '快速匹配找个对手，或者建房间叫朋友来';
+    const mine = onlineChain().filter(c => c.who === 'me').length;
+    if (game.winner) {
+      const won = game.winner === online.side;
+      const why = REASONS[game.reason] ? REASONS[game.reason](won) : '';
+      return `${won ? '你赢了！' : '你输了'}${why ? `（${why}）` : ''}，你接了 ${mine} 个`;
+    }
+    if (online.phase === 'left') return '连接断开了';
+    if (online.pending) return '…';
+    return game.turn === online.side ? '轮到你接' : '等对手接…';
+  }
+
   function draw() {
-    const mine = chain.filter(c => c.who === 'me').length;
+    const isOnline = mode === 'online';
+    const { game } = online;
+    const live = isOnline ? online.phase === 'playing' && game && !game.winner : !over;
+    const list = isOnline ? onlineChain() : chain;
+    const mine = list.filter(c => c.who === 'me').length;
+    const needInfo = isOnline ? (game ? game.need() : null) : need();
+
     $('level-row').hidden = mode !== 'cpu';
+    $('rule-row').hidden = isOnline && online.phase !== 'idle';
+    $('online-row').hidden = !isOnline || ['matching', 'waiting', 'playing'].includes(online.phase);
+    $('online-info').hidden = !isOnline || online.phase === 'idle';
+    $('online-hint').hidden = !isOnline;
+    $('online-text').textContent = onlineDescription();
+    $('copy').hidden = !(online.phase === 'waiting' && online.room);
+    $('leave').textContent = online.phase === 'matching' || online.phase === 'waiting' ? '取消' : '离开';
+
     $('need').replaceChildren();
-    if (!over) $('need').append('下一个成语用', el('b', { text: need() }), '开头');
-    $('form').hidden = !!over;
-    $('hint').hidden = !!over;
-    $('giveup').hidden = !!over;
+    if (live && needInfo) {
+      $('need').append('下一个成语用', el('b', { text: needInfo.char }), '开头');
+      if (needInfo.sound) $('need').append(el('br'), `读 ${needInfo.sound} 的字都行${(isOnline ? game.rule : rule) === 'diao' ? '（声调要一样）' : '（声调不限）'}`);
+    }
+    const myTurn = isOnline ? live && game.turn === online.side : live;
+    $('form').hidden = !live;
+    $('input').disabled = isOnline && !myTurn;
+    $('input').placeholder = isOnline && live && !myTurn ? '等对手接…' : '输入四字成语';
+    $('hint').hidden = !live || isOnline;
+    $('giveup').hidden = !live;
+    $('giveup').textContent = isOnline ? '认输' : '接不上了';
     $('hint').textContent = `提示（还有 ${hintsLeft} 次）`;
     $('hint').disabled = !hintsLeft;
-    if (over === 'win') $('status').textContent = `你赢了！一共接了 ${mine} 个`;
+    const restart = $('restart');
+    restart.hidden = isOnline && online.phase !== 'over';
+    restart.textContent = isOnline ? (online.rematchAsked ? '等对手同意…' : '再来一局') : '重新开始';
+    restart.disabled = isOnline && online.rematchAsked;
+
+    if (isOnline) $('status').textContent = onlineStatus();
+    else if (over === 'win') $('status').textContent = `你赢了！一共接了 ${mine} 个`;
     else if (over === 'lose') $('status').textContent = `电脑赢了，你接了 ${mine} 个`;
     else if (over === 'end') $('status').textContent = `接了 ${mine} 个成语`;
     else $('status').textContent = mode === 'cpu' ? (chain[chain.length - 1].who === 'me' ? '电脑在想…' : '轮到你接') : `已经接了 ${mine} 个`;
     $('sub').textContent = mode === 'solo' && bestNow ? `自己接的最长记录：${bestNow} 个` : '';
-    $('chain').replaceChildren(...[...chain].reverse().map((c, i) => {
+    $('chain').replaceChildren(...[...list].reverse().map((c, i) => {
       const item = el('li', { className: `${c.who}${i === 0 ? ' latest' : ''}` }, el('small'), el('span', { text: c.word }));
       if (c.unlisted) item.append(el('span', { className: 'unlisted', text: '词库外' }));
       return item;
     }));
+    drawClock();
   }
 
   $('form').addEventListener('submit', e => {
@@ -210,35 +461,78 @@
     submit($('input').value);
   });
   $('hint').addEventListener('click', () => {
-    const list = options(need());
-    if (!list.length) {
-      toast(`词库里没有「${need()}」开头、还没用过的成语`);
+    const all = options();
+    if (!all.length) {
+      toast('词库里已经没有能接的成语了');
       return;
     }
     hintsLeft--;
-    // 提示一个后面也好接的
-    const word = list.find(w => options(w[3]).length) || list[0];
+    // 提示一个常用、后面也好接的
+    const common = all.filter(w => Chengyu.COMMON_SET.has(w));
+    const list = common.length ? common : all;
+    const word = list.find(w => options(w).length) || list[0];
     $('input').value = word;
     $('input').focus();
     draw();
   });
   $('giveup').addEventListener('click', () => {
-    const list = options(need());
+    if (mode === 'online') {
+      if (online.phase === 'playing' && online.game && !online.game.winner && confirm('确定认输？')) net.send({ t: 'resign' });
+      return;
+    }
+    const list = options();
     over = mode === 'cpu' ? 'lose' : 'end';
     if (list.length) toast(`可以接：${list.slice(0, 3).join('、')}`);
     draw();
   });
-  $('restart').addEventListener('click', start);
+  $('restart').addEventListener('click', () => {
+    if (mode !== 'online') return start();
+    if (online.phase === 'over' && !online.rematchAsked) {
+      online.rematchAsked = true;
+      net.send({ t: 'rematch' });
+      draw();
+    }
+  });
+  $('match').addEventListener('click', () => goOnline('match'));
+  $('create').addEventListener('click', () => goOnline('create'));
+  $('join').addEventListener('click', () => goOnline('join', $('room').value));
+  $('room').addEventListener('keydown', e => {
+    if (e.key === 'Enter') goOnline('join', $('room').value);
+  });
+  $('copy').addEventListener('click', copyLink);
+  $('leave').addEventListener('click', () => leaveOnline());
 
-  [['cpu', '和电脑接'], ['solo', '自己接']].forEach(([value, label]) => {
-    const button = el('button', { type: 'button', 'aria-pressed': String(value === mode), text: label });
-    button.addEventListener('click', () => {
-      mode = value;
+  function setMode(value) {
+    if (mode === 'online' && value !== 'online' && !leaveOnline()) return false;
+    mode = value;
+    if (mode !== 'online') {
       store.set('chengyu:mode', mode);
-      $('mode').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
       start();
+    } else {
+      draw();
+    }
+    return true;
+  }
+  const modeButtons = [['cpu', '和电脑接'], ['solo', '自己接'], ['online', '联网对战']].map(([value, label]) => {
+    const button = el('button', { type: 'button', 'aria-pressed': String(value === mode), text: label });
+    button.dataset.mode = value;
+    button.addEventListener('click', () => {
+      if (value !== mode && setMode(value) === false) return;
+      modeButtons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
     });
     $('mode').append(button);
+    return button;
+  });
+  Object.entries(RULES).forEach(([value, label]) => {
+    const button = el('button', { type: 'button', 'aria-pressed': String(value === rule), text: label });
+    button.addEventListener('click', () => {
+      rule = value;
+      store.set('chengyu:rule', rule);
+      $('rule').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      if (mode === 'online') draw();
+      else start();
+    });
+    $('rule').append(button);
   });
   ['入门', '业余', '大师'].forEach((label, value) => {
     const button = el('button', { type: 'button', 'aria-pressed': String(value === level), text: label });
@@ -253,6 +547,15 @@
 
   Kit.setupRules('chengyu');
   start();
+  // 打开带 ?room=1234 的邀请链接，直接进房间
+  const invited = new URLSearchParams(location.search).get('room');
+  if (invited && /^\d{4}$/.test(invited)) {
+    mode = 'online';
+    modeButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === 'online')));
+    history.replaceState(null, '', location.pathname);
+    goOnline('join', invited);
+  }
+  window.addEventListener('pagehide', () => net.close());
 </script>
 </body>
 </html>
