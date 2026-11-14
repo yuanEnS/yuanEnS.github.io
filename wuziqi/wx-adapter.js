@@ -56,12 +56,14 @@
     },
 
     // 小游戏的触摸坐标相对屏幕左上角；网页里画布可能居中，要减去画布的偏移
+    // 没有 pointer 事件的老浏览器（比如 Kindle）用 click，点一下也能落子
     onTouchStart(cb) {
-      screen.addEventListener('pointerdown', e => {
+      const handle = e => {
         const rect = screen.getBoundingClientRect();
         const t = { clientX: e.clientX - rect.left, clientY: e.clientY - rect.top };
         cb({ touches: [t], changedTouches: [t] });
-      });
+      };
+      screen.addEventListener(window.PointerEvent ? 'pointerdown' : 'click', handle);
     },
 
     showToast({ title, icon }) {

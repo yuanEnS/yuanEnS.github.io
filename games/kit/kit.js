@@ -1,6 +1,31 @@
 // 游戏园网页小游戏共用的代码：规则弹窗、提示、存储，以及两人对弈的「人机 / 双人 / 联网」流程。
 // 联网和象棋、五子棋连同一个服务器（xiangqi 仓库的 server/lobby.js），走法由服务器用同一份规则检查。
 (function () {
+  // 老浏览器（比如 Kindle）缺的几个方法，各个游戏页面会用到
+  if (!Array.prototype.flat) {
+    Array.prototype.flat = function (depth = 1) {
+      return this.reduce((out, x) => out.concat(Array.isArray(x) && depth > 0 ? x.flat(depth - 1) : [x]), []);
+    };
+  }
+  if (!Array.prototype.flatMap) {
+    Array.prototype.flatMap = function (fn, self) {
+      return this.map(fn, self).flat();
+    };
+  }
+  if (!Element.prototype.replaceChildren) {
+    Element.prototype.replaceChildren = function (...nodes) {
+      while (this.firstChild) this.removeChild(this.firstChild);
+      this.append(...nodes);
+    };
+  }
+  if (!Object.fromEntries) {
+    Object.fromEntries = entries => {
+      const out = {};
+      for (const [k, v] of entries) out[k] = v;
+      return out;
+    };
+  }
+
   const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
   const WS_URL = LOCAL ? 'ws://127.0.0.1:8787' : 'wss://api.gamesyuan.com';
   const TOKEN_KEY = 'xiangqi:token'; // 和象棋、五子棋、账号页共用

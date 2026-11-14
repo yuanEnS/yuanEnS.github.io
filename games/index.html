@@ -161,21 +161,26 @@
   .btn:hover { filter: brightness(1.08); }
 
   h2 { font: 26px/1.3 var(--kai); margin: 40px 0 16px; }
-  .games { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  /* 每个游戏一张横向的小卡片：左边一个小图标，右边名字和介绍 */
+  .games { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
   .game {
-    display: flex; flex-direction: column;
+    display: flex; align-items: center; gap: 14px; padding: 12px 14px;
     background: var(--card); border: 1.5px solid var(--line); border-radius: 14px;
-    overflow: hidden; text-decoration: none; transition: transform .15s, box-shadow .15s;
+    text-decoration: none; transition: transform .15s, box-shadow .15s;
   }
   a.game:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08); }
-  .game svg { display: block; width: 100%; height: auto; }
-  .game-body { padding: 14px 16px 18px; }
-  .game-title { font: 22px/1.3 var(--kai); color: var(--primary); margin: 0 0 4px; }
-  .game-desc { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
-  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag { padding: 2px 10px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-size: 13px; }
-  .thumb { display: grid; place-items: center; aspect-ratio: 320 / 170; background: var(--board, #F0DAB2); border-bottom: 1.5px solid var(--line); }
-  .thumb span { font: 64px/1 var(--kai); color: var(--primary); letter-spacing: .04em; }
+  .game svg, .thumb { flex: none; display: block; width: 64px; height: 64px; border-radius: 12px; border: 1.5px solid var(--line); overflow: hidden; }
+  .game-body { min-width: 0; }
+  .game-title { font: 20px/1.3 var(--kai); color: var(--primary); margin: 0 0 2px; }
+  .game-desc { margin: 0 0 6px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { padding: 0 8px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-size: 12px; line-height: 1.7; }
+  .thumb { display: grid; place-items: center; background: var(--board, #F0DAB2); }
+  .thumb span { font: 28px/1 var(--kai); color: var(--primary); letter-spacing: .02em; }
+  .kindle { margin: 8px 0 0; padding: 14px 16px; border: 2px solid var(--text); border-radius: 12px; }
+  .kindle h2 { margin: 0 0 8px; font-size: 22px; }
+  .kindle p { margin: 6px 0; }
+  .kindle-hidden { color: var(--muted); font-size: 14px; }
   .game.soon { border-style: dashed; justify-content: center; align-items: center; min-height: 220px; text-align: center; padding: 24px; }
   .game.soon .game-title { color: var(--muted); }
 
@@ -223,11 +228,18 @@
     <a class="btn" href="/xiangqi/">开始下象棋</a>
   </section>
 
+  <!-- Kindle 等电子书阅读器才显示：纯网页版的小游戏，和这台阅读器能不能跑完整版游戏的检查结果 -->
+  <section class="kindle" id="kindle" hidden>
+    <h2>Kindle 版</h2>
+    <p>阅读器的浏览器比较旧，专门做了不用脚本的版本：<a href="/games/kindle/shici/index.html"><b>诗词填字</b></a> · <a href="/games/kindle/24/index.html"><b>24 点</b></a></p>
+    <p class="kindle-hidden" id="kindle-hidden"></p>
+  </section>
+
   <h2 id="games">全部游戏</h2>
   <div class="games">
-    <a class="game" href="/xiangqi/">
+    <a class="game" href="/xiangqi/" data-needs="js canvas">
       <!-- 象棋缩略图：一角棋盘和三枚棋子 -->
-      <svg viewBox="0 0 320 170" role="img" aria-label="中国象棋棋盘">
+      <svg viewBox="0 0 320 170" preserveAspectRatio="xMidYMid slice" role="img" aria-label="中国象棋棋盘">
         <rect width="320" height="170" fill="#F0DAB2"/>
         <g stroke="#6B4A2B" stroke-width="1" opacity="0.75">
           <path d="M0 25H320M0 65H320M0 105H320M0 145H320"/>
@@ -262,9 +274,9 @@
         </div>
       </div>
     </a>
-    <a class="game" href="/wuziqi/">
+    <a class="game" href="/wuziqi/" data-needs="js canvas">
       <!-- 五子棋缩略图：一角棋盘和几枚黑白子 -->
-      <svg viewBox="0 0 320 170" role="img" aria-label="五子棋棋盘">
+      <svg viewBox="0 0 320 170" preserveAspectRatio="xMidYMid slice" role="img" aria-label="五子棋棋盘">
         <rect width="320" height="170" fill="#E2C48F"/>
         <g stroke="#5E3D22" stroke-width="1" opacity="0.7">
           <path d="M0 15H320M0 45H320M0 75H320M0 105H320M0 135H320M0 165H320"/>
@@ -296,7 +308,7 @@
         </div>
       </div>
     </a>
-    <a class="game" href="/heibai/">
+    <a class="game" href="/heibai/" data-needs="js">
       <div class="thumb" aria-hidden="true"><span>●○</span></div>
       <div class="game-body">
         <h3 class="game-title">黑白棋</h3>
@@ -304,7 +316,7 @@
         <div class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></div>
       </div>
     </a>
-    <a class="game" href="/sizi/">
+    <a class="game" href="/sizi/" data-needs="js">
       <div class="thumb" aria-hidden="true"><span>四</span></div>
       <div class="game-body">
         <h3 class="game-title">四子连珠</h3>
@@ -312,7 +324,7 @@
         <div class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></div>
       </div>
     </a>
-    <a class="game" href="/doushou/">
+    <a class="game" href="/doushou/" data-needs="js">
       <div class="thumb" aria-hidden="true"><span>象</span></div>
       <div class="game-body">
         <h3 class="game-title">斗兽棋</h3>
@@ -320,7 +332,7 @@
         <div class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></div>
       </div>
     </a>
-    <a class="game" href="/huarong/">
+    <a class="game" href="/huarong/" data-needs="js">
       <div class="thumb" aria-hidden="true"><span>曹</span></div>
       <div class="game-body">
         <h3 class="game-title">华容道</h3>
@@ -328,7 +340,7 @@
         <div class="tags"><span class="tag">单人益智</span><span class="tag">提示</span></div>
       </div>
     </a>
-    <a class="game" href="/shudu/">
+    <a class="game" href="/shudu/" data-needs="js">
       <div class="thumb" aria-hidden="true"><span>九</span></div>
       <div class="game-body">
         <h3 class="game-title">数独</h3>
@@ -336,7 +348,7 @@
         <div class="tags"><span class="tag">每日一题</span><span class="tag">笔记</span></div>
       </div>
     </a>
-    <a class="game" href="/saolei/">
+    <a class="game" href="/saolei/" data-needs="js">
       <div class="thumb" aria-hidden="true"><span>雷</span></div>
       <div class="game-body">
         <h3 class="game-title">扫雷</h3>
@@ -344,7 +356,7 @@
         <div class="tags"><span class="tag">三档难度</span><span class="tag">单人</span></div>
       </div>
     </a>
-    <a class="game" href="/24dian/">
+    <a class="game" href="/24dian/" data-needs="js">
       <div class="thumb" aria-hidden="true"><span>24</span></div>
       <div class="game-body">
         <h3 class="game-title">24 点</h3>
@@ -352,7 +364,7 @@
         <div class="tags"><span class="tag">每日五题</span><span class="tag">算术</span></div>
       </div>
     </a>
-    <a class="game" href="/shici/">
+    <a class="game" href="/shici/" data-needs="js">
       <div class="thumb" aria-hidden="true"><span>诗</span></div>
       <div class="game-body">
         <h3 class="game-title">诗词填字</h3>
@@ -360,7 +372,7 @@
         <div class="tags"><span class="tag">每日五句</span><span class="tag">唐诗宋词</span></div>
       </div>
     </a>
-    <a class="game" href="/chengyu/">
+    <a class="game" href="/chengyu/" data-needs="js">
       <div class="thumb" aria-hidden="true"><span>龙</span></div>
       <div class="game-body">
         <h3 class="game-title">成语接龙</h3>
@@ -394,6 +406,51 @@
     </div>
   </div>
 </main>
+
+<script>
+  // 电子书阅读器（Kindle 等）：显示 Kindle 版入口，并检查这台阅读器能跑哪些游戏，跑不了的不显示。
+  // 这段要用老写法（ES5），太新的语法在 Kindle 上整段都不会执行。?kindle=1 可以在电脑上看效果。
+  (function () {
+    var reader = /Kindle|Silk|PocketBook|Kobo|BOOX|Onyx/i.test(navigator.userAgent) || /[?&]kindle=/.test(location.search);
+    if (!reader) return;
+    function can(code) {
+      try { new Function(code); return true; } catch (e) { return false; }
+    }
+    var has = {
+      // 游戏用到的新语法：class、箭头函数、解构、展开、模板字符串、async
+      js: can('class A {}; const f = async (a, ...b) => { await 0; return `${a}`; }; let { x } = { x: 1 }; return [...[x]];')
+        && typeof Promise !== 'undefined' && !!Element.prototype.append,
+      canvas: (function () {
+        try { var c = document.createElement('canvas'); return !!(c.getContext && c.getContext('2d')); } catch (e) { return false; }
+      })()
+    };
+    if (/[?&]kindle=old/.test(location.search)) has.js = false; // 在电脑上模拟很旧的阅读器
+    var cards = document.querySelectorAll('.game[data-needs]');
+    var hidden = [];
+    for (var i = 0; i < cards.length; i++) {
+      var needs = cards[i].getAttribute('data-needs').split(' ');
+      for (var j = 0; j < needs.length; j++) {
+        if (!has[needs[j]]) {
+          cards[i].style.display = 'none';
+          hidden.push(cards[i].querySelector('.game-title').textContent);
+          break;
+        }
+      }
+    }
+    document.getElementById('kindle').hidden = false;
+    var note = document.getElementById('kindle-hidden');
+    if (hidden.length === cards.length) {
+      note.textContent = '这台阅读器的浏览器太旧，下面的完整版游戏都跑不起来，已经隐藏。请玩上面的 Kindle 版。';
+      document.getElementById('games').style.display = 'none';
+    } else if (hidden.length) {
+      note.textContent = '这台阅读器跑不了的游戏已经隐藏：' + hidden.join('、') + '。';
+    } else {
+      note.textContent = '下面的游戏这台阅读器都能打开。建议在游戏里点「黑白」，墨水屏上看得更清楚。';
+    }
+    var start = document.querySelector('.hero .btn');
+    if (start && !has.js) start.style.display = 'none';
+  })();
+</script>
 
 <footer>
   <div class="wrap">
