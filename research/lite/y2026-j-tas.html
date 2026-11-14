@@ -17,5 +17,18 @@ summary { text-decoration: underline; }
 ul.links { padding-left: 1.2em; }
 ul.links li { margin: 6px 0; }
 .pager { margin-top: 20px; }
+article.here, article:target { border: 3px solid #000; padding: 10px; }
 .pager a, .pager b { margin-right: 10px; }
-</style></head><body><p class="nav"><a href="/research/lite/">研究园简易版</a> · <a href="books.html">经典书籍</a> · <a href="papers.html">期刊文章</a> · <a href="fulltext.html">有原文</a> · <a href="/research/?full=1">完整版（可多选筛选、搜索）</a> · <a href="/">首页</a></p><form action="https://api.gamesyuan.com/search" method="get"><input type="search" name="q" placeholder="搜论文、作者、书里的内容" aria-label="搜索" style="font-size:18px;padding:4px;width:60%"><input type="hidden" name="in" value="research"> <button type="submit" style="font-size:18px">搜索</button></form><h1>2026 年 · TAS</h1><p class="note">The American Statistician，2026 年发表的 1 篇，新的在前。点标题看作者和摘要。<a href="y2026.html">回到 2026 年</a></p><ul class="links"><li><a href="y2026-p31.html#p-10-1080-00031305-2025-2527319">A First Course in Causal Inference</a> · TAS · 2026-02-23</li></ul></body></html>
+</style></head><body><p class="nav"><a href="/research/lite/">研究园简易版</a> · <a href="books.html">经典书籍</a> · <a href="papers.html">期刊文章</a> · <a href="fulltext.html">有原文</a> · <a href="/research/?full=1">完整版（可多选筛选、搜索）</a> · <a href="/">首页</a></p><form action="https://api.gamesyuan.com/search" method="get"><input type="search" name="q" placeholder="搜论文、作者、书里的内容" aria-label="搜索" style="font-size:18px;padding:4px;width:60%"><input type="hidden" name="in" value="research"> <button type="submit" style="font-size:18px">搜索</button></form><h1>2026 年 · TAS</h1><p class="note">The American Statistician，2026 年发表的 1 篇，新的在前。点标题看作者和摘要。<a href="y2026.html">回到 2026 年</a></p><ul class="links"><li><a href="y2026-p31.html#p-10-1080-00031305-2025-2527319">A First Course in Causal Inference</a> · TAS · 2026-02-23 · 在第 31 页</li></ul><script>(function () {
+  function go() {
+    var id = location.hash.slice(1), el = id && document.getElementById(id);
+    if (!el) return;
+    var d = el.getElementsByTagName('details');
+    for (var i = 0; i < d.length; i++) d[i].open = true;
+    if (el.className.indexOf('here') < 0) el.className += ' here';
+    el.scrollIntoView(true);
+  }
+  if (document.readyState !== 'loading') go(); else document.addEventListener('DOMContentLoaded', go);
+  window.addEventListener('load', function () { setTimeout(go, 300); setTimeout(go, 1200); });
+  window.addEventListener('hashchange', go);
+})();</script></body></html>

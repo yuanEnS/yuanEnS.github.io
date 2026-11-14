@@ -421,6 +421,7 @@ summary { text-decoration: underline; }
 ul.links { padding-left: 1.2em; }
 ul.links li { margin: 6px 0; }
 .pager { margin-top: 20px; }
+article.here, article:target { border: 3px solid #000; padding: 10px; }
 .pager a, .pager b { margin-right: 10px; }
 </style>"""
 
@@ -431,6 +432,23 @@ def esc(text):
 
 def slug(text):
     return re.sub(r'[^a-z0-9]+', '-', text.lower()).strip('-')
+
+
+# 从标题清单点进来（链接带 #文章编号）：Kindle 的浏览器常常不会自己滚到那一篇，
+# 这段老写法（ES5）的小脚本在页面加载后找到那一篇，滚过去、展开摘要、加粗框。没有脚本的浏览器照常按 # 跳。
+JUMP = ("""<script>(function () {
+  function go() {
+    var id = location.hash.slice(1), el = id && document.getElementById(id);
+    if (!el) return;
+    var d = el.getElementsByTagName('details');
+    for (var i = 0; i < d.length; i++) d[i].open = true;
+    if (el.className.indexOf('here') < 0) el.className += ' here';
+    el.scrollIntoView(true);
+  }
+  if (document.readyState !== 'loading') go(); else document.addEventListener('DOMContentLoaded', go);
+  window.addEventListener('load', function () { setTimeout(go, 300); setTimeout(go, 1200); });
+  window.addEventListener('hashchange', go);
+})();</script>""")
 
 
 def lite_page(title, body, canonical=None):
@@ -444,7 +462,7 @@ def lite_page(title, body, canonical=None):
     search = ('<form action="https://api.gamesyuan.com/search" method="get"><input type="search" name="q" '
               'placeholder="搜论文、作者、书里的内容" aria-label="搜索" style="font-size:18px;padding:4px;width:60%">'
               '<input type="hidden" name="in" value="research"> <button type="submit" style="font-size:18px">搜索</button></form>')
-    return head + nav + search + body + '</body></html>\n'
+    return head + nav + search + body + JUMP + '</body></html>\n'
 
 
 def year_of(paper):
@@ -521,9 +539,14 @@ def write_lite(data, papers, folder, books):
             for p in in_year[n * LITE_PER_PAGE:(n + 1) * LITE_PER_PAGE]:
                 where[p['id']] = page_file(n)
 
+        def page_no(file):
+            found = re.search(r'-p(\d+)\.html$', file)
+            return int(found.group(1)) if found else 1
+
         def title_list(chosen):
             return '<ul class="links">' + ''.join(
                 f'<li><a href="{where[p["id"]]}#{anchor(p)}">{esc(p["title"])}</a> · {esc(p["journal"])} · {esc(p["date"] or "")}'
+                f' · 在第 {page_no(where[p["id"]])} 页'
                 f'{" · <b>有原文</b>" if p.get("reader") else ""}</li>' for p in chosen) + '</ul>'
 
         journal_rows, topic_rows = [], []
