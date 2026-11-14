@@ -1,9 +1,83 @@
 // 游戏园网页小游戏共用的代码：规则弹窗、提示、存储，以及两人对弈的「人机 / 双人 / 联网」流程。
 // 联网和象棋、五子棋连同一个服务器（xiangqi 仓库的 server/lobby.js），走法由服务器用同一份规则检查。
 (function () {
-  // 老浏览器（比如 Kindle）不认 CSS 的 min() 或 aspect-ratio 时，棋盘要换一种算法（见 kit.css 末尾的 .legacy）
-  const cssOk = window.CSS && CSS.supports && CSS.supports('width', 'min(1px, 2px)') && CSS.supports('aspect-ratio', '1');
-  if (!cssOk || /[?&]legacy=1/.test(location.search)) document.documentElement.classList.add('legacy');
+  // 老浏览器（比如 Kindle）：CSS 变量 var()、min()、aspect-ratio、vw 有一样算不对，棋盘就换一种算法。
+  // 不问浏览器「支不支持」，直接放几个看不见的小方块量一量，量出来不对就算不支持。
+  // 这时由脚本量好页面宽度，把每个棋盘的尺寸算成具体的像素，写成一段样式加到页面上（不用 var()，Kindle 不认）。
+  // 页面宽度变了（转屏）就重算。?legacy=1 可以在电脑上强制打开。
+  const root = document.documentElement;
+  function measure(style) {
+    const box = document.createElement('div');
+    box.style.cssText = `position:absolute;left:0;top:0;visibility:hidden;${style}`;
+    root.appendChild(box);
+    const size = [box.offsetWidth, box.offsetHeight];
+    root.removeChild(box);
+    return size;
+  }
+  const cssCheck = {
+    vars: measure('--t:50px;width:var(--t)')[0] === 50,
+    min: measure('width:min(100px, 50px)')[0] === 50,
+    aspect: measure('width:40px;aspect-ratio:1')[1] === 40,
+    vw: Math.abs(measure('width:50vw')[0] - window.innerWidth / 2) < 20,
+  };
+  const legacy = { on: false, hrdCell: 0 };
+  function legacyStyle() {
+    const W = root.clientWidth || window.innerWidth || screen.width;
+    const B = Math.floor(W * 0.96); // 棋盘宽度
+    const px = n => `${Math.floor(n)}px`;
+    const tiles = Math.min(B, 400);
+    const hrd = Math.min(Math.floor(W * 0.22), 92);
+    legacy.hrdCell = hrd;
+    let css = `
+      .legacy dialog.rules { width: ${px(W - 24)}; }
+      .legacy .othello { width: ${px(B)}; height: ${px(B)}; }
+      .legacy .c4 { width: ${px(B)}; }
+      .legacy .c4 .hole { height: ${px((B - 16) / 7)}; }
+      .legacy .jungle { width: ${px(B)}; }
+      .legacy .jungle button { height: ${px((B - 22) / 7)}; }
+      .legacy .jungle .piece { font-size: ${px(B / 13)}; }
+      .legacy .hrd { width: ${px(hrd * 4 + 16)}; height: ${px(hrd * 5 + 16)}; }
+      .legacy .hrd .exit { left: ${px(8 + hrd)}; width: ${px(hrd * 2)}; }
+      .legacy .piece { font-size: ${px(hrd * 0.3)}; }
+      .legacy .piece.cao { font-size: ${px(hrd * 0.42)}; }
+      .legacy .piece.bing { font-size: ${px(hrd * 0.34)}; }
+      .legacy .sudoku { width: ${px(B)}; height: ${px(B)}; }
+      .legacy .sudoku button { font-size: ${px(B / 15)}; }
+      .legacy .notes span { font-size: ${px(B / 38)}; }
+      .legacy .pad { width: ${px(B)}; }
+      .legacy .cards, .legacy .ops { width: ${px(B)}; }
+      .legacy .card { height: ${px((B - 30) / 4 * 1.4)}; font-size: ${px(B / 9)}; }
+      .legacy .card.frac { font-size: ${px(B / 13)}; }
+      .legacy .tiles { width: ${px(tiles)}; }
+      .legacy .tiles button { height: ${px(Math.min((tiles - 30) / 4, 92))}; }
+      .legacy .answer, .legacy .chain { width: ${px(Math.min(B, 420))}; }`;
+    // 扫雷三档：9、16、30 列。格子最小 24px，放不下就左右滑
+    for (const cols of [9, 16, 30]) {
+      const cell = Math.max(24, Math.min(40 * 1.5, Math.floor((B - 8) / cols)));
+      css += `
+      .legacy .field[data-cols="${cols}"] { grid-template-columns: repeat(${cols}, ${px(cell)}); }
+      .legacy .field[data-cols="${cols}"] button { width: ${px(cell)}; height: ${px(cell)}; font-size: ${px(cell * 0.55)}; }`;
+    }
+    let node = document.getElementById('legacy-style');
+    if (!node) {
+      node = document.createElement('style');
+      node.id = 'legacy-style';
+      document.head.appendChild(node);
+    }
+    node.textContent = css;
+  }
+  if (!cssCheck.vars || !cssCheck.min || !cssCheck.aspect || !cssCheck.vw || /[?&]legacy=1/.test(location.search)) {
+    legacy.on = true;
+    root.classList.add('legacy');
+    legacyStyle();
+    let lastWidth = root.clientWidth;
+    window.addEventListener('resize', () => {
+      if (root.clientWidth === lastWidth) return;
+      lastWidth = root.clientWidth;
+      legacyStyle();
+      window.dispatchEvent(new Event('legacyresize'));
+    });
+  }
 
   // 老浏览器（比如 Kindle）缺的几个方法，各个游戏页面会用到
   if (!Array.prototype.flat) {
@@ -640,5 +714,5 @@
     return { state, render };
   }
 
-  window.Kit = { el, store, toast, setupRules, shuffle, duel, Online, today, seeded, timeText };
+  window.Kit = { el, store, toast, setupRules, shuffle, duel, Online, today, seeded, timeText, cssCheck, legacy };
 })();
