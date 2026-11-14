@@ -5,6 +5,7 @@
   // 不问浏览器「支不支持」，直接放几个看不见的小方块量一量，量出来不对就算不支持。
   // 这时由脚本量好页面宽度，把每个棋盘的尺寸算成具体的像素，写成一段样式加到页面上（不用 var()，Kindle 不认）。
   // 页面宽度变了（转屏）就重算。?legacy=1 可以在电脑上强制打开。
+  const KIT_VERSION = 6; // 和页面里 kit.js?v= 的数字一致，?debug=1 时显示，看得出是不是拿到了新文件
   const root = document.documentElement;
   function measure(style) {
     const box = document.createElement('div');
@@ -20,9 +21,15 @@
     aspect: measure('width:40px;aspect-ratio:1')[1] === 40,
     vw: Math.abs(measure('width:50vw')[0] - window.innerWidth / 2) < 20,
   };
-  const legacy = { on: false, hrdCell: 0 };
+  const legacy = { on: false, hrdCell: 0, width: 0 };
+  // 页面宽度：Kindle 刚打开页面时有时还没排好，量出来的数不准，取几种量法里最小的正数，宁可小一点也不要超出屏幕
+  function pageWidth() {
+    const list = [root.clientWidth, window.innerWidth, document.body && document.body.clientWidth].filter(n => n > 100);
+    return list.length ? Math.min(...list) : 360;
+  }
   function legacyStyle() {
-    const W = root.clientWidth || window.innerWidth || screen.width;
+    const W = pageWidth();
+    legacy.width = W;
     const B = Math.floor(W * 0.96); // 棋盘宽度
     const px = n => `${Math.floor(n)}px`;
     const tiles = Math.min(B, 400);
@@ -70,13 +77,29 @@
     legacy.on = true;
     root.classList.add('legacy');
     legacyStyle();
-    let lastWidth = root.clientWidth;
-    window.addEventListener('resize', () => {
-      if (root.clientWidth === lastWidth) return;
-      lastWidth = root.clientWidth;
+    // 页面排好以后、从缓存恢复时、转屏时都再量一次，宽度变了就重算（华容道等用到像素的游戏会收到 legacyresize 重画）
+    const recheck = () => {
+      if (pageWidth() === legacy.width) return;
       legacyStyle();
       window.dispatchEvent(new Event('legacyresize'));
-    });
+    };
+    [0, 300, 1000, 2500].forEach(ms => setTimeout(recheck, ms));
+    ['load', 'pageshow', 'resize', 'orientationchange'].forEach(name => window.addEventListener(name, recheck));
+  }
+  // ?debug=1：页面底部显示量出来的结果，Kindle 上显示不对时拍下来就知道原因
+  if (/[?&]debug=1/.test(location.search)) {
+    const show = () => {
+      let line = document.getElementById('kit-debug');
+      if (!line) {
+        line = document.createElement('p');
+        line.id = 'kit-debug';
+        line.style.cssText = 'margin:12px 8px;padding:6px;border:2px solid #000;font:14px/1.5 monospace;background:#FFF;color:#000;';
+        document.body.appendChild(line);
+      }
+      line.textContent = `kit ${KIT_VERSION} · legacy ${legacy.on} · width ${legacy.width} · client ${root.clientWidth} · inner ${window.innerWidth} · `
+        + `var ${cssCheck.vars} · min ${cssCheck.min} · aspect ${cssCheck.aspect} · vw ${cssCheck.vw}`;
+    };
+    [0, 1000, 3000].forEach(ms => setTimeout(show, ms));
   }
 
   // 老浏览器（比如 Kindle）缺的几个方法，各个游戏页面会用到
