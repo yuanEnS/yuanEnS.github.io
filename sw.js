@@ -1,7 +1,7 @@
 // 让网站能装到手机上（PWA），没网时也能打开看过的页面、玩人机对战。
 // 网页、脚本、样式先上网拿最新的，拿不到再用存着的；字体和图片很少变，先用存着的。
 // 接口（api.gamesyuan.com）不经过这里，文章和账号总是最新的。
-const VERSION = 'v1';
+const VERSION = 'v2'; // 改了缓存规则就加一，旧的缓存会被清掉
 const CACHE = `gamesyuan-${VERSION}`;
 const SHELL = ['/', '/offline.html', '/life/life.css', '/life/life.js', '/favicon.svg', '/icon-192.png'];
 const SLOW_MS = 5000; // 网太慢时，有存着的就先用存着的
@@ -30,7 +30,8 @@ async function save(request, response) {
 
 async function networkFirst(event) {
   const { request } = event;
-  const cached = caches.match(request, { ignoreSearch: request.mode === 'navigate' ? false : true });
+  // 网址带的参数要算数：kit.js?v=6 不能拿存着的 kit.js?v=2 顶替（Kindle 网慢，超过 SLOW_MS 就会用存着的）
+  const cached = caches.match(request);
   const fresh = fetch(request).then(response => save(request, response));
   event.waitUntil(fresh.then(() => {}, () => {}));
   const slow = new Promise(resolve => setTimeout(resolve, SLOW_MS)).then(() => cached);

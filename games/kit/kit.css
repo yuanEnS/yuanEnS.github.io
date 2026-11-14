@@ -148,3 +148,14 @@ dialog.rules .close-row { display: flex; justify-content: flex-end; margin-top: 
 .legacy .sudoku button.given { font-weight: 700; }
 .legacy .sudoku button.peer { background: #EEE; }
 .legacy .pad button { border: 1.5px solid #000; }
+/* 墨水屏上动画只会留下残影，老浏览器上全部关掉 */
+.legacy *, .legacy *::before, .legacy *::after { animation: none !important; transition: none !important; }
+/* 黑白棋：黑子实心黑，白子白底加粗黑圈，一眼分得清 */
+.legacy .disc { box-shadow: none; }
+.legacy .disc.b { background: #000; border: 4px solid #000; }
+.legacy .disc.w { background: #FFF; border: 4px solid #000; }
+.legacy .othello button.hint::after { background: #000; }
+/* 四子连珠：红子实心黑，黄子白底粗黑圈加中间一点 */
+.legacy .c4 .hole span { border: 1.5px dashed #000; box-shadow: none; }
+.legacy .c4 .hole span.r { background: #000; border: 3px solid #000; }
+.legacy .c4 .hole span.y { background: #FFF; border: 5px solid #000; }

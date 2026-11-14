@@ -5,7 +5,7 @@
   // 不问浏览器「支不支持」，直接放几个看不见的小方块量一量，量出来不对就算不支持。
   // 这时由脚本量好页面宽度，把每个棋盘的尺寸算成具体的像素，写成一段样式加到页面上（不用 var()，Kindle 不认）。
   // 页面宽度变了（转屏）就重算。?legacy=1 可以在电脑上强制打开。
-  const KIT_VERSION = 6; // 和页面里 kit.js?v= 的数字一致，?debug=1 时显示，看得出是不是拿到了新文件
+  const KIT_VERSION = 7; // 和页面里 kit.js?v= 的数字一致，?debug=1 时显示，看得出是不是拿到了新文件
   const root = document.documentElement;
   function measure(style) {
     const box = document.createElement('div');
@@ -34,10 +34,19 @@
     const px = n => `${Math.floor(n)}px`;
     const tiles = Math.min(B, 400);
     const hrd = Math.min(Math.floor(W * 0.22), 92);
+    // 棋子用百分比定大小时，Kindle 算不出高度（棋子会压成一条线），这里按格子算成像素
+    const othello = (B - 12 - 14) / 8; // 黑白棋一格：内边距 6px，格间 2px
+    const c4 = (B - 16) / 7;
+    const jungle = (B - 22) / 7;
     legacy.hrdCell = hrd;
     let css = `
       .legacy dialog.rules { width: ${px(W - 24)}; }
       .legacy .othello { width: ${px(B)}; height: ${px(B)}; }
+      .legacy .othello .disc { width: ${px(othello * 0.8)}; height: ${px(othello * 0.8)}; }
+      .legacy .othello button.hint::after { width: ${px(othello * 0.2)}; height: ${px(othello * 0.2)}; }
+      .legacy .othello .last::before { width: ${px(othello * 0.22)}; height: ${px(othello * 0.22)}; }
+      .legacy .c4 .hole span { width: ${px(c4 * 0.8)}; height: ${px(c4 * 0.8)}; }
+      .legacy .jungle .piece { width: ${px(jungle * 0.86)}; height: ${px(jungle * 0.86)}; }
       .legacy .c4 { width: ${px(B)}; }
       .legacy .c4 .hole { height: ${px((B - 16) / 7)}; }
       .legacy .jungle { width: ${px(B)}; }
