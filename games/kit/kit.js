@@ -1,6 +1,10 @@
 // 游戏园网页小游戏共用的代码：规则弹窗、提示、存储，以及两人对弈的「人机 / 双人 / 联网」流程。
 // 联网和象棋、五子棋连同一个服务器（xiangqi 仓库的 server/lobby.js），走法由服务器用同一份规则检查。
 (function () {
+  // 老浏览器（比如 Kindle）不认 CSS 的 min() 或 aspect-ratio 时，棋盘要换一种算法（见 kit.css 末尾的 .legacy）
+  const cssOk = window.CSS && CSS.supports && CSS.supports('width', 'min(1px, 2px)') && CSS.supports('aspect-ratio', '1');
+  if (!cssOk || /[?&]legacy=1/.test(location.search)) document.documentElement.classList.add('legacy');
+
   // 老浏览器（比如 Kindle）缺的几个方法，各个游戏页面会用到
   if (!Array.prototype.flat) {
     Array.prototype.flat = function (depth = 1) {
