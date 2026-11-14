@@ -503,53 +503,66 @@ def write(folder, file, title, body):
 
 
 def write_lite(data, papers, folder, books):
-    """简易版：期刊文章按「年份 → 期刊」分页，带摘要；「年份 → 主题」只列标题，链到期刊页里的那一篇。"""
+    """简易版：每一年按发表时间分页（新的在前，每页 LITE_PER_PAGE 篇，带折叠的摘要）；
+    年份页顶部折叠着「按期刊」「按主题」，点进去是只列标题的清单，链到时间页里的那一篇。
+    一年有一千多篇，一页放不下（Kindle 打不开几 MB 的页面），所以要分页；摘要只放在时间页里，不重复存。"""
     if os.path.isdir(folder):
         shutil.rmtree(folder)
     os.makedirs(folder)
-    zh_of = {t['code']: t['zh'] for t in data['topics']}
-    full_of = {j['code']: j['name'] for j in data['journals']}
     years = sorted({year_of(p) for p in papers if year_of(p)}, reverse=True)
     newest = years[0] if years else 0
-    where = {}  # 文章 id -> 期刊页文件名
     year_rows = []
     for year in years:
-        in_year = [p for p in papers if year_of(p) == year]
+        in_year = [p for p in papers if year_of(p) == year]  # papers 已经按发表日期从新到旧排好
+        pages = -(-len(in_year) // LITE_PER_PAGE)
+        page_file = lambda n: f'y{year}.html' if n == 0 else f'y{year}-p{n + 1}.html'
+        where = {}  # 文章 id -> 所在的时间页
+        for n in range(pages):
+            for p in in_year[n * LITE_PER_PAGE:(n + 1) * LITE_PER_PAGE]:
+                where[p['id']] = page_file(n)
+
+        def title_list(chosen):
+            return '<ul class="links">' + ''.join(
+                f'<li><a href="{where[p["id"]]}#{anchor(p)}">{esc(p["title"])}</a> · {esc(p["journal"])} · {esc(p["date"] or "")}'
+                f'{" · <b>有原文</b>" if p.get("reader") else ""}</li>' for p in chosen) + '</ul>'
+
         journal_rows, topic_rows = [], []
         for journal in data['journals']:
             chosen = [p for p in in_year if p['journal'] == journal['code']]
             if not chosen:
                 continue
             name = f'y{year}-j-{slug(journal["code"])}'
-            pages = -(-len(chosen) // LITE_PER_PAGE)
-            for n in range(pages):
-                file = f'{name}.html' if n == 0 else f'{name}-{n + 1}.html'
-                chunk = chosen[n * LITE_PER_PAGE:(n + 1) * LITE_PER_PAGE]
-                for p in chunk:
-                    where[p['id']] = file
-                pager = pager_html(name, pages, n)
-                heading = f'{year} 年 · {journal["code"]}'
-                body = (f'<h1>{esc(heading)}</h1><p class="note">{esc(journal["name"])}，{year} 年发表的 {len(chosen)} 篇，新的在前。'
-                        f'{"这是第 " + str(n + 1) + " 页。" if pages > 1 else ""} <a href="y{year}.html">回到 {year} 年</a></p>'
-                        + pager + ''.join(lite_item(p, None) for p in chunk) + pager)
-                write(folder, file, heading, body)
+            heading = f'{year} 年 · {journal["code"]}'
+            write(folder, f'{name}.html', heading,
+                  f'<h1>{esc(heading)}</h1><p class="note">{esc(journal["name"])}，{year} 年发表的 {len(chosen)} 篇，新的在前。'
+                  f'点标题看作者和摘要。<a href="y{year}.html">回到 {year} 年</a></p>' + title_list(chosen))
             journal_rows.append(f'<li><a href="{name}.html">{esc(journal["code"])}</a> {esc(journal["name"])} · {len(chosen)} 篇</li>')
         for topic in data['topics']:
             chosen = [p for p in in_year if topic['code'] in p['topics']]
             if not chosen:
                 continue
             name = f'y{year}-t-{slug(topic["code"])}'
-            items = ''.join(f'<li><a href="{where[p["id"]]}#{anchor(p)}">{esc(p["title"])}</a> · {esc(p["journal"])}'
-                            f'{" · <b>有原文</b>" if p.get("reader") else ""}</li>' for p in chosen)
             heading = f'{year} 年 · {topic["code"]}（{topic["zh"]}）'
             write(folder, f'{name}.html', heading,
                   f'<h1>{esc(heading)}</h1><p class="note">{len(chosen)} 篇，新的在前。点标题看作者和摘要。'
-                  f'<a href="y{year}.html">回到 {year} 年</a></p><ul class="links">{items}</ul>')
+                  f'<a href="y{year}.html">回到 {year} 年</a></p>' + title_list(chosen))
             topic_rows.append(f'<li><a href="{name}.html">{esc(topic["code"])}</a> {esc(topic["zh"])} · {len(chosen)} 篇</li>')
-        write(folder, f'y{year}.html', f'{year} 年',
-              f'<h1>{year} 年的期刊文章</h1><p class="note">共 {len(in_year)} 篇。</p>'
-              '<h2>按期刊（带摘要）</h2><ul class="links">' + ''.join(journal_rows) + '</ul>'
-              '<h2>按主题（只列标题）</h2><ul class="links">' + ''.join(topic_rows) + '</ul>')
+
+        facets = ('<details><summary><b>按期刊看</b>（展开）</summary><ul class="links">' + ''.join(journal_rows) + '</ul></details>'
+                  '<details><summary><b>按主题看</b>（展开）</summary><ul class="links">' + ''.join(topic_rows) + '</ul></details>')
+        for n in range(pages):
+            chunk = in_year[n * LITE_PER_PAGE:(n + 1) * LITE_PER_PAGE]
+            links = []
+            for m in range(pages):
+                links.append(f'<b>{m + 1}</b>' if m == n else f'<a href="{page_file(m)}">{m + 1}</a>')
+            pager = '<p class="pager">第 ' + ' '.join(links) + ' 页</p>'
+            first, last = chunk[0]['date'] or '', chunk[-1]['date'] or ''
+            heading = f'{year} 年的期刊文章' + (f' · 第 {n + 1} 页' if n else '')
+            body = (f'<h1>{esc(heading)}</h1><p class="note">共 {len(in_year)} 篇，按发表时间排，新的在前，每页 {LITE_PER_PAGE} 篇。'
+                    f'这一页是 {esc(first)} 到 {esc(last)}。</p>'
+                    + (facets if n == 0 else f'<p class="note"><a href="y{year}.html">按期刊、按主题看 →</a></p>')
+                    + pager + ''.join(lite_item(p, None) for p in chunk) + pager)
+            write(folder, page_file(n), heading, body)
         year_rows.append(f'<li><a href="y{year}.html">{year} 年</a> · {len(in_year)} 篇</li>')
     with_text = [p for p in papers if p.get('reader')]
     text_books = [b for b in books if b.get('reader')]
