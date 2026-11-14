@@ -119,3 +119,42 @@ dialog.rules .close-row { display: flex; justify-content: flex-end; margin-top: 
 :root[data-ink] .ink-only { display: block; }
 :root[data-ink] .color-only { display: none; }
 .ink-btn[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+/* ---------- 老浏览器（Kindle 等阅读器）的补丁 ----------
+   Kindle 的浏览器能跑脚本，但不认 CSS 的 min() / clamp()、aspect-ratio、inset 和 flex 布局里的 gap，
+   棋盘会缩成一条线、按钮挤在一起。不认 min() 的浏览器才用下面这些写法，新浏览器完全不受影响。
+   页面宽度按 92vw 算（阅读器屏幕都不大），正方形格子用算出来的高度代替 aspect-ratio。 */
+@supports not (width: min(1px, 2px)) {
+  /* flex 的 gap 换成外边距 */
+  .bar > *, .seg > *, .panel .row > *, .actions > *, .mine-info > *, .score > *, .score span > *, .legend > *,
+  .hrd-top > *, .tools > *, .top > *, .progress > *, .answer > *, .ranks > *, .verse > * { margin: 3px; }
+  .chain li > * { margin-right: 10px; }
+  dialog.rules { width: calc(100vw - 24px); max-width: 560px; }
+
+  /* 扫雷 */
+  .field { --cell: calc((92vw - 8px) / var(--cols)); }
+  /* 黑白棋 */
+  .othello { --size: 92vw; }
+  /* 四子连珠：7 列，左右各 8px 内边距 */
+  .c4 { --w: 92vw; }
+  .c4 .hole { height: calc((92vw - 16px) / 7); }
+  /* 斗兽棋：7 列，内边距 5px，格子间 2px */
+  .jungle { --w: 92vw; }
+  .jungle button { height: calc((92vw - 22px) / 7); }
+  /* 华容道 */
+  .hrd { --cell: 21vw; }
+  .hrd .floor { top: 8px; right: 8px; bottom: 8px; left: 8px; }
+  /* 数独 */
+  .sudoku { --size: 92vw; }
+  .pad { width: 92vw; }
+  /* 24 点：4 张牌，牌间 10px，牌是 5:7 */
+  .cards, .ops { width: 92vw; }
+  .card { height: calc((92vw - 30px) / 4 * 1.4); font-size: calc(92vw / 9); }
+  .card.frac { font-size: calc(92vw / 13); }
+  /* 诗词填字 */
+  .verse { font-size: 30px; }
+  .tiles { width: 92vw; max-width: 400px; }
+  .tiles button { height: calc((92vw - 30px) / 4); max-height: 92px; font-size: 30px; }
+  /* 成语接龙 */
+  .answer, .chain { width: 92vw; max-width: 420px; }
+}
