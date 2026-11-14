@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:image" content="https://gamesyuan.com/og.png">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/games/kit/kit.css?v=7">
+<title>一触即发 · 箭头连锁益智游戏 | 游戏园</title>
+<meta name="description" content="一触即发：点一个格子，它顺着箭头点燃下一个格子，一路连锁下去。找到对的起点，一次清空整个棋盘。每日一题和无限关卡，手机、电脑、Kindle 都能玩。">
+<link rel="canonical" href="https://gamesyuan.com/chufa/">
+<meta property="og:title" content="一触即发 · 游戏园">
+<meta property="og:description" content="点一下，箭头一路连锁。找到对的起点，一次清空棋盘。">
+<meta property="og:url" content="https://gamesyuan.com/chufa/">
+<style>
+  /* 尺寸都由脚本算成像素写在元素上（Kindle 不认 CSS 变量和 aspect-ratio），颜色也直接写死，不用 var() */
+  .board-wrap { display: flex; justify-content: center; margin: 8px 0 4px; }
+  .board { position: relative; flex: none; border: 3px solid #6B4A2B; border-radius: 10px; background: #F0DAB2; }
+  .board button {
+    position: absolute; padding: 0; margin: 0; border: 2px solid #6B4A2B; border-radius: 8px;
+    background: #FFFDF8; color: #3A2A1E; cursor: pointer; font-family: -apple-system, "Segoe UI Symbol", "PingFang SC", sans-serif; font-weight: 700;
+    line-height: 1; text-align: center; transition: opacity .18s, transform .18s;
+  }
+  .board button:hover { border-color: #C62828; }
+  .board button.fire { background: #C62828; color: #FFF4E6; border-color: #C62828; }
+  .board button.gone { opacity: 0; transform: scale(.4); pointer-events: none; }
+  .board button.hint { outline: 4px dashed #C62828; outline-offset: 2px; }
+  .board button.first { box-shadow: 0 0 0 4px #F2B705; }
+  .taps { margin: 2px 0; text-align: center; font-size: 15px; color: #8A7560; }
+  .taps b { color: #C62828; font-size: 18px; }
+  .level-nav { display: inline-block; }
+  .level-nav .btn { margin: 0 2px; }
+  /* 黑白屏：格子白底黑框，点燃时黑底白字，提示用粗虚线 */
+  [data-ink] .board { border-color: #000; background: #FFF; }
+  [data-ink] .board button { border-color: #000; color: #000; background: #FFF; border-radius: 4px; }
+  [data-ink] .board button.fire { background: #000; color: #FFF; }
+  [data-ink] .board button.hint { outline-color: #000; }
+  [data-ink] .board button.first { box-shadow: 0 0 0 4px #000; }
+  [data-ink] .taps, [data-ink] .taps b { color: #000; }
+  .legacy .board button { transition: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <a class="back" href="/games/">← 游戏园</a>
+    <h1>一触即发</h1>
+    <button type="button" class="btn small rules-btn">规则</button>
+  </header>
+  <div class="panel">
+    <div class="row"><span class="label">题目</span><div class="seg" id="mode"></div></div>
+    <div class="row" id="level-row"><span class="label">关卡</span>
+      <span class="level-nav">
+        <button type="button" class="btn small" id="prev">上一关</button>
+        <b id="level-name"></b>
+        <button type="button" class="btn small" id="next-level">下一关</button>
+      </span>
+    </div>
+  </div>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <p class="taps" id="taps"></p>
+  <div class="board-wrap"><div class="board" id="board"></div></div>
+  <div class="actions">
+    <button type="button" class="btn" id="reset">重来</button>
+    <button type="button" class="btn" id="hint">提示</button>
+    <button type="button" class="btn primary" id="go">下一关</button>
+  </div>
+  <p class="sub" id="sub"></p>
+  <p class="foot"><a href="/games/">游戏园</a></p>
+</div>
+
+<dialog class="rules" id="rules" aria-labelledby="rules-title">
+  <div class="inner">
+    <h2 id="rules-title">一触即发怎么玩</h2>
+    <p>每个格子上有一个箭头。<strong>点一个格子</strong>，它会消失，并顺着箭头的方向「点燃」遇到的<strong>第一个</strong>格子（中间的空位直接跳过）；被点燃的格子也会消失，再顺着自己的箭头点燃下一个……一直连锁下去，直到箭头指向的方向上已经没有格子。</p>
+    <h3>目标</h3>
+    <p>在给定的次数内把<strong>所有格子都清掉</strong>。前几关只能点一次，所以要找到那个能一路连到底的起点；后面的关卡可以点两三次，起点和先后顺序都要想好。</p>
+    <h3>小窍门</h3>
+    <ul>
+      <li>先看哪些格子的箭头指向棋盘外面，连锁多半在那里结束。</li>
+      <li>格子消失以后，箭头会越过空位，指向更远的格子，所以要想着「那时候」棋盘是什么样。</li>
+      <li>点错了点「重来」。实在想不出来，「提示」会把起点框出来。</li>
+    </ul>
+    <h3>题目</h3>
+    <p><strong>每日一题</strong>每天北京时间零点换，所有人一样。<strong>闯关</strong>越往后棋盘越大，可以点的次数也越多。每一关都保证有解。</p>
+    <div class="close-row"><button type="button" class="btn primary close">知道了</button></div>
+  </div>
+</dialog>
+
+<script src="/games/kit/kit.js?v=7"></script>
+<script>
+  const { el, store, toast, seeded, today } = Kit;
+  const $ = id => document.getElementById(id);
+  const DIRS = { u: [-1, 0, '↑'], d: [1, 0, '↓'], l: [0, -1, '←'], r: [0, 1, '→'] };
+  const KEYS = Object.keys(DIRS);
+
+  // ---------- 规则 ----------
+  // 从 i 出发顺着方向 dir 走，遇到的第一个还在的格子；没有返回 -1
+  function target(level, alive, i, dir) {
+    const [dr, dc] = DIRS[dir];
+    let r = Math.floor(i / level.cols) + dr, c = (i % level.cols) + dc;
+    while (r >= 0 && r < level.rows && c >= 0 && c < level.cols) {
+      const j = r * level.cols + c;
+      if (alive.has(j)) return j;
+      r += dr;
+      c += dc;
+    }
+    return -1;
+  }
+
+  // 点 i：返回依次消失的格子（会改 alive）
+  function chain(level, alive, i) {
+    const order = [];
+    for (let cur = i; cur >= 0 && alive.has(cur);) {
+      alive.delete(cur);
+      order.push(cur);
+      cur = target(level, alive, cur, level.dirs[cur]);
+    }
+    return order;
+  }
+
+  // ---------- 出题 ----------
+  // 从满棋盘开始，按「随便挑一个起点，往还有格子的方向连下去」把连锁真的走一遍，走到的格子就是题目，
+  // 走不到的变成空位。这样每一关都一定有解（解就是 starts，按顺序点）。
+  function generate(seed, rows, cols, taps) {
+    const random = seeded(seed);
+    const pick = list => list[Math.floor(random() * list.length)];
+    const size = rows * cols;
+    for (let attempt = 0; ; attempt++) {
+      const level = { rows, cols, dirs: Array(size).fill(null), starts: [] };
+      const alive = new Set(Array.from({ length: size }, (_, i) => i));
+      let shortest = size;
+      for (let k = 0; k < taps && alive.size; k++) {
+        let cur = pick([...alive]);
+        level.starts.push(cur);
+        let length = 0;
+        for (;;) {
+          alive.delete(cur);
+          length++;
+          const options = KEYS.filter(d => target(level, alive, cur, d) >= 0);
+          if (!options.length) {
+            // 连锁到这里结束：箭头指向空的方向（这时四个方向都空了，随便挑）
+            level.dirs[cur] = pick(KEYS);
+            break;
+          }
+          const dir = pick(options);
+          level.dirs[cur] = dir;
+          cur = target(level, alive, cur, dir);
+        }
+        shortest = Math.min(shortest, length);
+      }
+      const filled = size - alive.size;
+      // 太空的棋盘、太短的连锁不好玩，换一个；试太多次就放宽一点
+      if ((filled >= size * 0.78 && shortest >= 4) || attempt > 200) return level;
+    }
+  }
+
+  // 第 n 关（从 1 开始）：4×4 起，每 4 关大一圈，最大 8×8；第 6 关起点两次，第 16 关起点三次
+  function levelSpec(n) {
+    const side = Math.min(8, 4 + Math.floor((n - 1) / 4));
+    const taps = n >= 16 ? 3 : n >= 6 ? 2 : 1;
+    return { seed: `chufa-${n}`, rows: side, cols: side, taps };
+  }
+
+  // ---------- 状态 ----------
+  let mode = store.get('chufa:mode', 'levels');
+  let levelNo = store.get('chufa:level', 1);
+  let best = store.get('chufa:best', 0); // 通过的最大关
+  let level = null, alive = null, tapsLeft = 0, tapped = [], busy = false, solved = false, hinted = false, spec = null;
+  let nodes = [];
+
+  function load() {
+    spec = mode === 'daily'
+      ? { seed: `chufa-daily-${today()}`, rows: 6, cols: 6, taps: 2 }
+      : levelSpec(levelNo);
+    level = generate(spec.seed, spec.rows, spec.cols, spec.taps);
+    restart();
+  }
+
+  function restart() {
+    alive = new Set();
+    level.dirs.forEach((d, i) => { if (d) alive.add(i); });
+    tapsLeft = spec.taps;
+    tapped = [];
+    busy = false;
+    solved = false;
+    hinted = false;
+    build();
+    draw();
+  }
+
+  // ---------- 棋盘 ----------
+  // 格子的位置、大小、字号都算成像素直接写在元素上：新浏览器和 Kindle 一样显示
+  function layout() {
+    // .wrap 的 clientWidth 含左右内边距，要减掉，否则棋盘比屏幕宽
+    const wrap = document.querySelector('.wrap');
+    const style = getComputedStyle(wrap);
+    const inner = wrap.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const width = Math.min(inner - 2, 480);
+    const gap = 4;
+    const cell = Math.floor((width - 6 - gap) / level.cols);
+    const board = $('board');
+    board.style.width = `${cell * level.cols + gap + 6}px`;
+    board.style.height = `${cell * level.rows + gap + 6}px`;
+    nodes.forEach((node, i) => {
+      if (!node) return;
+      node.style.left = `${gap + (i % level.cols) * cell}px`;
+      node.style.top = `${gap + Math.floor(i / level.cols) * cell}px`;
+      node.style.width = `${cell - gap}px`;
+      node.style.height = `${cell - gap}px`;
+      node.style.fontSize = `${Math.floor(cell * 0.5)}px`;
+    });
+  }
+
+  function build() {
+    const board = $('board');
+    while (board.firstChild) board.removeChild(board.firstChild);
+    nodes = level.dirs.map((dir, i) => {
+      if (!dir) return null;
+      const r = Math.floor(i / level.cols) + 1, c = (i % level.cols) + 1;
+      const node = el('button', { type: 'button', text: DIRS[dir][2], 'aria-label': `第 ${r} 行第 ${c} 列，箭头向${{ u: '上', d: '下', l: '左', r: '右' }[dir]}` });
+      node.addEventListener('click', () => tap(i));
+      board.append(node);
+      return node;
+    });
+    layout();
+  }
+
+  // 一格一格地消失。Kindle（墨水屏）上一次全部消失，不播动画
+  function play(order, done) {
+    if (Kit.legacy && Kit.legacy.on) {
+      order.forEach(i => nodes[i].classList.add('gone'));
+      return done();
+    }
+    let k = 0;
+    const step = () => {
+      if (k > 0) {
+        nodes[order[k - 1]].classList.remove('fire');
+        nodes[order[k - 1]].classList.add('gone');
+      }
+      if (k === order.length) return done();
+      nodes[order[k]].classList.add('fire');
+      k++;
+      setTimeout(step, 120);
+    };
+    step();
+  }
+
+  function tap(i) {
+    if (busy || solved || !alive.has(i) || tapsLeft <= 0) return;
+    nodes.forEach(n => n && n.classList.remove('hint'));
+    busy = true;
+    tapsLeft--;
+    tapped.push(i);
+    const order = chain(level, alive, i);
+    play(order, () => {
+      busy = false;
+      if (!alive.size) {
+        solved = true;
+        if (mode === 'levels' && levelNo > best) {
+          best = levelNo;
+          store.set('chufa:best', best);
+        }
+        if (mode === 'daily') store.set('chufa:daily', today());
+        toast(hinted ? '清空了！' : order.length >= 10 ? `一口气连了 ${order.length} 格，清空了！` : '清空了！');
+      } else if (!tapsLeft) {
+        toast(`还剩 ${alive.size} 格，点「重来」再试`);
+      }
+      draw();
+    });
+    draw();
+  }
+
+  // 提示：按正确的顺序，下一个该点哪里。之前点错了就先重来
+  function hint() {
+    if (busy || solved) return;
+    const k = tapped.length;
+    const onTrack = tapped.every((t, j) => t === level.starts[j]);
+    if (!onTrack) restart();
+    hinted = true;
+    const next = level.starts[onTrack ? k : 0];
+    nodes[next].classList.add('hint');
+    toast(onTrack ? '从框出来的格子点' : '刚才的顺序不对，已经重来了，从框出来的格子点');
+  }
+
+  function draw() {
+    $('level-row').hidden = mode !== 'levels';
+    $('level-name').textContent = ` 第 ${levelNo} 关 `;
+    $('prev').disabled = levelNo <= 1;
+    $('next-level').disabled = levelNo > best;
+    const total = level.dirs.filter(Boolean).length;
+    if (solved) {
+      $('status').textContent = mode === 'daily' ? '今天的题解开了！' : `第 ${levelNo} 关过了！`;
+    } else if (!tapsLeft && alive.size) {
+      $('status').textContent = `没清完，还剩 ${alive.size} 格`;
+    } else {
+      $('status').textContent = tapped.length ? '接着找下一个起点' : `点一个格子，把 ${total} 格一路连锁清掉`;
+    }
+    $('taps').replaceChildren('还能点 ', el('b', { text: String(tapsLeft) }), ` 次（共 ${spec.taps} 次）`);
+    $('go').hidden = mode !== 'levels' || !solved;
+    $('hint').hidden = solved;
+    const size = `${level.rows}×${level.cols}`;
+    $('sub').textContent = mode === 'daily'
+      ? `每日一题 · ${today()} · ${size}`
+      : `${size} 棋盘${best ? ` · 已经过到第 ${best} 关` : ''}`;
+  }
+
+  // ---------- 按钮 ----------
+  $('reset').addEventListener('click', () => { if (!busy) restart(); });
+  $('hint').addEventListener('click', hint);
+  $('go').addEventListener('click', () => {
+    levelNo++;
+    store.set('chufa:level', levelNo);
+    load();
+  });
+  $('prev').addEventListener('click', () => {
+    if (levelNo <= 1) return;
+    levelNo--;
+    store.set('chufa:level', levelNo);
+    load();
+  });
+  $('next-level').addEventListener('click', () => {
+    if (levelNo > best) return;
+    levelNo++;
+    store.set('chufa:level', levelNo);
+    load();
+  });
+  [['levels', '闯关'], ['daily', '每日一题']].forEach(([value, label]) => {
+    const button = el('button', { type: 'button', 'aria-pressed': String(value === mode), text: label });
+    button.addEventListener('click', () => {
+      mode = value;
+      store.set('chufa:mode', mode);
+      $('mode').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      load();
+    });
+    $('mode').append(button);
+  });
+  window.addEventListener('resize', () => level && layout());
+  window.addEventListener('legacyresize', () => level && layout());
+
+  Kit.setupRules('chufa');
+  load();
+</script>
+</body>
+</html>
