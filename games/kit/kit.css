@@ -140,3 +140,11 @@ dialog.rules .close-row { display: flex; justify-content: flex-end; margin-top: 
 .legacy .othello, .legacy .jungle, .legacy .sudoku, .legacy .field, .legacy .hrd { border: 2px solid #000; background: #FFF; }
 .legacy .othello button, .legacy .jungle button, .legacy .field button { background: #FFF; border: 1px solid #000; }
 .legacy .c4 .hole span { background: #FFF; }
+/* 数独：格线和九宫粗线原来用 var() 的颜色，老浏览器上会全部消失 */
+.legacy .sudoku { border: 3px solid #000; }
+.legacy .sudoku button { border-right: 1px solid #000; border-bottom: 1px solid #000; color: #000; }
+.legacy .sudoku button.c2, .legacy .sudoku button.c5 { border-right: 3px solid #000; }
+.legacy .sudoku button.r2, .legacy .sudoku button.r5 { border-bottom: 3px solid #000; }
+.legacy .sudoku button.given { font-weight: 700; }
+.legacy .sudoku button.peer { background: #EEE; }
+.legacy .pad button { border: 1.5px solid #000; }
