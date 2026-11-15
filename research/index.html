@@ -113,6 +113,10 @@
   .note-edit { margin: 8px 0 0; }
   .note-edit textarea { width: 100%; min-height: 72px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--card); color: var(--text); font: 15px/1.6 var(--kai); resize: vertical; }
   .note-edit .row { display: flex; gap: 8px; align-items: center; margin-top: 6px; font-size: 13px; color: var(--muted); }
+  .note-preview { margin: 6px 0 0; padding: 8px 12px; border: 1px dashed var(--rule); border-radius: 8px; font-size: 15px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .note-preview small, .note-help { display: block; color: var(--muted); font-size: 12px; }
+  .note-help code { padding: 0 4px; border-radius: 4px; background: rgba(120, 90, 60, .1); }
+  .my-note .math.display, .note-preview .math.display { margin: .4em 0; white-space: normal; }
   .marks-msg { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
   .marks-msg a { color: var(--primary); }
   .page .choice.wide { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 14px; padding: 14px 20px !important; }
@@ -594,6 +598,63 @@
     }
     return shelf.promise;
   }
+  // 笔记里的公式：和生活园一样，$...$ 嵌在句子里，$$...$$ 单独一行，\$ 是普通的美元符号。
+  // 「花了 $5，又花了 $6」不算公式：结束的 $ 后面紧跟数字、或者两头挨着空格的都不算。
+  const MATH = /\\\$|\$\$([\s\S]+?)\$\$|\$(?!\s)([^$\n]+?)(?<!\s)\$(?!\d)/g;
+  function noteNodes(text) {
+    const parts = [];
+    let last = 0, found;
+    MATH.lastIndex = 0;
+    while ((found = MATH.exec(text))) {
+      const display = !!found[1];
+      // 单独一行的公式自己就占一行，紧挨着它的换行去掉，免得上下多出空行
+      if (found.index > last) parts.push(display ? text.slice(last, found.index).replace(/\n$/, '') : text.slice(last, found.index));
+      if (found[0] === '\\$') parts.push('$');
+      else {
+        const tex = (found[1] || found[2]).trim();
+        const span = make('span', { className: `math${display ? ' display' : ''}` }, tex);
+        span.dataset.tex = tex;
+        parts.push(span);
+      }
+      last = MATH.lastIndex;
+      if (display && text[last] === '\n') last++;
+    }
+    if (last < text.length) parts.push(text.slice(last));
+    return parts;
+  }
+  // KaTeX 只在笔记里真有公式时才加载（和生活园同一个版本）
+  const KATEX = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11';
+  let katexReady = null;
+  function loadKatex() {
+    if (window.katex) return Promise.resolve();
+    if (!katexReady) {
+      katexReady = new Promise((resolve, reject) => {
+        const css = make('link', { rel: 'stylesheet', href: `${KATEX}/katex.min.css` });
+        document.head.append(css);
+        const script = make('script', { src: `${KATEX}/katex.min.js` });
+        script.onload = resolve;
+        script.onerror = () => {
+          katexReady = null;
+          reject(new Error('公式排版没加载出来'));
+        };
+        document.head.append(script);
+      });
+    }
+    return katexReady;
+  }
+  async function renderMath(root) {
+    const nodes = [...root.querySelectorAll('.math[data-tex]')];
+    if (!nodes.length) return;
+    try {
+      await loadKatex();
+    } catch (e) {
+      return; // 加载不了就显示公式原文
+    }
+    for (const node of nodes) {
+      window.katex.render(node.dataset.tex, node, { displayMode: node.classList.contains('display'), throwOnError: false, output: 'htmlAndMathml' });
+    }
+  }
+
   function shelfProblem() {
     const msg = make('p', { className: 'marks-msg' });
     if (shelf.problem === 'guest') msg.append('游客账号不能用书架，', make('a', { href: '/account/' }, '用邮箱或 Google 登录'), '以后就能收藏和记笔记。');
@@ -629,20 +690,36 @@
       if (message) parts.push(message);
       if (mine.note && !editing) {
         const when = mine.status === 'done' && mine.done_at ? ` · ${new Date(mine.done_at).toLocaleDateString('zh-CN')} 读完` : '';
-        parts.push(make('p', { className: 'my-note' }, make('small', {}, `我的笔记${when}`), mine.note));
+        const note = make('p', { className: 'my-note' }, make('small', {}, `我的笔记${when}`), ...noteNodes(mine.note));
+        renderMath(note);
+        parts.push(note);
       }
       if (editing) {
-        const area = make('textarea', { maxLength: 300, placeholder: '一两句读后感：讲了什么、哪里有用、想到了什么……（只有自己看得到）' });
+        const area = make('textarea', { maxLength: 600, placeholder: '一两句读后感：讲了什么、哪里有用、想到了什么……（只有自己看得到）' });
         area.value = mine.note || '';
         const left = make('span', {});
-        const count = () => { left.textContent = `${[...area.value].length} / 300`; };
-        area.addEventListener('input', count);
-        count();
+        // 写了公式就在下面预览排版的样子
+        const preview = make('div', { className: 'note-preview' });
+        let typing = null;
+        const refresh = () => {
+          left.textContent = `${[...area.value].length} / 600`;
+          clearTimeout(typing);
+          typing = setTimeout(() => {
+            const nodes = noteNodes(area.value);
+            preview.hidden = !nodes.some(n => n.nodeType === 1);
+            fill(preview, [make('small', {}, '预览'), ...nodes]);
+            renderMath(preview);
+          }, 250);
+        };
+        area.addEventListener('input', refresh);
+        refresh();
         const saveButton = make('button', { type: 'button', className: 'mark' }, '保存');
         saveButton.addEventListener('click', () => change({ note: area.value }).then(ok => { if (ok) { editing = false; draw(); } }));
         const cancel = make('button', { type: 'button', className: 'mark' }, '取消');
         cancel.addEventListener('click', () => { editing = false; draw(); });
-        parts.push(make('div', { className: 'note-edit' }, area, make('div', { className: 'row' }, saveButton, cancel, left)));
+        const help = make('span', { className: 'note-help' }, '可以写公式：', make('code', {}, '$\\hat\\theta$'), ' 嵌在句子里，',
+          make('code', {}, '$$\\sum_i x_i$$'), ' 单独一行；', make('code', {}, '\\$'), ' 是普通的美元符号。');
+        parts.push(make('div', { className: 'note-edit' }, area, help, preview, make('div', { className: 'row' }, saveButton, cancel, left)));
         setTimeout(() => area.focus(), 0);
       }
       fill(box, parts);
