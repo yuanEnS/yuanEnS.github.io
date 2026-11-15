@@ -15,7 +15,7 @@
 <script src="/pwa.js" defer></script>
 <meta name="theme-color" content="#FBF6EE">
 <link rel="stylesheet" href="/life/fonts/kai.css">
-<link rel="stylesheet" href="/life/life.css?v=7">
+<link rel="stylesheet" href="/life/life.css?v=8">
 </head>
 <body>
 <div class="page">
@@ -99,12 +99,14 @@
         <select class="field short" id="lunar-month" aria-label="农历几月"></select>
         <select class="field short" id="lunar-day" aria-label="农历哪一天"></select>
         <span class="hint" id="lunar-solar"></span></p>
-      <p class="choice-row"><span class="choice-label">邮件提醒</span>
-        <select class="field short" id="remind" aria-label="邮件提醒">
-          <option value="">不提醒</option><option value="0">当天</option><option value="1">提前 1 天</option>
-          <option value="3">提前 3 天</option><option value="7">提前 7 天</option><option value="15">提前 15 天</option><option value="30">提前 30 天</option>
-        </select>
-        <span class="hint">北京时间早上 8 点发到你登录用的邮箱，只发给你自己；一起写的人可以各设各的。</span></p>
+      <p class="choice-row" id="remind" role="group" aria-label="邮件提醒，可以多选"><span class="choice-label">邮件提醒</span>
+        <label><input type="checkbox" value="0"> 当天</label>
+        <label><input type="checkbox" value="1"> 提前 1 天</label>
+        <label><input type="checkbox" value="3"> 提前 3 天</label>
+        <label><input type="checkbox" value="7"> 提前 7 天</label>
+        <label><input type="checkbox" value="15"> 提前 15 天</label>
+        <label><input type="checkbox" value="30"> 提前 30 天</label></p>
+      <p class="hint remind-hint">可以多选，不选就不提醒。北京时间早上 8 点发到你登录用的邮箱，只发给你自己；一起写的人可以各设各的。</p>
     </div>
     <textarea class="field" id="item-body" rows="5" maxlength="5000"></textarea>
     <p class="note" id="item-message" role="status"></p>
@@ -198,7 +200,18 @@
   }
 
   // ---------- 纪念日、生日、农历 ----------
-  const remindText = days => (days === null || days === undefined ? '' : days === 0 ? '当天提醒' : `提前 ${days} 天提醒`);
+  // 提醒日 [0, 3, 7] → 「当天、提前 3、7 天提醒」
+  function remindText(days) {
+    if (!days || !days.length) return '';
+    const ahead = days.filter(d => d > 0);
+    const parts = [];
+    if (days.includes(0)) parts.push('当天');
+    if (ahead.length) parts.push(`提前 ${ahead.join('、')} 天`);
+    return `${parts.join('、')}提醒`;
+  }
+  const remindBoxes = () => [...document.querySelectorAll('#remind input[type=checkbox]')];
+  const getRemind = () => remindBoxes().filter(b => b.checked).map(b => Number(b.value)).sort((a, b) => a - b);
+  const setRemind = days => remindBoxes().forEach(b => { b.checked = !!days && days.includes(Number(b.value)); });
   const radio = name => document.querySelector(`input[name="${name}"]:checked`).value;
   const setRadio = (name, value) => { document.querySelector(`input[name="${name}"][value="${value}"]`).checked = true; };
   const isLunar = () => radio('calendar') === 'lunar';
@@ -437,7 +450,7 @@
       const tags = el('p', 'date-tags');
       tags.append(el('span', 'date-tag', item.date_type === 'birthday' ? '生日' : '纪念日'));
       if (item.lunar) tags.append(el('span', 'date-tag', '农历'));
-      if (item.remind !== null && item.remind !== undefined) tags.append(el('span', 'date-tag remind', `✉ ${remindText(item.remind)}`));
+      if (item.remind && item.remind.length) tags.append(el('span', 'date-tag remind', `✉ ${remindText(item.remind)}`));
       card.append(tags, el('h2', '', item.title), big, small);
       if (item.body) card.append(el('p', 'date-note', item.body));
       const foot = el('div', 'date-foot');
@@ -464,7 +477,7 @@
     if (data.garden.kind === 'dates') {
       setRadio('date-type', 'anniversary');
       setRadio('calendar', 'solar');
-      $('remind').value = '';
+      setRemind(null);
       setLunarFrom(today());
       showCalendar();
     }
@@ -491,7 +504,7 @@
     if (data.garden.kind === 'dates') {
       setRadio('date-type', item.date_type === 'birthday' ? 'birthday' : 'anniversary');
       setRadio('calendar', item.lunar ? 'lunar' : 'solar');
-      $('remind').value = item.remind === null || item.remind === undefined ? '' : String(item.remind);
+      setRemind(item.remind);
       setLunarFrom(item.date);
       showCalendar();
     }
@@ -700,13 +713,13 @@
           return;
         }
       }
-      remind = $('remind').value === '' ? null : Number($('remind').value);
+      remind = getRemind();
     }
-    const before = editing ? editing.remind : null;
+    const before = (editing && editing.remind) || [];
     const ok = await act(async () => {
       const saved = await api('/garden/item', body);
       // 邮件提醒单独存（每个人各设各的）；没变就不用发请求
-      if (data.garden.kind === 'dates' && (remind ?? null) !== (before ?? null)) {
+      if (data.garden.kind === 'dates' && remind.join() !== before.join()) {
         await api('/garden/remind', { item: saved.id, days: remind });
       }
     }, 'item-message');
