@@ -1,4 +1,4 @@
-// 世界园地图：作者多的国家颜色深，时不时冒出一个气泡，随机挑一位作者。
+// 世界园地图：作者多的国家颜色深，时不时冒出一个气泡，随机挑一位作者。可以缩放、拖动（geo-draw.js 的 zoomable）。
 // 按国界上色，数据来自 /api/life/map，国界在 geo.js，画法在 geo-draw.js。
 (() => {
   const root = document.getElementById('globe');
@@ -21,6 +21,10 @@
   const countryName = Geo.countryName;
   const toX = Geo.toX;
   const toY = Geo.toY;
+  const view = Geo.zoomable(root, () => {
+    draw();
+    live.forEach(bubble => view.place(bubble, bubble.place.x, bubble.place.y));
+  });
 
   // 对数刻度：一位作者也看得见，几十位也分得出深浅
   function level(n) {
@@ -54,12 +58,16 @@
       const [r, g, b] = mix(low, high, level(n));
       return `rgb(${r},${g},${b})`;
     };
+    ctx.save();
+    view.apply(ctx);
     Geo.paint(ctx, width, height, {
       land,
       line: style.getPropertyValue('--bg').trim(),
+      zoom: view.z,
       colorOf: heat,
       provinceColor: code => (code === 'CN-TW' ? heat('TW') : null),
     });
+    ctx.restore();
   }
 
   function closeBubble(bubble) {
@@ -73,8 +81,7 @@
     const bubble = document.createElement('a');
     bubble.className = 'bubble';
     bubble.href = `/life/post/?id=${pick.id}`;
-    bubble.style.left = `${x * 100}%`;
-    bubble.style.top = `${y * 100}%`;
+    view.place(bubble, x, y);
     if (x < 0.22) bubble.classList.add('from-left');
     if (x > 0.78) bubble.classList.add('from-right');
     if (y < 0.42) bubble.classList.add('below');
@@ -124,20 +131,19 @@
   }
 
   function showTip(event) {
-    if (event.pointerType === 'touch' || event.target.closest('.bubble')) {
+    if (event.pointerType === 'touch' || event.target.closest('.bubble, .map-zoom') || root.classList.contains('dragging')) {
       tip.hidden = true;
       return;
     }
-    const box = root.getBoundingClientRect();
-    const fx = (event.clientX - box.left) / box.width, fy = (event.clientY - box.top) / box.height;
+    const { fx, fy, sx, sy } = view.unproject(event);
     const spot = Geo.locate(Geo.toLat(fy), Geo.toLon(fx));
     tip.hidden = !spot.country;
     if (!spot.country) return;
     const code = Geo.regionOf(spot);
     const n = counts.get(code) || 0;
     tip.textContent = n ? `${countryName(code)} · ${n} 位作者` : countryName(code);
-    tip.style.left = `${fx * 100}%`;
-    tip.style.top = `${fy * 100}%`;
+    tip.style.left = `${sx}px`;
+    tip.style.top = `${sy}px`;
   }
 
   // 同样的信息用文字再写一遍，看不清颜色或用读屏软件的人也能知道
