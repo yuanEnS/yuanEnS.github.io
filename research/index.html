@@ -98,6 +98,37 @@
   .book-links a { color: var(--primary); }
   .page .label.free { border-color: var(--primary); color: var(--primary); cursor: default; }
   .page a.label.free { cursor: pointer; text-decoration: none; font-weight: 600; }
+  /* 书架：打星、阅读状态、笔记 */
+  .marks { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0 0; }
+  .page .mark {
+    padding: 1px 10px !important; border: 1px solid var(--rule) !important; border-radius: 999px !important;
+    background: transparent !important; color: var(--soft) !important; font: 13px/22px system-ui, -apple-system, sans-serif !important; cursor: pointer;
+  }
+  .page .mark:hover { border-color: var(--primary) !important; color: var(--primary) !important; }
+  .page .mark[aria-pressed="true"] { border-color: var(--primary) !important; background: var(--primary) !important; color: #FFF4E6 !important; }
+  .page .mark.star[aria-pressed="true"] { background: transparent !important; color: var(--primary) !important; font-weight: 700 !important; }
+  .marks .sep { width: 1px; height: 16px; background: var(--rule); margin: 0 2px; }
+  .my-note { margin: 8px 0 0; padding: 8px 12px; border-left: 3px solid var(--primary); background: var(--card); color: var(--text); font-size: 15px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .my-note small { display: block; color: var(--muted); font-size: 12px; }
+  .note-edit { margin: 8px 0 0; }
+  .note-edit textarea { width: 100%; min-height: 72px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--card); color: var(--text); font: 15px/1.6 var(--kai); resize: vertical; }
+  .note-edit .row { display: flex; gap: 8px; align-items: center; margin-top: 6px; font-size: 13px; color: var(--muted); }
+  .marks-msg { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+  .marks-msg a { color: var(--primary); }
+  .page .choice.wide { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 14px; padding: 14px 20px !important; }
+  .page .choice.wide[aria-pressed="true"] { padding: 13px 19px !important; }
+  .choice.wide .choice-name { font-size: 22px; }
+  .shelf-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 0 0 18px; }
+  .stat { padding: 12px 14px; border: 1px solid var(--rule); border-radius: 12px; background: var(--card); }
+  .stat b { display: block; font: 30px/1.2 Georgia, var(--kai); color: var(--primary); }
+  .stat span { color: var(--muted); font-size: 14px; }
+  .months { display: grid; grid-template-columns: repeat(12, 1fr); align-items: end; gap: 4px; height: 90px; margin: 4px 0 2px; }
+  .months i { display: block; background: var(--primary); border-radius: 3px 3px 0 0; min-height: 2px; }
+  .months-labels { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; color: var(--muted); font-size: 11px; text-align: center; margin-bottom: 18px; }
+  .shelf-item { padding: 16px 0; border-bottom: 1px solid var(--rule); }
+  .shelf-item h3 { margin: 4px 0 0; font: 18px/1.5 "Iowan Old Style", "Palatino Linotype", Georgia, var(--kai); font-weight: 400; }
+  .shelf-item h3 a { color: var(--text); text-decoration: none; }
+  .shelf-item h3 a:hover { color: var(--primary); text-decoration: underline; }
   .about { margin-top: 40px; color: var(--muted); font-size: 14px; line-height: 1.8; }
   @media (max-width: 560px) {
     .week { margin-left: 0; width: 100%; }
@@ -130,7 +161,19 @@
     <span class="choice-name">期刊文章</span>
     <span class="choice-text">统计学期刊 2016 年以来的文章，按年份、主题、期刊挑着看。</span>
   </button>
+  <button type="button" class="choice wide" data-view="shelf" aria-pressed="false">
+    <span class="seal" aria-hidden="true">架</span>
+    <span>
+      <span class="choice-name" style="display:block">我的书架</span>
+      <span class="choice-text" style="display:block;line-height:1.6">收藏的文章、想读 / 在读 / 读完，和自己写的笔记；看看今年读了多少篇。要登录。</span>
+    </span>
+  </button>
 </nav>
+
+<section id="shelf-view" hidden aria-labelledby="shelf-title">
+  <h2 class="section-title" id="shelf-title">我的书架</h2>
+  <div id="shelf"><p class="empty">正在打开…</p></div>
+</section>
 
 <section class="books" id="books-view" hidden aria-labelledby="books-title">
   <h2 class="section-title" id="books-title">经典书籍</h2>
@@ -210,7 +253,7 @@
     state.hideDiscussion = params.get('discussion') === 'hide';
     // 带了筛选条件的旧链接，直接进期刊文章
     const filtered = state.topics.size || state.journals.size || state.q || state.hideDiscussion || state.fulltext || yearInUrl;
-    state.view = ['books', 'papers'].includes(params.get('view')) ? params.get('view') : filtered ? 'papers' : '';
+    state.view = ['books', 'papers', 'shelf'].includes(params.get('view')) ? params.get('view') : filtered ? 'papers' : '';
   }
 
   function writeUrl() {
@@ -395,6 +438,7 @@
     } else {
       node.append(make('p', { className: 'no-abstract' }, '摘要没有收录，点标题看原文。'));
     }
+    node.append(marksNode({ item: paper.id, title: paper.title, journal: paper.journal, date: paper.date || '', link: paper.reader || paper.link }));
     return node;
   }
 
@@ -469,14 +513,17 @@
       make('h3', {}, first ? make('a', linkProps(first.url), book.title) : book.title),
       make('p', { className: 'book-by' }, by),
       book.intro ? make('p', { className: 'book-intro' }, book.intro) : null,
-      make('p', { className: 'book-links' }, ...(book.links || []).map(link => make('a', linkProps(link.url), link.label))));
+      make('p', { className: 'book-links' }, ...(book.links || []).map(link => make('a', linkProps(link.url), link.label))),
+      marksNode({ item: `book:${book.id}`, title: book.title, journal: '书', date: String(book.year || ''), link: book.reader || (first && first.url) || '/research/?view=books' }));
   }
 
   let booksLoaded = false;
+  let booksData = null;
   function loadBooks() {
     if (booksLoaded) return;
     booksLoaded = true;
     fetch('/research/books.json').then(res => res.json()).then(({ books }) => {
+      booksData = books || [];
       fill($('books'), books && books.length ? books.map(bookNode) : [make('p', { className: 'empty' }, '还没有书。')]);
     }).catch(() => {
       booksLoaded = false;
@@ -491,15 +538,203 @@
     document.querySelectorAll('.choice').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === view)));
     $('books-view').hidden = view !== 'books';
     $('papers-view').hidden = view !== 'papers';
+    $('shelf-view').hidden = view !== 'shelf';
+    // 书架的数据先下载，下好了把书、文章上的星和阅读状态补上
+    loadShelf().then(() => {
+      if (state.view === 'shelf') drawShelf();
+      else if (state.view === 'papers' && index) update();
+      else if (state.view === 'books' && booksData) fill($('books'), booksData.map(bookNode));
+    });
     if (view === 'books') loadBooks();
     if (view === 'papers' && !indexLoaded) {
       indexLoaded = true;
       loadIndex();
     } else if (view === 'papers' && index) update();
     writeUrl();
-    if (scroll && view) $(view === 'books' ? 'books-title' : 'papers-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (scroll && view) $(`${view}-title`).scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   document.querySelectorAll('.choice').forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
+
+  // ---------- 书架：打星、阅读状态、笔记（存在服务器上，只有自己看得到） ----------
+  const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://127.0.0.1:8787/api' : 'https://api.gamesyuan.com/api';
+  const STATUS = { want: '想读', reading: '在读', done: '读完' };
+  const shelf = { promise: null, ok: false, problem: '', items: new Map() };
+  function token() {
+    try {
+      return JSON.parse(localStorage.getItem('xiangqi:token')) || ''; // 和账号页、游戏共用的登录令牌
+    } catch (e) {
+      return '';
+    }
+  }
+  async function shelfApi(path, body) {
+    const res = await fetch(API + path, {
+      method: body ? 'POST' : 'GET',
+      headers: { 'content-type': 'application/json', Authorization: `Bearer ${token()}` },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw Object.assign(new Error(data.error || '出错了'), { status: res.status });
+    return data;
+  }
+  function loadShelf() {
+    if (!shelf.promise) {
+      shelf.promise = (async () => {
+        if (!token()) {
+          shelf.problem = 'login';
+          return;
+        }
+        try {
+          const { items } = await shelfApi('/shelf');
+          items.forEach(item => shelf.items.set(item.item, item));
+          shelf.ok = true;
+        } catch (err) {
+          shelf.problem = err.status === 401 ? 'login' : err.status === 403 ? 'guest' : 'down';
+        }
+      })();
+    }
+    return shelf.promise;
+  }
+  function shelfProblem() {
+    const msg = make('p', { className: 'marks-msg' });
+    if (shelf.problem === 'guest') msg.append('游客账号不能用书架，', make('a', { href: '/account/' }, '用邮箱或 Google 登录'), '以后就能收藏和记笔记。');
+    else if (shelf.problem === 'down') msg.append('书架暂时连不上，请稍后再试。');
+    else msg.append(make('a', { href: '/account/' }, '登录'), '以后，可以收藏文章、标阅读状态、写笔记，存在自己的书架上。');
+    return msg;
+  }
+  // entry：{ item, title, journal, date, link }，书架上存一份，书架页不用再下载整年的文章
+  function marksNode(entry) {
+    const box = make('div', {});
+    box.dataset.shelfItem = entry.item;
+    let editing = false, message = null;
+    const draw = () => {
+      const mine = shelf.items.get(entry.item) || {};
+      const button = (text, pressed, className, onClick, title) => {
+        const b = make('button', { type: 'button', className: `mark ${className || ''}`, title: title || '' }, text);
+        b.setAttribute('aria-pressed', String(!!pressed));
+        b.addEventListener('click', onClick);
+        return b;
+      };
+      const row = make('div', { className: 'marks' },
+        button(mine.starred ? '★ 已收藏' : '☆ 收藏', mine.starred, 'star', () => change({ starred: !mine.starred })),
+        make('span', { className: 'sep' }),
+        ...Object.entries(STATUS).map(([key, name]) => button(name, mine.status === key, '', () => change({ status: mine.status === key ? null : key }),
+          mine.status === key ? `再点一下取消「${name}」` : `标成「${name}」`)),
+        make('span', { className: 'sep' }),
+        button(mine.note ? '改笔记' : '写笔记', editing, '', () => {
+          if (!shelf.ok) return showProblem();
+          editing = !editing;
+          draw();
+        }));
+      const parts = [row];
+      if (message) parts.push(message);
+      if (mine.note && !editing) {
+        const when = mine.status === 'done' && mine.done_at ? ` · ${new Date(mine.done_at).toLocaleDateString('zh-CN')} 读完` : '';
+        parts.push(make('p', { className: 'my-note' }, make('small', {}, `我的笔记${when}`), mine.note));
+      }
+      if (editing) {
+        const area = make('textarea', { maxLength: 300, placeholder: '一两句读后感：讲了什么、哪里有用、想到了什么……（只有自己看得到）' });
+        area.value = mine.note || '';
+        const left = make('span', {});
+        const count = () => { left.textContent = `${[...area.value].length} / 300`; };
+        area.addEventListener('input', count);
+        count();
+        const saveButton = make('button', { type: 'button', className: 'mark' }, '保存');
+        saveButton.addEventListener('click', () => change({ note: area.value }).then(ok => { if (ok) { editing = false; draw(); } }));
+        const cancel = make('button', { type: 'button', className: 'mark' }, '取消');
+        cancel.addEventListener('click', () => { editing = false; draw(); });
+        parts.push(make('div', { className: 'note-edit' }, area, make('div', { className: 'row' }, saveButton, cancel, left)));
+        setTimeout(() => area.focus(), 0);
+      }
+      fill(box, parts);
+    };
+    box.redraw = () => draw();
+    const showProblem = () => {
+      message = shelfProblem();
+      draw();
+    };
+    const change = async changes => {
+      await loadShelf();
+      if (!shelf.ok) {
+        showProblem();
+        return false;
+      }
+      try {
+        const result = await shelfApi('/shelf/save', { ...entry, ...changes });
+        if (result.removed) shelf.items.delete(entry.item);
+        else shelf.items.set(entry.item, result.item);
+        message = null;
+        draw();
+        // 同一篇在页面上可能不止一处（列表重画过、书架页里也有），都按新的状态重画
+        document.querySelectorAll('[data-shelf-item]').forEach(other => {
+          if (other !== box && other.dataset.shelfItem === entry.item && other.redraw) other.redraw();
+        });
+        if (state.view === 'shelf') drawShelf();
+        return true;
+      } catch (err) {
+        message = make('p', { className: 'marks-msg' }, err.message || '没存上，请稍后再试');
+        draw();
+        return false;
+      }
+    };
+    draw();
+    return box;
+  }
+
+  function drawShelf() {
+    if (!shelf.ok) {
+      fill($('shelf'), [shelf.promise ? shelfProblem() : make('p', { className: 'empty' }, '正在打开…')]);
+      return;
+    }
+    const items = [...shelf.items.values()];
+    const doneYears = [...new Set(items.filter(i => i.done_at).map(i => new Date(i.done_at).getFullYear()))].sort((a, b) => b - a);
+    const thisYear = new Date().getFullYear();
+    if (!state.shelfYear) state.shelfYear = thisYear;
+    const doneIn = items.filter(i => i.done_at && new Date(i.done_at).getFullYear() === state.shelfYear);
+    const count = key => items.filter(i => (key === 'starred' ? i.starred : i.status === key)).length;
+    const stat = (n, text) => make('div', { className: 'stat' }, make('b', {}, String(n)), make('span', {}, text));
+    const stats = make('div', { className: 'shelf-stats' },
+      stat(doneIn.length, `${state.shelfYear} 年读完`), stat(count('reading'), '在读'), stat(count('want'), '想读'), stat(count('starred'), '收藏'));
+    // 每个月读完几篇
+    const perMonth = Array(12).fill(0);
+    doneIn.forEach(i => { perMonth[new Date(i.done_at).getMonth()]++; });
+    const top = Math.max(1, ...perMonth);
+    const bars = make('div', { className: 'months', title: `${state.shelfYear} 年每个月读完的篇数` },
+      ...perMonth.map((n, m) => {
+        const bar = make('i', { title: `${m + 1} 月读完 ${n} 篇` });
+        bar.style.height = `${Math.round((n / top) * 86) + (n ? 4 : 0)}px`;
+        return bar;
+      }));
+    const labels = make('div', { className: 'months-labels' }, ...perMonth.map((n, m) => make('span', {}, `${m + 1}月${n ? ` ${n}` : ''}`)));
+    const years = make('div', { className: 'chips' }, ...[...new Set([thisYear, ...doneYears])].sort((a, b) => b - a).map(y => {
+      const b = make('button', { type: 'button', className: 'chip' }, `${y} 年`);
+      b.setAttribute('aria-pressed', String(y === state.shelfYear));
+      b.addEventListener('click', () => { state.shelfYear = y; drawShelf(); });
+      return b;
+    }));
+    const filters = [['all', '全部'], ['starred', '收藏'], ['want', '想读'], ['reading', '在读'], ['done', '读完']];
+    if (!state.shelfFilter) state.shelfFilter = 'all';
+    const tabs = make('div', { className: 'chips' }, ...filters.map(([key, name]) => {
+      const n = key === 'all' ? items.length : count(key);
+      const b = make('button', { type: 'button', className: 'chip' }, name, make('small', {}, String(n)));
+      b.setAttribute('aria-pressed', String(key === state.shelfFilter));
+      b.addEventListener('click', () => { state.shelfFilter = key; drawShelf(); });
+      return b;
+    }));
+    const shown = items.filter(i => state.shelfFilter === 'all' || (state.shelfFilter === 'starred' ? i.starred : i.status === state.shelfFilter));
+    const list = shown.map(i => make('article', { className: 'shelf-item' },
+      make('p', { className: 'paper-meta' },
+        i.journal ? make('span', { className: 'label journal' }, i.journal) : null,
+        i.status ? make('span', { className: 'label kind' }, STATUS[i.status]) : null,
+        make('span', { className: 'week' }, i.date ? `发表于 ${i.date}` : '')),
+      make('h3', {}, make('a', linkProps(i.link || '#'), i.title)),
+      marksNode({ item: i.item, title: i.title, journal: i.journal, date: i.date, link: i.link })));
+    fill($('shelf'), [
+      make('fieldset', { className: 'facet' }, make('legend', {}, '读完的篇数'), years), bars, labels, stats,
+      make('fieldset', { className: 'facet' }, make('legend', {}, '书架上的'), tabs),
+      ...(list.length ? list : [make('p', { className: 'empty' }, items.length
+        ? '这一栏还没有。' : '书架还是空的。在「经典书籍」「期刊文章」里给文章打星、标「想读 / 在读 / 读完」，就会出现在这里。')]),
+    ]);
+  }
 
   // ---------- 开始 ----------
   readUrl();
