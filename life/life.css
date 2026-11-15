@@ -421,3 +421,44 @@ a.garden-card:hover { border-color: var(--primary); }
 .site-search input[type=search] { flex: 1; min-width: 0; padding: 9px 12px; border: 1px solid var(--rule); border-radius: 8px;
   background: var(--card); color: var(--text); font: 17px/1.5 var(--kai); }
 .page .site-search button { flex: none; padding: 8px 18px; border-color: var(--primary); background: var(--primary); color: #FFF4E6; }
+
+/* 经期记录：日历上的「来了 / 预计 / 易孕期 / 排卵日」除了颜色还有实线、虚线、点线、★ 区分，黑白屏和色弱也分得清 */
+.cycle { margin: 8px 0 24px; }
+.cycle-now { padding: 18px 20px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card, var(--bg)); }
+.cycle-big { margin: 0; font-size: 22px; color: var(--text); }
+.cycle-big b { color: var(--primary); font-size: 40px; font-weight: 400; font-variant-numeric: tabular-nums; margin: 0 4px; }
+.cycle-small { margin: 6px 0 0; color: var(--soft); font-size: 15px; line-height: 1.8; }
+.cycle-quick { margin: 12px 0 20px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.cal-head b { font-size: 18px; font-weight: 400; }
+.page .cal-head button { padding: 2px 14px; font-size: 20px; }
+.cal-week, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-week span { text-align: center; color: var(--muted); font-size: 13px; }
+.page .cal-day {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0;
+  min-height: 48px; padding: 2px 0; border: 1px solid var(--rule); border-radius: 8px; background: var(--card, var(--bg));
+  color: var(--text); font: 16px/1.2 system-ui, -apple-system, sans-serif;
+}
+.page .cal-day.future { cursor: default; color: var(--muted); }
+.page .cal-day.future:hover { border-color: var(--rule); color: var(--muted); }
+.cal-day .m { font-size: 9px; letter-spacing: -1px; line-height: 1; min-height: 9px; }
+.page .cal-day.period { background: var(--primary); border-color: var(--primary); color: #FFF4E6; }
+.page .cal-day.predicted { border: 2px dashed var(--primary); }
+.page .cal-day.fertile { border: 2px dotted var(--soft); background: rgba(120, 90, 60, .07); }
+.page .cal-day.ovulation { border: 2px dotted var(--soft); background: rgba(120, 90, 60, .14); }
+.page .cal-day.today { outline: 2px solid var(--text); outline-offset: 1px; }
+.page .cal-day.selected { box-shadow: 0 0 0 3px var(--primary); }
+.cal-key { margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 2; }
+.cal-key .k { display: inline-flex; align-items: center; gap: 4px; margin-right: 10px; }
+.cal-key .k::before { content: ''; width: 14px; height: 14px; border-radius: 4px; border: 1px solid var(--rule); }
+.cal-key .period::before { background: var(--primary); border-color: var(--primary); }
+.cal-key .predicted::before { border: 2px dashed var(--primary); }
+.cal-key .fertile::before { border: 2px dotted var(--soft); background: rgba(120, 90, 60, .07); }
+.cal-key .ovulation::before { content: '★'; width: auto; height: auto; border: 0; font-size: 12px; }
+.cycle-day { margin: 18px 0; padding: 16px 18px; border: 1px solid var(--rule); border-radius: 12px; }
+.cycle-day h3 { margin: 0 0 10px; font-size: 18px; font-weight: 400; }
+.cycle-stats h3 { margin: 18px 0 6px; font-size: 17px; font-weight: 400; }
+.cycle-line { margin: 14px 0 0; color: var(--soft); font-size: 15px; line-height: 1.8; }
+.cycle-history { margin: 0; padding-left: 1.2em; color: var(--soft); font-size: 15px; line-height: 1.9; }
+.cycle #cycle-remind { margin-top: 20px; }
+.cycle-privacy { margin-top: 14px; font-size: 13px; line-height: 1.8; }

@@ -15,7 +15,7 @@
 <script src="/pwa.js" defer></script>
 <meta name="theme-color" content="#FBF6EE">
 <link rel="stylesheet" href="/life/fonts/kai.css">
-<link rel="stylesheet" href="/life/life.css?v=8">
+<link rel="stylesheet" href="/life/life.css?v=10">
 </head>
 <body>
 <div class="page">
@@ -45,6 +45,47 @@
       <p class="hint" id="map-hint"></p>
       <div class="heat-key"><span>去过的地方少</span><i aria-hidden="true"></i><span>多</span></div>
     </div>
+  </section>
+
+  <!-- 经期记录（只有主人看得到）：现在的状态、日历、某一天的记录、统计、提醒 -->
+  <section class="cycle" id="cycle" hidden>
+    <div class="cycle-now" id="cycle-now"></div>
+    <div class="buttons cycle-quick"><button class="primary" type="button" id="cycle-today">今天来了</button></div>
+    <div class="cycle-cal">
+      <div class="cal-head">
+        <button type="button" id="cal-prev" aria-label="上个月">‹</button>
+        <b id="cal-title"></b>
+        <button type="button" id="cal-next" aria-label="下个月">›</button>
+      </div>
+      <div class="cal-week" aria-hidden="true"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <p class="cal-key"><span class="k period">来了</span><span class="k predicted">预计</span><span class="k fertile">易孕期（估）</span><span class="k ovulation">排卵日（估）</span>　点日期可以记那一天</p>
+    </div>
+    <form class="cycle-day" id="cycle-day" hidden>
+      <h3 id="day-title"></h3>
+      <p class="choice-row" role="radiogroup" aria-label="流量"><span class="choice-label">流量</span>
+        <label><input type="radio" name="flow" value="0"> 没来</label>
+        <label><input type="radio" name="flow" value="1"> 少</label>
+        <label><input type="radio" name="flow" value="2"> 中</label>
+        <label><input type="radio" name="flow" value="3"> 多</label></p>
+      <p class="choice-row" id="day-symptoms" role="group" aria-label="症状"><span class="choice-label">感觉</span></p>
+      <input class="field" id="day-note" maxlength="200" placeholder="一句话（可不填）" aria-label="一句话" autocomplete="off">
+      <p class="note" id="day-message" role="status"></p>
+      <div class="buttons">
+        <button class="primary" type="submit">保存这一天</button>
+        <button type="button" id="day-close">关上</button>
+      </div>
+    </form>
+    <div class="cycle-stats" id="cycle-stats"></div>
+    <p class="choice-row" id="cycle-remind" role="group" aria-label="邮件提醒，可以多选"><span class="choice-label">邮件提醒</span>
+      <label><input type="checkbox" value="0"> 预计当天</label>
+      <label><input type="checkbox" value="1"> 提前 1 天</label>
+      <label><input type="checkbox" value="2"> 提前 2 天</label>
+      <label><input type="checkbox" value="3"> 提前 3 天</label>
+      <label><input type="checkbox" value="7"> 提前 7 天</label></p>
+    <p class="hint remind-hint" id="cycle-remind-hint">可以多选。北京时间早上 8 点发到你登录用的邮箱，标题只写「周期小提醒」。经期里、或者已经推迟了就不发。</p>
+    <p class="hint cycle-privacy">这块园地只有你自己看得到：不能公开，也不能邀请别人。预测按你最近几次的平均周期估算，排卵日按下次月经前 14 天估，只是参考：
+      不能用来避孕，也不能代替看医生。周期突然变乱、推迟很久或者特别疼，请去看医生。</p>
   </section>
 
   <p class="progress" id="progress" hidden></p>
@@ -149,6 +190,7 @@
 <script src="/life/geo-draw.js?v=2"></script>
 <script src="/life/garden-map.js?v=2"></script>
 <script src="/life/lunar.js?v=1"></script>
+<script src="/life/cycle.js?v=1"></script>
 <script>
   const $ = id => document.getElementById(id);
   const gardenId = new URLSearchParams(location.search).get('id');
@@ -165,12 +207,13 @@
       seal: '念', add: '记一个日子', title: '比如：第一次见面、妈妈', date: '日期（生日就填出生那天）', body: '写几句（可不填）',
       empty: '还没有纪念日。',
     },
+    cycle: { seal: '月', add: '', title: '', date: '', body: '', empty: '' },
     notes: {
       seal: '记', add: '写一篇', title: '标题', date: '日期（可不填）', body: '正文。空一行就是新的一段。',
       empty: '还没有文章。', name: '其他',
     },
   };
-  const KIND_NAME = { wish: '心愿单', travel: '旅行地图', dates: '纪念日', notes: '' };
+  const KIND_NAME = { wish: '心愿单', travel: '旅行地图', dates: '纪念日', notes: '', cycle: '经期记录' };
 
   let data = null; // 接口返回的 { garden, members, items }
   let editing = null; // 正在改的条目
@@ -523,6 +566,196 @@
     $('item-title').focus({ preventScroll: true });
   }
 
+  // ---------- 经期记录 ----------
+  const WEEK = '日一二三四五六';
+  let calMonth = null; // 日历显示的月份 'YYYY-MM'
+  let dayEditing = null; // 正在记的日子
+  const cycleDays = () => (data.cycle ? data.cycle.days : []);
+  const cycleRecord = date => cycleDays().find(d => d.date === date);
+  const mdText = iso => `${Number(iso.slice(5, 7))} 月 ${Number(iso.slice(8, 10))} 日`;
+  const weekText = iso => `周${WEEK[new Date(`${iso}T00:00:00Z`).getUTCDay()]}`;
+
+  // 症状的勾选框只生成一次
+  function setupSymptoms() {
+    if ($('day-symptoms').querySelector('input')) return;
+    for (const [code, name] of Object.entries(Cycle.SYMPTOMS)) {
+      const label = el('label');
+      const box = el('input');
+      box.type = 'checkbox';
+      box.value = code;
+      label.append(box, ` ${name}`);
+      $('day-symptoms').append(label);
+    }
+  }
+
+  function showCycle() {
+    setupSymptoms();
+    const now = today();
+    const prediction = Cycle.predict(cycleDays(), now);
+    if (!calMonth) calMonth = now.slice(0, 7);
+
+    // 现在怎么样
+    const box = $('cycle-now');
+    const big = el('p', 'cycle-big');
+    const small = el('p', 'cycle-small');
+    if (!prediction) {
+      big.textContent = '还没有记录';
+      small.textContent = '来月经的那天点「今天来了」，或者在下面的日历上点那一天记下来。记两次以后，就能算出你自己的周期。';
+    } else if (prediction.inPeriod) {
+      big.append('经期第 ', el('b', '', String(prediction.dayOfPeriod)), ' 天');
+      const left = prediction.period - prediction.dayOfPeriod;
+      small.textContent = left > 0 ? `按平均 ${prediction.period} 天算，大约还有 ${left} 天。注意保暖，好好休息。` : `平均经期是 ${prediction.period} 天，快结束了。`;
+    } else if (prediction.late) {
+      big.append('推迟了 ', el('b', '', String(prediction.late)), ' 天');
+      small.textContent = `原本预计 ${mdText(prediction.next)}。推迟几天很常见（压力、作息、生病都会影响）；推迟超过一两周，或者经常不规律，可以去看看医生。`;
+    } else {
+      big.append('离下次还有 ', el('b', '', String(prediction.daysToNext)), ' 天');
+      const u = prediction.upcoming[0];
+      const fertile = now >= u.fertileStart && now <= u.fertileEnd;
+      small.textContent = `预计 ${mdText(prediction.next)}（${weekText(prediction.next)}）开始 · 现在是周期第 ${prediction.dayOfCycle} 天`
+        + (fertile ? ' · 估计在易孕期' : '');
+    }
+    box.replaceChildren(big, small);
+
+    // 快捷按钮
+    const todayRecord = cycleRecord(now);
+    $('cycle-today').textContent = todayRecord && todayRecord.flow ? '改今天的记录' : prediction && prediction.inPeriod ? '今天还在' : '今天来了';
+
+    drawCalendar(prediction);
+    drawStats(prediction);
+    const remind = data.cycle ? data.cycle.remind : [];
+    document.querySelectorAll('#cycle-remind input').forEach(b => { b.checked = remind.includes(Number(b.value)); });
+  }
+
+  function drawCalendar(prediction) {
+    const [y, m] = calMonth.split('-').map(Number);
+    $('cal-title').textContent = `${y} 年 ${m} 月`;
+    const first = `${calMonth}-01`;
+    const daysInMonth = new Date(Date.UTC(y, m, 0)).getUTCDate();
+    const lead = (new Date(`${first}T00:00:00Z`).getUTCDay() + 6) % 7; // 周一开头
+    const now = today();
+    const cells = [];
+    for (let i = 0; i < lead; i++) cells.push(el('span', 'cal-blank'));
+    for (let d = 1; d <= daysInMonth; d++) {
+      const iso = `${calMonth}-${String(d).padStart(2, '0')}`;
+      const record = cycleRecord(iso);
+      const button = el('button', 'cal-day');
+      button.type = 'button';
+      const kind = record && record.flow ? 'period' : Cycle.dayKind(prediction, iso);
+      if (kind) button.classList.add(kind);
+      if (iso === now) button.classList.add('today');
+      if (iso === dayEditing) button.classList.add('selected');
+      button.append(el('span', 'n', String(d)));
+      // 墨水屏、色弱也分得清：来了的标流量点数，症状、备注标一个小记号
+      const marks = [];
+      if (record && record.flow) marks.push('●'.repeat(record.flow));
+      else if (kind === 'ovulation') marks.push('★');
+      if (record && (record.symptoms.length || record.note)) marks.push('✎');
+      if (marks.length) button.append(el('span', 'm', marks.join('')));
+      const label = [`${m} 月 ${d} 日`, { period: `来了，流量${Cycle.FLOWS[record && record.flow]}`, predicted: '预计经期', fertile: '易孕期（估）', ovulation: '排卵日（估）' }[kind] || ''];
+      button.setAttribute('aria-label', label.filter(Boolean).join('，'));
+      // 还没到的日子不能记，但预计、易孕期的样子要看得清，所以不用 disabled（会变淡）
+      if (iso > now) {
+        button.classList.add('future');
+        button.setAttribute('aria-disabled', 'true');
+      } else button.addEventListener('click', () => openDay(iso));
+      cells.push(button);
+    }
+    $('cal-grid').replaceChildren(...cells);
+  }
+
+  function drawStats(prediction) {
+    const box = $('cycle-stats');
+    if (!prediction) {
+      box.replaceChildren();
+      return;
+    }
+    const parts = [];
+    const line = prediction.guessed
+      ? `目前只记了 ${prediction.periods.length} 次，周期先按 ${prediction.cycle} 天估；再记一次就能算出你自己的。`
+      : `平均周期 ${prediction.cycle} 天、经期 ${prediction.period} 天（最近 ${prediction.counted} 次）`
+        + (prediction.spread === null ? '' : `，最长最短差 ${prediction.spread} 天${prediction.spread <= 7 ? '，比较规律' : '，不太规律，预测误差会大一些'}`) + '。';
+    parts.push(el('p', 'cycle-line', line));
+    // 最近几次
+    const list = el('ul', 'cycle-history');
+    const periods = prediction.periods.slice(-6).reverse();
+    periods.forEach((period, i) => {
+      const next = prediction.periods[prediction.periods.length - i];
+      const cycle = next ? Cycle.dayNumber(next.start) - Cycle.dayNumber(period.start) : null;
+      list.append(el('li', '', `${period.start.slice(0, 4)} 年 ${mdText(period.start)}开始 · 经期 ${period.length} 天${cycle ? ` · 周期 ${cycle} 天` : ' · 这一次'}`));
+    });
+    parts.push(el('h3', '', '最近几次'), list);
+    // 最常记的感觉
+    const counts = {};
+    cycleDays().forEach(d => d.symptoms.forEach(s => { counts[s] = (counts[s] || 0) + 1; }));
+    const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    if (top.length) parts.push(el('p', 'cycle-line', `最常记的感觉：${top.map(([s, n]) => `${Cycle.SYMPTOMS[s]} ${n} 次`).join('、')}`));
+    box.replaceChildren(...parts);
+  }
+
+  function openDay(iso) {
+    dayEditing = iso;
+    const record = cycleRecord(iso) || { flow: 0, symptoms: [], note: '' };
+    $('day-title').textContent = `${iso.slice(0, 4)} 年 ${mdText(iso)}（${weekText(iso)}）`;
+    document.querySelector(`input[name="flow"][value="${record.flow}"]`).checked = true;
+    $('day-symptoms').querySelectorAll('input').forEach(b => { b.checked = record.symptoms.includes(b.value); });
+    $('day-note').value = record.note;
+    $('day-message').textContent = '';
+    $('cycle-day').hidden = false;
+    drawCalendar(Cycle.predict(cycleDays(), today()));
+    $('cycle-day').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  async function saveDay(day) {
+    const ok = await act(() => api('/garden/cycle/day', { garden: data.garden.id, ...day }), 'day-message');
+    if (ok) {
+      $('cycle-day').hidden = true;
+      dayEditing = null;
+      showCycle();
+    }
+  }
+
+  $('cycle-day').addEventListener('submit', e => {
+    e.preventDefault();
+    saveDay({
+      date: dayEditing,
+      flow: Number(document.querySelector('input[name="flow"]:checked').value),
+      symptoms: [...$('day-symptoms').querySelectorAll('input:checked')].map(b => b.value),
+      note: $('day-note').value,
+    });
+  });
+  $('day-close').addEventListener('click', () => {
+    $('cycle-day').hidden = true;
+    dayEditing = null;
+    showCycle();
+  });
+  $('cycle-today').addEventListener('click', () => {
+    const now = today();
+    const record = cycleRecord(now);
+    if (record && record.flow) return openDay(now);
+    // 一点就记上「今天来了，流量中」，要改再点日历上的今天
+    saveDay({ date: now, flow: 2, symptoms: record ? record.symptoms : [], note: record ? record.note : '' });
+  });
+  const moveMonth = step => {
+    const [y, m] = calMonth.split('-').map(Number);
+    const d = new Date(Date.UTC(y, m - 1 + step, 1));
+    calMonth = d.toISOString().slice(0, 7);
+    drawCalendar(Cycle.predict(cycleDays(), today()));
+  };
+  $('cal-prev').addEventListener('click', () => moveMonth(-1));
+  $('cal-next').addEventListener('click', () => moveMonth(1));
+  document.querySelectorAll('#cycle-remind input').forEach(box => box.addEventListener('change', async () => {
+    const days = [...document.querySelectorAll('#cycle-remind input:checked')].map(b => Number(b.value));
+    $('cycle-remind-hint').textContent = '正在保存…';
+    try {
+      await api('/garden/cycle/remind', { garden: data.garden.id, days });
+      data.cycle.remind = days;
+      $('cycle-remind-hint').textContent = days.length ? '已保存。北京时间早上 8 点发到你登录用的邮箱，标题只写「周期小提醒」。' : '已关掉邮件提醒。';
+    } catch (err) {
+      $('cycle-remind-hint').textContent = errorText(err);
+    }
+  }));
+
   // ---------- 整页 ----------
 
   function showHead() {
@@ -539,7 +772,7 @@
     $('intro').textContent = garden.intro;
     $('intro').hidden = !garden.intro;
     $('seal').textContent = kind().seal;
-    $('badge').textContent = garden.public ? '公开' : '只有一起写的人能看';
+    $('badge').textContent = garden.kind === 'cycle' ? '只有你自己能看' : garden.public ? '公开' : '只有一起写的人能看';
     const mine = garden.role === 'owner';
     const parent = path[path.length - 1];
     if (parent) {
@@ -556,7 +789,7 @@
 
     $('invite-bar').hidden = garden.role !== 'invited';
     $('invite-text').textContent = `${garden.owner}邀请你一起写这块园地。`;
-    $('item-form').hidden = !canWrite();
+    $('item-form').hidden = !canWrite() || garden.kind === 'cycle';
     // 最外面的园地只有主人能设置；小园地一起写的人都能改名字
     $('settings').hidden = path.length ? !canWrite() : !mine;
     $('leave-wrap').hidden = garden.role !== 'member' || !!path.length;
@@ -593,8 +826,9 @@
     $('garden-intro').value = garden.intro;
     $('garden-public').checked = !!garden.public;
     const nested = !!path.length;
-    $('public-wrap').hidden = nested;
-    $('people-settings').hidden = nested;
+    // 经期记录：不能公开、不能邀请人
+    $('public-wrap').hidden = nested || garden.kind === 'cycle';
+    $('people-settings').hidden = nested || garden.kind === 'cycle';
     $('nested-hint').hidden = !nested;
     $('nested-hint').textContent = nested ? `公开与否、一起写的人，都在最外面的「${path[0].title}」里设置。` : '';
     $('garden-delete').hidden = !(garden.role === 'owner' || garden.created);
@@ -614,6 +848,14 @@
 
   function showItems() {
     const { kind: type } = data.garden;
+    $('cycle').hidden = type !== 'cycle';
+    if (type === 'cycle') {
+      $('items').replaceChildren();
+      $('map-wrap').hidden = true;
+      $('progress').hidden = true;
+      showCycle();
+      return;
+    }
     const items = data.items;
     $('map-wrap').hidden = type !== 'travel';
     $('progress').hidden = true;
@@ -626,6 +868,7 @@
 
   function setupForm() {
     const type = data.garden.kind;
+    if (type === 'cycle') return;
     $('item-title').placeholder = kind().title;
     $('item-title').setAttribute('aria-label', kind().title);
     $('item-body').placeholder = kind().body;

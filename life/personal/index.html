@@ -45,6 +45,7 @@
         <label><input type="radio" name="kind" value="travel"><b>旅行地图</b><small>在地图上标出去过的地方，写下旅行故事</small></label>
         <label><input type="radio" name="kind" value="dates"><b>纪念日</b><small>记住重要的日子，数着过了多少天</small></label>
         <label><input type="radio" name="kind" value="notes"><b>其他</b><small>自己起名，写文章、随笔，里面还能再开小园地</small></label>
+        <label><input type="radio" name="kind" value="cycle"><b>经期记录</b><small>记下每次月经，预测下一次，可以邮件提醒；只有你自己看得到</small></label>
       </fieldset>
       <input class="field" id="new-title" maxlength="40" placeholder="起个名字，比如：我们的心愿" aria-label="园地名字" autocomplete="off" required>
       <label class="check"><input type="checkbox" id="new-public"> 公开，所有人都能看到（不勾就只有你和一起写的人能看）</label>
@@ -90,7 +91,7 @@
     list.firstChild.append(' ', link);
   }
 
-  const KINDS = { wish: ['愿', '心愿单'], travel: ['行', '旅行地图'], dates: ['念', '纪念日'], notes: ['记', ''] };
+  const KINDS = { wish: ['愿', '心愿单'], travel: ['行', '旅行地图'], dates: ['念', '纪念日'], notes: ['记', ''], cycle: ['月', '经期记录'] };
 
   function gardenCard(garden, { owned = true, invite = false } = {}) {
     const card = document.createElement(invite ? 'div' : 'a');
@@ -103,7 +104,7 @@
     const name = document.createElement('strong');
     name.textContent = garden.title;
     const meta = document.createElement('small');
-    const parts = [KINDS[garden.kind][1], `${garden.items} ${garden.kind === 'notes' ? '篇' : '条'}`].filter(Boolean);
+    const parts = [KINDS[garden.kind][1], garden.kind === 'cycle' ? '只有你看得到' : `${garden.items} ${garden.kind === 'notes' ? '篇' : '条'}`].filter(Boolean);
     if (garden.children) parts.push(`${garden.children} 块小园地`);
     if (garden.members) parts.push(`${garden.members + 1} 人一起写`);
     if (!owned) parts.push(`${garden.owner}的`);
@@ -162,6 +163,12 @@
     document.getElementById('posts-title').hidden = section.hidden;
   }
 
+  document.querySelectorAll('#new-garden-form [name=kind]').forEach(radio => radio.addEventListener('change', () => {
+    const cycle = document.querySelector('#new-garden-form [name=kind]:checked').value === 'cycle';
+    document.getElementById('new-public').closest('label').hidden = cycle;
+    document.getElementById('new-title').placeholder = cycle ? '起个名字，比如：我的周期' : '起个名字，比如：我们的心愿';
+  }));
+
   document.getElementById('new-garden-form').addEventListener('submit', async e => {
     e.preventDefault();
     const message = document.getElementById('new-message');
@@ -170,7 +177,8 @@
       const { id } = await api('/garden/save', {
         kind: e.target.querySelector('[name=kind]:checked').value,
         title: document.getElementById('new-title').value,
-        public: document.getElementById('new-public').checked,
+        // 经期记录永远不公开（服务器也会拦）
+        public: document.getElementById('new-public').checked && e.target.querySelector('[name=kind]:checked').value !== 'cycle',
       });
       location.href = `/life/garden/?id=${id}`;
     } catch (err) {
