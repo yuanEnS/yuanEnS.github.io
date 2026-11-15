@@ -15,7 +15,7 @@
 <script src="/pwa.js" defer></script>
 <meta name="theme-color" content="#FBF6EE">
 <link rel="stylesheet" href="/life/fonts/kai.css">
-<link rel="stylesheet" href="/life/life.css?v=6">
+<link rel="stylesheet" href="/life/life.css?v=7">
 </head>
 <body>
 <div class="page">
@@ -87,6 +87,25 @@
       <label class="check" id="done-wrap" hidden><input type="checkbox" id="item-done"> 已经实现了</label>
       <p class="hint" id="pick-text" hidden></p>
     </div>
+    <div class="date-extra" id="date-extra" hidden>
+      <p class="choice-row"><span class="choice-label">这是</span>
+        <label><input type="radio" name="date-type" value="anniversary" checked> 纪念日</label>
+        <label><input type="radio" name="date-type" value="birthday"> 生日</label></p>
+      <p class="choice-row"><span class="choice-label">按</span>
+        <label><input type="radio" name="calendar" value="solar" checked> 阳历</label>
+        <label><input type="radio" name="calendar" value="lunar"> 农历</label><span class="hint">过</span></p>
+      <p class="choice-row" id="lunar-row" hidden><span class="choice-label">农历</span>
+        <input class="field short" id="lunar-year" type="number" min="1901" max="2099" inputmode="numeric" aria-label="农历哪一年"> 年
+        <select class="field short" id="lunar-month" aria-label="农历几月"></select>
+        <select class="field short" id="lunar-day" aria-label="农历哪一天"></select>
+        <span class="hint" id="lunar-solar"></span></p>
+      <p class="choice-row"><span class="choice-label">邮件提醒</span>
+        <select class="field short" id="remind" aria-label="邮件提醒">
+          <option value="">不提醒</option><option value="0">当天</option><option value="1">提前 1 天</option>
+          <option value="3">提前 3 天</option><option value="7">提前 7 天</option><option value="15">提前 15 天</option><option value="30">提前 30 天</option>
+        </select>
+        <span class="hint">北京时间早上 8 点发到你登录用的邮箱，只发给你自己；一起写的人可以各设各的。</span></p>
+    </div>
     <textarea class="field" id="item-body" rows="5" maxlength="5000"></textarea>
     <p class="note" id="item-message" role="status"></p>
     <div class="buttons">
@@ -127,6 +146,7 @@
 <script src="/life/geo.js"></script>
 <script src="/life/geo-draw.js?v=2"></script>
 <script src="/life/garden-map.js?v=2"></script>
+<script src="/life/lunar.js?v=1"></script>
 <script>
   const $ = id => document.getElementById(id);
   const gardenId = new URLSearchParams(location.search).get('id');
@@ -140,7 +160,7 @@
       empty: '还没有去过的地方。',
     },
     dates: {
-      seal: '念', add: '记一个日子', title: '比如：第一次见面', date: '日期', body: '写几句（可不填）',
+      seal: '念', add: '记一个日子', title: '比如：第一次见面、妈妈', date: '日期（生日就填出生那天）', body: '写几句（可不填）',
       empty: '还没有纪念日。',
     },
     notes: {
@@ -177,15 +197,54 @@
     return Date.UTC(y, m - 1, d) / 86400000;
   }
 
-  // 下一个周年：今年的这一天过了就算明年的。2 月 29 日在平年算 3 月 1 日
-  function nextAnniversary(date) {
-    const [, m, d] = date.split('-').map(Number);
-    const now = today();
-    let year = Number(now.slice(0, 4));
-    const at = y => new Date(Date.UTC(y, m - 1, d)).toISOString().slice(0, 10);
-    if (at(year) < now) year++;
-    const next = at(year);
-    return { days: dayNumber(next) - dayNumber(now), years: year - Number(date.slice(0, 4)) };
+  // ---------- 纪念日、生日、农历 ----------
+  const remindText = days => (days === null || days === undefined ? '' : days === 0 ? '当天提醒' : `提前 ${days} 天提醒`);
+  const radio = name => document.querySelector(`input[name="${name}"]:checked`).value;
+  const setRadio = (name, value) => { document.querySelector(`input[name="${name}"][value="${value}"]`).checked = true; };
+  const isLunar = () => radio('calendar') === 'lunar';
+
+  // 农历的年、月、日选项：选了年份才知道有没有闰月、这个月有几天
+  function fillLunarMonths(year, keep) {
+    const months = [];
+    for (let m = 1; m <= 12; m++) {
+      months.push([`${m}`, Lunar.monthName(m, false)]);
+      if (year && Lunar.hasLeap(year, m)) months.push([`${m}L`, Lunar.monthName(m, true)]);
+    }
+    $('lunar-month').replaceChildren(...months.map(([value, label]) => Object.assign(el('option', '', label), { value })));
+    if (keep && months.some(([v]) => v === keep)) $('lunar-month').value = keep;
+  }
+  function fillLunarDays(keep) {
+    const year = Number($('lunar-year').value);
+    const [month, leap] = [parseInt($('lunar-month').value, 10), /L/.test($('lunar-month').value)];
+    const length = year ? Lunar.monthLength(year, month, leap) : 30;
+    const days = Array.from({ length }, (_, i) => i + 1);
+    $('lunar-day').replaceChildren(...days.map(d => Object.assign(el('option', '', Lunar.dayName(d)), { value: String(d) })));
+    $('lunar-day').value = String(Math.min(keep || 1, length));
+  }
+  // 选好的农历日子对应的阳历；不存在时返回 null
+  function lunarToSolar() {
+    const year = Number($('lunar-year').value);
+    const month = parseInt($('lunar-month').value, 10), leap = /L/.test($('lunar-month').value);
+    if (!(year >= 1901 && year <= 2099)) return null;
+    return Lunar.toSolar(year, month, Number($('lunar-day').value), leap);
+  }
+  function showLunarSolar() {
+    const solar = lunarToSolar();
+    $('lunar-solar').textContent = solar ? `是阳历 ${cnDate(solar)}` : '这个日子不存在，换一天';
+  }
+  // 阳历日期 → 填好农历的年、月、日
+  function setLunarFrom(solar) {
+    const l = Lunar.toLunar(solar || today());
+    $('lunar-year').value = l.year;
+    fillLunarMonths(l.year, `${l.month}${l.leap ? 'L' : ''}`);
+    fillLunarDays(l.day);
+    showLunarSolar();
+  }
+  function showCalendar() {
+    const lunar = data.garden.kind === 'dates' && isLunar();
+    $('lunar-row').hidden = !lunar;
+    $('date-label').hidden = lunar;
+    $('item-date').required = data.garden.kind === 'dates' && !lunar;
   }
 
   function byline(item) {
@@ -342,7 +401,8 @@
 
   function showDates(items) {
     const now = today();
-    const rows = items.map(item => ({ item, next: nextAnniversary(item.date) }));
+    const rows = items.map(item => ({ item, next: Lunar.next({ date: item.date, lunar: !!item.lunar }, now) || { date: item.date, years: 0 } }));
+    rows.forEach(row => { row.next.days = dayNumber(row.next.date) - dayNumber(now); });
     // 将来的日子按还有几天排在前面，过去的按下一个周年排
     rows.sort((a, b) => {
       const da = a.item.date > now ? dayNumber(a.item.date) - dayNumber(now) : a.next.days;
@@ -354,19 +414,31 @@
       const big = el('p', 'date-count');
       const small = el('p', 'date-next');
       const gap = dayNumber(now) - dayNumber(item.date);
-      if (gap < 0) {
+      const lunarText = item.lunar ? `农历${Lunar.name(Lunar.toLunar(item.date))}` : '';
+      const when = [lunarText, cnDate(item.date)].filter(Boolean).join(' · ');
+      if (item.date_type === 'birthday' && gap >= 0) {
+        // 生日：大字是离下一个生日还有几天
+        const age = next.years;
+        if (next.days === 0) big.append(el('b', '', '今天'), ` 是 ${age} 岁生日`);
+        else big.append('还有 ', el('b', '', String(next.days)), ` 天 · ${age} 岁生日`);
+        small.textContent = `${when}出生${item.lunar ? `，属${Lunar.zodiac(Lunar.toLunar(item.date).year)}` : ''}`;
+      } else if (gap < 0) {
         big.append('还有 ', el('b', '', String(-gap)), ' 天');
-        small.textContent = cnDate(item.date);
+        small.textContent = when;
       } else if (gap === 0) {
         big.append(el('b', '', '就是今天'));
-        small.textContent = cnDate(item.date);
+        small.textContent = when;
       } else {
         big.append('已经 ', el('b', '', String(gap)), ' 天');
         small.textContent = next.days === 0
           ? `今天是 ${next.years} 周年`
-          : `${cnDate(item.date)} · ${next.years} 周年还有 ${next.days} 天`;
+          : `${when} · ${next.years} 周年还有 ${next.days} 天`;
       }
-      card.append(el('h2', '', item.title), big, small);
+      const tags = el('p', 'date-tags');
+      tags.append(el('span', 'date-tag', item.date_type === 'birthday' ? '生日' : '纪念日'));
+      if (item.lunar) tags.append(el('span', 'date-tag', '农历'));
+      if (item.remind !== null && item.remind !== undefined) tags.append(el('span', 'date-tag remind', `✉ ${remindText(item.remind)}`));
+      card.append(tags, el('h2', '', item.title), big, small);
       if (item.body) card.append(el('p', 'date-note', item.body));
       const foot = el('div', 'date-foot');
       foot.append(el('small', '', byline(item)));
@@ -389,6 +461,13 @@
     $('item-title').value = '';
     $('item-body').value = '';
     $('item-date').value = data.garden.kind === 'dates' ? today() : '';
+    if (data.garden.kind === 'dates') {
+      setRadio('date-type', 'anniversary');
+      setRadio('calendar', 'solar');
+      $('remind').value = '';
+      setLunarFrom(today());
+      showCalendar();
+    }
     $('item-done').checked = false;
     $('form-title').textContent = kind().add;
     $('item-cancel').hidden = true;
@@ -409,6 +488,13 @@
     $('item-title').value = item.title;
     $('item-body').value = item.body;
     $('item-date').value = item.date;
+    if (data.garden.kind === 'dates') {
+      setRadio('date-type', item.date_type === 'birthday' ? 'birthday' : 'anniversary');
+      setRadio('calendar', item.lunar ? 'lunar' : 'solar');
+      $('remind').value = item.remind === null || item.remind === undefined ? '' : String(item.remind);
+      setLunarFrom(item.date);
+      showCalendar();
+    }
     $('item-done').checked = !!item.done;
     $('form-title').textContent = '修改';
     $('item-cancel').hidden = false;
@@ -536,6 +622,7 @@
     $('item-body').maxLength = type === 'notes' ? 20000 : 5000;
     $('item-body').rows = type === 'notes' ? 12 : 5;
     $('done-wrap').hidden = type !== 'wish';
+    $('date-extra').hidden = type !== 'dates';
     $('pick-text').hidden = type !== 'travel';
     $('place-search').hidden = type !== 'travel';
     if (type === 'travel') ensureMap().picking(canWrite());
@@ -570,6 +657,23 @@
     $('garden').hidden = false;
   }
 
+  document.querySelectorAll('input[name="calendar"]').forEach(input => input.addEventListener('change', () => {
+    // 换历法时把已经选的日子换算过去
+    if (isLunar()) setLunarFrom($('item-date').value || today());
+    else if (lunarToSolar()) $('item-date').value = lunarToSolar();
+    showCalendar();
+  }));
+  $('lunar-year').addEventListener('input', () => {
+    const year = Number($('lunar-year').value);
+    if (year >= 1901 && year <= 2099) {
+      fillLunarMonths(year, $('lunar-month').value);
+      fillLunarDays(Number($('lunar-day').value));
+    }
+    showLunarSolar();
+  });
+  $('lunar-month').addEventListener('change', () => { fillLunarDays(Number($('lunar-day').value)); showLunarSolar(); });
+  $('lunar-day').addEventListener('change', showLunarSolar);
+
   $('item-form').addEventListener('submit', async e => {
     e.preventDefault();
     const button = $('item-save');
@@ -584,7 +688,28 @@
       ...(picked || {}),
     };
     if (data.garden.kind === 'wish' && body.done && !body.date) body.date = today();
-    const ok = await act(() => api('/garden/item', body), 'item-message');
+    let remind;
+    if (data.garden.kind === 'dates') {
+      body.date_type = radio('date-type');
+      body.lunar = isLunar();
+      if (body.lunar) {
+        body.date = lunarToSolar();
+        if (!body.date) {
+          $('item-message').textContent = '这个农历日子不存在（比如那一年没有这个闰月），换一天。';
+          button.disabled = false;
+          return;
+        }
+      }
+      remind = $('remind').value === '' ? null : Number($('remind').value);
+    }
+    const before = editing ? editing.remind : null;
+    const ok = await act(async () => {
+      const saved = await api('/garden/item', body);
+      // 邮件提醒单独存（每个人各设各的）；没变就不用发请求
+      if (data.garden.kind === 'dates' && (remind ?? null) !== (before ?? null)) {
+        await api('/garden/remind', { item: saved.id, days: remind });
+      }
+    }, 'item-message');
     if (ok) {
       resetForm();
       $('item-message').textContent = '已保存。';
