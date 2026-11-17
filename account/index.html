@@ -249,12 +249,6 @@
       ? '你现在是游客，积分只保存在这个浏览器里。登录后积分保留，换设备也能接着玩。'
       : '已有账号就登录；第一次玩不用登录，快速匹配时会自动创建游客账号。';
     if (!signedIn) return;
-    // 从私人研究园（另一个网址，登录状态不共用）点「登录」过来的：正式账号登录好了，就把令牌放在 # 后面带回去。
-    // # 后面的内容浏览器不会发给服务器；目的地写死，不接受别的网址
-    if (!guest && new URLSearchParams(location.search).get('to') === 'research') {
-      location.replace(`https://research.yuanens.com/research/?view=shelf#token=${encodeURIComponent(getToken())}`);
-      return;
-    }
     $('name').textContent = data.user.name;
     $('identity').textContent = guest ? '游客账号' : data.user.email;
     showStats(data.ratings);
