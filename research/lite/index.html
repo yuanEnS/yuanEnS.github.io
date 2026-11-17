@@ -1,34 +1,8 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>研究园 · 研究园简易版</title><meta name="robots" content="noindex"><style>
-body { margin: 0 auto; max-width: 760px; padding: 12px 16px 40px; background: #fff; color: #000;
-  font: 19px/1.6 Georgia, "Times New Roman", "Songti SC", serif; }
-a { color: #000; }
-h1 { font-size: 28px; margin: 12px 0 4px; }
-h2 { font-size: 21px; margin: 24px 0 8px; }
-.nav, .meta, .authors, .note, .pager { font-size: 16px; }
-.meta { margin: 0; }
-.tag { border: 1px solid #000; padding: 0 4px; }
-.journal { background: #000; color: #fff; padding: 0 5px; }
-article { padding: 14px 0; border-bottom: 1px solid #000; }
-article h3 { font-size: 20px; margin: 6px 0 4px; font-weight: normal; }
-.authors { margin: 0; color: #333; }
-details { margin-top: 6px; }
-summary { text-decoration: underline; }
-.abstract { margin: 6px 0 0; }
-ul.links { padding-left: 1.2em; }
-ul.links li { margin: 6px 0; }
-.pager { margin-top: 20px; }
-article.here, article:target { border: 3px solid #000; padding: 10px; }
-.pager a, .pager b { margin-right: 10px; }
-</style></head><body><p class="nav"><a href="/research/lite/">研究园简易版</a> · <a href="books.html">经典书籍</a> · <a href="papers.html">期刊文章</a> · <a href="fulltext.html">有原文</a> · <a href="/research/?full=1">完整版（可多选筛选、搜索）</a> · <a href="/">首页</a></p><form action="https://api.yuanens.com/search" method="get"><input type="search" name="q" placeholder="搜论文、作者、书里的内容" aria-label="搜索" style="font-size:18px;padding:4px;width:60%"><input type="hidden" name="in" value="research"> <button type="submit" style="font-size:18px">搜索</button></form><h1>研究园 · 简易版</h1><p class="note">这个版本不用 JavaScript，适合 Kindle 和老浏览器。</p><h2><a href="books.html">经典书籍 →</a></h2><p>值得反复读的教材和专著，共 1 本，有的可以在线分章读。</p><h2><a href="papers.html">期刊文章 →</a></h2><p>统计学期刊 2016 年以来的文章，共 15867 篇，按年份、期刊、主题看。</p><h2><a href="fulltext.html">有原文 →</a></h2><p>可以在本站直接读全文的书和文章。</p><script>(function () {
-  function go() {
-    var id = location.hash.slice(1), el = id && document.getElementById(id);
-    if (!el) return;
-    var d = el.getElementsByTagName('details');
-    for (var i = 0; i < d.length; i++) d[i].open = true;
-    if (el.className.indexOf('here') < 0) el.className += ' here';
-    el.scrollIntoView(true);
-  }
-  if (document.readyState !== 'loading') go(); else document.addEventListener('DOMContentLoaded', go);
-  window.addEventListener('load', function () { setTimeout(go, 300); setTimeout(go, 1200); });
-  window.addEventListener('hashchange', go);
-})();</script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>研究园已不公开 | Enjoy and Share</title>
+<p style="font:18px/1.7 Georgia,serif;max-width:640px;margin:40px auto;padding:0 16px">研究园现在是私人的读书笔记，不再公开。<br><a href="/">回到首页</a> · <a href="/reading/">阅读园</a></p>
+</html>
