@@ -5,7 +5,7 @@
 // 词库在 chengyu-words.js（由 tools/chengyu/build.py 生成），读音按成语里的读法，多音字不会读错。
 // 联网对战时双方轮流接，接不上、超时或认输就输；接完以后对方在词库里已经无词可接，直接算赢。
 // 联网时只认词库里的成语；网页上和电脑接、自己接的时候，词库外的词问一句也算数（同音接法按这个字常见的读音算）。
-// 服务器（server/lobby.js）和网页（gamesyuan.com/games/rules/）共用这一份：改了要运行 node tools/copy-rules.js
+// 服务器（server/lobby.js）和网页（yuanens.com/games/rules/）共用这一份：改了要运行 node tools/copy-rules.js
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(require('./chengyu-words.js'));
   else root.Chengyu = factory(root.ChengyuWords);

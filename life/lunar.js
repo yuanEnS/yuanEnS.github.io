@@ -1,5 +1,5 @@
 // 农历（阴历）换算：用浏览器和 Worker 自带的中国历法（Intl 的 chinese 历，ICU 的数据），不用自己维护几百年的农历表。
-// 纪念日、生日的页面（gamesyuan.com/life/lunar.js）和 Worker 的邮件提醒共用这一份：
+// 纪念日、生日的页面（yuanens.com/life/lunar.js）和 Worker 的邮件提醒共用这一份：
 // 改了要运行 node tools/copy-rules.js，把它复制到网站仓库。
 //
 // 日期都是 'YYYY-MM-DD' 字符串（阳历）。农历用 { year, month, day, leap }，month 1–12，leap 表示闰月。

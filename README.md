@@ -1,17 +1,17 @@
-# 游戏园 · gamesyuan.com
+# 游戏园 · yuanens.com
 
 主页有两个入口：生活园（`/life/`）和游戏园（`/games/`）。这个仓库是主页、游戏列表和生活园。游戏的源码都在 [yuanEnS/xiangqi](https://github.com/yuanEnS/xiangqi) 仓库里：
 
 | 游戏 | 地址 | 怎么发布 |
 |---|---|---|
-| 中国象棋 | https://gamesyuan.com/xiangqi/ | xiangqi 仓库推送后自动发布（GitHub Pages 把项目仓库挂在 `/xiangqi/`） |
-| 五子棋 | https://gamesyuan.com/wuziqi/ | 本仓库的 `wuziqi/` 目录，由 xiangqi 仓库打包生成，**不要手改** |
+| 中国象棋 | https://yuanens.com/xiangqi/ | xiangqi 仓库推送后自动发布（GitHub Pages 把项目仓库挂在 `/xiangqi/`） |
+| 五子棋 | https://yuanens.com/wuziqi/ | 本仓库的 `wuziqi/` 目录，由 xiangqi 仓库打包生成，**不要手改** |
 
 更新五子棋：在 xiangqi 仓库运行 `node web/build.js gomoku ../yuanEnS.github.io/wuziqi`，再在本仓库提交推送。
 
 ## 加一个新游戏
 
-1. 在 xiangqi 仓库里写好游戏，打包到本仓库的一个新目录（或者单独建一个仓库开启 Pages，会自动出现在 `https://gamesyuan.com/仓库名/`）。
+1. 在 xiangqi 仓库里写好游戏，打包到本仓库的一个新目录（或者单独建一个仓库开启 Pages，会自动出现在 `https://yuanens.com/仓库名/`）。
 2. 在 `games/index.html` 的「全部游戏」里加一张卡片，在 `sitemap.xml` 里加一个 `<url>`。
 
 ## 文件
@@ -23,6 +23,6 @@
 - `research/`：研究园。统计学期刊 2016 年以来的文章，按年份、主题、期刊、有没有原文筛选。数据在 `research/papers/`（`index.json` 是筛选用的小索引，`<年>.json` 是那一年的文章，选了才下载），由 `python3 research/tools/build.py ../journal ../journal2` 从每周的周报（journal/）和按期刊按年的目录（journal2/）生成（每次从头生成，可以反复跑）。本站有原文的文章登记在 `research/articles.json`。登录以后每篇文章和书都可以打星、标「想读 / 在读 / 读完」、写一两句笔记，存在「我的书架」（`?view=shelf`），数据在 Worker 的 `/api/shelf`（D1 的 shelf 表），只有自己看得到。经典书籍在 `research/books.json`；以开放许可发布在 arXiv 上的书可以用 `research/tools/arxiv_book.py` 转成分章纯 HTML（公式渲染成图片，Kindle 能看），放在 `research/books/<id>/`。
 - `reading/`：阅读园。中英文经典名著分章在线读：英文来自 Standard Ebooks（CC0），中文来自维基文库（CC BY-SA，`python3 reading/tools/wikisource.py` 取并转简体）。书目在 `reading/books.json`，运行 `python3 reading/tools/build.py` 下载、转换并生成书目页（书目页模板是 `reading/tools/index.template.html`）。
 - `resume/`：作者简历（不从站内链接，直接用网址访问）
-- `CNAME`：自定义域名 gamesyuan.com
+- `CNAME`：自定义域名 yuanens.com
 - `sitemap.xml` / `robots.txt`：给搜索引擎
 - `og.png`：分享到社交平台时显示的预览图

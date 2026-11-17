@@ -898,7 +898,7 @@ module.exports = {
 
 },
 "js/config.js": function (require, module, exports) {
-module.exports = {"SERVER_URL":"wss://api.gamesyuan.com","GAMES":["gomoku"]};
+module.exports = {"SERVER_URL":"wss://api.yuanens.com","GAMES":["gomoku"]};
 },
 "js/xiangqi-app.js": function (require, module, exports) {
 // 中国象棋：首页、人机设置、联网流程、对局画面

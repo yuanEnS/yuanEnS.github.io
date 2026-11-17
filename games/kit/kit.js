@@ -137,7 +137,7 @@
   }
 
   const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
-  const WS_URL = LOCAL ? 'ws://127.0.0.1:8787' : 'wss://api.gamesyuan.com';
+  const WS_URL = LOCAL ? 'ws://127.0.0.1:8787' : 'wss://api.yuanens.com';
   const TOKEN_KEY = 'xiangqi:token'; // 和象棋、五子棋、账号页共用
 
   function el(tag, props, ...children) {

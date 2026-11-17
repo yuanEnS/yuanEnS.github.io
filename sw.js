@@ -1,6 +1,6 @@
 // 让网站能装到手机上（PWA），没网时也能打开看过的页面、玩人机对战。
 // 网页、脚本、样式先上网拿最新的，拿不到再用存着的；字体和图片很少变，先用存着的。
-// 接口（api.gamesyuan.com）不经过这里，文章和账号总是最新的。
+// 接口（api.yuanens.com）不经过这里，文章和账号总是最新的。
 const VERSION = 'v2'; // 改了缓存规则就加一，旧的缓存会被清掉
 const CACHE = `gamesyuan-${VERSION}`;
 const SHELL = ['/', '/offline.html', '/life/life.css', '/life/life.js', '/favicon.svg', '/icon-192.png'];

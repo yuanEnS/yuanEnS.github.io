@@ -1,5 +1,5 @@
 // 经期记录：从每天的记录算出每次月经、平均周期，预测下一次和排卵期。
-// 网页（gamesyuan.com/life/cycle.js）和 Worker 的邮件提醒共用这一份：改了要运行 node tools/copy-rules.js。
+// 网页（yuanens.com/life/cycle.js）和 Worker 的邮件提醒共用这一份：改了要运行 node tools/copy-rules.js。
 //
 // 记录是 [{ date: 'YYYY-MM-DD', flow: 0–3, symptoms: ['cramps', …], note }]，flow 0 没来、1 少、2 中、3 多。
 // 预测用的是最常见的日历法：最近几次的平均周期往后推；排卵日按下次月经前 14 天估。

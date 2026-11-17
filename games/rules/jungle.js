@@ -5,7 +5,7 @@
 // 走进对方的陷阱，就谁都能吃它；不能走进自己的兽穴。走进对方兽穴、吃光对方、或对方无路可走就赢。
 // 双方连续 100 步（各 50 步）都没吃子就算和棋。
 // board[r][c]：null 或 { side: 'r' | 'b', rank: 1–8 }。走法是 [[行, 列], [行, 列]]。
-// 服务器（server/lobby.js）和网页（gamesyuan.com/games/rules/）共用这一份：改了要运行 node tools/copy-rules.js
+// 服务器（server/lobby.js）和网页（yuanens.com/games/rules/）共用这一份：改了要运行 node tools/copy-rules.js
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.Jungle = factory();

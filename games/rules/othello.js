@@ -1,7 +1,7 @@
 // 黑白棋规则：8×8 棋盘，黑先。落子要夹住对方至少一枚棋子，被夹住的翻成自己的颜色。
 // 一方无处可下就由对方接着下；双方都无处可下时数子，多的赢。
 // board[r][c]：'' 空，'b' 黑，'w' 白。走法是 [行, 列]。
-// 服务器（server/lobby.js）和网页（gamesyuan.com/games/rules/）共用这一份：改了要运行 node tools/copy-rules.js
+// 服务器（server/lobby.js）和网页（yuanens.com/games/rules/）共用这一份：改了要运行 node tools/copy-rules.js
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.Othello = factory();

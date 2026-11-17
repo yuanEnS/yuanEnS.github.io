@@ -154,7 +154,7 @@ def nice_label(label):
 def credit(book):
     return (f'<p class="credit">{esc(book["title"])}，{esc(book["author"])}，{book["year"]} 年，原作已进入公有领域。'
             f'文本来自 <a href="{SE}{esc(book["se"])}">Standard Ebooks</a> 的精校版（CC0，放弃一切版权）。'
-            '本站（gamesyuan.com）把它改成分章的纯 HTML，方便在手机和 Kindle 上读，文字没有改动。本站与 Standard Ebooks 无关。</p>')
+            '本站（yuanens.com）把它改成分章的纯 HTML，方便在手机和 Kindle 上读，文字没有改动。本站与 Standard Ebooks 无关。</p>')
 
 
 def page(book, title, body, nav):

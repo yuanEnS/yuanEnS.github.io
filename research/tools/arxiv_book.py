@@ -191,7 +191,7 @@ def credit(meta):
     return (f'<p class="credit">本书：{html.escape(meta["title"])}，作者 {html.escape(meta["author"])}。'
             f'原文：<a href="https://arxiv.org/abs/{meta["arxiv"]}">arXiv:{meta["arxiv"]}</a>，'
             f'按 <a href="{meta["license_url"]}">{meta["license"]}</a> 许可发布。'
-            '本站（gamesyuan.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，'
+            '本站（yuanens.com）把 arXiv 网页版改成分章的纯 HTML，把公式渲染成图片，方便在 Kindle 等电子书阅读器上看，'
             '内容没有改动。转换难免有错，以原文为准。本站与作者和出版社无关。</p>')
 
 

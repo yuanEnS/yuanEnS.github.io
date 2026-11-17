@@ -8,7 +8,7 @@
 <meta name="description" content="生活园：写写日常，也写写想法。">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="游戏园">
-<meta property="og:image" content="https://gamesyuan.com/og.png">
+<meta property="og:image" content="https://yuanens.com/og.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -36,7 +36,7 @@
 <nav class="pager" id="pager" hidden></nav>
 <!-- 评论不进搜索结果的摘要 -->
 <section class="comments" id="comments" data-nosnippet hidden></section>
-<footer class="foot"><a href="/life/">生活园</a> · <a href="/">首页</a> · <a href="https://api.gamesyuan.com/life/lite">Kindle 版</a></footer>
+<footer class="foot"><a href="/life/">生活园</a> · <a href="/">首页</a> · <a href="https://api.yuanens.com/life/lite">Kindle 版</a></footer>
 </div>
 <script src="/life/life.js"></script>
 <script src="/life/comments.js"></script>
@@ -66,14 +66,14 @@
     $('rights').textContent = line(post.author);
     if (post.rights === 'credit') {
       const link = document.createElement('a');
-      link.href = `https://gamesyuan.com/life/post/?id=${post.id}`;
-      link.textContent = `gamesyuan.com/life/post/?id=${post.id}`;
+      link.href = `https://yuanens.com/life/post/?id=${post.id}`;
+      link.textContent = `yuanens.com/life/post/?id=${post.id}`;
       $('rights').append(link);
     }
   }
 
   function show({ post, newer, older }) {
-    const url = `https://gamesyuan.com/life/post/?id=${post.id}`;
+    const url = `https://yuanens.com/life/post/?id=${post.id}`;
     const summary = excerpt(post.body, 110) || post.title;
     setMeta({
       title: `${post.title} | 生活园`,
@@ -90,8 +90,8 @@
         inLanguage: 'zh-CN',
         url,
         mainEntityOfPage: url,
-        author: { '@type': 'Person', name: post.author, url: `https://gamesyuan.com${authorUrl(post.author)}` },
-        publisher: { '@type': 'Organization', name: 'gamesyuan', url: 'https://gamesyuan.com/' },
+        author: { '@type': 'Person', name: post.author, url: `https://yuanens.com${authorUrl(post.author)}` },
+        publisher: { '@type': 'Organization', name: 'gamesyuan', url: 'https://yuanens.com/' },
         keywords: post.tags.split(/\s+/).filter(Boolean).join(','),
       },
     });

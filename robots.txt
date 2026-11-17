@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://gamesyuan.com/sitemap.xml
+Sitemap: https://yuanens.com/sitemap.xml
 # 生活园的公开文章和作者页，由服务器按最新文章生成
-Sitemap: https://api.gamesyuan.com/sitemap-life.xml
+Sitemap: https://api.yuanens.com/sitemap-life.xml

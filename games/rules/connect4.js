@@ -1,7 +1,7 @@
 // 四子连珠规则：7 列 6 行竖着放的棋盘，红先黄后。每次选一列放子，子落到这一列最下面的空位。
 // 横、竖、斜连成四子就赢；放满还没人连成就是和棋。
 // board[r][c]：r = 0 是最上面一行。'' 空，'r' 红，'y' 黄。走法是列号 0–6。
-// 服务器（server/lobby.js）和网页（gamesyuan.com/games/rules/）共用这一份：改了要运行 node tools/copy-rules.js
+// 服务器（server/lobby.js）和网页（yuanens.com/games/rules/）共用这一份：改了要运行 node tools/copy-rules.js
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.Connect4 = factory();

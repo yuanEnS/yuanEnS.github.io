@@ -1,6 +1,6 @@
 // 生活园共用的代码：接口、排版、日期
 const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
-const API = LOCAL ? 'http://127.0.0.1:8787/api' : 'https://api.gamesyuan.com/api';
+const API = LOCAL ? 'http://127.0.0.1:8787/api' : 'https://api.yuanens.com/api';
 const TOKEN_KEY = 'xiangqi:token'; // 和游戏、账号页共用
 const DIGITS = '〇一二三四五六七八九';
 

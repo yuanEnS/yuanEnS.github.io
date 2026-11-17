@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>账号与排行榜 · 象棋五子棋积分榜 | 游戏园</title>
 <meta name="description" content="游戏园积分排行榜：中国象棋、五子棋快速匹配的等级分排名。用 Google 或邮箱登录，积分可以跨设备保存。">
-<link rel="canonical" href="https://gamesyuan.com/account/">
+<link rel="canonical" href="https://yuanens.com/account/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -168,12 +168,12 @@
 </main>
 
 <footer>
-  <div class="wrap"><a href="/privacy/">隐私说明</a> · © 2026 游戏园 gamesyuan.com</div>
+  <div class="wrap"><a href="/privacy/">隐私说明</a> · © 2026 游戏园 yuanens.com</div>
 </footer>
 
 <script>
   const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
-  const API = LOCAL ? 'http://127.0.0.1:8787/api' : 'https://api.gamesyuan.com/api';
+  const API = LOCAL ? 'http://127.0.0.1:8787/api' : 'https://api.yuanens.com/api';
   const TOKEN_KEY = 'xiangqi:token'; // 和游戏共用，见 wx-adapter.js 的存储前缀
   const GAME_NAMES = { xiangqi: '象棋', gomoku: '五子棋', othello: '黑白棋', connect4: '四子连珠', jungle: '斗兽棋', chengyu: '成语接龙' };
   const $ = id => document.getElementById(id);

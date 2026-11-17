@@ -1,4 +1,4 @@
-// 文章下面的评论和回复，只有文字。接口在 api.gamesyuan.com/api/life/comments。
+// 文章下面的评论和回复，只有文字。接口在 api.yuanens.com/api/life/comments。
 // mountComments(section, postId)：section 是空的 <section>，评论区画在里面。
 const COMMENT_CANNOT = {
   login: '登录后可以评论。',
