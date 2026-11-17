@@ -41,6 +41,14 @@ a { color: inherit; }
 .top { display: flex; justify-content: space-between; align-items: baseline; padding: 24px 0 0; font-size: 17px; color: var(--muted); }
 .top a { text-decoration: none; }
 .top a:hover { color: var(--primary); }
+/* 主页右上角的账号入口：醒目一点 */
+.home-top { align-items: center; }
+.top .account-link {
+  padding: 4px 16px; border: 1.5px solid var(--primary); border-radius: 999px;
+  color: var(--primary); font-size: 16px; line-height: 1.7; white-space: nowrap;
+}
+.top .account-link:hover { background: var(--primary); color: #FFF4E6; }
+.top .account-link.signed-in::before { content: '◉ '; font-size: 12px; vertical-align: 1px; }
 
 /* 印章 */
 .seal {

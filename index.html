@@ -3,31 +3,31 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>gamesyuan · 生活园、游戏园、研究园与阅读园</title>
-<meta name="description" content="gamesyuan 有四个园子：生活园，写写日常，看看世界各地的作者；游戏园，打开就能玩中国象棋和五子棋；研究园，统计学经典书籍和期刊新文章；阅读园，中英文经典名著在线读。">
+<title>Enjoy and Share · 生活园、游戏园、研究园与阅读园</title>
+<meta name="description" content="Enjoy and Share 有四个园子：生活园，写写日常，看看世界各地的作者；游戏园，打开就能玩中国象棋和五子棋；研究园，统计学经典书籍和期刊新文章；阅读园，中英文经典名著在线读。">
 <link rel="canonical" href="https://yuanens.com/">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="gamesyuan">
-<meta property="og:title" content="gamesyuan · 生活园、游戏园、研究园与阅读园">
-<meta property="og:description" content="gamesyuan 有四个园子：生活园，写写日常，看看世界各地的作者；游戏园，打开就能玩中国象棋和五子棋；研究园，统计学经典书籍和期刊新文章；阅读园，中英文经典名著在线读。">
+<meta property="og:site_name" content="Enjoy and Share">
+<meta property="og:title" content="Enjoy and Share · 生活园、游戏园、研究园与阅读园">
+<meta property="og:description" content="Enjoy and Share 有四个园子：生活园，写写日常，看看世界各地的作者；游戏园，打开就能玩中国象棋和五子棋；研究园，统计学经典书籍和期刊新文章；阅读园，中英文经典名著在线读。">
 <meta property="og:url" content="https://yuanens.com/">
 <meta property="og:image" content="https://yuanens.com/og.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="apple-mobile-web-app-title" content="Enjoy &amp; Share">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <script src="/pwa.js" defer></script>
 <meta name="theme-color" content="#FBF6EE">
 <link rel="stylesheet" href="/life/fonts/kai.css">
-<link rel="stylesheet" href="/life/life.css">
+<link rel="stylesheet" href="/life/life.css?v=11">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "gamesyuan",
-  "alternateName": "游戏园",
+  "name": "Enjoy and Share",
+  "alternateName": "yuanens",
   "url": "https://yuanens.com/",
   "inLanguage": "zh-CN"
 }
@@ -35,10 +35,12 @@
 </head>
 <body>
 <div class="page">
+<!-- 右上角的账号入口：没登录显示「登录 / 注册」，登录了显示昵称 -->
+<nav class="top home-top"><span></span><a class="account-link" id="account-link" href="/account/">登录 / 注册</a></nav>
 <header class="masthead">
   <span class="seal" aria-hidden="true">园</span>
-  <h1>gamesyuan</h1>
-  <p>写写生活，下下棋。</p>
+  <h1>Enjoy and Share</h1>
+  <p>写写生活，下下棋，读读书，一起分享。</p>
 </header>
 <form class="site-search" action="https://api.yuanens.com/search" method="get" role="search"><input type="search" name="q" placeholder="搜书名、作者、正文、论文" aria-label="搜索"><input type="hidden" name="in" value="all"><button type="submit">搜索</button></form>
 <script>/* 本地预览时搜索走本地服务器 */ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { var fs = document.querySelectorAll('.site-search'); for (var i = 0; i < fs.length; i++) fs[i].action = 'http://127.0.0.1:8787/search'; }</script>
@@ -51,12 +53,12 @@
   <a class="door" href="/games/">
     <span class="seal" aria-hidden="true">游</span>
     <span class="door-name">游戏园<small>games</small></span>
-    <span class="door-text">中国象棋、五子棋，打开就能玩。</span>
+    <span class="door-text">象棋、五子棋、黑白棋、数独……十几个小游戏，打开就能玩。</span>
   </a>
   <a class="door" href="/research/">
     <span class="seal" aria-hidden="true">研</span>
     <span class="door-name">研究园<small>research</small></span>
-    <span class="door-text">统计学经典书籍，和期刊每周的新文章。</span>
+    <span class="door-text">统计学经典书籍，和期刊 2016 年以来的文章。</span>
   </a>
   <a class="door" href="/reading/">
     <span class="seal" aria-hidden="true">读</span>
@@ -65,7 +67,26 @@
   </a>
 </main>
 <p class="install" id="install" hidden><span id="install-text"></span> <button type="button" class="primary" id="install-button" hidden>装到手机</button></p>
-<footer class="foot"><a href="/account/">账号</a> · <a href="/privacy/">隐私说明</a> · <a href="https://github.com/yuanEnS" rel="noopener">GitHub</a></footer>
+<footer class="foot"><a href="/account/">账号与排行榜</a> · <a href="/privacy/">隐私说明</a> · <a href="https://github.com/yuanEnS" rel="noopener">GitHub</a></footer>
 </div>
+<script>
+  // 登录了就把右上角换成昵称（登录令牌和游戏、账号页共用）
+  (function () {
+    var token = '';
+    try { token = JSON.parse(localStorage.getItem('xiangqi:token')) || ''; } catch (e) {}
+    if (!token) return;
+    var local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+    var api = local ? 'http://127.0.0.1:8787/api' : 'https://api.yuanens.com/api';
+    fetch(api + '/me', { headers: { Authorization: 'Bearer ' + token } }).then(function (res) {
+      return res.ok ? res.json() : null;
+    }).then(function (data) {
+      if (!data || !data.user) return;
+      var link = document.getElementById('account-link');
+      link.textContent = data.user.guest ? '游客 · 去登录' : data.user.name;
+      link.title = data.user.guest ? '用邮箱或 Google 登录，保存你的积分和文章' : '我的账号';
+      if (!data.user.guest) link.classList.add('signed-in');
+    }).catch(function () {});
+  })();
+</script>
 </body>
 </html>

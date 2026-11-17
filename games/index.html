@@ -3,17 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>游戏园 · 打开就能玩的网页小游戏 | gamesyuan</title>
-<meta name="description" content="游戏园（gamesyuan）是一个免费的网页小游戏站，不用下载、不用注册。中国象棋、五子棋、黑白棋、四子连珠、斗兽棋支持人机对战和联网对弈，成语接龙也能联网对战；还有华容道、数独、扫雷、24 点、诗词填字，和原创的一触即发。手机电脑都能玩，墨水屏也看得清。">
-<meta name="keywords" content="游戏园,gamesyuan,网页小游戏,在线象棋,中国象棋,五子棋,黑白棋,翻转棋,四子连珠,斗兽棋,华容道,数独,扫雷,24点,诗词填字,成语接龙,免费小游戏">
+<title>游戏园 · 打开就能玩的网页小游戏 | Enjoy and Share</title>
+<meta name="description" content="游戏园是 Enjoy and Share 里免费的网页小游戏站，不用下载、不用注册。中国象棋、五子棋、黑白棋、四子连珠、斗兽棋支持人机对战和联网对弈，成语接龙也能联网对战；还有华容道、数独、扫雷、24 点、诗词填字，和原创的一触即发。手机电脑都能玩，墨水屏也看得清。">
+<meta name="keywords" content="游戏园,Enjoy and Share,网页小游戏,在线象棋,中国象棋,五子棋,黑白棋,翻转棋,四子连珠,斗兽棋,华容道,数独,扫雷,24点,诗词填字,成语接龙,免费小游戏">
 <link rel="canonical" href="https://yuanens.com/games/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-title" content="gamesyuan">
+<meta name="apple-mobile-web-app-title" content="Enjoy &amp; Share">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <script src="/pwa.js" defer></script>
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/life/life.css?v=11">
 <script>
   try {
     const ink = JSON.parse(localStorage.getItem('games:ink'));
@@ -78,321 +80,163 @@
 </script>
 
 <style>
-  :root {
-    --bg: #FBF6EE;
-    --card: #FFFDF8;
-    --primary: #C62828;
-    --primary-soft: rgba(198, 40, 40, 0.08);
-    --text: #3A2A1E;
-    --muted: #8A7560;
-    --line: rgba(198, 40, 40, 0.35);
-    --decor: rgba(120, 90, 60, 0.07);
-    --board: #F0DAB2;
-    --board-line: #6B4A2B;
-    --kai: "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Songti SC", serif;
-    --sans: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #16191F;
-      --card: #20242C;
-      --primary: #EF5350;
-      --primary-soft: rgba(239, 83, 80, 0.12);
-      --text: #E8EAED;
-      --muted: #9AA1AD;
-      --line: rgba(239, 83, 80, 0.4);
-      --decor: rgba(255, 255, 255, 0.04);
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #16191F;
-    --card: #20242C;
-    --primary: #EF5350;
-    --primary-soft: rgba(239, 83, 80, 0.12);
-    --text: #E8EAED;
-    --muted: #9AA1AD;
-    --line: rgba(239, 83, 80, 0.4);
-    --decor: rgba(255, 255, 255, 0.04);
-  }
-
-  /* 在任何一个小游戏里打开过「黑白」，这里也跟着变成黑白 */
-  :root[data-ink] {
-    --bg: #FFFFFF; --card: #FFFFFF; --primary: #000000; --primary-soft: #FFFFFF; --text: #000000;
-    --muted: #000000; --line: #000000; --decor: transparent; --board: #FFFFFF;
-  }
-  :root[data-ink] .tag { border: 1px solid #000; }
-  :root[data-ink] .btn { color: #FFF; }
-  :root[data-ink] a.game:hover { box-shadow: none; transform: none; }
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font: 16px/1.7 var(--sans);
-  }
-  a { color: inherit; }
-  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
-
-  header { padding: 20px 0; }
-  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .logo-mark {
-    width: 40px; height: 40px; border-radius: 50%;
-    display: grid; place-items: center;
-    background: var(--primary); color: #FFF4E6;
-    font: 22px/1 var(--kai);
-    box-shadow: inset 0 0 0 3px var(--primary), inset 0 0 0 4.5px #FFF4E6;
-  }
-  .logo-name { font: 26px/1 var(--kai); color: var(--primary); }
-  .logo-sub { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
-  nav { display: flex; gap: 18px; font-size: 15px; }
-  nav a { text-decoration: none; color: var(--muted); }
-  nav a:hover { color: var(--primary); }
-
-  .hero { padding: 40px 0 28px; }
-  .hero h1 { margin: 0 0 12px; font: 40px/1.25 var(--kai); color: var(--text); }
-  .hero h1 em { font-style: normal; color: var(--primary); }
-  .hero p { margin: 0 0 24px; max-width: 34em; color: var(--muted); font-size: 17px; }
-  .btn {
-    display: inline-block; padding: 12px 26px; border-radius: 10px;
-    background: var(--primary); color: #fff; text-decoration: none;
-    font: 18px/1.2 var(--kai);
-  }
-  .btn:hover { filter: brightness(1.08); }
-
-  h2 { font: 26px/1.3 var(--kai); margin: 40px 0 16px; }
-  /* 每个游戏一张横向的小卡片：左边一个小图标，右边名字和介绍 */
-  .games { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+  /* 游戏园和生活园、研究园、阅读园用同一套样式（life.css），这里只补游戏卡片 */
+  .group-title { margin: 40px 0 14px; }
+  .group-title small { margin-left: 10px; color: var(--muted); font-size: 15px; }
+  .games { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .game {
-    display: flex; align-items: center; gap: 14px; padding: 12px 14px;
-    background: var(--card); border: 1.5px solid var(--line); border-radius: 14px;
-    text-decoration: none; transition: transform .15s, box-shadow .15s;
+    display: flex; align-items: flex-start; gap: 14px; padding: 18px 18px 16px;
+    border: 1px solid var(--rule); border-radius: 14px; background: var(--card); text-decoration: none;
+    transition: border-color .15s, transform .15s;
   }
-  a.game:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08); }
-  .game svg, .thumb { flex: none; display: block; width: 64px; height: 64px; border-radius: 12px; border: 1.5px solid var(--line); overflow: hidden; }
-  .game-body { min-width: 0; }
-  .game-title { font: 20px/1.3 var(--kai); color: var(--primary); margin: 0 0 2px; }
-  .game-desc { margin: 0 0 6px; color: var(--muted); font-size: 14px; line-height: 1.5; }
-  .tags { display: flex; flex-wrap: wrap; gap: 4px; }
-  .tag { padding: 0 8px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-size: 12px; line-height: 1.7; }
-  .thumb { display: grid; place-items: center; background: var(--board, #F0DAB2); }
-  .thumb span { font: 28px/1 var(--kai); color: var(--primary); letter-spacing: .02em; }
-  .kindle { margin: 8px 0 0; padding: 14px 16px; border: 2px solid var(--text); border-radius: 12px; }
-  .kindle h2 { margin: 0 0 8px; font-size: 22px; }
-  .kindle p { margin: 6px 0; }
-  .kindle-hidden { color: var(--muted); font-size: 14px; }
-  .game.soon { border-style: dashed; justify-content: center; align-items: center; min-height: 220px; text-align: center; padding: 24px; }
-  .game.soon .game-title { color: var(--muted); }
-
-  .about { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px 28px; }
-  .about h3 { font: 18px/1.4 var(--kai); margin: 0 0 4px; color: var(--primary); }
-  .about p { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
-
-  footer { margin-top: 48px; padding: 24px 0 40px; border-top: 1px solid var(--decor); color: var(--muted); font-size: 13px; }
-  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
-
-  @media (max-width: 560px) {
-    .hero { padding-top: 16px; }
-    .hero h1 { font-size: 30px; }
-    nav { gap: 12px; font-size: 14px; }
-    .logo-sub { display: none; }
+  .game:hover { border-color: var(--primary); transform: translateY(-2px); }
+  .game .seal { flex: none; width: 44px; height: 44px; font-size: 26px; }
+  .game-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .game-title { font-size: 23px; line-height: 1.35; }
+  .game-desc { color: var(--soft); font-size: 15px; line-height: 1.7; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 2px; }
+  .tag { padding: 0 8px; border: 1px solid var(--rule); border-radius: 999px; color: var(--muted); font-size: 12px; line-height: 20px; }
+  .kindle { margin: 0 0 8px; padding: 14px 18px; border: 1px solid var(--text); border-radius: 12px; }
+  .kindle h2 { margin: 0 0 6px; font-size: 22px; font-weight: 400; }
+  .kindle p { margin: 4px 0; font-size: 17px; }
+  .kindle-hidden { color: var(--muted); font-size: 15px; }
+  .about { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 28px; }
+  .about h3 { margin: 0; font-size: 19px; font-weight: 400; color: var(--primary); }
+  .about p { margin: 2px 0 18px; color: var(--soft); font-size: 15px; line-height: 1.8; }
+  .about a { color: var(--primary); }
+  @media (max-width: 600px) {
+    .games, .about { grid-template-columns: 1fr; }
   }
+  @media (prefers-reduced-motion: reduce) { .game { transition: none; } .game:hover { transform: none; } }
+  /* 在小游戏里打开过「黑白」，这里也跟着黑白 */
+  :root[data-ink] { --bg: #FFF; --card: #FFF; --primary: #000; --text: #000; --soft: #000; --muted: #000; --rule: #000; }
+  :root[data-ink] .game:hover { transform: none; }
 </style>
 </head>
 <body>
-
-<header>
-  <div class="wrap">
-    <a class="logo" href="/games/" aria-label="游戏园">
-      <span class="logo-mark" aria-hidden="true">游</span>
-      <span>
-        <span class="logo-name">游戏园</span><br>
-        <span class="logo-sub">yuanens.com</span>
-      </span>
-    </a>
-    <nav>
-      <a href="/">首页</a>
-      <a href="#games">游戏</a>
-      <a href="/account/">排行榜</a>
-      <a href="/life/">生活园</a>
-      <a href="#about">关于</a>
-      <a href="https://github.com/yuanEnS" rel="noopener">GitHub</a>
-    </nav>
-  </div>
+<div class="page">
+<nav class="top"><a href="/">← 首页</a><span class="top-links"><a href="/account/">账号与排行榜</a></span></nav>
+<header class="masthead">
+  <span class="seal" aria-hidden="true">游</span>
+  <h1>游戏园</h1>
+  <p>打开就能玩的小游戏。和电脑过招，或者一键匹配正在找对手的人。</p>
 </header>
 
-<main class="wrap">
-  <section class="hero">
-    <h1>打开就能玩的<em>小游戏</em></h1>
-    <p>不用下载，不用注册。和电脑过招，或者一键匹配正在找棋友的人。手机、平板、电脑都能玩。</p>
-    <a class="btn" href="/xiangqi/">开始下象棋</a>
-  </section>
+<!-- Kindle 等电子书阅读器才显示：纯网页版的小游戏，和这台阅读器能不能跑完整版游戏的检查结果 -->
+<section class="kindle" id="kindle" hidden>
+  <h2>Kindle 版</h2>
+  <p>阅读器的浏览器比较旧，专门做了不用脚本的版本：<a href="/games/kindle/shici/index.html"><b>诗词填字</b></a> · <a href="/games/kindle/24/index.html"><b>24 点</b></a></p>
+  <p class="kindle-hidden" id="kindle-hidden"></p>
+</section>
 
-  <!-- Kindle 等电子书阅读器才显示：纯网页版的小游戏，和这台阅读器能不能跑完整版游戏的检查结果 -->
-  <section class="kindle" id="kindle" hidden>
-    <h2>Kindle 版</h2>
-    <p>阅读器的浏览器比较旧，专门做了不用脚本的版本：<a href="/games/kindle/shici/index.html"><b>诗词填字</b></a> · <a href="/games/kindle/24/index.html"><b>24 点</b></a></p>
-    <p class="kindle-hidden" id="kindle-hidden"></p>
-  </section>
-
-  <h2 id="games">全部游戏</h2>
+<main id="game-list">
+  <h2 class="section-title group-title" id="games">对弈<small>人机、双人、联网</small></h2>
   <div class="games">
     <a class="game" href="/xiangqi/" data-needs="js canvas">
-      <!-- 象棋缩略图：一角棋盘和三枚棋子 -->
-      <svg viewBox="0 0 320 170" preserveAspectRatio="xMidYMid slice" role="img" aria-label="中国象棋棋盘">
-        <rect width="320" height="170" fill="#F0DAB2"/>
-        <g stroke="#6B4A2B" stroke-width="1" opacity="0.75">
-          <path d="M0 25H320M0 65H320M0 105H320M0 145H320"/>
-          <path d="M20 0V170M60 0V170M100 0V170M140 0V170M180 0V170M220 0V170M260 0V170M300 0V170"/>
-          <path d="M140 25L220 105M220 25L140 105"/>
-        </g>
-        <g font-family="KaiTi, STKaiti, 'Kaiti SC', serif" font-size="24" text-anchor="middle">
-          <g transform="translate(100 65)">
-            <circle r="19" fill="#1F1F1F" stroke="rgba(0,0,0,.35)"/>
-            <circle r="15.5" fill="none" stroke="rgba(255,240,220,.6)"/>
-            <text y="8" fill="#FFF4E6">馬</text>
-          </g>
-          <g transform="translate(180 105)">
-            <circle r="19" fill="#C62828" stroke="rgba(0,0,0,.35)"/>
-            <circle r="15.5" fill="none" stroke="rgba(255,240,220,.75)"/>
-            <text y="8" fill="#FFF4E6">帥</text>
-          </g>
-          <g transform="translate(260 65)">
-            <circle r="19" fill="#C62828" stroke="rgba(0,0,0,.35)"/>
-            <circle r="15.5" fill="none" stroke="rgba(255,240,220,.75)"/>
-            <text y="8" fill="#FFF4E6">炮</text>
-          </g>
-        </g>
-      </svg>
-      <div class="game-body">
-        <h3 class="game-title">中国象棋</h3>
-        <p class="game-desc">人机对战三档难度，在线快速匹配，好友房间约战，5 套棋盘主题。</p>
-        <div class="tags">
-          <span class="tag">人机对战</span>
-          <span class="tag">快速匹配</span>
-          <span class="tag">好友房间</span>
-        </div>
-      </div>
+      <span class="seal" aria-hidden="true">帥</span>
+      <span class="game-body">
+        <span class="game-title">中国象棋</span>
+        <span class="game-desc">人机对战三档难度，在线快速匹配，好友房间约战，5 套棋盘主题。</span>
+        <span class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></span>
+      </span>
     </a>
     <a class="game" href="/wuziqi/" data-needs="js canvas">
-      <!-- 五子棋缩略图：一角棋盘和几枚黑白子 -->
-      <svg viewBox="0 0 320 170" preserveAspectRatio="xMidYMid slice" role="img" aria-label="五子棋棋盘">
-        <rect width="320" height="170" fill="#E2C48F"/>
-        <g stroke="#5E3D22" stroke-width="1" opacity="0.7">
-          <path d="M0 15H320M0 45H320M0 75H320M0 105H320M0 135H320M0 165H320"/>
-          <path d="M10 0V170M40 0V170M70 0V170M100 0V170M130 0V170M160 0V170M190 0V170M220 0V170M250 0V170M280 0V170M310 0V170"/>
-        </g>
-        <circle cx="160" cy="75" r="3" fill="#5E3D22"/>
-        <defs>
-          <radialGradient id="stone-b" cx="35%" cy="30%"><stop offset="0" stop-color="#5C574F"/><stop offset="1" stop-color="#1C1A17"/></radialGradient>
-          <radialGradient id="stone-w" cx="35%" cy="30%"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9E3D6"/></radialGradient>
-        </defs>
-        <g stroke="rgba(0,0,0,.25)">
-          <circle cx="100" cy="135" r="13" fill="url(#stone-b)"/>
-          <circle cx="130" cy="105" r="13" fill="url(#stone-b)"/>
-          <circle cx="160" cy="75" r="13" fill="url(#stone-b)"/>
-          <circle cx="190" cy="45" r="13" fill="url(#stone-b)"/>
-          <circle cx="130" cy="75" r="13" fill="url(#stone-w)"/>
-          <circle cx="160" cy="105" r="13" fill="url(#stone-w)"/>
-          <circle cx="190" cy="75" r="13" fill="url(#stone-w)"/>
-          <circle cx="220" cy="15" r="13" fill="url(#stone-w)"/>
-        </g>
-      </svg>
-      <div class="game-body">
-        <h3 class="game-title">五子棋</h3>
-        <p class="game-desc">15 路标准棋盘，人机对战三档难度，在线快速匹配，好友房间约战。</p>
-        <div class="tags">
-          <span class="tag">人机对战</span>
-          <span class="tag">快速匹配</span>
-          <span class="tag">好友房间</span>
-        </div>
-      </div>
+      <span class="seal" aria-hidden="true">五</span>
+      <span class="game-body">
+        <span class="game-title">五子棋</span>
+        <span class="game-desc">15 路标准棋盘，人机对战三档难度，在线快速匹配，好友房间约战。</span>
+        <span class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></span>
+      </span>
     </a>
     <a class="game" href="/heibai/" data-needs="js">
-      <div class="thumb" aria-hidden="true"><span>●○</span></div>
-      <div class="game-body">
-        <h3 class="game-title">黑白棋</h3>
-        <p class="game-desc">夹住对方的子翻成自己的颜色，最后子多的赢。</p>
-        <div class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></div>
-      </div>
+      <span class="seal" aria-hidden="true">黑</span>
+      <span class="game-body">
+        <span class="game-title">黑白棋</span>
+        <span class="game-desc">夹住对方的子翻成自己的颜色，最后子多的赢。</span>
+        <span class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></span>
+      </span>
     </a>
     <a class="game" href="/sizi/" data-needs="js">
-      <div class="thumb" aria-hidden="true"><span>四</span></div>
-      <div class="game-body">
-        <h3 class="game-title">四子连珠</h3>
-        <p class="game-desc">竖着放子，横竖斜先连成四个的赢。</p>
-        <div class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></div>
-      </div>
+      <span class="seal" aria-hidden="true">四</span>
+      <span class="game-body">
+        <span class="game-title">四子连珠</span>
+        <span class="game-desc">竖着放子，横竖斜先连成四个的赢。</span>
+        <span class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></span>
+      </span>
     </a>
     <a class="game" href="/doushou/" data-needs="js">
-      <div class="thumb" aria-hidden="true"><span>象</span></div>
-      <div class="game-body">
-        <h3 class="game-title">斗兽棋</h3>
-        <p class="game-desc">象狮虎豹狼狗猫鼠，大的吃小的，老鼠能吃大象。</p>
-        <div class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></div>
-      </div>
-    </a>
-    <a class="game" href="/huarong/" data-needs="js">
-      <div class="thumb" aria-hidden="true"><span>曹</span></div>
-      <div class="game-body">
-        <h3 class="game-title">华容道</h3>
-        <p class="game-desc">挪开武将和小兵，让曹操从出口逃出去。14 关从易到难。</p>
-        <div class="tags"><span class="tag">单人益智</span><span class="tag">提示</span></div>
-      </div>
-    </a>
-    <a class="game" href="/shudu/" data-needs="js">
-      <div class="thumb" aria-hidden="true"><span>九</span></div>
-      <div class="game-body">
-        <h3 class="game-title">数独</h3>
-        <p class="game-desc">每行、每列、每宫 1–9 各一次。每日一题，三档难度。</p>
-        <div class="tags"><span class="tag">每日一题</span><span class="tag">笔记</span></div>
-      </div>
-    </a>
-    <a class="game" href="/saolei/" data-needs="js">
-      <div class="thumb" aria-hidden="true"><span>雷</span></div>
-      <div class="game-body">
-        <h3 class="game-title">扫雷</h3>
-        <p class="game-desc">根据数字推理哪里有雷。手机可以长按插旗。</p>
-        <div class="tags"><span class="tag">三档难度</span><span class="tag">单人</span></div>
-      </div>
-    </a>
-    <a class="game" href="/24dian/" data-needs="js">
-      <div class="thumb" aria-hidden="true"><span>24</span></div>
-      <div class="game-body">
-        <h3 class="game-title">24 点</h3>
-        <p class="game-desc">四张牌，加减乘除算出 24。每日五题和练习。</p>
-        <div class="tags"><span class="tag">每日五题</span><span class="tag">算术</span></div>
-      </div>
-    </a>
-    <a class="game" href="/shici/" data-needs="js">
-      <div class="thumb" aria-hidden="true"><span>诗</span></div>
-      <div class="game-body">
-        <h3 class="game-title">诗词填字</h3>
-        <p class="game-desc">古诗名句空了两个字，挑出来填上。</p>
-        <div class="tags"><span class="tag">每日五句</span><span class="tag">唐诗宋词</span></div>
-      </div>
+      <span class="seal" aria-hidden="true">兽</span>
+      <span class="game-body">
+        <span class="game-title">斗兽棋</span>
+        <span class="game-desc">象狮虎豹狼狗猫鼠，大的吃小的，老鼠能吃大象。</span>
+        <span class="tags"><span class="tag">人机对战</span><span class="tag">快速匹配</span><span class="tag">好友房间</span></span>
+      </span>
     </a>
     <a class="game" href="/chengyu/" data-needs="js">
-      <div class="thumb" aria-hidden="true"><span>龙</span></div>
-      <div class="game-body">
-        <h3 class="game-title">成语接龙</h3>
-        <p class="game-desc">用上一个成语的最后一个字接下一个，能联网对战。</p>
-        <div class="tags"><span class="tag">和电脑接</span><span class="tag">自己接</span></div>
-      </div>
-    </a>
-    <a class="game" href="/chufa/" data-needs="js">
-      <div class="thumb" aria-hidden="true"><span>触</span></div>
-      <div class="game-body">
-        <h3 class="game-title">一触即发</h3>
-        <p class="game-desc">点一下，箭头一路连锁。找对起点，一次清空棋盘。</p>
-        <div class="tags"><span class="tag">原创</span><span class="tag">闯关</span><span class="tag">每日一题</span></div>
-      </div>
+      <span class="seal" aria-hidden="true">龙</span>
+      <span class="game-body">
+        <span class="game-title">成语接龙</span>
+        <span class="game-desc">用上一个成语的最后一个字接下一个，能联网对战。</span>
+        <span class="tags"><span class="tag">和电脑接</span><span class="tag">自己接</span></span>
+      </span>
     </a>
   </div>
 
-  <h2 id="about">关于游戏园</h2>
-  <div class="about">
+  <h2 class="section-title group-title">一个人玩<small>益智、每日一题</small></h2>
+  <div class="games">
+    <a class="game" href="/huarong/" data-needs="js">
+      <span class="seal" aria-hidden="true">曹</span>
+      <span class="game-body">
+        <span class="game-title">华容道</span>
+        <span class="game-desc">挪开武将和小兵，让曹操从出口逃出去。14 关从易到难。</span>
+        <span class="tags"><span class="tag">单人益智</span><span class="tag">提示</span></span>
+      </span>
+    </a>
+    <a class="game" href="/shudu/" data-needs="js">
+      <span class="seal" aria-hidden="true">九</span>
+      <span class="game-body">
+        <span class="game-title">数独</span>
+        <span class="game-desc">每行、每列、每宫 1–9 各一次。每日一题，三档难度。</span>
+        <span class="tags"><span class="tag">每日一题</span><span class="tag">笔记</span></span>
+      </span>
+    </a>
+    <a class="game" href="/saolei/" data-needs="js">
+      <span class="seal" aria-hidden="true">雷</span>
+      <span class="game-body">
+        <span class="game-title">扫雷</span>
+        <span class="game-desc">根据数字推理哪里有雷。手机可以长按插旗。</span>
+        <span class="tags"><span class="tag">三档难度</span><span class="tag">单人</span></span>
+      </span>
+    </a>
+    <a class="game" href="/24dian/" data-needs="js">
+      <span class="seal" aria-hidden="true">算</span>
+      <span class="game-body">
+        <span class="game-title">24 点</span>
+        <span class="game-desc">四张牌，加减乘除算出 24。每日五题和练习。</span>
+        <span class="tags"><span class="tag">每日五题</span><span class="tag">算术</span></span>
+      </span>
+    </a>
+    <a class="game" href="/shici/" data-needs="js">
+      <span class="seal" aria-hidden="true">诗</span>
+      <span class="game-body">
+        <span class="game-title">诗词填字</span>
+        <span class="game-desc">古诗名句空了两个字，挑出来填上。</span>
+        <span class="tags"><span class="tag">每日五句</span><span class="tag">唐诗宋词</span></span>
+      </span>
+    </a>
+    <a class="game" href="/chufa/" data-needs="js">
+      <span class="seal" aria-hidden="true">触</span>
+      <span class="game-body">
+        <span class="game-title">一触即发</span>
+        <span class="game-desc">点一下，箭头一路连锁。找对起点，一次清空棋盘。</span>
+        <span class="tags"><span class="tag">原创</span><span class="tag">闯关</span><span class="tag">每日一题</span></span>
+      </span>
+    </a>
+  </div>
+</main>
+
+<h2 class="section-title group-title" id="about">关于游戏园</h2>
+<div class="about">
     <div>
       <h3>完全免费</h3>
       <p>所有游戏免费，打开网页就能玩，不需要注册账号，也不用安装任何东西。</p>
@@ -413,8 +257,10 @@
       <h3>还不会下象棋？</h3>
       <p>看一页<a href="/xiangqi/rules.html">中国象棋规则入门</a>：七种棋子怎么走、怎样算赢、棋谱怎么读，十分钟就能上手。</p>
     </div>
-  </div>
-</main>
+</div>
+
+<footer class="foot"><a href="/">首页</a> · <a href="/account/">账号与排行榜</a> · <a href="/privacy/">隐私说明</a> · <a href="https://github.com/yuanEnS/xiangqi" rel="noopener">源码</a></footer>
+</div>
 
 <script>
   // 电子书阅读器（Kindle 等）：显示 Kindle 版入口，并检查这台阅读器能跑哪些游戏，跑不了的不显示。
@@ -450,23 +296,13 @@
     var note = document.getElementById('kindle-hidden');
     if (hidden.length === cards.length) {
       note.textContent = '这台阅读器的浏览器太旧，下面的完整版游戏都跑不起来，已经隐藏。请玩上面的 Kindle 版。';
-      document.getElementById('games').style.display = 'none';
+      document.getElementById('game-list').style.display = 'none';
     } else if (hidden.length) {
       note.textContent = '这台阅读器跑不了的游戏已经隐藏：' + hidden.join('、') + '。';
     } else {
       note.textContent = '下面的游戏这台阅读器都能打开。建议在游戏里点「黑白」，墨水屏上看得更清楚。';
     }
-    var start = document.querySelector('.hero .btn');
-    if (start && !has.js) start.style.display = 'none';
   })();
 </script>
-
-<footer>
-  <div class="wrap">
-    <span>© 2026 游戏园 yuanens.com</span>
-    <span>源码：<a href="https://github.com/yuanEnS/xiangqi" rel="noopener">github.com/yuanEnS/xiangqi</a> · <a href="/privacy/">隐私说明</a></span>
-  </div>
-</footer>
-
 </body>
 </html>
