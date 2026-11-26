@@ -76,11 +76,30 @@
     setTimeout(() => bubble.remove(), quiet.matches ? 0 : 320);
   }
 
+  // 从这位作者最近的几篇里随机挑一篇：第 n 新的机会是最新一篇的 1/n，上次刚出现过的尽量不再挑
+  function choosePost(pick) {
+    const posts = pick.posts && pick.posts.length ? pick.posts : [pick];
+    const roll = () => {
+      const weights = posts.map((_, i) => 1 / (i + 1));
+      let r = Math.random() * weights.reduce((a, b) => a + b, 0);
+      for (let i = 0; i < posts.length; i++) {
+        r -= weights[i];
+        if (r < 0) return posts[i];
+      }
+      return posts[0];
+    };
+    let post = roll();
+    if (posts.length > 1 && post.id === pick.lastId) post = roll();
+    pick.lastId = post.id;
+    return post;
+  }
+
   function makeBubble(pick) {
     const x = toX(pick.lon), y = toY(pick.lat);
+    const post = choosePost(pick);
     const bubble = document.createElement('a');
     bubble.className = 'bubble';
-    bubble.href = `/life/post/?id=${pick.id}`;
+    bubble.href = `/life/post/?id=${post.id}`;
     view.place(bubble, x, y);
     if (x < 0.22) bubble.classList.add('from-left');
     if (x > 0.78) bubble.classList.add('from-right');
@@ -88,7 +107,7 @@
     const name = document.createElement('strong');
     name.textContent = pick.author;
     const title = document.createElement('span');
-    title.textContent = pick.title;
+    title.textContent = post.title;
     const place = document.createElement('small');
     place.textContent = countryName(pick.country);
     const card = document.createElement('span');

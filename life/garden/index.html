@@ -15,7 +15,7 @@
 <script src="/pwa.js" defer></script>
 <meta name="theme-color" content="#FBF6EE">
 <link rel="stylesheet" href="/life/fonts/kai.css">
-<link rel="stylesheet" href="/life/life.css?v=11">
+<link rel="stylesheet" href="/life/life.css?v=12">
 </head>
 <body>
 <div class="page">
@@ -190,7 +190,7 @@
 <script src="/life/life.js"></script>
 <script src="/life/geo.js"></script>
 <script src="/life/geo-draw.js?v=2"></script>
-<script src="/life/garden-map.js?v=2"></script>
+<script src="/life/garden-map.js?v=3"></script>
 <script src="/life/lunar.js?v=1"></script>
 <script src="/life/cycle.js?v=1"></script>
 <script src="/life/images.js?v=1"></script>
@@ -391,7 +391,7 @@
       been.provinces ? `中国的 ${been.provinces} 个省份` : '',
     ].filter(Boolean).join('、');
     $('map-hint').textContent = items.length
-      ? `去过 ${been.places} 个地方${regions ? `，走过 ${regions}` : ''}。颜色越深去过的地方越多；点红点打开那段故事，滚轮或双指可以缩放。`
+      ? `去过 ${been.places} 个地方${regions ? `，走过 ${regions}` : ''}。颜色越深去过的地方越多；点红点或小图打开那段故事，滚轮或双指可以缩放。`
       : '';
     return newestFirst(items).map(story);
   }

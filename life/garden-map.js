@@ -1,5 +1,6 @@
 // 旅行地图：按国界和中国省界画。去过的国家涂上颜色，去过的地方越多颜色越深（热力图）；
-// 在中国境内按省份分别算（港澳台算省级行政区）。红点是去过的地方，可以点地图选一个地方。可以缩放、拖动。
+// 在中国境内按省份分别算（港澳台算省级行政区）。红点是去过的地方，那一条里有图片的就显示第一张图片的小图；
+// 可以点地图选一个地方。可以缩放、拖动。
 // gardenMap(root, { onPin(item), onPick(lat, lon) }) 返回 { setPins(items), setPick(lat, lon), picking(on) }
 // setPins 返回 { countries, provinces, places }：去过多少个国家、中国的多少个省级行政区、多少个不同的地方
 function gardenMap(root, { onPin, onPick } = {}) {
@@ -65,6 +66,12 @@ function gardenMap(root, { onPin, onPick } = {}) {
 
   const clampLat = lat => Math.max(Geo.BOTTOM, Math.min(Geo.TOP, lat));
 
+  // 正文里第一张图片（单独一段的 ![说明](地址)）
+  function firstPhoto(body) {
+    const m = String(body || '').match(/^\s*!\[[^\]]*\]\((https?:\/\/\S+?|\/\S+?)\)\s*$/m);
+    return m ? m[1] : null;
+  }
+
   function setPins(items) {
     layer.querySelectorAll('.pin').forEach(pin => pin.remove());
     places = new Map();
@@ -91,6 +98,22 @@ function gardenMap(root, { onPin, onPick } = {}) {
       pin.setAttribute('aria-label', item.title);
       pin.lon = item.lon;
       pin.latClamped = clampLat(item.lat);
+      const photo = firstPhoto(item.body);
+      if (photo) {
+        pin.classList.add('photo');
+        const img = document.createElement('img');
+        img.src = photo;
+        img.alt = '';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.referrerPolicy = 'no-referrer';
+        // 图片打不开就还是红点
+        img.addEventListener('error', () => {
+          pin.classList.remove('photo');
+          img.remove();
+        });
+        pin.append(img);
+      }
       pin.addEventListener('click', e => {
         e.stopPropagation();
         if (onPin) onPin(item);
