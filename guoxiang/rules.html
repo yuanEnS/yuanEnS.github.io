@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>国际象棋规则详解：走法、王车易位、吃过路兵、兵升变与和棋 | 游戏园</title>
+<meta name="description" content="一页看懂国际象棋规则：王后车象马兵六种棋子怎么走，王车易位的条件，吃过路兵，兵升变，将死和逼和，三次重复、五十步、子力不足等和棋规则，以及棋谱（代数记谱法）怎么读。">
+<link rel="canonical" href="https://yuanens.com/guoxiang/rules.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<meta name="theme-color" content="#FBF6EE">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:title" content="国际象棋规则详解 · 游戏园">
+<meta property="og:description" content="六种棋子的走法、王车易位、吃过路兵、兵升变、将死与各种和棋，配棋盘图解。">
+<meta property="og:url" content="https://yuanens.com/guoxiang/rules.html">
+<meta property="og:image" content="https://yuanens.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "国际象棋规则详解：走法、王车易位、吃过路兵、兵升变与和棋",
+      "inLanguage": "zh-CN",
+      "url": "https://yuanens.com/guoxiang/rules.html",
+      "image": "https://yuanens.com/og.png",
+      "publisher": { "@type": "Organization", "name": "游戏园", "url": "https://yuanens.com/" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "游戏园", "item": "https://yuanens.com/games/" },
+        { "@type": "ListItem", "position": 2, "name": "国际象棋", "item": "https://yuanens.com/guoxiang/" },
+        { "@type": "ListItem", "position": 3, "name": "规则详解", "item": "https://yuanens.com/guoxiang/rules.html" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "王车易位需要什么条件？", "acceptedAnswer": { "@type": "Answer", "text": "王和这只车都从没动过；王和车之间没有棋子；王现在没被将军；王经过的格子和落到的格子都不能被对方攻击。易位时王往车的方向走两格，车跳到王的另一边紧挨着王。" } },
+        { "@type": "Question", "name": "什么是吃过路兵？", "acceptedAnswer": { "@type": "Answer", "text": "对方的兵从起始位置一次走两格，停在你的兵正旁边时，你可以在紧接着的下一步，用你的兵斜着走到它跳过的那一格，把它吃掉。过了这一步就不能再吃。" } },
+        { "@type": "Question", "name": "兵走到底线会怎样？", "acceptedAnswer": { "@type": "Answer", "text": "兵走到对方底线时必须升变，变成后、车、象或马中的一种，由自己选，不受已有棋子数量限制。绝大多数情况选后。" } },
+        { "@type": "Question", "name": "逼和是输还是和？", "acceptedAnswer": { "@type": "Answer", "text": "是和棋。轮到一方走棋，他的王没有被将军，但没有任何合法的走法，就叫逼和。这和中国象棋不同，中国象棋里无棋可走（困毙）算输。" } },
+        { "@type": "Question", "name": "国际象棋有哪些和棋情况？", "acceptedAnswer": { "@type": "Answer", "text": "逼和；同一局面出现三次；双方连续 50 步都没有吃子也没有动兵；剩下的棋子谁都不可能将死对方（比如王对王、王单马对王）；以及双方同意和棋。" } }
+      ]
+    }
+  ]
+}
+</script>
+
+<style>
+  /* 不用 var()：Kindle 等老浏览器不认 */
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: #FBF6EE; color: #3A2A1E; font: 16px/1.8 -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+  a { color: #C62828; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 18px 0; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .logo { display: flex; align-items: center; text-decoration: none; font: 22px/1 "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif; color: #C62828; margin-right: 12px; }
+  .logo-mark {
+    width: 34px; height: 34px; border-radius: 50%; display: inline-block; text-align: center; line-height: 34px; margin-right: 8px;
+    background: #C62828; color: #FFF4E6; font: 19px/34px "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+  }
+  .crumbs { font-size: 13px; color: #8A7560; }
+  .crumbs a { color: #8A7560; }
+  h1 { font: 34px/1.3 "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif; margin: 20px 0 10px; }
+  .lead { color: #8A7560; margin: 0 0 20px; }
+  h2 { font: 25px/1.4 "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif; margin: 40px 0 12px; padding-top: 10px; border-top: 1px solid #E5D8C6; }
+  h3 { font: 19px/1.4 "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif; margin: 22px 0 4px; color: #C62828; }
+  p, li { margin: 0 0 10px; }
+  ul, ol { padding-left: 1.4em; }
+  .btn { display: inline-block; padding: 11px 24px; border-radius: 10px; background: #C62828; color: #FFF; text-decoration: none; font: 18px/1.2 "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif; }
+  .toc { background: #FFFDF8; border: 1px solid #E5D8C6; border-radius: 12px; padding: 12px 18px; margin: 18px 0 0; }
+  .toc ol { margin: 0; padding-left: 1.3em; columns: 2; column-gap: 24px; }
+  .toc li { margin: 2px 0; }
+  .note { background: #F7E9E3; border-radius: 10px; padding: 10px 14px; margin: 12px 0; }
+  .table-scroll { overflow-x: auto; }
+  table.info { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 15px; }
+  table.info th, table.info td { padding: 8px 10px; border-bottom: 1px solid #E5D8C6; text-align: left; vertical-align: top; }
+  table.info th { color: #8A7560; font-weight: normal; font-size: 13px; }
+  table.info td:first-child { white-space: nowrap; font: 17px/1.5 "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif; }
+  .fig { font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "DejaVu Sans", serif; font-size: 22px; line-height: 1; margin-right: 4px; vertical-align: -2px; }
+  code { font: 15px/1.5 Menlo, Consolas, monospace; background: #F3EADC; padding: 1px 5px; border-radius: 4px; }
+
+  /* 棋盘示意图 */
+  .diagrams { display: flex; flex-wrap: wrap; justify-content: center; }
+  .diagram { margin: 10px 10px 16px; width: 272px; }
+  .bd { border-collapse: collapse; border: 3px solid #6B4A2B; margin: 0 auto; }
+  .bd td { position: relative; width: 33px; height: 33px; padding: 0; text-align: center; vertical-align: middle; }
+  .bd td.l { background: #F0D9B5; }
+  .bd td.d { background: #B58863; }
+  .bd td.hl.l { background: #E8D36A; }
+  .bd td.hl.d { background: #C9A93E; }
+  .bd span { position: relative; z-index: 1; font: 27px/1 "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "DejaVu Sans", serif; }
+  .bd span.w { color: #FFF; text-shadow: 0 0 1px #000, 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; }
+  .bd span.b { color: #1E1A16; }
+  .bd td.dot::after { content: ""; position: absolute; left: 12px; top: 12px; width: 9px; height: 9px; border-radius: 50%; background: #2E5E1E; }
+  .bd td.x { box-shadow: inset 0 0 0 3px #B71C1C; }
+  .bd i { position: absolute; font: 9px/1 Arial, sans-serif; font-style: normal; color: #6B4A2B; opacity: .85; }
+  .bd td.d i { color: #F0D9B5; }
+  .bd i.rk { left: 2px; top: 2px; }
+  .bd i.fl { right: 2px; bottom: 1px; }
+  .diagram figcaption { margin-top: 6px; font-size: 14px; line-height: 1.6; color: #6E5A47; }
+
+  .cta { margin: 40px 0 0; padding: 22px; border-radius: 14px; background: #FFFDF8; border: 1.5px solid #E2A9A2; text-align: center; }
+  .cta p { color: #8A7560; }
+  footer { margin-top: 40px; padding: 20px 0 36px; border-top: 1px solid #E5D8C6; color: #8A7560; font-size: 13px; }
+  footer a { color: #8A7560; }
+
+  @media (max-width: 560px) {
+    h1 { font-size: 27px; }
+    .toc ol { columns: 1; }
+    table.info th, table.info td { padding: 8px 6px; }
+    table.info td:first-child { white-space: normal; }
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #16191F; color: #E8EAED; }
+    a, .logo, h3 { color: #EF5350; }
+    .lead, .crumbs, .crumbs a, table.info th, .cta p, footer, footer a { color: #9AA1AD; }
+    h2, table.info th, table.info td, footer { border-color: #333A45; }
+    .toc, .cta { background: #20242C; border-color: #333A45; }
+    .note { background: #2A2226; }
+    code { background: #2A2F38; }
+    .diagram figcaption { color: #B7BEC9; }
+  }
+  /* 墨水屏：纯黑白 */
+  @media (monochrome) {
+    body { background: #FFF; color: #000; }
+    a, h3, .logo { color: #000; }
+    .bd { border-color: #000; }
+    .bd td.l, .bd td.hl.l { background: #FFF; }
+    .bd td.d, .bd td.hl.d { background: #C8C8C8; }
+    .bd td.hl { outline: 3px solid #000; outline-offset: -3px; }
+    .bd td.dot::after { background: #000; }
+    .bd td.x { box-shadow: none; outline: 3px dotted #000; outline-offset: -3px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="/games/" aria-label="游戏园"><span class="logo-mark" aria-hidden="true">游</span>游戏园</a>
+    <nav class="crumbs"><a href="/games/">游戏园</a> › <a href="./">国际象棋</a> › 规则</nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>国际象棋规则详解</h1>
+  <p class="lead">六种棋子怎么走，三条特殊规则（王车易位、吃过路兵、兵升变），怎样算赢、哪些情况是和棋，以及棋谱怎么读。配了棋盘图，看完就能下。</p>
+  <a class="btn" href="./">直接开始下棋</a>
+
+  <nav class="toc" aria-label="目录">
+    <ol>
+      <li><a href="#board">棋盘和摆法</a></li>
+      <li><a href="#pieces">六种棋子的走法</a></li>
+      <li><a href="#check">将军和将死</a></li>
+      <li><a href="#castling">王车易位</a></li>
+      <li><a href="#en-passant">吃过路兵</a></li>
+      <li><a href="#promotion">兵升变</a></li>
+      <li><a href="#draws">和棋的五种情况</a></li>
+      <li><a href="#notation">怎么读棋谱</a></li>
+      <li><a href="#tips">新手入门建议</a></li>
+      <li><a href="#xiangqi">和中国象棋有什么不同</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="board">棋盘和摆法</h2>
+  <p>国际象棋的棋盘是 8×8 共 64 个黑白相间的格子，棋子放在<strong>格子里</strong>。竖的 8 列叫<strong>直线</strong>，从白方左手边起用字母 a 到 h 表示；横的 8 行叫<strong>横线</strong>，从白方这边起用数字 1 到 8 表示。每个格子都有一个名字，比如 e4 就是 e 列和第 4 横线交叉的那一格。</p>
+  <p>双方各有 16 个棋子：1 王、1 后、2 车、2 象、2 马、8 兵。白方在第 1、2 横线，黑方在第 7、8 横线。<strong>白方先走</strong>，之后轮流，每次走一步。</p>
+  <div class="diagrams">
+    <figure class="diagram"><table class="bd" role="img" aria-label="棋盘：黑车 a8，黑马 b8，黑象 c8，黑后 d8，黑王 e8，黑象 f8，黑马 g8，黑车 h8，黑兵 a7，黑兵 b7，黑兵 c7，黑兵 d7，黑兵 e7，黑兵 f7，黑兵 g7，黑兵 h7，白兵 a2，白兵 b2，白兵 c2，白兵 d2，白兵 e2，白兵 f2，白兵 g2，白兵 h2，白车 a1，白马 b1，白象 c1，白后 d1，白王 e1，白象 f1，白马 g1，白车 h1"><tr><td class="l"><i class="rk">8</i><span class="b">♜&#xFE0E;</span></td><td class="d"><span class="b">♞&#xFE0E;</span></td><td class="l"><span class="b">♝&#xFE0E;</span></td><td class="d"><span class="b">♛&#xFE0E;</span></td><td class="l"><span class="b">♚&#xFE0E;</span></td><td class="d"><span class="b">♝&#xFE0E;</span></td><td class="l"><span class="b">♞&#xFE0E;</span></td><td class="d"><span class="b">♜&#xFE0E;</span></td></tr><tr><td class="d"><i class="rk">7</i><span class="b">♟&#xFE0E;</span></td><td class="l"><span class="b">♟&#xFE0E;</span></td><td class="d"><span class="b">♟&#xFE0E;</span></td><td class="l"><span class="b">♟&#xFE0E;</span></td><td class="d"><span class="b">♟&#xFE0E;</span></td><td class="l"><span class="b">♟&#xFE0E;</span></td><td class="d"><span class="b">♟&#xFE0E;</span></td><td class="l"><span class="b">♟&#xFE0E;</span></td></tr><tr><td class="l"><i class="rk">6</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">5</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">4</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">3</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">2</i><span class="w">♟&#xFE0E;</span></td><td class="d"><span class="w">♟&#xFE0E;</span></td><td class="l"><span class="w">♟&#xFE0E;</span></td><td class="d"><span class="w">♟&#xFE0E;</span></td><td class="l"><span class="w">♟&#xFE0E;</span></td><td class="d"><span class="w">♟&#xFE0E;</span></td><td class="l"><span class="w">♟&#xFE0E;</span></td><td class="d"><span class="w">♟&#xFE0E;</span></td></tr><tr><td class="d"><i class="rk">1</i><i class="fl">a</i><span class="w">♜&#xFE0E;</span></td><td class="l"><i class="fl">b</i><span class="w">♞&#xFE0E;</span></td><td class="d"><i class="fl">c</i><span class="w">♝&#xFE0E;</span></td><td class="l"><i class="fl">d</i><span class="w">♛&#xFE0E;</span></td><td class="d"><i class="fl">e</i><span class="w">♚&#xFE0E;</span></td><td class="l"><i class="fl">f</i><span class="w">♝&#xFE0E;</span></td><td class="d"><i class="fl">g</i><span class="w">♞&#xFE0E;</span></td><td class="l"><i class="fl">h</i><span class="w">♜&#xFE0E;</span></td></tr></table><figcaption>开局摆法。记两点就不会摆错：棋盘右下角（h1）是白格；后放在和自己同色的格子上（白后 d1，黑后 d8）。</figcaption></figure>
+  </div>
+
+  <h2 id="pieces">六种棋子的走法</h2>
+  <div class="table-scroll">
+  <table class="info">
+    <thead><tr><th>棋子</th><th>怎么走</th><th>大约值几个兵</th></tr></thead>
+    <tbody>
+      <tr><td><span class="fig">&#x265A;&#xFE0E;</span>王</td><td>横、竖、斜任意方向走一格。不能走到被对方攻击的格子上（不能「送王」）。</td><td>无价（丢了就输）</td></tr>
+      <tr><td><span class="fig">&#x265B;&#xFE0E;</span>后</td><td>横、竖、斜任意方向直线走，格数不限。最强的棋子。</td><td>9</td></tr>
+      <tr><td><span class="fig">&#x265C;&#xFE0E;</span>车</td><td>横、竖直线走，格数不限。</td><td>5</td></tr>
+      <tr><td><span class="fig">&#x265D;&#xFE0E;</span>象</td><td>斜线走，格数不限。一只象从头到尾都在同一种颜色的格子上，所以每方有一只「白格象」和一只「黑格象」。</td><td>3</td></tr>
+      <tr><td><span class="fig">&#x265E;&#xFE0E;</span>马</td><td>走「L」形：直走两格再横走一格（或者横两格再直一格）。马可以<strong>跳过</strong>中间的任何棋子，没有「蹩马腿」。</td><td>3</td></tr>
+      <tr><td><span class="fig">&#x265F;&#xFE0E;</span>兵</td><td>只能往前直走一格，不能后退；每个兵<strong>第一次走时可以走两格</strong>。吃子时<strong>斜着往前</strong>吃一格，前面有子挡着就走不动。</td><td>1</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>除了马，所有棋子都不能越过别的棋子。走到对方棋子所在的格子上，就把它吃掉（拿出棋盘）；自己的棋子不能吃。兵是唯一「走法」和「吃法」不一样的棋子。</p>
+  <div class="diagrams">
+    <figure class="diagram"><table class="bd" role="img" aria-label="棋盘：白马 d4"><tr><td class="l"><i class="rk">8</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">7</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">6</i></td><td class="d"></td><td class="l dot"></td><td class="d"></td><td class="l dot"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">5</i></td><td class="l dot"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l dot"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">4</i></td><td class="d"></td><td class="l"></td><td class="d"><span class="w">♞&#xFE0E;</span></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">3</i></td><td class="l dot"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l dot"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">2</i></td><td class="d"></td><td class="l dot"></td><td class="d"></td><td class="l dot"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">1</i><i class="fl">a</i></td><td class="l"><i class="fl">b</i></td><td class="d"><i class="fl">c</i></td><td class="l"><i class="fl">d</i></td><td class="d"><i class="fl">e</i></td><td class="l"><i class="fl">f</i></td><td class="d"><i class="fl">g</i></td><td class="l"><i class="fl">h</i></td></tr></table><figcaption>马在 d4，可以跳到 8 个圆点中的任何一个。马每跳一次，所在格子的颜色就换一次。</figcaption></figure>
+    <figure class="diagram"><table class="bd" role="img" aria-label="棋盘：黑兵 d5，黑马 e5，白兵 d4，白兵 e2"><tr><td class="l"><i class="rk">8</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">7</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">6</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">5</i></td><td class="l"></td><td class="d"></td><td class="l"><span class="b">♟&#xFE0E;</span></td><td class="d x"><span class="b">♞&#xFE0E;</span></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">4</i></td><td class="d"></td><td class="l"></td><td class="d"><span class="w">♟&#xFE0E;</span></td><td class="l dot"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">3</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d dot"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">2</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"><span class="w">♟&#xFE0E;</span></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">1</i><i class="fl">a</i></td><td class="l"><i class="fl">b</i></td><td class="d"><i class="fl">c</i></td><td class="l"><i class="fl">d</i></td><td class="d"><i class="fl">e</i></td><td class="l"><i class="fl">f</i></td><td class="d"><i class="fl">g</i></td><td class="l"><i class="fl">h</i></td></tr></table><figcaption>e2 的兵还没动过，可以走一格或两格；d4 的兵前面被 d5 的兵挡住，不能直走，但可以斜着吃掉 e5 的马。</figcaption></figure>
+  </div>
+  <p class="note">棋子价值只是大概的参考：一般不要用车换对方的象或马，也不要白白丢兵。实战中位置好不好，常常比多一两个兵更重要。</p>
+
+  <h2 id="check">将军和将死</h2>
+  <p>某一步走完，对方的王处在你的棋子能吃到的位置，就叫<strong>将军</strong>（棋谱里用 + 表示）。被将军的一方必须马上解除，有三种办法：</p>
+  <ol>
+    <li><strong>躲开</strong>：把王走到不被攻击的格子；</li>
+    <li><strong>挡住</strong>：在王和将军的棋子之间垫一个子（马将军挡不住）；</li>
+    <li><strong>吃掉</strong>：把将军的那个棋子吃了。</li>
+  </ol>
+  <p>任何一步走完以后，自己的王都不能处在被攻击的位置。所以如果一个子挡在王和对方的车、象、后之间（被<strong>牵制</strong>），它就不能随便走开。</p>
+  <p>被将军以后怎么走都解不了，就是<strong>将死</strong>（棋谱里用 # 表示），被将死的一方输棋。国际象棋里王不会真的被吃掉，将死就结束了。对方主动认输也算赢。</p>
+  <div class="diagrams">
+    <figure class="diagram"><table class="bd" role="img" aria-label="棋盘：白车 a8，黑王 g8，黑兵 f7，黑兵 g7，黑兵 h7，白王 g1"><tr><td class="l hl"><i class="rk">8</i><span class="w">♜&#xFE0E;</span></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"><span class="b">♚&#xFE0E;</span></td><td class="d"></td></tr><tr><td class="d"><i class="rk">7</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"><span class="b">♟&#xFE0E;</span></td><td class="d"><span class="b">♟&#xFE0E;</span></td><td class="l"><span class="b">♟&#xFE0E;</span></td></tr><tr><td class="l"><i class="rk">6</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">5</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">4</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">3</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">2</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d hl"><i class="rk">1</i><i class="fl">a</i></td><td class="l"><i class="fl">b</i></td><td class="d"><i class="fl">c</i></td><td class="l"><i class="fl">d</i></td><td class="d"><i class="fl">e</i></td><td class="l"><i class="fl">f</i></td><td class="d"><i class="fl">g</i><span class="w">♚&#xFE0E;</span></td><td class="l"><i class="fl">h</i></td></tr></table><figcaption>底线杀：白车从 a1 走到 a8 将军。黑王前面被自己的三个兵挡住，无路可逃，车又挡不住也吃不到——将死，白胜。</figcaption></figure>
+  </div>
+
+  <h2 id="castling">王车易位</h2>
+  <p>王车易位是一步特殊的走法：<strong>王和一只车同时动</strong>。王朝车的方向横走两格，然后车跳过王，放在紧挨着王的另一边。它让王躲到角落更安全的地方，同时把车调到中间参战。一局棋每方最多易位一次。</p>
+  <ul>
+    <li><strong>短易位</strong>（王翼易位，棋谱写 O-O）：和 h 列的车。白方王 e1→g1，车 h1→f1；黑方王 e8→g8，车 h8→f8。</li>
+    <li><strong>长易位</strong>（后翼易位，棋谱写 O-O-O）：和 a 列的车。白方王 e1→c1，车 a1→d1；黑方王 e8→c8，车 a8→d8。</li>
+  </ul>
+  <h3>要同时满足五个条件</h3>
+  <ol>
+    <li>王从开局到现在<strong>一步都没动过</strong>（动过再走回原位也不行）；</li>
+    <li>参与易位的那只车也<strong>没动过</strong>；</li>
+    <li>王和车之间的格子<strong>全是空的</strong>；</li>
+    <li>王现在<strong>没有被将军</strong>（不能用易位来躲将）；</li>
+    <li>王<strong>经过的格子和落到的格子</strong>都没有被对方攻击（不能「穿过」火力线）。</li>
+  </ol>
+  <p>注意：只看王走过的格子。长易位时车经过的 b1（或 b8）就算被攻击，也不影响易位。车本身被攻击也可以易位。</p>
+  <div class="diagrams">
+    <figure class="diagram"><table class="bd" role="img" aria-label="棋盘：黑车 a8，黑王 e8，黑车 h8，白车 a1，白王 e1，白车 h1"><tr><td class="l"><i class="rk">8</i><span class="b">♜&#xFE0E;</span></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"><span class="b">♚&#xFE0E;</span></td><td class="d"></td><td class="l"></td><td class="d"><span class="b">♜&#xFE0E;</span></td></tr><tr><td class="d"><i class="rk">7</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">6</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">5</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">4</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">3</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">2</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">1</i><i class="fl">a</i><span class="w">♜&#xFE0E;</span></td><td class="l"><i class="fl">b</i></td><td class="d dot"><i class="fl">c</i></td><td class="l"><i class="fl">d</i></td><td class="d"><i class="fl">e</i><span class="w">♚&#xFE0E;</span></td><td class="l"><i class="fl">f</i></td><td class="d dot"><i class="fl">g</i></td><td class="l"><i class="fl">h</i><span class="w">♜&#xFE0E;</span></td></tr></table><figcaption>易位前：双方的王和车都没动过，中间也空了。白王可以走到 g1（短易位）或 c1（长易位）。</figcaption></figure>
+    <figure class="diagram"><table class="bd" role="img" aria-label="棋盘：黑王 c8，黑车 d8，黑车 h8，白车 a1，白车 f1，白王 g1"><tr><td class="l"><i class="rk">8</i></td><td class="d"></td><td class="l hl"><span class="b">♚&#xFE0E;</span></td><td class="d hl"><span class="b">♜&#xFE0E;</span></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"><span class="b">♜&#xFE0E;</span></td></tr><tr><td class="d"><i class="rk">7</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">6</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">5</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">4</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">3</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">2</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">1</i><i class="fl">a</i><span class="w">♜&#xFE0E;</span></td><td class="l"><i class="fl">b</i></td><td class="d"><i class="fl">c</i></td><td class="l"><i class="fl">d</i></td><td class="d"><i class="fl">e</i></td><td class="l hl"><i class="fl">f</i><span class="w">♜&#xFE0E;</span></td><td class="d hl"><i class="fl">g</i><span class="w">♚&#xFE0E;</span></td><td class="l"><i class="fl">h</i></td></tr></table><figcaption>易位后：白方短易位，王在 g1、车在 f1；黑方长易位，王在 c8、车在 d8。</figcaption></figure>
+  </div>
+  <p class="note">在本站下棋时，先点王，再点它往旁边两格的那个亮点，车会自动跟着过去。</p>
+
+  <h2 id="en-passant">吃过路兵</h2>
+  <p>兵第一次走可以一下走两格，但这样它可能「溜过」对方兵的攻击范围。为了公平，规则允许对方像它只走了一格那样把它吃掉，这叫<strong>吃过路兵</strong>（法语 en passant，棋谱里有时写 e.p.）。</p>
+  <ul>
+    <li>你的兵在第 5 横线（黑方是第 4 横线）；</li>
+    <li>对方紧挨着它的那一列的兵，<strong>从起始位置一次走了两格</strong>，停在你的兵正旁边；</li>
+    <li>你可以<strong>马上在下一步</strong>，用你的兵斜着走到对方兵<strong>跳过的那一格</strong>，把那个兵拿掉。</li>
+  </ul>
+  <p>机会只有这一步：先走了别的，就不能再吃这个兵了。吃过路兵不是必须的，想吃才吃（除非它是唯一的合法走法）。</p>
+  <div class="diagrams">
+    <figure class="diagram"><table class="bd" role="img" aria-label="棋盘：黑王 e8，黑兵 d5，白兵 e5，白王 e1"><tr><td class="l"><i class="rk">8</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"><span class="b">♚&#xFE0E;</span></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">7</i></td><td class="l"></td><td class="d"></td><td class="l hl"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">6</i></td><td class="d"></td><td class="l"></td><td class="d dot"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">5</i></td><td class="l"></td><td class="d"></td><td class="l hl"><span class="b">♟&#xFE0E;</span></td><td class="d"><span class="w">♟&#xFE0E;</span></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">4</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">3</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">2</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">1</i><i class="fl">a</i></td><td class="l"><i class="fl">b</i></td><td class="d"><i class="fl">c</i></td><td class="l"><i class="fl">d</i></td><td class="d"><i class="fl">e</i><span class="w">♚&#xFE0E;</span></td><td class="l"><i class="fl">f</i></td><td class="d"><i class="fl">g</i></td><td class="l"><i class="fl">h</i></td></tr></table><figcaption>黑兵刚从 d7 一下走到 d5，停在白兵 e5 旁边。白方这一步可以走 e5×d6，吃掉 d5 的兵。</figcaption></figure>
+    <figure class="diagram"><table class="bd" role="img" aria-label="棋盘：黑王 e8，白兵 d6，白王 e1"><tr><td class="l"><i class="rk">8</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"><span class="b">♚&#xFE0E;</span></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">7</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">6</i></td><td class="d"></td><td class="l"></td><td class="d hl"><span class="w">♟&#xFE0E;</span></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">5</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d hl"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">4</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">3</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">2</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">1</i><i class="fl">a</i></td><td class="l"><i class="fl">b</i></td><td class="d"><i class="fl">c</i></td><td class="l"><i class="fl">d</i></td><td class="d"><i class="fl">e</i><span class="w">♚&#xFE0E;</span></td><td class="l"><i class="fl">f</i></td><td class="d"><i class="fl">g</i></td><td class="l"><i class="fl">h</i></td></tr></table><figcaption>吃过路兵以后：白兵落在 d6，d5 的黑兵被拿掉了。棋谱写作 exd6。</figcaption></figure>
+  </div>
+
+  <h2 id="promotion">兵升变</h2>
+  <p>兵一路走到对方的底线（白兵到第 8 横线，黑兵到第 1 横线），<strong>必须</strong>立刻变成同色的后、车、象或马中的一种，由自己选，不能留着当兵，也不能变王。升变不受已有棋子数量的限制，理论上可以有好几个后。</p>
+  <p>绝大多数时候选后，因为它最强。偶尔选马更好（比如马能马上将军或抽吃），或者为了避免把对方逼和，选车或象，这叫<strong>低升变</strong>。走到底线的那一步也可以是吃子。</p>
+  <div class="diagrams">
+    <figure class="diagram"><table class="bd" role="img" aria-label="棋盘：黑王 e8，白兵 a7，白王 e1"><tr><td class="l dot"><i class="rk">8</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"><span class="b">♚&#xFE0E;</span></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">7</i><span class="w">♟&#xFE0E;</span></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">6</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">5</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">4</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">3</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">2</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">1</i><i class="fl">a</i></td><td class="l"><i class="fl">b</i></td><td class="d"><i class="fl">c</i></td><td class="l"><i class="fl">d</i></td><td class="d"><i class="fl">e</i><span class="w">♚&#xFE0E;</span></td><td class="l"><i class="fl">f</i></td><td class="d"><i class="fl">g</i></td><td class="l"><i class="fl">h</i></td></tr></table><figcaption>a7 的兵再走一步就到底线。走到 a8 后变成后，棋谱写作 a8=Q（这里还同时将军，写 a8=Q+）。</figcaption></figure>
+  </div>
+  <p class="note">在本站下棋时，兵走到底线会弹出后、车、象、马四个按钮，点一个就完成升变。</p>
+
+  <h2 id="draws">和棋的五种情况</h2>
+  <h3>1. 逼和</h3>
+  <p>轮到一方走棋，他的王<strong>没有被将军</strong>，但他<strong>没有任何合法的走法</strong>（每一步都会让自己的王被攻击，或者根本动不了），这一局立即和棋。子力大优的一方要小心：别只顾围王，忘了给对方留一步棋。</p>
+  <div class="diagrams">
+    <figure class="diagram"><table class="bd" role="img" aria-label="棋盘：黑王 h8，白后 f7，白王 g6"><tr><td class="l"><i class="rk">8</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"><span class="b">♚&#xFE0E;</span></td></tr><tr><td class="d"><i class="rk">7</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"><span class="w">♛&#xFE0E;</span></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">6</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"><span class="w">♚&#xFE0E;</span></td><td class="d"></td></tr><tr><td class="d"><i class="rk">5</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">4</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">3</i></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td></tr><tr><td class="l"><i class="rk">2</i></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td><td class="l"></td><td class="d"></td></tr><tr><td class="d"><i class="rk">1</i><i class="fl">a</i></td><td class="l"><i class="fl">b</i></td><td class="d"><i class="fl">c</i></td><td class="l"><i class="fl">d</i></td><td class="d"><i class="fl">e</i></td><td class="l"><i class="fl">f</i></td><td class="d"><i class="fl">g</i></td><td class="l"><i class="fl">h</i></td></tr></table><figcaption>轮到黑方：黑王没被将军，但 g8、g7、h7 都被白后、白王控制，黑方又没有别的子——逼和。白方多一个后，却只得到和棋。</figcaption></figure>
+  </div>
+  <h3>2. 三次重复局面</h3>
+  <p>同一个局面出现了<strong>三次</strong>（不一定连续），就是和棋。「同一局面」指：所有棋子都在同样的位置，轮到同一方走，而且双方的易位权、能不能吃过路兵也一样。常见的是一方不停地将军，另一方躲不开也走不掉，这叫<strong>长将和棋</strong>。</p>
+  <h3>3. 五十步规则</h3>
+  <p>双方<strong>连续各走 50 步</strong>（共 100 步），其间没有任何吃子，也没有动过任何一个兵，就是和棋。这条规则防止一方在赢不了的局面里无休止地拖下去。</p>
+  <h3>4. 子力不足</h3>
+  <p>剩下的棋子不管怎么走，谁都不可能将死对方，立即和棋。比如：王对王；王加一只象对王；王加一只马对王；双方各只剩一只象，而且两只象在同色格上。</p>
+  <p>注意：王加两只马对王虽然一般杀不死，但对方配合失误时是可能将死的，所以不算子力不足。只要还有兵、车或后，也都不算。</p>
+  <h3>5. 双方同意</h3>
+  <p>一方提议和棋，另一方接受，就和棋。和电脑下时不能提和，局面实在走不下去可以点「重新开始」。</p>
+  <p class="note">正式比赛里，三次重复和五十步要由一方向裁判<strong>提出</strong>才判和；不提出就继续下，直到出现五次重复或七十五步时才自动判和。本站为了方便，出现三次重复或满五十步时<strong>自动判和</strong>，网上下棋大多也是这样处理的。</p>
+
+  <h2 id="notation">怎么读棋谱</h2>
+  <p>国际象棋通用<strong>代数记谱法</strong>：每一步写成「棋子字母 + 到达的格子」。</p>
+  <div class="table-scroll">
+  <table class="info">
+    <thead><tr><th>写法</th><th>意思</th></tr></thead>
+    <tbody>
+      <tr><td>K Q R B N</td><td>王（King）、后（Queen）、车（Rook）、象（Bishop）、马（Knight）。兵不写字母。</td></tr>
+      <tr><td>e4、Nf3</td><td>兵走到 e4；马走到 f3。</td></tr>
+      <tr><td>x</td><td>吃子：Bxc6 是象吃 c6 的子；兵吃子写出发的列，比如 exd5。</td></tr>
+      <tr><td>+　#</td><td>将军；将死。</td></tr>
+      <tr><td>O-O　O-O-O</td><td>短易位；长易位。</td></tr>
+      <tr><td>e8=Q</td><td>兵走到 e8 升变成后。</td></tr>
+      <tr><td>Nbd2、R1a3</td><td>两个同样的棋子都能走到这一格时，加上出发的列（b）或横线（1）区分。</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>一个回合写一个序号，先写白方、再写黑方。例如「1. e4 e5 2. Nf3 Nc6 3. Bb5」就是著名的西班牙开局。本站对局时，棋盘下面会按这种写法记下双方的每一步。</p>
+
+  <h2 id="tips">新手入门建议</h2>
+  <ul>
+    <li><strong>抢中心</strong>：开局先用兵占住 e4、d4（或 e5、d5）这几个中心格，再把马、象跳出来对着中心。</li>
+    <li><strong>先出马象，再动后</strong>：后出来太早容易被对方的小子赶来赶去，白白浪费步数。</li>
+    <li><strong>尽早易位</strong>：前十步左右把王易位到安全的一边，让车连起来。</li>
+    <li><strong>每走一步前先看三样</strong>：对方上一步威胁什么？有没有将军、吃子的机会？我要走的这个子走开以后，有没有东西被白吃？</li>
+    <li><strong>领先时换子</strong>：多了子力就主动兑换，局面越简单越好赢；残局里记得让王也出来帮忙。</li>
+    <li><strong>小心逼和</strong>：对方只剩一个王时，每走一步都看看他是不是还有棋可走。</li>
+  </ul>
+
+  <h2 id="xiangqi">和中国象棋有什么不同</h2>
+  <ul>
+    <li>棋子放在<strong>格子里</strong>，不是交叉点上；没有河界和九宫，王可以走遍全盘。</li>
+    <li>马<strong>没有蹩马腿</strong>，可以跳过任何棋子；象<strong>可以过河</strong>，斜线走多远都行。</li>
+    <li>没有炮，多了<strong>后</strong>这个最强的子；兵<strong>只能往前</strong>，斜着吃子，走到底线还能<strong>升变</strong>。</li>
+    <li>两个王可以在同一条线上，但不能紧挨着（谁靠过去都等于送王）。</li>
+    <li>无棋可走时：中国象棋叫困毙，<strong>算输</strong>；国际象棋叫逼和，<strong>算和</strong>。</li>
+    <li>中国象棋是红先，国际象棋是<strong>白先</strong>。</li>
+  </ul>
+  <p>想对照一下？看<a href="/xiangqi/rules.html">中国象棋规则入门</a>。</p>
+
+  <section class="cta">
+    <p>规则看完了，去实战一下吧。电脑有入门、业余、高手、大师、特级大师五档难度，可以悔棋；也可以和朋友在同一台设备上轮流下。</p>
+    <a class="btn" href="./">开始下国际象棋</a>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© 2026 <a href="/games/">游戏园 yuanens.com</a> · <a href="./">在线下国际象棋</a></div>
+</footer>
+
+</body>
+</html>

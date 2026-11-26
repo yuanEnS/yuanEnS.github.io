@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Enjoy &amp; Share">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="/pwa.js" defer></script>
+<meta name="theme-color" content="#FBF6EE">
+<meta property="og:site_name" content="游戏园">
+<meta property="og:image" content="https://yuanens.com/og.png">
+<link rel="stylesheet" href="/life/fonts/kai.css">
+<link rel="stylesheet" href="/games/kit/kit.css?v=7">
+<title>国际象棋 · 和电脑下五档难度 | 游戏园</title>
+<meta name="description" content="免费在线国际象棋：和电脑对弈，入门、业余、高手、大师、特级大师五档难度，支持王车易位、吃过路兵、兵升变，可以悔棋。附国际象棋规则详解。">
+<link rel="canonical" href="https://yuanens.com/guoxiang/">
+<meta property="og:title" content="国际象棋 · 游戏园">
+<meta property="og:description" content="和电脑下国际象棋，五档难度，从入门到特级大师。">
+<meta property="og:url" content="https://yuanens.com/guoxiang/">
+<style>
+  /* 不用 var()：Kindle 不认。老浏览器上棋盘尺寸由 kit.js 算好（.legacy .chess） */
+  .chess {
+    width: 92vw; max-width: 480px; padding: 4px; border-radius: 6px; background: #6B4A2B;
+    display: grid; grid-template-columns: repeat(8, 1fr); box-shadow: 0 6px 18px rgba(0, 0, 0, .12);
+  }
+  .chess button {
+    position: relative; aspect-ratio: 1; padding: 0; border: 0; border-radius: 0; margin: 0;
+    background: #F0D9B5; display: flex; align-items: center; justify-content: center; cursor: default; overflow: hidden;
+  }
+  .chess button.dark { background: #B58863; }
+  .legacy .chess button { float: left; }
+  /* 棋子：图形符号，白子白色描黑边，黑子黑色 */
+  .chess .pc {
+    position: relative; z-index: 1; line-height: 1; font-size: 9.5vw;
+    font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "Noto Sans Symbols2", "DejaVu Sans", "Arial Unicode MS", serif;
+    pointer-events: none;
+  }
+  .chess .pc.w { color: #FFFFFF; text-shadow: 0 0 1px #000, 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 2px 3px rgba(0, 0, 0, .35); }
+  .chess .pc.b { color: #1E1A16; text-shadow: 0 1px 0 rgba(255, 255, 255, .35), 0 2px 3px rgba(0, 0, 0, .3); }
+  /* 棋子：汉字（王后车象马兵），圆片 */
+  .chess .pc.zh {
+    width: 82%; height: 82%; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", "楷体", serif; font-size: 5.5vw; text-shadow: none;
+  }
+  .chess .pc.zh.w { background: #FFF8EC; color: #3A2A1E; border: 2px solid #3A2A1E; }
+  .chess .pc.zh.b { background: #2B211A; color: #FFF4E6; border: 2px solid #2B211A; }
+  @media (min-width: 522px) {
+    .chess .pc { font-size: 50px; }
+    .chess .pc.zh { font-size: 28px; }
+  }
+  .chess .co { position: absolute; z-index: 0; font: 11px/1 -apple-system, "Helvetica Neue", Arial, sans-serif; opacity: .75; pointer-events: none; }
+  .chess .co.file { right: 3px; bottom: 2px; }
+  .chess .co.rank { left: 3px; top: 3px; }
+  .chess button.dark .co { color: #F0D9B5; }
+  .chess button .co { color: #8B6440; }
+  .chess button.pick { cursor: pointer; }
+  .chess button.from, .chess button.to { background: #E8D36A; }
+  .chess button.dark.from, .chess button.dark.to { background: #C9A93E; }
+  .chess button.selected { background: #8FBF5F; }
+  .chess button.dark.selected { background: #6E9E42; }
+  .chess button.check::before {
+    content: ""; position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle, rgba(220, 30, 30, .9) 0, rgba(220, 30, 30, .5) 40%, rgba(220, 30, 30, 0) 72%);
+  }
+  .chess button.target { cursor: pointer; }
+  .chess button.target::after {
+    content: ""; position: absolute; z-index: 2; left: 36%; top: 36%; width: 28%; height: 28%; border-radius: 50%; background: rgba(30, 60, 20, .35);
+  }
+  .chess button.target.capture::after {
+    left: 4%; top: 4%; width: 92%; height: 92%; box-sizing: border-box; background: transparent; border: 5px solid rgba(30, 60, 20, .35);
+  }
+  .chess.thinking button { cursor: progress; }
+
+  /* 黑白屏：白格白色、黑格浅灰，选中和上一步用黑框 */
+  [data-ink] .chess { background: #000; padding: 3px; border-radius: 0; }
+  [data-ink] .chess button, [data-ink] .chess button.from, [data-ink] .chess button.to, [data-ink] .chess button.selected { background: #FFF; }
+  [data-ink] .chess button.dark, [data-ink] .chess button.dark.from, [data-ink] .chess button.dark.to, [data-ink] .chess button.dark.selected { background: #C8C8C8; }
+  [data-ink] .chess .co, [data-ink] .chess button.dark .co { color: #000; opacity: 1; }
+  [data-ink] .chess .pc.w { color: #FFF; text-shadow: 0 0 1px #000, 1.5px 1.5px 0 #000, -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000 !important; }
+  [data-ink] .chess .pc.b { color: #000; }
+  [data-ink] .chess .pc.zh.w { background: #FFF; color: #000; border: 2.5px solid #000; text-shadow: none !important; }
+  [data-ink] .chess .pc.zh.b { background: #000; color: #FFF; border: 2.5px solid #000; }
+  [data-ink] .chess button.selected { outline: 4px solid #000; outline-offset: -4px; }
+  [data-ink] .chess button.from { outline: 2px dashed #000; outline-offset: -4px; }
+  [data-ink] .chess button.to { outline: 3px solid #000; outline-offset: -4px; }
+  [data-ink] .chess button.check::before { background: none; border: 4px double #000; }
+  [data-ink] .chess button.target::after { background: #FFF; border: 3px solid #000; }
+  [data-ink] .chess button.target.capture::after { background: transparent; border: 4px dotted #000; }
+  /* 老浏览器（Kindle）：没有颜色变量，补上格子边框 */
+  .legacy .chess { background: #000; padding: 4px; }
+  .legacy .chess .co { display: none; }
+
+  /* 升变时选棋子 */
+  .promo { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 10px 0 4px; }
+  .promo button { min-width: 64px; min-height: 64px; padding: 4px 10px; border: 2px solid #C62828; border-radius: 10px; background: #FFFDF8; cursor: pointer; }
+  .promo button .pc { display: block; font-size: 38px; line-height: 1.1; font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "DejaVu Sans", serif; color: #1E1A16; }
+  .promo button small { display: block; font-size: 14px; color: #3A2A1E; }
+  [data-ink] .promo button { border: 2px solid #000; background: #FFF; }
+  .promo-box { margin: 8px auto 0; max-width: 480px; padding: 8px 10px; border: 1.5px solid #C62828; border-radius: 12px; background: #FFFDF8; text-align: center; color: #3A2A1E; }
+  [data-ink] .promo-box { border: 2px solid #000; background: #FFF; color: #000; }
+
+  /* 棋谱 */
+  .moves { max-width: 480px; margin: 6px auto 0; padding: 8px 12px; border: 1px solid rgba(120, 90, 60, .2); border-radius: 10px; font: 15px/1.9 -apple-system, "Helvetica Neue", Arial, sans-serif; max-height: 9.6em; overflow-y: auto; }
+  .moves:empty { display: none; }
+  .moves .n { color: #8A7560; margin-right: 3px; }
+  .moves .m { margin-right: 10px; white-space: nowrap; }
+  .moves .m.last { font-weight: 700; }
+  [data-ink] .moves { border: 1.5px solid #000; }
+  [data-ink] .moves .n { color: #000; }
+  .taken { min-height: 1.4em; margin: 2px auto 0; max-width: 480px; text-align: center; font: 20px/1.3 "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "DejaVu Sans", serif; color: #6B4A2B; letter-spacing: 1px; }
+  .taken small { font: 13px/1 -apple-system, Arial, sans-serif; margin-left: 4px; }
+  .rules-link { text-align: center; margin: 14px 0 0; font-size: 15px; }
+  .rules-link a { color: #C62828; }
+  [data-ink] .rules-link a, [data-ink] .taken { color: #000; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]):not([data-ink]) .moves { border-color: rgba(255, 255, 255, .15); }
+    :root:not([data-theme="light"]):not([data-ink]) .moves .n { color: #9AA1AD; }
+    :root:not([data-theme="light"]):not([data-ink]) .taken { color: #C9B79C; }
+    :root:not([data-theme="light"]):not([data-ink]) .rules-link a { color: #EF5350; }
+    :root:not([data-theme="light"]):not([data-ink]) .promo-box { background: #20242C; color: #E8EAED; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <a class="back" href="/games/">← 游戏园</a>
+    <h1>国际象棋</h1>
+    <button type="button" class="btn small rules-btn">规则</button>
+  </header>
+  <div id="modes"></div>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <p class="taken" id="taken-top" aria-hidden="true"></p>
+  <div class="board-wrap"><div class="chess" id="board" role="grid" aria-label="国际象棋棋盘"></div></div>
+  <p class="taken" id="taken-bottom" aria-hidden="true"></p>
+  <div class="promo-box" id="promo" hidden>
+    <div>兵走到底线了，选一种棋子升变：</div>
+    <div class="promo" id="promo-list"></div>
+  </div>
+  <p class="sub" id="sub"></p>
+  <div class="actions" id="actions"></div>
+  <div class="moves" id="moves" aria-label="棋谱"></div>
+  <p class="rules-link">第一次下国际象棋？看<a href="/guoxiang/rules.html">国际象棋规则详解</a>：六种棋子的走法、王车易位、吃过路兵、兵升变，以及将死和各种和棋。</p>
+  <p class="foot"><a href="/games/">游戏园</a> · <a href="/guoxiang/rules.html">规则详解</a></p>
+</div>
+
+<dialog class="rules" id="rules" aria-labelledby="rules-title">
+  <div class="inner">
+    <h2 id="rules-title">国际象棋怎么下</h2>
+    <p>8×8 的棋盘，白方在下、黑方在上，<strong>白方先走</strong>。目标是<strong>将死</strong>对方的王：王被攻击（被将军），而且怎么走都躲不开。</p>
+    <h3>六种棋子</h3>
+    <ul>
+      <li><strong>王</strong> ♚：横、竖、斜走一格。不能走到被对方攻击的格子。</li>
+      <li><strong>后</strong> ♛：横、竖、斜，想走几格走几格，最强的棋子。</li>
+      <li><strong>车</strong> ♜：横、竖直走，格数不限。</li>
+      <li><strong>象</strong> ♝：斜走，格数不限，永远在同一种颜色的格子上。</li>
+      <li><strong>马</strong> ♞：走「日」字（先直走两格再横一格），可以跳过别的棋子，没有蹩马腿。</li>
+      <li><strong>兵</strong> ♟：只能往前走一格，第一次可以走两格；吃子要<strong>斜着往前</strong>吃一格。</li>
+    </ul>
+    <p>除了马，所有棋子都不能越过别的棋子。走到对方棋子所在的格子就把它吃掉。</p>
+    <h3>三条特殊规则</h3>
+    <ul>
+      <li><strong>王车易位</strong>：王和车都没动过、中间没有子、王没被将军，也不经过或停在被攻击的格子上时，王往车的方向走两格，车跳到王的另一边。点王，再点亮着的那一格就行。</li>
+      <li><strong>吃过路兵</strong>：对方的兵第一次走两格，正好停在你的兵旁边，你可以在<strong>紧接着的那一步</strong>斜着走到它跳过的格子，把它吃掉。</li>
+      <li><strong>兵升变</strong>：兵走到对方底线，必须变成后、车、象、马中的一种（通常选后）。</li>
+    </ul>
+    <h3>怎样算结束</h3>
+    <ul>
+      <li><strong>将死</strong>对方就赢了。</li>
+      <li>轮到一方走，王没被将军却无棋可走，叫<strong>逼和</strong>，算和棋。</li>
+      <li>同一局面出现三次、双方连续 50 步没吃子也没动兵、或者剩下的子谁都将不死谁，也是和棋。</li>
+    </ul>
+    <p>更详细的说明和例子：<a href="/guoxiang/rules.html">国际象棋规则详解</a>。</p>
+    <h3>两种玩法</h3>
+    <p><strong>人机</strong>和电脑下，五档难度从入门到特级大师，可以悔棋；<strong>双人</strong>两个人在同一台设备上轮流下。执黑时棋盘会倒过来，自己的棋子总在下面。棋盘下面的「汉字棋子」按钮可以把棋子换成王后车象马兵。</p>
+    <div class="close-row"><button type="button" class="btn primary close">知道了</button></div>
+  </div>
+</dialog>
+
+<script src="/games/rules/chess.js?v=1"></script>
+<script src="/games/kit/kit.js?v=8"></script>
+<script>
+  const { el } = Kit;
+  const { kindOf, sideOf, uci, NAMES, FILES } = Chess;
+  const SIDE_NAMES = { w: '白方', b: '黑方' };
+  const LEVELS = ['入门', '业余', '高手', '大师', '特级大师'];
+  // 每档的思考时间，和 games/rules/chess-engine.js 的 LEVELS 一致：Worker 超过这个时间 1.5 秒还没回话就停掉它
+  const LEVEL_MS = [300, 600, 400, 1000, 4000];
+  const ENGINE_URL = '/games/rules/chess-engine.js?v=1';
+  const FIGURE = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' };
+  const TEXT = '︎'; // 让手机按文字显示符号，不变成彩色表情
+
+  // ---------- 电脑：在 Web Worker 里算，到时间一定出棋 ----------
+  let worker = null;
+  let workerBusy = false;
+  let jobId = 0;
+
+  function stopWorker() {
+    if (worker) worker.terminate();
+    worker = null;
+    workerBusy = false;
+  }
+
+  // 浏览器没有 Worker（或者出错了）：在页面里加载同一个引擎，少算一会儿
+  let mainEngine = null;
+  function loadMainEngine() {
+    if (mainEngine) return mainEngine;
+    mainEngine = new Promise((resolve, reject) => {
+      if (window.ChessEngine) return resolve(window.ChessEngine);
+      const script = document.createElement('script');
+      script.src = ENGINE_URL;
+      script.onload = () => (window.ChessEngine ? resolve(window.ChessEngine) : reject(new Error('引擎没加载上')));
+      script.onerror = () => {
+        mainEngine = null;
+        reject(new Error('引擎没加载上'));
+      };
+      document.head.appendChild(script);
+    });
+    return mainEngine;
+  }
+  function thinkHere(moves, level) {
+    return loadMainEngine().then(engine => new Promise(resolve => {
+      // 先让「电脑在想」画出来再算；页面里算会卡一下，时间压短
+      setTimeout(() => {
+        const r = engine.think({ moves, level, timeMs: level >= 2 ? Math.min(LEVEL_MS[level], 800) : undefined });
+        resolve(r && r.move);
+      }, 30);
+    })).catch(() => null);
+  }
+
+  // 万一什么都算不出来，就随便走一步合法的（保证一定出棋）
+  function anyMove(game) {
+    const list = game.legalMoves();
+    if (!list.length) return null;
+    const capture = list.filter(m => game.board[m.to[0]][m.to[1]]);
+    const pool = capture.length ? capture : list;
+    return uci(pool[Math.floor(Math.random() * pool.length)]);
+  }
+
+  function ai(game, level) {
+    const moves = game.history.map(h => uci(h.move));
+    const id = ++jobId;
+    const valid = move => (move && game.fromUci(move) ? move : null);
+    return new Promise(resolve => {
+      let finished = false, last = null, timer = null;
+      const finish = move => {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
+        workerBusy = false;
+        if (id !== jobId) return resolve(null);
+        move = valid(move);
+        if (move) return resolve(move);
+        thinkHere(moves, level).then(m => resolve(valid(m) || anyMove(game)));
+      };
+      try {
+        if (!worker && typeof Worker !== 'undefined') worker = new Worker(ENGINE_URL);
+      } catch (e) {
+        worker = null;
+      }
+      if (!worker) return finish(null);
+      worker.onmessage = e => {
+        const d = e.data;
+        if (d.id !== id) return;
+        if (d.type === 'info') last = d.move;
+        else finish(d.move || last);
+      };
+      worker.onerror = () => {
+        stopWorker();
+        finish(last);
+      };
+      // 到时间一定出棋：Worker 自己按时限停下；万一它没按时回来（手机切后台、出错），超过 1.5 秒就停掉它，用它已经算出的走法
+      timer = setTimeout(() => {
+        stopWorker();
+        finish(last);
+      }, LEVEL_MS[level] + 1500);
+      workerBusy = true;
+      worker.postMessage({ id, moves, level });
+    });
+  }
+
+  function stopAi() {
+    jobId++;
+    if (workerBusy) stopWorker(); // 正在算的那步不要了，不然下一步要排在它后面
+  }
+
+  // ---------- 棋盘 ----------
+  const boardEl = document.getElementById('board');
+  const promoBox = document.getElementById('promo');
+  const promoList = document.getElementById('promo-list');
+  const movesEl = document.getElementById('moves');
+  const cells = [];
+  for (let i = 0; i < 64; i++) {
+    const cell = el('button', { type: 'button', role: 'gridcell' });
+    cell.addEventListener('click', () => tap(i));
+    cells.push(cell);
+    boardEl.append(cell);
+  }
+  let view = null;
+  let current = null;
+  let selected = null; // [行, 列]
+  let promoting = null; // 等着选升变棋子的走法 { from, to }
+  let glyphs = Kit.store.get('chess:glyphs', 'figure'); // figure 图形 / zh 汉字
+  const glyphBtn = el('button', { type: 'button', className: 'btn', title: '棋子换成汉字或图形' });
+
+  function setGlyphs(value) {
+    glyphs = value;
+    Kit.store.set('chess:glyphs', value);
+    glyphBtn.textContent = value === 'zh' ? '图形棋子' : '汉字棋子';
+    if (current) draw(current, view);
+  }
+  glyphBtn.addEventListener('click', () => setGlyphs(glyphs === 'zh' ? 'figure' : 'zh'));
+  setGlyphs(glyphs);
+
+  function pieceNode(piece, tag) {
+    const side = sideOf(piece), kind = kindOf(piece);
+    if (glyphs === 'zh') return el(tag || 'span', { className: `pc zh ${side}`, text: NAMES[kind] });
+    return el(tag || 'span', { className: `pc ${side}`, text: FIGURE[kind] + TEXT });
+  }
+
+  // 屏幕上第 i 格对应棋盘上的哪一格：执黑时倒过来
+  function at(i) {
+    const r = Math.floor(i / 8), c = i % 8;
+    return view && view.flip ? [7 - r, 7 - c] : [r, c];
+  }
+
+  function tap(i) {
+    if (!view || !view.canPlay) return;
+    const [r, c] = at(i);
+    const piece = current.board[r][c];
+    if (selected && current.targets(selected[0], selected[1]).some(t => t[0] === r && t[1] === c)) {
+      const move = { from: selected, to: [r, c] };
+      selected = null;
+      if (kindOf(current.board[move.from[0]][move.from[1]]) === 'p' && (r === 0 || r === 7)) {
+        askPromotion(move);
+        return;
+      }
+      view.play(move);
+      return;
+    }
+    promoting = null;
+    selected = piece && sideOf(piece) === current.turn && !(selected && selected[0] === r && selected[1] === c) ? [r, c] : null;
+    draw(current, view);
+  }
+
+  function askPromotion(move) {
+    promoting = move;
+    const side = current.turn;
+    promoList.replaceChildren(...'qrbn'.split('').map(kind => {
+      const piece = side === 'w' ? kind.toUpperCase() : kind;
+      const button = el('button', { type: 'button', 'aria-label': `升变成${NAMES[kind]}` },
+        glyphs === 'zh' ? el('span', { className: 'pc', text: NAMES[kind] }) : el('span', { className: 'pc', text: FIGURE[kind] + TEXT }),
+        el('small', { text: NAMES[kind] }));
+      button.addEventListener('click', () => {
+        const m = promoting;
+        promoting = null;
+        if (m && view && view.canPlay) view.play({ from: m.from, to: m.to, promo: kind });
+        else draw(current, view);
+      });
+      return button;
+    }));
+    draw(current, view);
+  }
+
+  const VALUE = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
+  // 吃掉的子：看现在棋盘上少了哪些（升变后多出来的不算）
+  function takenText(game, side) {
+    const start = { p: 8, n: 2, b: 2, r: 2, q: 1 };
+    const have = { p: 0, n: 0, b: 0, r: 0, q: 0 };
+    let material = { w: 0, b: 0 };
+    for (const row of game.board) for (const p of row) {
+      if (!p || kindOf(p) === 'k') continue;
+      material[sideOf(p)] += VALUE[kindOf(p)];
+      if (sideOf(p) === side) have[kindOf(p)]++;
+    }
+    let text = '';
+    for (const kind of 'qrbnp') {
+      const lost = Math.max(0, start[kind] - have[kind]);
+      for (let i = 0; i < lost; i++) text += glyphs === 'zh' ? NAMES[kind] : FIGURE[kind] + TEXT;
+    }
+    const lead = material[Chess.other(side)] - material[side];
+    return { text, lead };
+  }
+
+  function draw(game, v) {
+    if (game !== current || !v.canPlay) {
+      selected = null;
+      promoting = null;
+    }
+    current = game;
+    view = v;
+    const targets = v.canPlay && selected ? game.targets(selected[0], selected[1]) : [];
+    const last = game.lastMove;
+    const checkSq = !game.winner || game.reason === 'mate' ? (game.inCheck() ? findKing(game) : null) : null;
+    boardEl.classList.toggle('thinking', !!v.thinking);
+    cells.forEach((cell, i) => {
+      const [r, c] = at(i);
+      const piece = game.board[r][c];
+      const classes = [];
+      if ((r + c) % 2 === 1) classes.push('dark');
+      const pickable = v.canPlay && !promoting && piece && sideOf(piece) === game.turn;
+      if (pickable) classes.push('pick');
+      if (selected && selected[0] === r && selected[1] === c) classes.push('selected');
+      const isTarget = targets.some(t => t[0] === r && t[1] === c);
+      if (isTarget) classes.push('target');
+      if (isTarget && piece) classes.push('capture');
+      if (last && last.from[0] === r && last.from[1] === c) classes.push('from');
+      if (last && last.to[0] === r && last.to[1] === c) classes.push('to');
+      if (checkSq && checkSq[0] === r && checkSq[1] === c) classes.push('check');
+      cell.className = classes.join(' ');
+      cell.disabled = !(pickable || isTarget || (selected && v.canPlay));
+      const children = [];
+      const row = Math.floor(i / 8), col = i % 8;
+      if (col === 0) children.push(el('span', { className: 'co rank', text: String(8 - r) }));
+      if (row === 7) children.push(el('span', { className: 'co file', text: FILES[c] }));
+      if (piece) children.push(pieceNode(piece));
+      cell.replaceChildren(...children);
+      const name = piece ? `，${SIDE_NAMES[sideOf(piece)]}${NAMES[kindOf(piece)]}` : '';
+      cell.setAttribute('aria-label', `${Chess.square(r, c)}${name}${isTarget ? '，可以走到这里' : ''}`);
+    });
+    promoBox.hidden = !promoting;
+
+    // 吃掉的子：上面显示对面吃掉的我的子，下面显示我吃掉的
+    const bottomSide = v.flip ? 'b' : 'w';
+    const topSide = Chess.other(bottomSide);
+    for (const [id, lostSide] of [['taken-top', bottomSide], ['taken-bottom', topSide]]) {
+      const t = takenText(game, lostSide);
+      const node = document.getElementById(id);
+      node.textContent = t.text;
+      if (t.lead > 0) node.append(el('small', { text: `+${t.lead}` }));
+    }
+
+    // 棋谱
+    const items = [];
+    game.history.forEach((h, i) => {
+      if (i % 2 === 0) items.push(el('span', { className: 'n', text: `${i / 2 + 1}.` }));
+      items.push(el('span', { className: `m${i === game.history.length - 1 ? ' last' : ''}`, text: h.san }));
+    });
+    movesEl.replaceChildren(...items);
+    movesEl.scrollTop = movesEl.scrollHeight;
+  }
+
+  function findKing(game) {
+    const king = game.turn === 'w' ? 'K' : 'k';
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) if (game.board[r][c] === king) return [r, c];
+    return null;
+  }
+
+  Kit.setupRules('guoxiang');
+  Kit.duel({
+    kind: 'chess',
+    Game: Chess.Game,
+    sides: ['w', 'b'],
+    sideNames: SIDE_NAMES,
+    levels: LEVELS,
+    firstLabels: ['我执白先走', '我执黑'],
+    online: false,
+    draw,
+    ai,
+    stopAi,
+    reasons: {
+      mate: '将死',
+      stalemate: '逼和：没被将军，但无棋可走',
+      repetition: '同一局面出现了三次',
+      fifty: '双方连续 50 步没吃子也没动兵',
+      material: '剩下的子谁都将不死谁',
+    },
+    note: game => {
+      if (game.winner) return '';
+      if (game.inCheck()) return `${SIDE_NAMES[game.turn]}被将军了！`;
+      if (game.pos.half >= 80) return `已经连续 ${game.pos.half} 步没吃子、没动兵，到 100 步（各 50 步）算和棋`;
+      if (game.repetitions() === 2) return '这个局面已经出现过两次，再出现一次就是和棋';
+      return '';
+    },
+  });
+  document.getElementById('actions').append(glyphBtn);
+</script>
+</body>
+</html>

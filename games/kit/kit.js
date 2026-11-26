@@ -5,7 +5,7 @@
   // 不问浏览器「支不支持」，直接放几个看不见的小方块量一量，量出来不对就算不支持。
   // 这时由脚本量好页面宽度，把每个棋盘的尺寸算成具体的像素，写成一段样式加到页面上（不用 var()，Kindle 不认）。
   // 页面宽度变了（转屏）就重算。?legacy=1 可以在电脑上强制打开。
-  const KIT_VERSION = 7; // 和页面里 kit.js?v= 的数字一致，?debug=1 时显示，看得出是不是拿到了新文件
+  const KIT_VERSION = 8; // 和页面里 kit.js?v= 的数字一致，?debug=1 时显示，看得出是不是拿到了新文件
   const root = document.documentElement;
   function measure(style) {
     const box = document.createElement('div');
@@ -52,6 +52,10 @@
       .legacy .jungle { width: ${px(B)}; }
       .legacy .jungle button { height: ${px((B - 22) / 7)}; }
       .legacy .jungle .piece { font-size: ${px(B / 13)}; }
+      .legacy .chess { width: ${px(Math.floor((B - 8) / 8) * 8 + 8)}; }
+      .legacy .chess button { width: ${px(Math.floor((B - 8) / 8))}; height: ${px(Math.floor((B - 8) / 8))}; }
+      .legacy .chess .pc { font-size: ${px((B - 8) / 8 * 0.78)}; }
+      .legacy .chess .pc.zh { font-size: ${px((B - 8) / 8 * 0.5)}; width: ${px((B - 8) / 8 * 0.82)}; height: ${px((B - 8) / 8 * 0.82)}; }
       .legacy .hrd { width: ${px(hrd * 4 + 16)}; height: ${px(hrd * 5 + 16)}; }
       .legacy .hrd .exit { left: ${px(8 + hrd)}; width: ${px(hrd * 2)}; }
       .legacy .piece { font-size: ${px(hrd * 0.3)}; }
@@ -350,12 +354,17 @@
   // o.sideNames { b: '黑棋', w: '白棋' }
   // o.draw(game, view)  画棋盘。view.canPlay 是现在能不能点，view.play(move) 落子，
   //                     view.mySide 是我执哪一方（双人模式为 null），view.flip 表示要不要把棋盘倒过来
-  // o.ai(game, level)   电脑选一步，level 0 入门 / 1 业余 / 2 大师
+  // o.ai(game, level)   电脑选一步，level 0 入门 / 1 业余 / 2 大师；可以返回 Promise（比如在 Worker 里算）
+  // o.stopAi()  不要正在算的那一步了（悔棋、重新开始时调用，可不给）
+  // o.levels    难度名称（可不给，默认入门、业余、大师）
+  // o.firstLabels  [我先手, 电脑先手] 的说法（可不给）
+  // o.online    false 表示没有联网对战
   // o.reasons   { four: '连成四子', ... } 对局结束的原因
   // o.note(game)        棋盘下面的小字（可不给），比如黑白棋的子数
   function duel(o) {
     const [FIRST, SECOND] = o.sides;
-    const LEVELS = ['入门', '业余', '大师'];
+    const LEVELS = o.levels || ['入门', '业余', '大师'];
+    const hasOnline = o.online !== false;
     const $ = id => document.getElementById(id);
     const state = {
       mode: store.get(`${o.kind}:mode`, 'ai'),
@@ -376,6 +385,7 @@
       rating: null,
     };
     if (state.mode === 'online') state.mode = 'ai'; // 联网要自己点，打开页面不自动连
+    if (!(state.level >= 0 && state.level < LEVELS.length)) state.level = 0;
     const net = new Online(onNet, onNetClose);
 
     // ----- 面板 -----
@@ -391,7 +401,7 @@
       });
       return box;
     };
-    const modeSeg = seg([['ai', '人机'], ['local', '双人'], ['online', '联网']], state.mode, setMode);
+    const modeSeg = seg([['ai', '人机'], ['local', '双人']].concat(hasOnline ? [['online', '联网']] : []), state.mode, setMode);
     const aiRow = el('div', { className: 'row' },
       el('span', { className: 'label', text: '难度' }),
       seg(LEVELS.map((name, i) => [i, name]), state.level, level => {
@@ -400,7 +410,7 @@
         newGame();
       }),
       el('span', { className: 'label', text: '先后' }),
-      seg([[true, '我先走'], [false, '电脑先走']], state.humanFirst, first => {
+      seg([[true, (o.firstLabels || [])[0] || '我先走'], [false, (o.firstLabels || [])[1] || '电脑先走']], state.humanFirst, first => {
         state.humanFirst = first;
         store.set(`${o.kind}:first`, first);
         newGame();
@@ -426,7 +436,7 @@
     panel.className = 'panel';
     panel.append(
       el('div', { className: 'row' }, el('span', { className: 'label', text: '模式' }), modeSeg),
-      aiRow, onlineRow, onlineInfo, onlineHint,
+      aiRow, ...(hasOnline ? [onlineRow, onlineInfo, onlineHint] : []),
     );
 
     const undoButton = el('button', { type: 'button', className: 'btn', text: '悔棋', onclick: undo });
@@ -440,7 +450,7 @@
       state.mode = mode;
       if (mode !== 'online') store.set(`${o.kind}:mode`, mode);
       if (mode === 'online') {
-        state.aiToken++;
+        stopAi();
         state.thinking = false;
         state.phase = 'idle';
         state.game = new o.Game();
@@ -451,8 +461,13 @@
       }
     }
 
-    function newGame() {
+    function stopAi() {
       state.aiToken++;
+      if (o.stopAi) o.stopAi();
+    }
+
+    function newGame() {
+      stopAi();
       state.thinking = false;
       state.game = new o.Game();
       state.mySide = state.mode === 'ai' ? (state.humanFirst ? FIRST : SECOND) : null;
@@ -494,9 +509,8 @@
       state.thinking = true;
       render();
       // 先让「电脑在想」显示出来，再算
-      setTimeout(() => {
-        if (token !== state.aiToken) return;
-        const move = o.ai(game, state.level);
+      const done = move => {
+        if (token !== state.aiToken || game !== state.game) return;
         state.thinking = false;
         if (move === null || move === undefined || !game.move(move)) {
           render();
@@ -504,13 +518,19 @@
         }
         render();
         maybeAi();
+      };
+      setTimeout(() => {
+        if (token !== state.aiToken) return;
+        const move = o.ai(game, state.level);
+        if (move && typeof move.then === 'function') move.then(done, () => done(null));
+        else done(move);
       }, 380);
     }
 
     function undo() {
       const { game } = state;
       if (state.mode === 'online' || !game.history.length) return;
-      state.aiToken++;
+      stopAi();
       state.thinking = false;
       if (state.mode === 'local') {
         game.undo();
@@ -733,7 +753,7 @@
 
     // 打开带 ?room=1234 的邀请链接，直接进房间
     const invited = new URLSearchParams(location.search).get('room');
-    if (invited && /^\d{4}$/.test(invited)) {
+    if (hasOnline && invited && /^\d{4}$/.test(invited)) {
       state.mode = 'online';
       modeSeg.querySelectorAll('button').forEach((b, i) => b.setAttribute('aria-pressed', String(i === 2)));
       history.replaceState(null, '', location.pathname);
