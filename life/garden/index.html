@@ -149,7 +149,9 @@
         <label><input type="checkbox" value="30"> 提前 30 天</label></p>
       <p class="hint remind-hint">可以多选，不选就不提醒。北京时间早上 8 点发到你登录用的邮箱，只发给你自己；一起写的人可以各设各的。</p>
     </div>
+    <div class="tools"><button type="button" id="item-image" hidden>图片</button></div>
     <textarea class="field" id="item-body" rows="5" maxlength="5000"></textarea>
+    <p class="hint" id="item-image-hint" hidden></p>
     <p class="note" id="item-message" role="status"></p>
     <div class="buttons">
       <button class="primary" type="submit" id="item-save">保存</button>
@@ -191,6 +193,7 @@
 <script src="/life/garden-map.js?v=2"></script>
 <script src="/life/lunar.js?v=1"></script>
 <script src="/life/cycle.js?v=1"></script>
+<script src="/life/images.js?v=1"></script>
 <script>
   const $ = id => document.getElementById(id);
   const gardenId = new URLSearchParams(location.search).get('id');
@@ -530,6 +533,7 @@
     $('item-delete').hidden = true;
     $('item-message').textContent = '';
     showPick();
+    images.refresh();
   }
 
   function showPick() {
@@ -555,6 +559,7 @@
     $('form-title').textContent = '修改';
     $('item-cancel').hidden = false;
     $('item-delete').hidden = !(item.mine || data.garden.role === 'owner');
+    images.refresh();
     $('item-message').textContent = '';
     if (data.garden.kind === 'travel') {
       picked = { lat: item.lat, lon: item.lon };
@@ -882,7 +887,13 @@
     $('pick-text').hidden = type !== 'travel';
     $('place-search').hidden = type !== 'travel';
     if (type === 'travel') ensureMap().picking(canWrite());
+    if (canWrite()) api('/life/level').then(images.setLevel).catch(() => {});
   }
+
+  const images = setupImages({
+    textarea: $('item-body'), button: $('item-image'), hint: $('item-image-hint'),
+    say: text => { $('item-message').textContent = text; }, unit: '条',
+  });
 
   async function load() {
     data = await api(`/garden/view?id=${encodeURIComponent(gardenId)}`);

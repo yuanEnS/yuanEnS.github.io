@@ -37,10 +37,12 @@
       <button type="button" data-tool="rule">分隔线</button>
       <button type="button" data-tool="math" title="嵌在句子里的公式，比如 $a^2+b^2=c^2$">公式</button>
       <button type="button" data-tool="mathBlock" title="单独一行、居中的公式">公式块</button>
+      <button type="button" id="image-button" hidden>图片</button>
       <button type="button" id="preview-toggle" aria-pressed="false">预览</button>
     </div>
     <textarea class="field" id="text" rows="16" placeholder="写点什么。空一行就是新的一段。" aria-label="正文"></textarea>
     <div class="body preview" id="preview" hidden></div>
+    <p class="hint" id="image-hint" hidden></p>
     <details class="math-help">
       <summary>怎么写数学公式</summary>
       <p>用 LaTeX 写法。嵌在句子里：<code>$a^2 + b^2 = c^2$</code>；单独一行居中：上下各一行 <code>$$</code>，中间写公式。点「预览」看排出来的样子。</p>
@@ -69,11 +71,30 @@
 
   <h2 class="year all-posts">我的文章</h2>
   <div id="posts"></div>
+
+  <section id="members" hidden>
+    <h2 class="year">会员</h2>
+    <p class="hint">会员写文章、写园地时可以上传图片：初级会员每篇最多 1 张，高级会员最多 9 张。园主自己就是高级会员。只有园主能看到这一栏。</p>
+    <form id="member-form">
+      <div class="field-row">
+        <label>昵称 <input class="field" id="member-name" maxlength="12" autocomplete="off" required></label>
+        <label>设成 <select class="field" id="member-level">
+          <option value="1">初级会员</option>
+          <option value="2">高级会员</option>
+          <option value="0">取消会员</option>
+        </select></label>
+      </div>
+      <div class="buttons"><button type="submit" id="member-save">确定</button></div>
+    </form>
+    <p class="note" id="member-message" role="status"></p>
+    <div id="member-list"></div>
+  </section>
 </main>
 
 <footer class="foot"><a href="/life/">生活园</a></footer>
 </div>
 <script src="/life/life.js"></script>
+<script src="/life/images.js?v=1"></script>
 <script>
   const $ = id => document.getElementById(id);
   const AUTOSAVE_KEY = 'life:autosave';
@@ -90,6 +111,8 @@
   function say(text) {
     $('message').textContent = text;
   }
+
+  const images = setupImages({ textarea: $('text'), button: $('image-button'), hint: $('image-hint'), say, onInsert: autosave });
 
   function showQuota() {
     const spent = wroteToday && !counted;
@@ -116,6 +139,7 @@
     $('save-draft').textContent = currentId && !post.draft ? '改成草稿' : '存为草稿';
     showEditor();
     showQuota();
+    images.refresh();
   }
 
   // 没保存的内容留在这台设备上，页面意外关掉也不会丢
@@ -194,6 +218,8 @@
     const mine = await api('/life/mine');
     const { list } = mine;
     wroteToday = mine.wroteToday;
+    images.setLevel(mine);
+    if (mine.admin) loadMembers();
     const own = list.find(post => post.author_id !== null);
     lastRights = own ? own.rights : '';
     $('posts').replaceChildren(...list.map(post => {
@@ -291,6 +317,52 @@
       say(errorText(err));
     }
     e.target.disabled = false;
+  });
+
+  // 园主开通会员
+  const LEVELS = ['', '初级会员', '高级会员'];
+  function showMembers(list) {
+    $('members').hidden = false;
+    $('member-list').replaceChildren(...list.map(m => {
+      const row = document.createElement('p');
+      row.className = 'post-row';
+      const name = document.createElement('span');
+      name.textContent = m.name;
+      const level = document.createElement('small');
+      level.textContent = LEVELS[m.level] || '';
+      row.append(name, level);
+      return row;
+    }));
+    if (!list.length) {
+      const none = document.createElement('p');
+      none.className = 'hint';
+      none.textContent = '还没有开通会员的账号。';
+      $('member-list').replaceChildren(none);
+    }
+  }
+
+  async function loadMembers() {
+    try {
+      showMembers((await api('/life/members')).list);
+    } catch (err) {
+      $('member-message').textContent = errorText(err);
+    }
+  }
+
+  $('member-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    $('member-save').disabled = true;
+    $('member-message').textContent = '';
+    try {
+      const name = $('member-name').value.trim();
+      const level = Number($('member-level').value);
+      showMembers((await api('/life/member', { name, level })).list);
+      $('member-message').textContent = level ? `已把「${name}」设成${LEVELS[level]}。` : `已取消「${name}」的会员。`;
+      $('member-name').value = '';
+    } catch (err) {
+      $('member-message').textContent = errorText(err);
+    }
+    $('member-save').disabled = false;
   });
 
   start().catch(err => {
