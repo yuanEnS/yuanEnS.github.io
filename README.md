@@ -21,7 +21,7 @@
 - `wuziqi/`：五子棋网页（自动生成）
 - `life/`：生活园入口。下面有世界园 `world/`（地图和气泡，`map.js`；国界和中国省界在 `geo.js`，画法在 `geo-draw.js`，由 xiangqi 仓库的 `tools/geo/` 生成）和私人园 `personal/`（自己或某位作者的文章和园地，`?author=昵称`）。园地是心愿单、旅行地图、纪念日，页面在 `life/garden/?id=N`，旅行地图用 `garden-map.js`。文章在 Cloudflare D1 里，正式账号都能在 `/life/write/` 写，每人每天发布一篇
 - `research/`：研究园搬到了单独的私有仓库（research-private，部署在 research.yuanens.com，有登录），这里只留一个「不再公开」的说明页。
-- `reading/`：阅读园。中英文经典名著分章在线读：英文来自 Standard Ebooks（CC0），中文来自维基文库（CC BY-SA，`python3 reading/tools/wikisource.py` 取并转简体）。书目在 `reading/books.json`，运行 `python3 reading/tools/build.py` 下载、转换并生成书目页（书目页模板是 `reading/tools/index.template.html`）。
+- `reading/`：阅读园。中英文经典名著分章在线读：英文来自 Standard Ebooks（CC0），中文来自维基文库（CC BY-SA，`python3 reading/tools/wikisource.py` 取并转简体）。书目在 `reading/books.json`，运行 `python3 reading/tools/build.py` 下载、转换并生成书目页（书目页模板是 `reading/tools/index.template.html`）。英文书页上点单词会弹出中文释义：脚本是 `reading/lookup.js`，词典在 `reading/dict/`（来自 ECDICT，MIT 许可）；加了英文书后运行 `python3 reading/tools/build_dict.py ecdict.csv reading/dict reading/books/<英文书>...` 重新生成（ecdict.csv 从 https://github.com/skywind3000/ECDICT 下载，不放进仓库）。
 - `resume/`：作者简历（不从站内链接，直接用网址访问）
 - `CNAME`：自定义域名 yuanens.com
 - `sitemap.xml` / `robots.txt`：给搜索引擎

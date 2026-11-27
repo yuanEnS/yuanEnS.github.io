@@ -157,11 +157,15 @@ def credit(book):
             '本站（yuanens.com）把它改成分章的纯 HTML，方便在手机和 Kindle 上读，文字没有改动。本站与 Standard Ebooks 无关。</p>')
 
 
+# 英文书点词查义（reading/lookup.js，词典在 reading/dict/，由 build_dict.py 生成）
+LOOKUP = '<script src="/reading/lookup.js" data-dict="/reading/dict/" defer></script>'
+
+
 def page(book, title, body, nav):
     bottom = nav.replace('class="nav"', 'class="nav bottom"')
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width, initial-scale=1">'
-            f'<title>{esc(title)} · {esc(book["title"])} | 阅读园</title>{STYLE}</head>'
+            f'<title>{esc(title)} · {esc(book["title"])} | 阅读园</title>{STYLE}{LOOKUP}</head>'
             f'<body>{nav}{body}{bottom}{credit(book)}</body></html>\n')
 
 
