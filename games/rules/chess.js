@@ -356,12 +356,31 @@
       const m = typeof move === 'string' ? this.fromUci(move) : this.find(move);
       if (!m) return false;
       const san = this.san(m);
+      const zh = this.zh(m);
       const undo = makeMove(this.pos, m);
-      this.history.push({ move: m, undo, san });
+      const entry = { move: m, undo, san, zh };
+      this.history.push(entry);
       this.keys.push(this.positionKey());
       this.checkEnd();
-      if (this.reason === 'mate') this.history[this.history.length - 1].san = san.replace(/\+$/, '#');
+      if (this.reason === 'mate') {
+        entry.san = san.replace(/\+$/, '#');
+        entry.zh += '，将死';
+      } else if (/\+$/.test(san)) entry.zh += '，将军';
       return true;
+    }
+
+    // 中文记谱（网页棋谱用）：「马 g1→f3」「象 b5→c6 吃马」「兵 e5→d6 吃过路兵」「王车短易位」「兵 e7→e8 升变为后」。
+    // 将军、将死由 move() 接在后面
+    zh(m) {
+      const { board } = this.pos;
+      if (m.castle) return m.castle === 'k' ? '王车短易位' : '王车长易位';
+      const piece = board[m.from[0]][m.from[1]];
+      let text = `${NAMES[kindOf(piece)]} ${square(m.from[0], m.from[1])}→${square(m.to[0], m.to[1])}`;
+      const target = board[m.to[0]][m.to[1]];
+      if (m.ep) text += ' 吃过路兵';
+      else if (target) text += ` 吃${NAMES[kindOf(target)]}`;
+      if (m.promo) text += `${m.ep || target ? '，' : ' '}升变为${NAMES[m.promo]}`;
+      return text;
     }
 
     undo() {

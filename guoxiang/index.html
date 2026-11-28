@@ -15,11 +15,11 @@
 <meta property="og:image" content="https://yuanens.com/og.png">
 <link rel="stylesheet" href="/life/fonts/kai.css">
 <link rel="stylesheet" href="/games/kit/kit.css?v=7">
-<title>国际象棋 · 和电脑下五档难度 | 游戏园</title>
-<meta name="description" content="免费在线国际象棋：和电脑对弈，入门、业余、高手、大师、特级大师五档难度，支持王车易位、吃过路兵、兵升变，可以悔棋。附国际象棋规则详解。">
+<title>国际象棋 · 人机五档难度与联网对弈 | 游戏园</title>
+<meta name="description" content="免费在线国际象棋：和电脑对弈（入门到特级大师五档难度），或者联网快速匹配、建房间和朋友下。支持王车易位、吃过路兵、兵升变，附国际象棋规则详解。">
 <link rel="canonical" href="https://yuanens.com/guoxiang/">
 <meta property="og:title" content="国际象棋 · 游戏园">
-<meta property="og:description" content="和电脑下国际象棋，五档难度，从入门到特级大师。">
+<meta property="og:description" content="和电脑下国际象棋（五档难度），或者联网和棋友对弈。">
 <meta property="og:url" content="https://yuanens.com/guoxiang/">
 <style>
   /* 不用 var()：Kindle 不认。老浏览器上棋盘尺寸由 kit.js 算好（.legacy .chess） */
@@ -104,11 +104,15 @@
   [data-ink] .promo-box { border: 2px solid #000; background: #FFF; color: #000; }
 
   /* 棋谱 */
-  .moves { max-width: 480px; margin: 6px auto 0; padding: 8px 12px; border: 1px solid rgba(120, 90, 60, .2); border-radius: 10px; font: 15px/1.9 -apple-system, "Helvetica Neue", Arial, sans-serif; max-height: 9.6em; overflow-y: auto; }
+  /* 每回合一行：序号、白方这一步、黑方这一步；超过几行就在框里上下滚，总是滚到最新一步 */
+  .moves { max-width: 480px; margin: 6px auto 0; padding: 6px 10px; border: 1px solid rgba(120, 90, 60, .2); border-radius: 10px; font-size: 15px; line-height: 1.7; max-height: 11em; overflow-y: auto; overflow-x: hidden; }
   .moves:empty { display: none; }
-  .moves .n { color: #8A7560; margin-right: 3px; }
-  .moves .m { margin-right: 10px; white-space: nowrap; }
-  .moves .m.last { font-weight: 700; }
+  .moves .row { padding: 1px 0; border-bottom: 1px dashed rgba(120, 90, 60, .15); }
+  .moves .row:last-child { border-bottom: 0; }
+  .moves .n { display: inline-block; width: 2.4em; color: #8A7560; vertical-align: top; }
+  .moves .m { display: inline-block; width: 43%; vertical-align: top; }
+  .moves .m.last { font-weight: 700; color: #C62828; }
+  [data-ink] .moves .m.last { color: #000; text-decoration: underline; }
   [data-ink] .moves { border: 1.5px solid #000; }
   [data-ink] .moves .n { color: #000; }
   .taken { min-height: 1.4em; margin: 2px auto 0; max-width: 480px; text-align: center; font: 20px/1.3 "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "DejaVu Sans", serif; color: #6B4A2B; letter-spacing: 1px; }
@@ -145,7 +149,7 @@
   <div class="actions" id="actions"></div>
   <div class="moves" id="moves" aria-label="棋谱"></div>
   <p class="rules-link">第一次下国际象棋？看<a href="/guoxiang/rules.html">国际象棋规则详解</a>：六种棋子的走法、王车易位、吃过路兵、兵升变，以及将死和各种和棋。</p>
-  <p class="foot"><a href="/games/">游戏园</a> · <a href="/guoxiang/rules.html">规则详解</a></p>
+  <p class="foot"><a href="/games/">游戏园</a> · <a href="/guoxiang/rules.html">规则详解</a> · <a href="/account/">账号与排行榜</a></p>
 </div>
 
 <dialog class="rules" id="rules" aria-labelledby="rules-title">
@@ -175,13 +179,13 @@
       <li>同一局面出现三次、双方连续 50 步没吃子也没动兵、或者剩下的子谁都将不死谁，也是和棋。</li>
     </ul>
     <p>更详细的说明和例子：<a href="/guoxiang/rules.html">国际象棋规则详解</a>。</p>
-    <h3>两种玩法</h3>
-    <p><strong>人机</strong>和电脑下，五档难度从入门到特级大师，可以悔棋；<strong>双人</strong>两个人在同一台设备上轮流下。执黑时棋盘会倒过来，自己的棋子总在下面。棋盘下面的「汉字棋子」按钮可以把棋子换成王后车象马兵。</p>
+    <h3>三种玩法</h3>
+    <p><strong>人机</strong>和电脑下，五档难度从入门到特级大师，可以悔棋；<strong>双人</strong>两个人在同一台设备上轮流下；<strong>联网</strong>可以快速匹配陌生棋友（计积分），也可以建房间把房间号发给朋友。执黑时棋盘会倒过来，自己的棋子总在下面。棋盘下面的「汉字棋子」按钮可以把棋子换成王后车象马兵。</p>
     <div class="close-row"><button type="button" class="btn primary close">知道了</button></div>
   </div>
 </dialog>
 
-<script src="/games/rules/chess.js?v=1"></script>
+<script src="/games/rules/chess.js?v=2"></script>
 <script src="/games/kit/kit.js?v=8"></script>
 <script>
   const { el } = Kit;
@@ -434,13 +438,18 @@
       if (t.lead > 0) node.append(el('small', { text: `+${t.lead}` }));
     }
 
-    // 棋谱
-    const items = [];
+    // 棋谱：中文写法（马 g1→f3、象 b5→c6 吃马、王车短易位……），每回合一行
+    const rows = [];
+    const startBlack = game.startFen.split(' ')[1] === 'b';
     game.history.forEach((h, i) => {
-      if (i % 2 === 0) items.push(el('span', { className: 'n', text: `${i / 2 + 1}.` }));
-      items.push(el('span', { className: `m${i === game.history.length - 1 ? ' last' : ''}`, text: h.san }));
+      const k = i + (startBlack ? 1 : 0);
+      if (k % 2 === 0 || !rows.length) {
+        rows.push(el('div', { className: 'row' }, el('span', { className: 'n', text: `${Math.floor(k / 2) + 1}.` })));
+        if (k % 2 === 1) rows[rows.length - 1].append(el('span', { className: 'm', text: '…' }));
+      }
+      rows[rows.length - 1].append(el('span', { className: `m${i === game.history.length - 1 ? ' last' : ''}`, text: h.zh, title: h.san }));
     });
-    movesEl.replaceChildren(...items);
+    movesEl.replaceChildren(...rows);
     movesEl.scrollTop = movesEl.scrollHeight;
   }
 
@@ -458,7 +467,6 @@
     sideNames: SIDE_NAMES,
     levels: LEVELS,
     firstLabels: ['我执白先走', '我执黑'],
-    online: false,
     draw,
     ai,
     stopAi,
@@ -468,6 +476,7 @@
       repetition: '同一局面出现了三次',
       fifty: '双方连续 50 步没吃子也没动兵',
       material: '剩下的子谁都将不死谁',
+      resign: '认输',
     },
     note: game => {
       if (game.winner) return '';
